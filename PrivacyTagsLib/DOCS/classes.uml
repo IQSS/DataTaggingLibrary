@@ -1,0 +1,38 @@
+@startuml
+
+class PrivacyTagSet {
+	+ storage
+	+ transit
+	+ authentication
+	+ approval
+	+ dataUseAgreement
+	+ isComplete() : boolean
+	+ composeWith( set:PrivacyTagSet ) : PrivacyTagSet
+}
+
+class DecisionNode {
+	+ id:String
+	+ title
+	+ text
+	+ absoluteResult() : PrivacyTagSet
+	+ decide( result:boolean, tags: PrivacyTags ) : DecisionResult
+}
+
+class DecisionResult {
+	+ node : DecisionNode
+	+ tags : PrivacyTagSet
+}
+
+enum HarmLevel {
+
+}
+
+HarmLevel o--> "1" PrivacyTagSet
+
+DecisionNode o--> DecisionNode : parent
+DecisionNode <--> DecisionNode : yes
+DecisionNode <--> DecisionNode : no
+
+DecisionResult o--- DecisionNode
+DecisionResult o--- PrivacyTagSet
+@enduml
