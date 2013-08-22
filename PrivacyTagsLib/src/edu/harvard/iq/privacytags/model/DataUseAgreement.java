@@ -8,5 +8,5 @@ package edu.harvard.iq.privacytags.model;
  * @author michael
  */
 public enum DataUseAgreement {
-	None, Needed
+	None, Required
 }
