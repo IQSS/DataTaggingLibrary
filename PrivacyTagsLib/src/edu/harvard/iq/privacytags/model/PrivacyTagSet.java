@@ -113,6 +113,13 @@ public class PrivacyTagSet  {
 		return total > 0;
 	}
 	
+	public boolean stricterOrEqualTo( PrivacyTagSet other ) {
+		return stricterThan(other) || equals(other);
+	}
+	
+	public boolean stricterThan( HarmLevel hl ) { return stricterThan( hl.tags() ); }
+	public boolean stricterOrEqualTo( HarmLevel hl ) { return stricterOrEqualTo( hl.tags() ); }
+	
 	public PrivacyTagSet composeWith( PrivacyTagSet other ) {
 		return new PrivacyTagSet(
 				getApprovalType()!=null ? getApprovalType() : other.getApprovalType(), 
@@ -121,10 +128,6 @@ public class PrivacyTagSet  {
 				getTransitEncryptionType()!=null ? getTransitEncryptionType() : other.getTransitEncryptionType(), 
 				getStorageEncryptionType()!=null ? getStorageEncryptionType() : other.getStorageEncryptionType()
 			);
-	}
-	
-	public boolean stricterOrEqualTo( PrivacyTagSet other ) {
-		return stricterThan(other) || equals(other);
 	}
 	
 	public ApprovalType getApprovalType() {
