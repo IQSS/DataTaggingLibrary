@@ -1,6 +1,6 @@
 package edu.harvard.iq.privacytags.webapp.view;
 
-import edu.harvard.iq.privacytags.webapp.boundary.DecisionTreeNodeExtraDataFacade;
+import edu.harvard.iq.privacytags.webapp.boundary.DecisionNodeExtraDataFacade;
 import edu.harvard.iq.privacytags.webapp.model.DecisionTreeNodeExtraData;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
@@ -14,7 +14,7 @@ import javax.faces.bean.RequestScoped;
 @RequestScoped
 public class DecisionTreeNodeExtraDataView {
 	@EJB
-	private DecisionTreeNodeExtraDataFacade dtnExtraDataFacade;
+	private DecisionNodeExtraDataFacade dtnExtraDataFacade;
 	
 	private DecisionTreeNodeExtraData extraData;
 	

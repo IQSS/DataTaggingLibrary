@@ -5,11 +5,10 @@
 package edu.harvard.iq.privacytags.questionnaire;
 
 import edu.harvard.iq.privacytags.model.questionnaire.Answer;
-import edu.harvard.iq.privacytags.model.questionnaire.DecisionTreeNode;
+import edu.harvard.iq.privacytags.model.questionnaire.DecisionNode;
 import edu.harvard.iq.privacytags.model.ApprovalType;
 import edu.harvard.iq.privacytags.model.AuthenticationType;
 import edu.harvard.iq.privacytags.model.DataUseAgreement;
-import edu.harvard.iq.privacytags.model.EncryptionType;
 import edu.harvard.iq.privacytags.model.PrivacyTagSet;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -27,23 +26,23 @@ public class DecisionTreeNodeTest {
 	public void testGetAbsoluteAssumption() {
 		// Set up a basic questionnaire
 		int id = 0;
-		DecisionTreeNode root = new DecisionTreeNode( Integer.toString(++id) );
+		DecisionNode root = new DecisionNode( Integer.toString(++id) );
 		
-		DecisionTreeNode nd = new DecisionTreeNode( Integer.toString(++id) );
+		DecisionNode nd = new DecisionNode( Integer.toString(++id) );
 		nd.setBaseAssumption( new PrivacyTagSet(ApprovalType.None, null, null, null, null) );
 		root.setNodeFor(Answer.YES, nd);
 		
-		DecisionTreeNode ndSub = new DecisionTreeNode( Integer.toString(++id) );
+		DecisionNode ndSub = new DecisionNode( Integer.toString(++id) );
 		ndSub.setBaseAssumption( new PrivacyTagSet(null, AuthenticationType.Password, null, null, null) );
 		nd.setNodeFor(Answer.NO, ndSub);
 		nd = ndSub;
 		
-		ndSub = new DecisionTreeNode( Integer.toString(++id) );
+		ndSub = new DecisionNode( Integer.toString(++id) );
 		ndSub.setBaseAssumption( new PrivacyTagSet(null, null, DataUseAgreement.Required, null, null) );
 		nd.setNodeFor(Answer.YES, ndSub);
 		nd = ndSub;
 		
-		ndSub = new DecisionTreeNode( Integer.toString(++id) );
+		ndSub = new DecisionNode( Integer.toString(++id) );
 		ndSub.setBaseAssumption( new PrivacyTagSet(ApprovalType.Signed, null, null, null, null) );
 		nd.setNodeFor(Answer.YES, ndSub);
 		

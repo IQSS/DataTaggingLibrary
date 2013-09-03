@@ -10,7 +10,7 @@ import javax.persistence.PersistenceContext;
  * @author michael
  */
 @Stateless
-public class DecisionTreeNodeExtraDataFacade extends AbstractFacade<DecisionTreeNodeExtraData> {
+public class DecisionNodeExtraDataFacade extends AbstractFacade<DecisionTreeNodeExtraData> {
 	@PersistenceContext(unitName = "PrivacyTagsWebAppPU")
 	private EntityManager em;
 
@@ -19,7 +19,7 @@ public class DecisionTreeNodeExtraDataFacade extends AbstractFacade<DecisionTree
 		return em;
 	}
 
-	public DecisionTreeNodeExtraDataFacade() {
+	public DecisionNodeExtraDataFacade() {
 		super(DecisionTreeNodeExtraData.class);
 	}
 	

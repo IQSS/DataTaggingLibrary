@@ -12,17 +12,17 @@ import java.util.Map;
  * single question, with a YES/NO {@link Answer}.
  * @author michael
  */
-public class DecisionTreeNode {
+public class DecisionNode {
 	
 	private final String id;
-	private DecisionTreeNode parent;
+	private DecisionNode parent;
 	private String title;
 	private String questionText;
 	private String helpText;
-	private final Map<Answer, DecisionTreeNode> subtrees = new EnumMap<>(Answer.class);
+	private final Map<Answer, DecisionNode> subtrees = new EnumMap<>(Answer.class);
 	private PrivacyTagSet baseAssumption = new PrivacyTagSet();
 
-	public DecisionTreeNode(String id) {
+	public DecisionNode(String id) {
 		this.id = id;
 	}
 
@@ -62,35 +62,35 @@ public class DecisionTreeNode {
 		this.baseAssumption = baseAssumption;
 	}
 
-	public DecisionTreeNode getParent() {
+	public DecisionNode getParent() {
 		return parent;
 	}
 
-	protected void setParent(DecisionTreeNode parent) {
+	protected void setParent(DecisionNode parent) {
 		this.parent = parent;
 	}
 	
-	public void setNodeFor( Answer answer, DecisionTreeNode node ) {
+	public void setNodeFor( Answer answer, DecisionNode node ) {
 		if ( node != null ) {
 			node.setParent(this);
 		}
 		subtrees.put(answer, node);
 	}
 	
-	public DecisionTreeNode getNodeFor( Answer answer ) {
+	public DecisionNode getNodeFor( Answer answer ) {
 		return subtrees.get(answer);
 	}
 	
 	public PrivacyTagSet getAbsoluteAssumption() {
-		List<DecisionTreeNode> ancestors = new LinkedList<>();
-		DecisionTreeNode node = this;
+		List<DecisionNode> ancestors = new LinkedList<>();
+		DecisionNode node = this;
 		while ( node != null ) {
 			ancestors.add(node);
 			node = node.getParent();
 		}
 		Collections.reverse(ancestors);
 		PrivacyTagSet result = new PrivacyTagSet();
-		for ( DecisionTreeNode dtn : ancestors ) {
+		for ( DecisionNode dtn : ancestors ) {
 			result = dtn.getBaseAssumption().composeWith(result);
 		}
 		
