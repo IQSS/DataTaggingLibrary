@@ -4,6 +4,8 @@
 
 package edu.harvard.iq.privacytags.questionnaire;
 
+import edu.harvard.iq.privacytags.model.questionnaire.Answer;
+import edu.harvard.iq.privacytags.model.questionnaire.DecisionTreeNode;
 import edu.harvard.iq.privacytags.model.ApprovalType;
 import edu.harvard.iq.privacytags.model.AuthenticationType;
 import edu.harvard.iq.privacytags.model.DataUseAgreement;

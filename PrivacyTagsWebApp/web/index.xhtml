@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+		<f:view>
+			<h:form>
+				<h:outputLabel value="Node id"/><h:inputText value="#{dtnExtraDataView.extraData.treeNodeId}"/> <br/>
+				<h:outputLabel value="Explanation"/><h:inputText value="#{dtnExtraDataView.extraData.explanation}"/> <br/>
+				<h:outputLabel value="Help Text"/><h:inputText value="#{dtnExtraDataView.extraData.helpText}"/> <br/>
+				<h:commandButton action="#{dtnExtraDataView.postNew}" value="Add new"/>
+			</h:form>
+		</f:view>
+    </h:body>
+</html>
+
