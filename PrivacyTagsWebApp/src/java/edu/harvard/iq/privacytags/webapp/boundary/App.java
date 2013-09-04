@@ -58,7 +58,6 @@ public class App {
 	}
 
 	private DecisionNode makeDummyQuestionnaire() {
-		logger.info("Making dummy questions");
 		DecisionNode root = new DecisionNode( Integer.toString(0) );
 		root.setTitle("First Question title");
 		root.setQuestionText("This is the text for the first question.");
@@ -76,14 +75,13 @@ public class App {
 				subNode = parent.getNodeFor(lastAnswer);
 				depth++;
 			}
-			logger.log(Level.INFO, "Question:{0} depth:{1}", new Object[]{i, depth});
 
 			subNode = sampleNode();
 			// append node
 			if ( parent != null ) {
 				if (!parent.getAbsoluteAssumption().isComplete()) {
 					parent.setNodeFor(lastAnswer, subNode);
-					subNode.setBaseAssumption( improveOn(subNode.getBaseAssumption()) );
+					subNode.setBaseAssumption( improveOn(subNode.getAbsoluteAssumption()) );
 				}
 			} else {
 				logger.severe("parent is null");

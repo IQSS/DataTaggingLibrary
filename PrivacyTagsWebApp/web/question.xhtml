@@ -6,6 +6,19 @@
 	  xmlns:c="http://java.sun.com/jsp/jstl/core">
     <h:head>
         <title>Question #{decisionNodeView.nodeId}</title>
+		<style>
+			.help {
+				color: #888;
+				font-size: 0.9em;
+			}
+			.unset {
+				background-color: #888;
+				color: #FFF;
+			}
+			dd {
+				color: blue;
+			}
+		</style>
     </h:head>
     <h:body>
 		<c:if test="#{decisionNodeView.hasParentNode()}">
@@ -17,7 +30,7 @@
 		<div>
 			<h:outputLabel value="#{decisionNodeView.node.questionText}" /></div>
 		<c:if test="#{decisionNodeView.node.helpText != null}">
-			<div><h:outputLabel value="#{decisionNodeView.node.helpText}"/></div>
+			<div class="help"><h:outputLabel value="#{decisionNodeView.node.helpText}"/></div>
 		</c:if>
 		<hr />
 			
@@ -32,7 +45,40 @@
 				<f:param name="nodeId" value="#{decisionNodeView.getNoNode().id}"/>
 			</h:link>
 		</c:if>
-
+		
+		<c:if test="#{decisionNodeView.hasNode()}">
+		<div id="currentTags">
+			<h3>Privacy Tags</h3>
+			<dl>
+				<dt>Approval Type</dt>
+				<dd><h:outputText value="#{decisionNodeView.tags().approvalType}" />
+					<h:outputText rendered="#{decisionNodeView.tags().approvalType==null}"
+								  value="unset"
+								  class="unset"/>
+				</dd>
+				<dt>Authentication Type</dt>
+				<dd><h:outputText value="#{decisionNodeView.tags().authenticationType}" />
+					<h:outputText rendered="#{decisionNodeView.tags().authenticationType==null}"
+								  value="unset"
+								  class="unset"/></dd>
+				<dt>Data Use Agreement</dt>
+				<dd><h:outputText value="#{decisionNodeView.tags().dataUseAgreement}" />
+					<h:outputText rendered="#{decisionNodeView.tags().dataUseAgreement==null}"
+								  value="unset"
+								  class="unset"/></dd>
+				<dt>Transit Encryption Type</dt>
+				<dd><h:outputText value="#{decisionNodeView.tags().transitEncryptionType}" />
+					<h:outputText rendered="#{decisionNodeView.tags().transitEncryptionType==null}"
+								  value="unset"
+								  class="unset"/></dd>
+				<dt>Storage Encryption</dt>
+				<dd><h:outputText value="#{decisionNodeView.tags().storageEncryptionType}" />
+					<h:outputText rendered="#{decisionNodeView.tags().storageEncryptionType==null}"
+								  value="unset"
+								  class="unset"/></dd>
+			</dl>
+		</div>
+		</c:if>
     </h:body>
 </html>
 
