@@ -7,81 +7,111 @@
     <h:head>
         <title>Question #{decisionNodeView.nodeId}</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-		<h:outputStylesheet library="css" name="bootstrap.min.css" />
+		<h:outputStylesheet library="css" name="bootstrap.css" />
 		<h:outputStylesheet library="css" name="main.css" />
     </h:head>
     <h:body>
 		<div class="container">
 			<br />
-		
-		<div class="panel panel-default qPanel">
-			<div class="panel-heading">
-				<h3><h:outputLabel value="#{decisionNodeView.node.title}" /></h3>
-			</div>
-			<div class="panel-body">
-				<div>
-					<h:outputLabel value="#{decisionNodeView.node.questionText}" />
+			<div class="row">
+				<div class="col-md-8">
+				<div class="panel panel-default qPanel">
+					<div class="panel-heading">
+						<h3><h:outputLabel value="#{decisionNodeView.node.title}" /></h3>
+					</div>
+					<div class="panel-body">
+						<div>
+							<h:outputLabel value="#{decisionNodeView.node.questionText}" />
+						</div>
+						<c:if test="#{decisionNodeView.node.helpText != null}">
+							<div class="help"><h:outputLabel value="#{decisionNodeView.node.helpText}"/></div>
+						</c:if>
+						<hr />
+
+						<div class="pull-right">
+							<c:if test="#{decisionNodeView.hasYesNode()}">
+								<h:link value="YES" class="btn btn-lg btn-success">
+									<f:param name="nodeId" value="#{decisionNodeView.getYesNode().id}"/>
+								</h:link>
+							</c:if>
+							&nbsp;
+							<c:if test="#{decisionNodeView.hasNoNode()}">
+								<h:link value="NO" class="btn btn-lg btn-warning">
+									<f:param name="nodeId" value="#{decisionNodeView.getNoNode().id}"/>
+								</h:link>
+							</c:if>
+						</div>
+						<c:if test="#{decisionNodeView.hasParentNode()}">
+							<a class="btn btn-default btn-lg"
+							   href="question.xhtml?nodeId=#{decisionNodeView.getParentNode().id}">
+								<span class="glyphicon glyphicon-arrow-left"></span>
+								Back to Parent
+							</a>
+						</c:if>
+					</div>
 				</div>
-				<c:if test="#{decisionNodeView.node.helpText != null}">
-					<div class="help"><h:outputLabel value="#{decisionNodeView.node.helpText}"/></div>
-				</c:if>
-				<hr />
+			</div>
 				
-				<div class="pull-right">
-					<c:if test="#{decisionNodeView.hasYesNode()}">
-						<h:link value="YES" class="btn btn-lg btn-success">
-							<f:param name="nodeId" value="#{decisionNodeView.getYesNode().id}"/>
-						</h:link>
-					</c:if>
-					&nbsp;
-					<c:if test="#{decisionNodeView.hasNoNode()}">
-						<h:link value="NO" class="btn btn-lg btn-warning">
-							<f:param name="nodeId" value="#{decisionNodeView.getNoNode().id}"/>
-						</h:link>
-					</c:if>
+			<div class="col-md-4">					
+				<c:if test="#{decisionNodeView.hasNode()}">
+				<div id="currentTags" class="well well-sm">
+					<h3>Privacy Tags</h3>
+					<ul class="list-group">
+						<li class="list-group-item">
+							<h:outputText value="#{decisionNodeView.tags().approvalType}"
+										  class="badge bdg#{decisionNodeView.tags().approvalType.ordinal()}"/>
+							<h:outputText rendered="#{decisionNodeView.tags().approvalType==null}"
+										  value="unset"
+										  class="badge unset"/>
+							Approval Type
+						</li>
+
+						<li class="list-group-item">
+							<h:outputText value="#{decisionNodeView.tags().authenticationType}"
+										  class="badge bdg#{decisionNodeView.tags().authenticationType.ordinal()}"/>
+							<h:outputText rendered="#{decisionNodeView.tags().authenticationType==null}"
+										  value="unset"
+										  class="badge unset"/>
+							Authentication Type
+						</li>
+
+						<li class="list-group-item">
+							<h:outputText value="#{decisionNodeView.tags().dataUseAgreement}"
+										  class="badge bdg#{decisionNodeView.tags().dataUseAgreement.ordinal()}"/>
+							<h:outputText rendered="#{decisionNodeView.tags().dataUseAgreement==null}"
+										  value="unset"
+										  class="badge unset"/>
+							Data Use Agreement
+						</li>
+
+						<li class="list-group-item">
+							<h:outputText value="#{decisionNodeView.tags().transitEncryptionType}"
+										  class="badge bdg#{decisionNodeView.tags().transitEncryptionType.ordinal()}"/>
+							<h:outputText rendered="#{decisionNodeView.tags().transitEncryptionType==null}"
+										  value="unset"
+										  class="badge unset"/>
+							Transit Encryption Type
+						</li>
+
+						<li class="list-group-item">
+							<h:outputText value="#{decisionNodeView.tags().storageEncryptionType}"
+										  class="badge bdg#{decisionNodeView.tags().storageEncryptionType.ordinal()}"/>
+							<h:outputText rendered="#{decisionNodeView.tags().storageEncryptionType==null}"
+										  value="unset"
+										  class="badge unset"/>
+							Storage Encryption Type
+						</li>
+
+				  </ul>
+
 				</div>
-				<c:if test="#{decisionNodeView.hasParentNode()}">
-					<h:link value="Back To Parent" class="btn btn-default btn-lg">
-						<f:param name="nodeId" value="#{decisionNodeView.getParentNode().id}"/>
-					</h:link>
 				</c:if>
 			</div>
+			</div>
 		</div>
-		
-		<c:if test="#{decisionNodeView.hasNode()}">
-		<div id="currentTags">
-			<h3>Privacy Tags</h3>
-			<dl>
-				<dt>Approval Type</dt>
-				<dd><h:outputText value="#{decisionNodeView.tags().approvalType}" />
-					<h:outputText rendered="#{decisionNodeView.tags().approvalType==null}"
-								  value="unset"
-								  class="unset"/>
-				</dd>
-				<dt>Authentication Type</dt>
-				<dd><h:outputText value="#{decisionNodeView.tags().authenticationType}" />
-					<h:outputText rendered="#{decisionNodeView.tags().authenticationType==null}"
-								  value="unset"
-								  class="unset"/></dd>
-				<dt>Data Use Agreement</dt>
-				<dd><h:outputText value="#{decisionNodeView.tags().dataUseAgreement}" />
-					<h:outputText rendered="#{decisionNodeView.tags().dataUseAgreement==null}"
-								  value="unset"
-								  class="unset"/></dd>
-				<dt>Transit Encryption Type</dt>
-				<dd><h:outputText value="#{decisionNodeView.tags().transitEncryptionType}" />
-					<h:outputText rendered="#{decisionNodeView.tags().transitEncryptionType==null}"
-								  value="unset"
-								  class="unset"/></dd>
-				<dt>Storage Encryption</dt>
-				<dd><h:outputText value="#{decisionNodeView.tags().storageEncryptionType}" />
-					<h:outputText rendered="#{decisionNodeView.tags().storageEncryptionType==null}"
-								  value="unset"
-								  class="unset"/></dd>
-			</dl>
-		</div>
-		</c:if>
-		</div>
+		<footer>
+			&copy; 2013 Harvard copyright notice goes here
+		</footer>
     </h:body>
 </html>
 

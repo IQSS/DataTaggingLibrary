@@ -1,13 +1,13 @@
 body {
-	background-color: #E5E5F0;
+	background-color: #E5E5EF;
 }
 .help {
 	color: #888;
 	font-size: 0.9em;
 }
 .unset {
-	background-color: #888;
-	color: #FFF;
+	background-color: #AAA;
+	color: #EEE;
 }
 dd {
 	color: blue;
@@ -25,8 +25,33 @@ dd {
 .centerContainer{
 	position: relative;
 }
+
 .absoluteCenter {
   margin: auto;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
+}
+
+.bdg0 {
+	background-color: #AAF;
+}
+.bdg1 {
+	background-color: #05ad00;
+}
+.bdg2 {
+	background-color: #5d8902;
+}
+.bdg3 {
+	background-color: #a85802;
+}
+.bdg4 {
+	background-color: #F00;
+}
+
+footer {
+	font-size: 0.9em;
+	border-top: 1px solid black;
+	margin:0;
+	padding: 0.5em;
+	text-align: center;
 }
