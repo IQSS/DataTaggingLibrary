@@ -13,6 +13,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ApplicationScoped;
 
@@ -23,7 +25,7 @@ import javax.faces.bean.ApplicationScoped;
 @ManagedBean( name="App" )
 @ApplicationScoped
 public class App {
-	
+	private static final Logger logger = Logger.getLogger(App.class.getName());
 	private DecisionNode questionnaireRoot;
 	private final Map<String, DecisionNode> dtnById = new HashMap<>(); 
 	/**
@@ -33,7 +35,11 @@ public class App {
 		setQuestionnaire( makeDummyQuestionnaire() );
 	}
 	
-	public void setQuestionnaire( DecisionNode root ) {
+	public DecisionNode getDecisionNode( String id ) {
+		return dtnById.get(id);
+	}
+
+	private void setQuestionnaire( DecisionNode root ) {
 		dtnById.clear();
 		questionnaireRoot = root;
 		List<DecisionNode> queue = new LinkedList<>();
@@ -41,6 +47,7 @@ public class App {
 		while ( ! queue.isEmpty() ) {
 			DecisionNode nd = queue.remove(0);
 			dtnById.put( nd.getId(), nd );
+			System.out.println("added " + nd);
 			for ( Answer a : Answer.values() ) {
 				DecisionNode subNode = nd.getNodeFor(a);
 				if ( subNode != null ) {
@@ -51,28 +58,35 @@ public class App {
 	}
 
 	private DecisionNode makeDummyQuestionnaire() {
-		int id = 0;
-		DecisionNode root = new DecisionNode( Integer.toString(++id) );
+		logger.info("Making dummy questions");
+		DecisionNode root = new DecisionNode( Integer.toString(0) );
 		root.setTitle("First Question title");
 		root.setQuestionText("This is the text for the first question.");
 		root.setHelpText("The rest of the nodes are randomly generated for now.");
 		
-		DecisionNode nd = root;
-		DecisionNode parent = null;
 		for ( int i=0; i<30; i++ ) {
+			DecisionNode parent = null;
+			DecisionNode subNode = root;
 			// get to a leaf
 			Answer lastAnswer = Answer.YES;
-			while (nd != null) {
-				parent = nd;
+			int depth = 0;
+			while (subNode != null) {
+				parent = subNode;
 				lastAnswer =  random.nextBoolean() ? Answer.YES : Answer.NO;
-				nd = parent.getNodeFor(lastAnswer);
+				subNode = parent.getNodeFor(lastAnswer);
+				depth++;
 			}
-			DecisionNode nextNode = sampleNode();
-			
+			logger.log(Level.INFO, "Question:{0} depth:{1}", new Object[]{i, depth});
+
+			subNode = sampleNode();
 			// append node
-			if ( (parent != null) && (!parent.getAbsoluteAssumption().isComplete())) {
-				parent.setNodeFor(lastAnswer, nextNode);
-				nextNode.setBaseAssumption( improveOn(nextNode.getBaseAssumption()) );
+			if ( parent != null ) {
+				if (!parent.getAbsoluteAssumption().isComplete()) {
+					parent.setNodeFor(lastAnswer, subNode);
+					subNode.setBaseAssumption( improveOn(subNode.getBaseAssumption()) );
+				}
+			} else {
+				logger.severe("parent is null");
 			}
 		}
 		
@@ -111,17 +125,21 @@ public class App {
 		PrivacyTagSet res = asm.makeCopy();
 		if ( res.getApprovalType() == null ) {
 			res.setApprovalType( randOf(ApprovalType.values()));
+			return res;
 		}
 		if ( res.getAuthenticationType() == null ) {
 			res.setAuthenticationType(randOf(AuthenticationType.values()));
+			return res;
 		}
 		
 		if ( res.getDataUseAgreement()== null ) {
 			res.setDataUseAgreement(randOf(DataUseAgreement.values()));
+			return res;
 		}
 		
 		if ( res.getStorageEncryptionType()== null ) {
 			res.setStorageEncryptionType(randOf(EncryptionType.values()));
+			return res;
 		}
 		
 		if ( res.getTransitEncryptionType()== null ) {

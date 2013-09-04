@@ -96,4 +96,11 @@ public class DecisionNode {
 		
 		return result;
 	}
+
+	@Override
+	public String toString() {
+		return "DecisionNode{" + "id=" + id + ", title=" + title + '}';
+	}
+	
+	
 }

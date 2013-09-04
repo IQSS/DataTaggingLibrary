@@ -7,6 +7,9 @@
         <title>Facelet Title</title>
     </h:head>
     <h:body>
+		<h:link value="Go to root question" outcome="question">
+			<f:param name="nodeId" value="0"/>
+		</h:link>
 		<f:view>
 			<h:form>
 				<h:outputLabel value="Node id"/><h:inputText value="#{dtnExtraDataView.extraData.treeNodeId}"/> <br/>

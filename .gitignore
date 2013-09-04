@@ -6,3 +6,5 @@
 *.ear
 *build/
 /PrivacyTagsWebApp/nbproject/private/
+/PrivacyTagsLib/dist/
+/PrivacyTagsWebApp/dist/
