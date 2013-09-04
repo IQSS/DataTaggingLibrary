@@ -63,7 +63,7 @@ public class App {
 		root.setQuestionText("This is the text for the first question.");
 		root.setHelpText("The rest of the nodes are randomly generated for now.");
 		
-		for ( int i=0; i<30; i++ ) {
+		for ( int i=0; i<50; i++ ) {
 			DecisionNode parent = null;
 			DecisionNode subNode = root;
 			// get to a leaf

@@ -6,45 +6,47 @@
 	  xmlns:c="http://java.sun.com/jsp/jstl/core">
     <h:head>
         <title>Question #{decisionNodeView.nodeId}</title>
-		<style>
-			.help {
-				color: #888;
-				font-size: 0.9em;
-			}
-			.unset {
-				background-color: #888;
-				color: #FFF;
-			}
-			dd {
-				color: blue;
-			}
-		</style>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+		<h:outputStylesheet library="css" name="bootstrap.min.css" />
+		<h:outputStylesheet library="css" name="main.css" />
     </h:head>
     <h:body>
-		<c:if test="#{decisionNodeView.hasParentNode()}">
-			<h:link value="Back To Parent">
-				<f:param name="nodeId" value="#{decisionNodeView.getParentNode().id}"/>
-			</h:link>
-		</c:if>
-		<h1><h:outputLabel value="#{decisionNodeView.node.title}" /></h1>
-		<div>
-			<h:outputLabel value="#{decisionNodeView.node.questionText}" /></div>
-		<c:if test="#{decisionNodeView.node.helpText != null}">
-			<div class="help"><h:outputLabel value="#{decisionNodeView.node.helpText}"/></div>
-		</c:if>
-		<hr />
-			
-		<c:if test="#{decisionNodeView.hasYesNode()}">
-			<h:link value="YES">
-				<f:param name="nodeId" value="#{decisionNodeView.getYesNode().id}"/>
-			</h:link>
-		</c:if>
-		&nbsp;
-		<c:if test="#{decisionNodeView.hasNoNode()}">
-			<h:link value="NO">
-				<f:param name="nodeId" value="#{decisionNodeView.getNoNode().id}"/>
-			</h:link>
-		</c:if>
+		<div class="container">
+			<br />
+		
+		<div class="panel panel-default qPanel">
+			<div class="panel-heading">
+				<h3><h:outputLabel value="#{decisionNodeView.node.title}" /></h3>
+			</div>
+			<div class="panel-body">
+				<div>
+					<h:outputLabel value="#{decisionNodeView.node.questionText}" />
+				</div>
+				<c:if test="#{decisionNodeView.node.helpText != null}">
+					<div class="help"><h:outputLabel value="#{decisionNodeView.node.helpText}"/></div>
+				</c:if>
+				<hr />
+				
+				<div class="pull-right">
+					<c:if test="#{decisionNodeView.hasYesNode()}">
+						<h:link value="YES" class="btn btn-lg btn-success">
+							<f:param name="nodeId" value="#{decisionNodeView.getYesNode().id}"/>
+						</h:link>
+					</c:if>
+					&nbsp;
+					<c:if test="#{decisionNodeView.hasNoNode()}">
+						<h:link value="NO" class="btn btn-lg btn-warning">
+							<f:param name="nodeId" value="#{decisionNodeView.getNoNode().id}"/>
+						</h:link>
+					</c:if>
+				</div>
+				<c:if test="#{decisionNodeView.hasParentNode()}">
+					<h:link value="Back To Parent" class="btn btn-default btn-lg">
+						<f:param name="nodeId" value="#{decisionNodeView.getParentNode().id}"/>
+					</h:link>
+				</c:if>
+			</div>
+		</div>
 		
 		<c:if test="#{decisionNodeView.hasNode()}">
 		<div id="currentTags">
@@ -79,6 +81,7 @@
 			</dl>
 		</div>
 		</c:if>
+		</div>
     </h:body>
 </html>
 
