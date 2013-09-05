@@ -9,9 +9,8 @@
     <h:head>
         <title>Question #{decisionNodeView.nodeId}</title>
     </h:head>
-	<!-- TODO add icons on the YES/NO buttons -->
     <h:body>
-		<ui:composition template="./Base.xhtml">
+		<ui:composition template="./templates/Base.xhtml">
 			<ui:define name="title">Privacy Tags Question ##{decisionNodeView.nodeId}</ui:define>
 					   
 			<ui:define name="content">
@@ -32,15 +31,19 @@
 
 								<div class="pull-right">
 									<c:if test="#{decisionNodeView.hasYesNode()}">
-										<h:link value="YES" class="btn btn-lg btn-success">
-											<f:param name="nodeId" value="#{decisionNodeView.getYesNode().id}"/>
-										</h:link>
+										<a href="question.xhtml?nodeId=#{decisionNodeView.getYesNode().id}"
+										   class="btn btn-lg btn-success">
+											<span class="glyphicon glyphicon-ok-circle"></span>
+											&nbsp;YES
+										</a>
 									</c:if>
 									&nbsp;
 									<c:if test="#{decisionNodeView.hasNoNode()}">
-										<h:link value="NO" class="btn btn-lg btn-warning">
-											<f:param name="nodeId" value="#{decisionNodeView.getNoNode().id}"/>
-										</h:link>
+										<a href="question.xhtml?nodeId=#{decisionNodeView.getNoNode().id}"
+										   class="btn btn-lg btn-warning">
+											<span class="glyphicon glyphicon-remove-circle"></span>
+											&nbsp;NO
+										</a>
 									</c:if>
 								</div>
 								<c:if test="#{decisionNodeView.hasParentNode()}">
@@ -57,7 +60,10 @@
 					<div class="col-md-5">					
 						<c:if test="#{decisionNodeView.hasNode()}">
 							<div id="currentTags">
-								<h3>Privacy Tags</h3>
+								<h3>
+									<span class="glyphicon glyphicon-tags pull-right"></span> 
+									Privacy Tags
+								</h3>
 								<components:PrivacyTagSetListDisplay tagSet="#{decisionNodeView.tags()}" />
 							</div>
 						</c:if>

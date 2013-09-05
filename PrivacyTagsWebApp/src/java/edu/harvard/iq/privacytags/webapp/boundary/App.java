@@ -4,6 +4,7 @@ import edu.harvard.iq.privacytags.model.ApprovalType;
 import edu.harvard.iq.privacytags.model.AuthenticationType;
 import edu.harvard.iq.privacytags.model.DataUseAgreement;
 import edu.harvard.iq.privacytags.model.EncryptionType;
+import edu.harvard.iq.privacytags.model.HarmLevel;
 import edu.harvard.iq.privacytags.model.PrivacyTagSet;
 import edu.harvard.iq.privacytags.model.questionnaire.Answer;
 import edu.harvard.iq.privacytags.model.questionnaire.DecisionNode;
@@ -13,7 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ApplicationScoped;
@@ -37,6 +37,10 @@ public class App {
 	
 	public DecisionNode getDecisionNode( String id ) {
 		return dtnById.get(id);
+	}
+	
+	public List<HarmLevel> harmLevels() {
+		return Arrays.asList( HarmLevel.values() );
 	}
 
 	private void setQuestionnaire( DecisionNode root ) {
