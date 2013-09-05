@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:cc="http://java.sun.com/jsf/composite"
+	  xmlns:h="http://java.sun.com/jsf/html">
+
+	<!-- INTERFACE -->
+	<cc:interface>
+		<cc:attribute name="tagSet" />
+	</cc:interface>
+
+	<!-- IMPLEMENTATION -->
+	<cc:implementation>
+		<ul class="list-group">
+			<li class="list-group-item">
+				<h:outputText value="#{cc.attrs.tagSet.approvalType}"
+							  class="badge bdg#{cc.attrs.tagSet.approvalType.ordinal()}"/>
+				<h:outputText rendered="#{cc.attrs.tagSet.approvalType==null}"
+							  value="unset"
+							  class="badge unset"/>
+				Approval Type
+			</li>
+
+			<li class="list-group-item">
+				<h:outputText value="#{cc.attrs.tagSet.authenticationType}"
+							  class="badge bdg#{cc.attrs.tagSet.authenticationType.ordinal()}"/>
+				<h:outputText rendered="#{cc.attrs.tagSet.authenticationType==null}"
+							  value="unset"
+							  class="badge unset"/>
+				Authentication Type
+			</li>
+
+			<li class="list-group-item">
+				<h:outputText value="#{cc.attrs.tagSet.dataUseAgreement}"
+							  class="badge bdg#{cc.attrs.tagSet.dataUseAgreement.ordinal()}"/>
+				<h:outputText rendered="#{cc.attrs.tagSet.dataUseAgreement==null}"
+							  value="unset"
+							  class="badge unset"/>
+				Data Use Agreement
+			</li>
+
+			<li class="list-group-item">
+				<h:outputText value="#{cc.attrs.tagSet.transitEncryptionType}"
+							  class="badge bdg#{cc.attrs.tagSet.transitEncryptionType.ordinal()}"/>
+				<h:outputText rendered="#{cc.attrs.tagSet.transitEncryptionType==null}"
+							  value="unset"
+							  class="badge unset"/>
+				Transit Encryption Type
+			</li>
+
+			<li class="list-group-item">
+				<h:outputText value="#{cc.attrs.tagSet.storageEncryptionType}"
+							  class="badge bdg#{cc.attrs.tagSet.storageEncryptionType.ordinal()}"/>
+				<h:outputText rendered="#{cc.attrs.tagSet.storageEncryptionType==null}"
+							  value="unset"
+							  class="badge unset"/>
+				Storage Encryption Type
+			</li>
+	  </ul>
+	</cc:implementation>
+</html>

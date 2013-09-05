@@ -13,8 +13,15 @@ dd {
 	color: blue;
 }
 
-.qPanel {
+#currentTags {
+	border-radius: 5px;
+	padding: 5px;
+	background-color: #ffffb5;
 	box-shadow: 0 5px 10px rgba(0,0,0,0.75);
+}
+
+.qPanel {
+	box-shadow: 0 2px 4px rgba(0,0,0,0.75);
 }
 .backToParentBtn {
 	margin: 1em;
@@ -52,6 +59,7 @@ footer {
 	font-size: 0.9em;
 	border-top: 1px solid black;
 	margin:0;
+	margin-top: 2em;
 	padding: 0.5em;
 	text-align: center;
 }
