@@ -38,7 +38,7 @@ public class DecisionTreeNodeTest {
 		nd = ndSub;
 		
 		ndSub = new DecisionNode( Integer.toString(++id) );
-		ndSub.setBaseAssumption( new PrivacyTagSet(null, null, DataUseAgreement.Required, null, null) );
+		ndSub.setBaseAssumption( new PrivacyTagSet(null, null, DataUseAgreement.Sign, null, null) );
 		nd.setNodeFor(Answer.YES, ndSub);
 		nd = ndSub;
 		
@@ -47,7 +47,7 @@ public class DecisionTreeNodeTest {
 		nd.setNodeFor(Answer.YES, ndSub);
 		
 		PrivacyTagSet expected = new PrivacyTagSet(ApprovalType.Signed, 
-				AuthenticationType.Password, DataUseAgreement.Required, null, null);
+				AuthenticationType.Password, DataUseAgreement.Sign, null, null);
 		PrivacyTagSet result = ndSub.getAbsoluteAssumption();
 		
 		assertEquals( expected, result );

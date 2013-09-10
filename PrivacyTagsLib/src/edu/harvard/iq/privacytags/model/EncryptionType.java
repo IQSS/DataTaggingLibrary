@@ -6,5 +6,4 @@ package edu.harvard.iq.privacytags.model;
  */
 public enum EncryptionType {
 	Clear, Encrypted, DoubleEncryption
-	
 }

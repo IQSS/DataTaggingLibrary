@@ -11,13 +11,13 @@ public enum HarmLevel {
 	Forsaken( 
 		2,   new PrivacyTagSet(ApprovalType.None,   AuthenticationType.Email_or_OAuth, DataUseAgreement.None,      EncryptionType.Clear,     EncryptionType.Clear) ),
 	Shamed( 
-		3,   new PrivacyTagSet(ApprovalType.Online, AuthenticationType.Password,       DataUseAgreement.Required,  EncryptionType.Encrypted, EncryptionType.Encrypted) ),
+		3,   new PrivacyTagSet(ApprovalType.Online, AuthenticationType.Password,       DataUseAgreement.ClickThrough,  EncryptionType.Encrypted, EncryptionType.Encrypted) ),
 	CivilPenalties( 
-		4,   new PrivacyTagSet(ApprovalType.Signed, AuthenticationType.Password,       DataUseAgreement.Required,  EncryptionType.Encrypted, EncryptionType.Encrypted) ),
+		4,   new PrivacyTagSet(ApprovalType.Signed, AuthenticationType.Password,       DataUseAgreement.Sign,  EncryptionType.Encrypted, EncryptionType.Encrypted) ),
 	CriminalPenalties(
-		4,   new PrivacyTagSet(ApprovalType.Signed, AuthenticationType.TwoFactor,      DataUseAgreement.Required,  EncryptionType.Encrypted, EncryptionType.Encrypted) ),
+		4,   new PrivacyTagSet(ApprovalType.Signed, AuthenticationType.TwoFactor,      DataUseAgreement.Sign,  EncryptionType.Encrypted, EncryptionType.Encrypted) ),
 	MaxControl( 
-		4.5, new PrivacyTagSet(ApprovalType.Signed, AuthenticationType.TwoFactor,      DataUseAgreement.Required,  EncryptionType.DoubleEncryption, EncryptionType.DoubleEncryption) );
+		4.5, new PrivacyTagSet(ApprovalType.Signed, AuthenticationType.TwoFactor,      DataUseAgreement.Sign,  EncryptionType.DoubleEncryption, EncryptionType.DoubleEncryption) );
 	
 	private final PrivacyTagSet tags; 
 	private final double harvardSecurityLevel;

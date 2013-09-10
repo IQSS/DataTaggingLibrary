@@ -42,12 +42,12 @@ public class PrivacyTagSetTest {
 	public void testIsComplete() {
 		assertTrue( new PrivacyTagSet(ApprovalType.None, 
 									AuthenticationType.None,
-									DataUseAgreement.Required, 
+									DataUseAgreement.Sign, 
 									EncryptionType.DoubleEncryption, 
 									EncryptionType.DoubleEncryption).isComplete() );
 		assertFalse( new PrivacyTagSet(ApprovalType.None, 
 									null,
-									DataUseAgreement.Required, 
+									DataUseAgreement.Sign, 
 									EncryptionType.DoubleEncryption, 
 									EncryptionType.DoubleEncryption).isComplete() );
 	}
@@ -59,7 +59,7 @@ public class PrivacyTagSetTest {
 	public void testComposeWith() {
 		PrivacyTagSet a = new PrivacyTagSet(null, 
 				null, 
-				DataUseAgreement.Required, 
+				DataUseAgreement.Sign, 
 				EncryptionType.DoubleEncryption, 
 				EncryptionType.DoubleEncryption);
 		PrivacyTagSet b = new PrivacyTagSet(null, 
@@ -74,7 +74,7 @@ public class PrivacyTagSetTest {
 		// null X a -> a
 		assertEquals( AuthenticationType.Email_or_OAuth, composed.getAuthenticationType() );
 		// a X b -> a
-		assertEquals( DataUseAgreement.Required, composed.getDataUseAgreement() );
+		assertEquals( DataUseAgreement.Sign, composed.getDataUseAgreement() );
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class PrivacyTagSetTest {
 	public void testStricterThan() {
 		PrivacyTagSet a = new PrivacyTagSet(null, 
 				AuthenticationType.Password, 
-				DataUseAgreement.Required, 
+				DataUseAgreement.Sign, 
 				EncryptionType.DoubleEncryption, 
 				EncryptionType.DoubleEncryption);
 		
@@ -110,7 +110,7 @@ public class PrivacyTagSetTest {
 	public void testStricterOrEqualTo() {
 		PrivacyTagSet a = new PrivacyTagSet(null, 
 				AuthenticationType.Password, 
-				DataUseAgreement.Required, 
+				DataUseAgreement.Sign, 
 				EncryptionType.DoubleEncryption, 
 				EncryptionType.DoubleEncryption);
 		
