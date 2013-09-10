@@ -1,6 +1,6 @@
-package edu.harvard.iq.privacytags.webapp.boundary;
+package edu.harvard.iq.datatags.webapp.boundary;
 
-import edu.harvard.iq.privacytags.webapp.model.DecisionTreeNodeExtraData;
+import edu.harvard.iq.datatags.webapp.model.DecisionTreeNodeExtraData;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

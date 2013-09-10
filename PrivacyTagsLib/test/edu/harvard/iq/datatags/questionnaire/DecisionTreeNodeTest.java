@@ -2,14 +2,14 @@
  *  (C) Michael Bar-Sinai
  */
 
-package edu.harvard.iq.privacytags.questionnaire;
+package edu.harvard.iq.datatags.questionnaire;
 
-import edu.harvard.iq.privacytags.model.questionnaire.Answer;
-import edu.harvard.iq.privacytags.model.questionnaire.DecisionNode;
-import edu.harvard.iq.privacytags.model.ApprovalType;
-import edu.harvard.iq.privacytags.model.AuthenticationType;
-import edu.harvard.iq.privacytags.model.DataUseAgreement;
-import edu.harvard.iq.privacytags.model.PrivacyTagSet;
+import edu.harvard.iq.datatags.questionnaire.Answer;
+import edu.harvard.iq.datatags.questionnaire.DecisionNode;
+import edu.harvard.iq.datatags.tags.ApprovalType;
+import edu.harvard.iq.datatags.tags.AuthenticationType;
+import edu.harvard.iq.datatags.tags.DataUseAgreement;
+import edu.harvard.iq.datatags.tags.DataTags;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -29,26 +29,26 @@ public class DecisionTreeNodeTest {
 		DecisionNode root = new DecisionNode( Integer.toString(++id) );
 		
 		DecisionNode nd = new DecisionNode( Integer.toString(++id) );
-		nd.setBaseAssumption( new PrivacyTagSet(ApprovalType.None, null, null, null, null) );
+		nd.setBaseAssumption( new DataTags(ApprovalType.None, null, null, null, null) );
 		root.setNodeFor(Answer.YES, nd);
 		
 		DecisionNode ndSub = new DecisionNode( Integer.toString(++id) );
-		ndSub.setBaseAssumption( new PrivacyTagSet(null, AuthenticationType.Password, null, null, null) );
+		ndSub.setBaseAssumption( new DataTags(null, AuthenticationType.Password, null, null, null) );
 		nd.setNodeFor(Answer.NO, ndSub);
 		nd = ndSub;
 		
 		ndSub = new DecisionNode( Integer.toString(++id) );
-		ndSub.setBaseAssumption( new PrivacyTagSet(null, null, DataUseAgreement.Sign, null, null) );
+		ndSub.setBaseAssumption( new DataTags(null, null, DataUseAgreement.Sign, null, null) );
 		nd.setNodeFor(Answer.YES, ndSub);
 		nd = ndSub;
 		
 		ndSub = new DecisionNode( Integer.toString(++id) );
-		ndSub.setBaseAssumption( new PrivacyTagSet(ApprovalType.Signed, null, null, null, null) );
+		ndSub.setBaseAssumption( new DataTags(ApprovalType.Signed, null, null, null, null) );
 		nd.setNodeFor(Answer.YES, ndSub);
 		
-		PrivacyTagSet expected = new PrivacyTagSet(ApprovalType.Signed, 
+		DataTags expected = new DataTags(ApprovalType.Signed, 
 				AuthenticationType.Password, DataUseAgreement.Sign, null, null);
-		PrivacyTagSet result = ndSub.getAbsoluteAssumption();
+		DataTags result = ndSub.getAbsoluteAssumption();
 		
 		assertEquals( expected, result );
 	}

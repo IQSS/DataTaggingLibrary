@@ -1,13 +1,13 @@
-package edu.harvard.iq.privacytags.webapp.boundary;
+package edu.harvard.iq.datatags.webapp.boundary;
 
-import edu.harvard.iq.privacytags.model.ApprovalType;
-import edu.harvard.iq.privacytags.model.AuthenticationType;
-import edu.harvard.iq.privacytags.model.DataUseAgreement;
-import edu.harvard.iq.privacytags.model.EncryptionType;
-import edu.harvard.iq.privacytags.model.HarmLevel;
-import edu.harvard.iq.privacytags.model.PrivacyTagSet;
-import edu.harvard.iq.privacytags.model.questionnaire.Answer;
-import edu.harvard.iq.privacytags.model.questionnaire.DecisionNode;
+import edu.harvard.iq.datatags.tags.ApprovalType;
+import edu.harvard.iq.datatags.tags.AuthenticationType;
+import edu.harvard.iq.datatags.tags.DataUseAgreement;
+import edu.harvard.iq.datatags.tags.EncryptionType;
+import edu.harvard.iq.datatags.tags.HarmLevel;
+import edu.harvard.iq.datatags.tags.DataTags;
+import edu.harvard.iq.datatags.questionnaire.Answer;
+import edu.harvard.iq.datatags.questionnaire.DecisionNode;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -123,8 +123,8 @@ public class App {
 		return sb.toString();
 	}
 
-	private PrivacyTagSet improveOn(PrivacyTagSet asm) {
-		PrivacyTagSet res = asm.makeCopy();
+	private DataTags improveOn(DataTags asm) {
+		DataTags res = asm.makeCopy();
 		if ( res.getApprovalType() == null ) {
 			res.setApprovalType( randOf(ApprovalType.values()));
 			return res;

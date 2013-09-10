@@ -1,4 +1,4 @@
-package edu.harvard.iq.privacytags.webapp.boundary;
+package edu.harvard.iq.datatags.webapp.boundary;
 
 import java.util.List;
 import javax.persistence.EntityManager;

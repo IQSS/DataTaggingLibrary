@@ -1,6 +1,6 @@
-package edu.harvard.iq.privacytags.model.questionnaire;
+package edu.harvard.iq.datatags.questionnaire;
 
-import edu.harvard.iq.privacytags.model.PrivacyTagSet;
+import edu.harvard.iq.datatags.tags.DataTags;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -20,7 +20,7 @@ public class DecisionNode {
 	private String questionText;
 	private String helpText;
 	private final Map<Answer, DecisionNode> subtrees = new EnumMap<>(Answer.class);
-	private PrivacyTagSet baseAssumption = new PrivacyTagSet();
+	private DataTags baseAssumption = new DataTags();
 
 	public DecisionNode(String id) {
 		this.id = id;
@@ -54,11 +54,11 @@ public class DecisionNode {
 		this.helpText = helpText;
 	}
 
-	public PrivacyTagSet getBaseAssumption() {
+	public DataTags getBaseAssumption() {
 		return baseAssumption;
 	}
 
-	public void setBaseAssumption(PrivacyTagSet baseAssumption) {
+	public void setBaseAssumption(DataTags baseAssumption) {
 		this.baseAssumption = baseAssumption;
 	}
 
@@ -81,7 +81,7 @@ public class DecisionNode {
 		return subtrees.get(answer);
 	}
 	
-	public PrivacyTagSet getAbsoluteAssumption() {
+	public DataTags getAbsoluteAssumption() {
 		List<DecisionNode> ancestors = new LinkedList<>();
 		DecisionNode node = this;
 		while ( node != null ) {
@@ -89,7 +89,7 @@ public class DecisionNode {
 			node = node.getParent();
 		}
 		Collections.reverse(ancestors);
-		PrivacyTagSet result = new PrivacyTagSet();
+		DataTags result = new DataTags();
 		for ( DecisionNode dtn : ancestors ) {
 			result = dtn.getBaseAssumption().composeWith(result);
 		}

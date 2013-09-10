@@ -1,7 +1,7 @@
-package edu.harvard.iq.privacytags.webapp.view;
+package edu.harvard.iq.datatags.webapp.view;
 
-import edu.harvard.iq.privacytags.webapp.boundary.DecisionNodeExtraDataFacade;
-import edu.harvard.iq.privacytags.webapp.model.DecisionTreeNodeExtraData;
+import edu.harvard.iq.datatags.webapp.boundary.DecisionNodeExtraDataFacade;
+import edu.harvard.iq.datatags.webapp.model.DecisionTreeNodeExtraData;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;

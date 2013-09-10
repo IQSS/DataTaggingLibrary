@@ -1,4 +1,4 @@
-package edu.harvard.iq.privacytags.model;
+package edu.harvard.iq.datatags.tags;
 
 /**
  *

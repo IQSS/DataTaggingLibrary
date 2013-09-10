@@ -1,4 +1,4 @@
-package edu.harvard.iq.privacytags.webapp.model;
+package edu.harvard.iq.datatags.webapp.model;
 
 import java.io.Serializable;
 import javax.persistence.Entity;

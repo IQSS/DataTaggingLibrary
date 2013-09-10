@@ -1,15 +1,15 @@
-package edu.harvard.iq.privacytags.model;
+package edu.harvard.iq.datatags.tags;
 
 import java.util.Objects;
 
 /**
  * The reason this whole project exists: the set of privacy tags that describe 
  * how a data set should be treated. A set is incomplete, if some of the fields
- * have {@code null} values.
+ * have {@literal null} values.
  * 
  * @author michael
  */
-public class PrivacyTagSet  {
+public class DataTags  {
 	
 	private ApprovalType approvalType;
 	private AuthenticationType authenticationType;
@@ -17,7 +17,7 @@ public class PrivacyTagSet  {
 	private EncryptionType transitEncryptionType;
 	private EncryptionType storageEncryptionType;
 	
-	public PrivacyTagSet(ApprovalType approvalType, AuthenticationType authenticationType, DataUseAgreement dataUseAgreement, EncryptionType transitEncryptionType, EncryptionType storageEncryptionType) {
+	public DataTags(ApprovalType approvalType, AuthenticationType authenticationType, DataUseAgreement dataUseAgreement, EncryptionType transitEncryptionType, EncryptionType storageEncryptionType) {
 		this.approvalType = approvalType;
 		this.authenticationType = authenticationType;
 		this.dataUseAgreement = dataUseAgreement;
@@ -25,12 +25,12 @@ public class PrivacyTagSet  {
 		this.storageEncryptionType = storageEncryptionType;
 	}
 	
-	public PrivacyTagSet() {
+	public DataTags() {
 		
 	}
 
-	public PrivacyTagSet makeCopy() {
-		return new PrivacyTagSet(getApprovalType(),
+	public DataTags makeCopy() {
+		return new DataTags(getApprovalType(),
 				getAuthenticationType(),
 				getDataUseAgreement(),
 				getTransitEncryptionType(),
@@ -39,7 +39,7 @@ public class PrivacyTagSet  {
 	}
 	
 	/**
-	 * @return {@code true} iff all values are set (e.g non-null).
+	 * @return {@literal true} iff all values are set (e.g non-null).
 	 */
 	public boolean isComplete() {
 		return (approvalType != null)            
@@ -50,16 +50,16 @@ public class PrivacyTagSet  {
 	}
 	
 	/**
-	 * A partial order on privacy tag sets. {@code a} is stricter-than {@code b}
+	 * A partial order on privacy tag sets.{@literal a} is stricter-than {@literal b}
 	 * if, they have the same non-null fields, and in each of these fields the values
-	 * in {@code a} are equal or higher (in their type's natural order) than those in {@code b}' fields. <br />
-	 * A practical use case is that if a standard requires tag set of {@code S}, than
-	 * all sets {@code T} for which {@code T stricter-than S} fall within that standard.
+	 * in {@literal a} are equal or higher (in their type's natural order) than those in {@literal b}' fields. <br />
+	 * A practical use case is that if a standard requires tag set of {@literal S}, than
+	 * all sets {@literal T} for which {@literal T stricter-than S} fall within that standard.
 	 * 
-	 * @param other The tag set we compare {@code this} to.
-	 * @return whether {@code this} is stricter than {@code other}.
+	 * @param other The tag set we compare {@literal this} to.
+	 * @return whether {@literal this} is stricter than {@literal other}.
 	 */
-	public boolean stricterThan( PrivacyTagSet other ) {
+	public boolean stricterThan( DataTags other ) {
 		int res;
 		int total=0;
 		
@@ -111,15 +111,15 @@ public class PrivacyTagSet  {
 		return total > 0;
 	}
 	
-	public boolean stricterOrEqualTo( PrivacyTagSet other ) {
+	public boolean stricterOrEqualTo( DataTags other ) {
 		return stricterThan(other) || equals(other);
 	}
 	
 	public boolean stricterThan( HarmLevel hl ) { return stricterThan( hl.tags() ); }
 	public boolean stricterOrEqualTo( HarmLevel hl ) { return stricterOrEqualTo( hl.tags() ); }
 	
-	public PrivacyTagSet composeWith( PrivacyTagSet other ) {
-		return new PrivacyTagSet(
+	public DataTags composeWith( DataTags other ) {
+		return new DataTags(
 				getApprovalType()!=null ? getApprovalType() : other.getApprovalType(), 
 				getAuthenticationType()!=null ? getAuthenticationType() : other.getAuthenticationType(), 
 				getDataUseAgreement()!=null ? getDataUseAgreement() : other.getDataUseAgreement(), 
@@ -132,7 +132,7 @@ public class PrivacyTagSet  {
 		return approvalType;
 	}
 
-	public PrivacyTagSet setApprovalType(ApprovalType approvalType) {
+	public DataTags setApprovalType(ApprovalType approvalType) {
 		this.approvalType = approvalType;
 		return this;
 	}
@@ -141,7 +141,7 @@ public class PrivacyTagSet  {
 		return authenticationType;
 	}
 
-	public PrivacyTagSet setAuthenticationType(AuthenticationType authenticationType) {
+	public DataTags setAuthenticationType(AuthenticationType authenticationType) {
 		this.authenticationType = authenticationType;
 		return this;
 	}
@@ -150,7 +150,7 @@ public class PrivacyTagSet  {
 		return dataUseAgreement;
 	}
 
-	public PrivacyTagSet setDataUseAgreement(DataUseAgreement dataUseAgreement) {
+	public DataTags setDataUseAgreement(DataUseAgreement dataUseAgreement) {
 		this.dataUseAgreement = dataUseAgreement;
 		return this;
 	}
@@ -159,7 +159,7 @@ public class PrivacyTagSet  {
 		return transitEncryptionType;
 	}
 
-	public PrivacyTagSet setTransitEncryptionType(EncryptionType transitEncryptionType) {
+	public DataTags setTransitEncryptionType(EncryptionType transitEncryptionType) {
 		this.transitEncryptionType = transitEncryptionType;
 		return this;
 	}
@@ -168,7 +168,7 @@ public class PrivacyTagSet  {
 		return storageEncryptionType;
 	}
 
-	public PrivacyTagSet setStorageEncryptionType(EncryptionType storageEncryptionType) {
+	public DataTags setStorageEncryptionType(EncryptionType storageEncryptionType) {
 		this.storageEncryptionType = storageEncryptionType;
 		return this;
 	}
@@ -190,7 +190,7 @@ public class PrivacyTagSet  {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final PrivacyTagSet other = (PrivacyTagSet) obj;
+		final DataTags other = (DataTags) obj;
 		if (this.approvalType != other.approvalType) {
 			return false;
 		}

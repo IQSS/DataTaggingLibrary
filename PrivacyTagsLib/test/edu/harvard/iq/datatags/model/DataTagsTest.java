@@ -1,8 +1,13 @@
 /*
  *  (C) Michael Bar-Sinai
  */
-package edu.harvard.iq.privacytags.model;
+package edu.harvard.iq.datatags.model;
 
+import edu.harvard.iq.datatags.tags.EncryptionType;
+import edu.harvard.iq.datatags.tags.ApprovalType;
+import edu.harvard.iq.datatags.tags.DataUseAgreement;
+import edu.harvard.iq.datatags.tags.AuthenticationType;
+import edu.harvard.iq.datatags.tags.DataTags;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,9 +19,9 @@ import static org.junit.Assert.*;
  *
  * @author michael
  */
-public class PrivacyTagSetTest {
+public class DataTagsTest {
 	
-	public PrivacyTagSetTest() {
+	public DataTagsTest() {
 	}
 	
 	@BeforeClass
@@ -36,16 +41,16 @@ public class PrivacyTagSetTest {
 	}
 
 	/**
-	 * Test of isComplete method, of class PrivacyTagSet.
+	 * Test of isComplete method, of class DataTags.
 	 */
 	@Test
 	public void testIsComplete() {
-		assertTrue( new PrivacyTagSet(ApprovalType.None, 
+		assertTrue( new DataTags(ApprovalType.None, 
 									AuthenticationType.None,
 									DataUseAgreement.Sign, 
 									EncryptionType.DoubleEncryption, 
 									EncryptionType.DoubleEncryption).isComplete() );
-		assertFalse( new PrivacyTagSet(ApprovalType.None, 
+		assertFalse( new DataTags(ApprovalType.None, 
 									null,
 									DataUseAgreement.Sign, 
 									EncryptionType.DoubleEncryption, 
@@ -53,21 +58,21 @@ public class PrivacyTagSetTest {
 	}
 
 	/**
-	 * Test of composeWith method, of class PrivacyTagSet.
+	 * Test of composeWith method, of class DataTags.
 	 */
 	@Test
 	public void testComposeWith() {
-		PrivacyTagSet a = new PrivacyTagSet(null, 
+		DataTags a = new DataTags(null, 
 				null, 
 				DataUseAgreement.Sign, 
 				EncryptionType.DoubleEncryption, 
 				EncryptionType.DoubleEncryption);
-		PrivacyTagSet b = new PrivacyTagSet(null, 
+		DataTags b = new DataTags(null, 
 				AuthenticationType.Email_or_OAuth, 
 				DataUseAgreement.None, 
 				EncryptionType.DoubleEncryption, 
 				EncryptionType.DoubleEncryption);
-		PrivacyTagSet composed = a.composeWith(b);
+		DataTags composed = a.composeWith(b);
 		
 		// null X null -> null 
 		assertNull( composed.getApprovalType() );
@@ -78,11 +83,11 @@ public class PrivacyTagSetTest {
 	}
 
 	/**
-	 * Test of stricterThan method, of class PrivacyTagSet.
+	 * Test of stricterThan method, of class DataTags.
 	 */
 	@Test
 	public void testStricterThan() {
-		PrivacyTagSet a = new PrivacyTagSet(null, 
+		DataTags a = new DataTags(null, 
 				AuthenticationType.Password, 
 				DataUseAgreement.Sign, 
 				EncryptionType.DoubleEncryption, 
@@ -104,11 +109,11 @@ public class PrivacyTagSetTest {
 	}
 
 	/**
-	 * Test of stricterOrEqualTo method, of class PrivacyTagSet.
+	 * Test of stricterOrEqualTo method, of class DataTags.
 	 */
 	@Test
 	public void testStricterOrEqualTo() {
-		PrivacyTagSet a = new PrivacyTagSet(null, 
+		DataTags a = new DataTags(null, 
 				AuthenticationType.Password, 
 				DataUseAgreement.Sign, 
 				EncryptionType.DoubleEncryption, 

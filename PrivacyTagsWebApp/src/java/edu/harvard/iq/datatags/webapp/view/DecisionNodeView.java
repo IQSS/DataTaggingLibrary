@@ -1,9 +1,9 @@
-package edu.harvard.iq.privacytags.webapp.view;
+package edu.harvard.iq.datatags.webapp.view;
 
-import edu.harvard.iq.privacytags.model.PrivacyTagSet;
-import edu.harvard.iq.privacytags.model.questionnaire.Answer;
-import edu.harvard.iq.privacytags.model.questionnaire.DecisionNode;
-import edu.harvard.iq.privacytags.webapp.boundary.App;
+import edu.harvard.iq.datatags.tags.DataTags;
+import edu.harvard.iq.datatags.questionnaire.Answer;
+import edu.harvard.iq.datatags.questionnaire.DecisionNode;
+import edu.harvard.iq.datatags.webapp.boundary.App;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -80,7 +80,7 @@ public class DecisionNodeView {
 		return hasNode() && (getNode().getNodeFor(a)!=null);
 	}
 	
-	public PrivacyTagSet tags() {
+	public DataTags tags() {
 		return hasNode() ? getNode().getAbsoluteAssumption() : null;
 	}
 }
