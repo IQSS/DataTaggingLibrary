@@ -63,3 +63,23 @@ footer {
 	padding: 0.5em;
 	text-align: center;
 }
+
+footer a {
+	height: 40px;
+	display: inline-block;
+	width: auto;
+	border-left: 1px solid #AAA;
+	padding: 4px 8px;
+	vertical-align: middle;
+	margin: 0;
+}
+
+footer a:hover {
+	box-shadow: 0 0 4px rgba(0,0,0,.75) inset;
+	background-color: rgb(220,220,255);
+}
+
+footer a:active {
+	box-shadow: 0 0 8px rgba(10,10,0,0.75) inset;
+	background-color: rgb(200,200,225);
+}

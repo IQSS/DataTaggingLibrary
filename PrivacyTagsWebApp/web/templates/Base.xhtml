@@ -8,6 +8,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
 		<h:outputStylesheet library="css" name="bootstrap.css" />
+		<h:outputStylesheet library="css" name="bootstrap-theme.min.css" />
 		<h:outputStylesheet library="css" name="main.css" />
 		<title><ui:insert name="title">Privacy Tags</ui:insert></title>
     </h:head>
@@ -15,12 +16,16 @@
     <h:body>
 		<div class="container">
 			<div class="page-header">
-				<h1><h:link outcome="index" value="Privacy Tags" /><small>&nbsp;A part of the Privacy Tools for Sharing Research Data Project</small></h1>
+				<h1><h:link outcome="index" value="Data Tags" /><small>&nbsp;Sharing data with confidence</small></h1>
 			</div>
 			<ui:insert name="content"> content </ui:insert>
         </div>
 		<footer>
 			&copy; 2013 by the President and Fellows of Harvard College
+			<a href="http://nsf.gov"             target="_blank"><img src="#{resource['images/nsf-logo-small.png']}" alt="NSF logo" /></a>
+			<a href="http://thedata.org"         target="_blank"><img src="#{resource['images/dvn-logo-small.png']}" alt="Dataverse logo" /></a>
+			<a href="http://dataprivacylab.org/" target="_blank"><img src="#{resource['images/dpl-logo-small.png']}" alt="Data Privacy Lab logo" />Data Privacy Lab</a>
+			<a href="http://iq.harvard.edu"      target="_blank"><img src="#{resource['images/iqss-logo-small.png']}" alt="IQSS logo" /></a>
 		</footer>
     </h:body>
 
