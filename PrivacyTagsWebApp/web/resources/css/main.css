@@ -1,85 +1,144 @@
 body {
-	background-color: #F8F8F8;
+  background-color: #F8F8F8;
 }
+
 .help {
-	color: #888;
-	font-size: 0.9em;
+  font-size: 0.9em;
+  color: #888;
 }
+
 .unset {
-	background-color: #AAA;
-	color: #EEE;
+  color: #EEE;
+  background-color: #AAA;
 }
+
 dd {
-	color: blue;
+  color: blue;
 }
 
 #currentTags {
-	border-radius: 5px;
-	padding: 5px;
-	background-color: #ffffb5;
-	box-shadow: 0 5px 10px rgba(0,0,0,0.75);
+  padding: 5px;
+  background-color: #ffffb5;
+  border-radius: 5px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.75);
 }
 
 .qPanel {
-	box-shadow: 0 2px 4px rgba(0,0,0,0.75);
-}
-.backToParentBtn {
-	margin: 1em;
-	width: 10em;
-	height: 2.5em;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.75);
 }
 
-.centerContainer{
-	position: relative;
+.backToParentBtn {
+  width: 10em;
+  height: 2.5em;
+  margin: 1em;
+}
+
+.centerContainer {
+  position: relative;
 }
 
 .absoluteCenter {
-  margin: auto;
   position: absolute;
-  top: 0; left: 0; bottom: 0; right: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
 }
 
 .bdg0 {
-	background-color: #AAF;
+  background-color: #AAF;
 }
+
 .bdg1 {
-	background-color: #05ad00;
+  background-color: #05ad00;
 }
+
 .bdg2 {
-	background-color: #5d8902;
+  background-color: #5d8902;
 }
+
 .bdg3 {
-	background-color: #a85802;
+  background-color: #a85802;
 }
+
 .bdg4 {
-	background-color: #F00;
+  background-color: #F00;
 }
 
 footer {
-	font-size: 0.9em;
-	border-top: 1px solid black;
-	margin:0;
-	margin-top: 2em;
-	padding: 0.5em;
-	text-align: center;
+  padding: 0.5em;
+  margin: 0;
+  margin-top: 2em;
+  font-size: 0.9em;
+  text-align: center;
+  border-top: 1px solid black;
 }
 
 footer a {
-	height: 40px;
-	display: inline-block;
-	width: auto;
-	border-left: 1px solid #AAA;
-	padding: 4px 8px;
-	vertical-align: middle;
-	margin: 0;
+  display: inline-block;
+  width: auto;
+  height: 40px;
+  padding: 4px 8px;
+  margin: 0;
+  vertical-align: middle;
+  border-left: 1px solid #AAA;
 }
 
 footer a:hover {
-	box-shadow: 0 0 4px rgba(0,0,0,.75) inset;
-	background-color: rgb(220,220,255);
+  background-color: #dcdcff;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.75) inset;
 }
 
 footer a:active {
-	box-shadow: 0 0 8px rgba(10,10,0,0.75) inset;
-	background-color: rgb(200,200,225);
+  background-color: #c8c8e1;
+  box-shadow: 0 0 8px rgba(10, 10, 0, 0.75) inset;
+}
+
+.harmLevel1 {
+  color: #657b35;
+  background-color: #bdd092;
+}
+
+.harmLevel2 {
+  color: #66632c;
+  background-color: #c9a97a;
+}
+
+.harmLevel3 {
+  color: #664b23;
+  background-color: #d48261;
+}
+
+.harmLevel4 {
+  color: #67331a;
+  background-color: #e05a48;
+}
+
+.harmLevel5 {
+  color: #671b11;
+  background-color: #ec3330;
+}
+
+.harmLevel6 {
+  color: #680308;
+  background-color: #f80c17;
+}
+
+table.harmLevelTable thead th {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  background-color: #a8a8a8;
+  border-bottom: 2px solid #444;
+}
+
+table.harmLevelTable tbody tr td {
+  border-top: none;
+}
+
+table.harmLevelTable tbody tr td .badge {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
+}
+
+table.harmLevelTable tbody tr th {
+  border-top: none;
 }

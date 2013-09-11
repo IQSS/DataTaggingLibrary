@@ -1,0 +1,142 @@
+body {
+	background-color: #F8F8F8;
+}
+.help {
+	font-size: 0.9em;
+	color: #888;
+}
+.unset {
+	color: #EEE;
+	background-color: #AAA;
+}
+dd {
+	color: blue;
+}
+
+#currentTags {
+	border-radius: 5px;
+	padding: 5px;
+	background-color: #ffffb5;
+	box-shadow: 0 5px 10px rgba(0,0,0,0.75);
+}
+
+.qPanel {
+	box-shadow: 0 2px 4px rgba(0,0,0,0.75);
+}
+.backToParentBtn {
+	margin: 1em;
+	width: 10em;
+	height: 2.5em;
+}
+
+.centerContainer{
+	position: relative;
+}
+
+.absoluteCenter {
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+
+.bdg0 {
+	background-color: #AAF;
+}
+.bdg1 {
+	background-color: #05ad00;
+}
+.bdg2 {
+	background-color: #5d8902;
+}
+.bdg3 {
+	background-color: #a85802;
+}
+.bdg4 {
+	background-color: #F00;
+}
+
+footer {
+	font-size: 0.9em;
+	border-top: 1px solid black;
+	margin:0;
+	margin-top: 2em;
+	padding: 0.5em;
+	text-align: center;
+}
+
+footer a {
+	height: 40px;
+	display: inline-block;
+	width: auto;
+	border-left: 1px solid #AAA;
+	padding: 4px 8px;
+	vertical-align: middle;
+	margin: 0;
+}
+
+footer a:hover {
+	box-shadow: 0 0 4px rgba(0,0,0,.75) inset;
+	background-color: rgb(220,220,255);
+}
+
+footer a:active {
+	box-shadow: 0 0 8px rgba(10,10,0,0.75) inset;
+	background-color: rgb(200,200,225);
+}
+
+@harmlevel-min-txt: #657b35;
+@harmlevel-min-bkg: lighten(@harmlevel-min-txt, 35%);
+
+@harmlevel-max-bkg: #f80c17;
+@harmlevel-max-txt: darken(@harmlevel-max-bkg, 30%);
+
+//@harmLevel2: #f5944d;
+// @harmLevel3: #f9c093;
+
+.harmLevel1 {
+	color: @harmlevel-min-txt;
+	background-color: @harmlevel-min-bkg;
+}
+.harmLevel2 {
+	color: mix(@harmlevel-min-txt, @harmlevel-max-txt, 80%);
+	background-color: mix(@harmlevel-min-bkg, @harmlevel-max-bkg, 80%);
+}
+.harmLevel3 {
+	color: mix(@harmlevel-min-txt, @harmlevel-max-txt, 60%);
+	background-color: mix(@harmlevel-min-bkg, @harmlevel-max-bkg, 60%);
+}
+.harmLevel4 {
+	color: mix(@harmlevel-min-txt, @harmlevel-max-txt, 40%);
+	background-color: mix(@harmlevel-min-bkg, @harmlevel-max-bkg, 40%);
+}
+.harmLevel5 {
+	color: mix(@harmlevel-min-txt, @harmlevel-max-txt, 20%);
+	background-color: mix(@harmlevel-min-bkg, @harmlevel-max-bkg, 20%);
+}
+.harmLevel6 {
+	color: @harmlevel-max-txt;
+	background-color: @harmlevel-max-bkg;
+}
+
+table.harmLevelTable {
+	thead {
+		th {
+			background-color: #a8a8a8;
+			text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+			border-bottom: 2px solid #444;
+		}
+	}
+	tbody {
+		tr {
+			td {
+				border-top: none;
+				.badge {
+					box-shadow: 0 1px 2px rgba(0,0,0,.75);
+				}
+			}
+			th {
+				border-top: none;
+			}
+		}
+	}		
+}
