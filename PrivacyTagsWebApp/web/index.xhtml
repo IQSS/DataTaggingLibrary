@@ -42,7 +42,9 @@
 										<ui:repeat var="hl" value="#{App.harmLevels()}">
 											<tr class="harmLevel#{hl.ordinal()+1}">
 												<th>#{hl.name()}</th>
-												<td><components:EnumBadge enumVal="#{hl.tags().approvalType}" /></td>
+												<td>
+													<a id="tst#{hl.ordinal()}" href="#" data-toggle="popover" data-trigger="hover" title="#{hl.name()}">
+														<components:EnumBadge enumVal="#{hl.tags().approvalType}" /></a></td>
 												<td><components:EnumBadge enumVal="#{hl.tags().authenticationType}" /></td>
 												<td><components:EnumBadge enumVal="#{hl.tags().dataUseAgreement}" /></td>
 												<td><components:EnumBadge enumVal="#{hl.tags().transitEncryptionType}" /></td>
@@ -57,9 +59,8 @@
 							</div>
 						 </div>
 					</div>
+					<h:link outcome="management/index" value="Manage" />
 				</div>
-				
-				
 			</ui:define>
 		</ui:composition>
 	</h:body>

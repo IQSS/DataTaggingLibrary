@@ -27,6 +27,10 @@
 			<a href="http://dataprivacylab.org/" target="_blank"><img src="#{resource['images/dpl-logo-small.png']}" alt="Data Privacy Lab logo" />Data Privacy Lab</a>
 			<a href="http://iq.harvard.edu"      target="_blank"><img src="#{resource['images/iqss-logo-small.png']}" alt="IQSS logo" /></a>
 		</footer>
+		<h:outputScript library="js" name="jquery.min.js" />
+		<h:outputScript library="js" name="bootstrap.min.js" />
+		<script>
+			$(document).ready( function(){ $("a[data-toggle='popover']").popover(); } );
+		</script>
     </h:body>
-
 </html>

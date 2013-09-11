@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:cc="http://java.sun.com/jsf/composite"
+	  xmlns:f="http://java.sun.com/jsf/core"
+	  xmlns:h="http://java.sun.com/jsf/html">
+
+	<!-- INTERFACE -->
+	<cc:interface>
+	</cc:interface>
+
+	<!-- IMPLEMENTATION -->
+	<cc:implementation>
+		<nav class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="#">Management</a>
+  </div>
+  <div class="collapse navbar-collapse navbar-ex1-collapse">
+    <ul class="nav navbar-nav">
+      <li><a href="explanationList.xhtml">Explanations</a></li>
+      <li><a href="questionList.xhtml">Questions</a></li>
+    </ul>
+	<f:view>
+		<h:form>
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<div style="position:relative; top:10px">
+						<h:commandLink action="index" class="btn btn-danger btn-sm pull-right" value="logout"/>
+					</div>
+				</li>
+			</ul>
+		</h:form>
+	</f:view>
+  </div><!-- /.navbar-collapse -->
+</nav>
+	</cc:implementation>
+</html>
