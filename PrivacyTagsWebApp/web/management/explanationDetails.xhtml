@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:ui="http://java.sun.com/jsf/facelets"
+	  xmlns:c="http://java.sun.com/jsp/jstl/core"
+	  xmlns:components="http://java.sun.com/jsf/composite/components"
+	  xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+     <h:body>
+		<ui:composition template="/templates/Base.xhtml">
+			<ui:define name="title">Privacy Tags - Explanation details</ui:define>
+			<ui:define name="content">
+				<components:ManagementNavBar />
+				<div class="row">
+					<div class="col-md-12">
+						<h3>
+							Explanation Details
+						</h3>
+						<f:verbatim rendered="#{explanationListView.explanationNotFound}">
+							<div class="alert alert-danger">
+								Explanation by the name <strong>#{explanationListView.explanationName}</strong> was not found.
+							</div>
+						</f:verbatim>
+						<f:view>
+							<h:form>
+								<div class="form-group">
+									<h:outputLabel id="nameLabel" for="name" value="Name"/>
+									<h:inputText id="name" value="#{explanationListView.explanation.name}" class="form-control"/>
+								</div>
+								<div class="form-group">
+									<h:outputLabel id="shortLabel" for="short" value="Short Version"/>
+									<h:inputTextarea id="short" value="#{explanationListView.explanation.shortExplanation}" class="form-control"/>
+								</div>
+								<div class="form-group">
+									<h:outputLabel id="longLabel" for="long" value="Longer Version"/>
+									<h:inputTextarea id="long" value="#{explanationListView.explanation.longExplanation}" rows="5" class="form-control"/>
+								</div>
+								<div class="form-group">
+									<c:if test="#{explanationListView.explanationNew}">
+										
+										<h:commandButton action='#{explanationListView.save("explanationList")}'
+														 value="Save"
+														 class="btn btn-primary"/>
+										&nbsp;
+										<h:commandButton action='#{explanationListView.save("explanationDetails")}'
+														 value="Save Add Another Term"
+														 class="btn btn-info"/>
+									</c:if>
+									<c:if test="#{! explanationListView.explanationNew}">
+										<h:commandButton action="#{explanationListView.update()}"
+														 value="Update"
+														 class="btn btn-primary"/>
+										<h:link outcome="UPDATE_OK" value="updateok"/>
+									</c:if>
+								</div>
+							</h:form>
+						</f:view>
+					</div>
+				</div>
+			</ui:define>
+		</ui:composition>
+    </h:body>
+</html>
+

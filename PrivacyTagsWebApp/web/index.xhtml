@@ -7,6 +7,7 @@
 	  xmlns:components="http://java.sun.com/jsf/composite/components">
     <h:head>
         <title>Facelet Title</title>
+		<h:outputStylesheet name="css/jsfcrud.css"/>
     </h:head>
     <h:body>
 		<ui:composition template="./templates/Base.xhtml">
@@ -24,9 +25,9 @@
 					<div class="col-md-12">
 						<div class="panel panel-default">
 							<div class="panel-heading">
-							  <h3 class="panel-title">Harm Levels, and Their Appropriate Tags</h3>
+								<h3 class="panel-title">Harm Levels, and Their Appropriate Tags</h3>
 							</div>
-							<div class="panel-body">
+							<div class="table-responsive">
 								<table class="harmLevelTable table">
 									<thead>
 										<tr>
@@ -57,12 +58,15 @@
 							<div class="panel-footer">
 								Final tags may not match the tags of a specific harm level.
 							</div>
-						 </div>
+						</div>
 					</div>
 					<h:link outcome="management/index" value="Manage" />
 				</div>
 			</ui:define>
 		</ui:composition>
+		<br />
+		<h:link outcome="/wiz/explanation/List" value="Show All Explanation Items"/>
 	</h:body>
+
 </html>
 

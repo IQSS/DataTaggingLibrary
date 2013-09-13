@@ -16,7 +16,7 @@ public class DecisionTreeNodeExtraDataView {
 	@EJB
 	private DecisionNodeExtraDataFacade dtnExtraDataFacade;
 	
-	private DecisionTreeNodeExtraData extraData;
+	final private DecisionTreeNodeExtraData extraData;
 	
 	/**
 	 * Creates a new instance of DecisionTreeExtraDataView

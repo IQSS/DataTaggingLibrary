@@ -3,7 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
 	  xmlns:ui="http://java.sun.com/jsf/facelets"
-	  xmlns:components="http://java.sun.com/jsf/composite/components">
+	  xmlns:components="http://java.sun.com/jsf/composite/components"
+	  xmlns:c="http://java.sun.com/jsp/jstl/core"
+	  xmlns:f="http://java.sun.com/jsf/core">
     <h:head>
         <title>Facelet Title</title>
     </h:head>
@@ -12,23 +14,53 @@
 			<ui:define name="title">Privacy Tags - Management Console</ui:define>
 			<ui:define name="content">
 				<components:ManagementNavBar />
-				<div class="row">
-					<div class="col-md-4 col-md-offset-2">
-						<a href="explanationList.xhtml" class="btn btn-primary btn-block">Explanations</a>
+				<div class="row"><div class="col-md-12">
+					<h3>
+						<div class="pull-right">
+						<a href="explanationDetails.xhtml" class="btn btn-primary">
+							<span class="glyphicon glyphicon-plus-sign"></span>
+							&nbsp;Add new
+						</a>
+						</div>
+						Explanations
+					</h3>
+					<div class="well well-sm">
+						Explanations clarify term that may not be clear to users.
+						Legal and technological terms are good examples.
 					</div>
-					<div class="col-md-4">
-						The explanations for terms in the website.
-					</div>
-				</div>
-				<br />
-				<div class="row">
-					<div class="col-md-4 col-md-offset-2">
-						<a href="questionList.xhtml" class="btn btn-success btn-block">Questions Extra Data</a>
-					</div>
-					<div class="col-md-4">
-						Make users life easier by expanding on questions that come from the survey file.
-					</div>
-				</div>
+					<c:if test="#{explanationListView.explanationCount==0}">
+						<div class="alert alert-warning">
+							Currently, there are no explanations in the system. You can 
+							<a href="explanationDetails.xhtml" class="alert-link">add one</a>
+							by clicking the "Add New" button.
+						</div>
+					</c:if>
+					<c:if test="#{explanationListView.explanationCount > 0}">
+						<h:dataTable value="#{explanationListView.explanations}" var="exp"
+									 class="table table-bordered table-condensed table-striped">
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Name" />
+								</f:facet>
+								<h:outputText value="#{exp.name}"/>
+							</h:column>
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="Short Explanation" />
+								</f:facet>
+								<h:outputText value="#{exp.shortExplanation}"/>
+							</h:column>
+							<h:column>
+								<f:facet name="header">
+									<span class="glyphicon glyphicon-cog"></span>
+								</f:facet>
+								<h:link outcome="explanationDetails" value="Edit" class="btn btn-warning">
+									<f:param name="name" value="#{exp.name}" />
+								</h:link>
+							</h:column>
+						</h:dataTable>
+					</c:if>
+				</div></div>
 			</ui:define>
 		</ui:composition>
     </h:body>

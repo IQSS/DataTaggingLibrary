@@ -23,6 +23,14 @@ dd {
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.75);
 }
 
+#messageArea {
+  position: absolute;
+  top: 6em;
+  z-index: 1000;
+  width: 50%;
+  margin: auto;
+}
+
 .qPanel {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.75);
 }

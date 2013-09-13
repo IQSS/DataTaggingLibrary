@@ -28,6 +28,6 @@ public class ExplanationFacade extends AbstractFacade<Explanation> {
 	}
 	
 	public Explanation findByName( String name ) {
-		return null;
+		return find(name);
 	}
 }

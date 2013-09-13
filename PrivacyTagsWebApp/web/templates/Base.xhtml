@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:c="http://java.sun.com/jsp/jstl/core">
 
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -16,7 +17,12 @@
     <h:body>
 		<div class="container">
 			<div class="page-header">
-				<h1><h:link outcome="index" value="Data Tags" /><small>&nbsp;Sharing data with confidence</small></h1>
+				<h1><h:link outcome="/index" value="Data Tags" /><small>&nbsp;Sharing data with confidence</small></h1>
+			</div>
+			<div style="position: relative">
+				<div id="messageArea">
+					<!-- TODO list messages -->
+				</div>
 			</div>
 			<ui:insert name="content"> content </ui:insert>
         </div>

@@ -2,6 +2,7 @@ package edu.harvard.iq.datatags.webapp.model;
 
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -17,6 +18,7 @@ public class Explanation implements Serializable {
 	
 	private String shortExplanation;
 	
+	@Column(length = 2048)
 	private String longExplanation;
 	
 	public String getName() {
@@ -38,7 +40,7 @@ public class Explanation implements Serializable {
 	public String getLongExplanation() {
 		return longExplanation;
 	}
-
+	
 	public void setLongExplanation(String longExplanation) {
 		this.longExplanation = longExplanation;
 	}
