@@ -4,8 +4,8 @@
     <Scope Scope="Project">
         <Node id="newExtraDataAdded.xhtml" x="400" y="150" zoom="true"/>
         <Node id="resources/components/EnumBadge.xhtml" x="400" y="450" zoom="true"/>
-        <Node id="templates/Base.xhtml" x="150" y="150" zoom="true"/>
         <Node id="index.xhtml" x="150" y="600" zoom="true"/>
+        <Node id="templates/Base.xhtml" x="150" y="150" zoom="true"/>
         <Node id="management/explanationDetails.xhtml" x="650" y="150" zoom="true"/>
         <Node id="resources/components/ManagementNavBar.xhtml" x="900" y="150" zoom="true"/>
         <Node id="question.xhtml" x="150" y="450" zoom="true"/>

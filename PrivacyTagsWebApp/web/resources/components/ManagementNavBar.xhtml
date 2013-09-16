@@ -23,8 +23,8 @@
 			</div>
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
-					<li><h:link outcome="/management/explanation/List" value="Explanations" /></li>
-					<li><a href="questionList.xhtml">Questions</a></li>
+					<li><h:link outcome="/management/wiz/explanation/List" value="Explanations" /></li>
+					<li><h:link outcome="/management/wiz/decisionTreeNodeExtraData/List" value="Questions" /></li>
 				</ul>
 				<f:view>
 					<h:form>
@@ -44,5 +44,8 @@
 				</f:view>
 			</div><!-- /.navbar-collapse -->
 		</nav>
+		<h:panelGroup id="messagePanel" layout="block">
+			<h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+		</h:panelGroup>
 	</cc:implementation>
 </html>

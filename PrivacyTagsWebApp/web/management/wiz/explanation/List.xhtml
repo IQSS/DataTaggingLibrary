@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundleWiz.ListExplanationTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+			<h:form styleClass="jsfcrud_list_form">
+				<h:outputText escape="false" value="#{bundleWiz.ListExplanationEmpty}" rendered="#{explanationController.items.rowCount == 0}"/>
+				<h:panelGroup rendered="#{explanationController.items.rowCount > 0}">
+					<h:outputText value="#{explanationController.pagination.pageFirstItem + 1}..#{explanationController.pagination.pageLastItem + 1}/#{explanationController.pagination.itemsCount}"/>&nbsp;
+					<h:commandLink action="#{explanationController.previous}" value="#{bundleWiz.Previous} #{explanationController.pagination.pageSize}" rendered="#{explanationController.pagination.hasPreviousPage}"/>&nbsp;
+					<h:commandLink action="#{explanationController.next}" value="#{bundleWiz.Next} #{explanationController.pagination.pageSize}" rendered="#{explanationController.pagination.hasNextPage}"/>&nbsp;
+					<h:dataTable value="#{explanationController.items}" var="item" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px">
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundleWiz.ListExplanationTitle_name}"/>
+							</f:facet>
+							<h:outputText value="#{item.name}"/>
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundleWiz.ListExplanationTitle_shortExplanation}"/>
+							</f:facet>
+							<h:outputText value="#{item.shortExplanation}"/>
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="#{bundleWiz.ListExplanationTitle_longExplanation}"/>
+							</f:facet>
+							<h:outputText value="#{item.longExplanation}"/>
+						</h:column>
+						<h:column>
+							<f:facet name="header">
+								<h:outputText value="&nbsp;"/>
+							</f:facet>
+							<h:commandLink action="#{explanationController.prepareView}" value="#{bundleWiz.ListExplanationViewLink}"/>
+							<h:outputText value=" "/>
+							<h:commandLink action="#{explanationController.prepareEdit}" value="#{bundleWiz.ListExplanationEditLink}"/>
+							<h:outputText value=" "/>
+							<h:commandLink action="#{explanationController.destroy}" value="#{bundleWiz.ListExplanationDestroyLink}"/>
+						</h:column>
+					</h:dataTable>
+				</h:panelGroup>
+				<br />
+				<h:commandLink action="#{explanationController.prepareCreate}" value="#{bundleWiz.ListExplanationCreateLink}"/>
+				<br />
+				<br />
+				<h:link outcome="/index" value="#{bundleWiz.ListExplanationIndexLink}"/>
+			</h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

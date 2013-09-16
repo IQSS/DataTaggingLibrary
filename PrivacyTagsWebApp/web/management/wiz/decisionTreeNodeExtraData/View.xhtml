@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundleWiz.ViewDecisionTreeNodeExtraDataTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputText value="#{bundleWiz.ViewDecisionTreeNodeExtraDataLabel_id}"/>
+                    <h:outputText value="#{decisionTreeNodeExtraDataController.selected.id}" title="#{bundleWiz.ViewDecisionTreeNodeExtraDataTitle_id}"/>
+                    <h:outputText value="#{bundleWiz.ViewDecisionTreeNodeExtraDataLabel_treeNodeId}"/>
+                    <h:outputText value="#{decisionTreeNodeExtraDataController.selected.treeNodeId}" title="#{bundleWiz.ViewDecisionTreeNodeExtraDataTitle_treeNodeId}"/>
+                    <h:outputText value="#{bundleWiz.ViewDecisionTreeNodeExtraDataLabel_explanation}"/>
+                    <h:outputText value="#{decisionTreeNodeExtraDataController.selected.explanation}" title="#{bundleWiz.ViewDecisionTreeNodeExtraDataTitle_explanation}"/>
+                    <h:outputText value="#{bundleWiz.ViewDecisionTreeNodeExtraDataLabel_helpText}"/>
+                    <h:outputText value="#{decisionTreeNodeExtraDataController.selected.helpText}" title="#{bundleWiz.ViewDecisionTreeNodeExtraDataTitle_helpText}"/>
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{decisionTreeNodeExtraDataController.destroyAndView}" value="#{bundleWiz.ViewDecisionTreeNodeExtraDataDestroyLink}"/>
+                <br />
+                <br />
+                <h:link outcome="Edit" value="#{bundleWiz.ViewDecisionTreeNodeExtraDataEditLink}"/>
+                <br />
+                <h:commandLink action="#{decisionTreeNodeExtraDataController.prepareCreate}" value="#{bundleWiz.ViewDecisionTreeNodeExtraDataCreateLink}" />
+                <br />
+                <h:commandLink action="#{decisionTreeNodeExtraDataController.prepareList}" value="#{bundleWiz.ViewDecisionTreeNodeExtraDataShowAllLink}"/>
+                <br />
+                <br />
+                <h:link outcome="/index" value="#{bundleWiz.ViewDecisionTreeNodeExtraDataIndexLink}"/>
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>
