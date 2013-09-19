@@ -1,12 +1,16 @@
 package edu.harvard.iq.datatags.webapp.parsers;
 
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import edu.harvard.iq.datatags.questionnaire.DecisionNode;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -25,6 +29,63 @@ public class QuestionnaireJsonParser {
 	private List<String> topLevelNames;
 	private DecisionNode root;
 	private String name;
+	
+	public void parse( URL source ) throws IOException {
+		ObjectMapper omp = new ObjectMapper();
+		JsonNode parsedRoot = omp.readTree( source );
+		readRoot( parsedRoot );
+		dumpNode( parsedRoot, 0 );
+	}
+	
+	/**
+	 * Reads the parts that are unique for the root: the name, and the 
+	 * category names.
+	 * @param parsedRoot 
+	 */
+	private void readRoot(JsonNode parsedRoot) {
+		name = parsedRoot.get("name").asText();
+		topLevelNames = new LinkedList<>();
+		// TODO add base tags here
+		for ( JsonNode nd : Iterator2Iterable.cnv(parsedRoot.get("children").iterator())) {
+			String nodeName = nd.get("name").textValue();
+			if ( Character.isDigit( nodeName.charAt(0)) ) {
+				topLevelNames.add( nodeName.split(" ",2)[1] );
+			}
+		}
+	}
+	
+	private void dumpNode( JsonNode nd, int depth ) {
+		StringBuilder sb = new StringBuilder( depth );
+		for ( int i=0; i<depth; i++ ) sb.append( " " );
+		String prefix = sb.toString();
+		
+		System.out.println(prefix + "===  Node [" + nd.getNodeType()  +"]");
+		switch ( nd.getNodeType() ) {
+			case OBJECT:
+				System.out.println(prefix + "names:");
+				for ( String str : Iterator2Iterable.cnv(nd.fieldNames()) ) {
+					System.out.println(prefix + " " + str + " \t-> " + nd.get(str));
+				}
+				for ( JsonNode snd : Iterator2Iterable.cnv(nd.elements()) ) {
+					dumpNode( snd, depth+1 );
+				}
+				break;
+				
+			case ARRAY:
+				for ( int i=0; i<nd.size(); i++ ) {
+					JsonNode sbnd = nd.get(i);
+					System.out.println(String.format(prefix + " [%d]: %s", i, sbnd) );
+				}
+				for ( int i=0; i<nd.size(); i++ ) {
+					dumpNode( nd.get(i), depth+1 );
+				}
+				break;
+				
+			default:
+				System.out.println(prefix + "value:" + nd.asText());
+		}
+		System.out.println(prefix + "=== /Node");
+	}
 	
 	public void parse( InputStream strm ) {
 		JsonFactory fact = new JsonFactory();
@@ -136,5 +197,22 @@ public class QuestionnaireJsonParser {
 	public String getName() {
 		return name;
 	}
+}
+
+class Iterator2Iterable<T> implements Iterable<T> {
 	
+	static <S> Iterable<S> cnv( Iterator<S> anIt ) {
+		return new Iterator2Iterable(anIt);
+	}
+
+	private final Iterator<T> it;
+
+	public Iterator2Iterable(Iterator<T> it) {
+		this.it = it;
+	}
+	
+	@Override
+	public Iterator<T> iterator() {
+		return it;
+	}
 }

@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.webapp.parsers;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -9,16 +10,19 @@ import java.io.InputStream;
  */
 public class QuestionnaireJsonParserTest {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		QuestionnaireJsonParser prsr = new QuestionnaireJsonParser();
 		
-		InputStream input = QuestionnaireJsonParserTest.class
-									.getClassLoader().getResourceAsStream("META-INF/simple.json");
+//		InputStream input = QuestionnaireJsonParserTest.class
+//									.getClassLoader().getResourceAsStream("META-INF/simple.json");
 		
-		prsr.parse(input);
+		prsr.parse(QuestionnaireJsonParserTest.class
+									.getClassLoader().getResource("META-INF/accord.json"));
 		
 		System.out.println("prsr.name = " + prsr.getName());
-		
+		for ( String name : prsr.getTopLevelNames() ) {
+			System.out.println(" -> " + name );
+		}
 	}
 	
 }
