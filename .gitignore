@@ -5,8 +5,8 @@
 *.war
 *.ear
 *build/
-/PrivacyTagsWebApp/nbproject/private/
-/PrivacyTagsLib/dist/
-/PrivacyTagsWebApp/dist/
+/DataTagsWebApp/nbproject/private/
+/DataTagsLib/dist/
+/DataTagsWebApp/dist/
 .DS_Store
 
