@@ -5,14 +5,18 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import edu.harvard.iq.datatags.questionnaire.Answer;
 import edu.harvard.iq.datatags.questionnaire.DecisionNode;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -29,12 +33,23 @@ public class QuestionnaireJsonParser {
 	private List<String> topLevelNames;
 	private DecisionNode root;
 	private String name;
+
+	static class NameParseResult {
+		Answer ans;
+		String id;
+		String title;
+		String info;
+	}
+	
+	static class NodeParseResult {
+		Answer ans;
+		DecisionNode node;
+	}
 	
 	public void parse( URL source ) throws IOException {
 		ObjectMapper omp = new ObjectMapper();
 		JsonNode parsedRoot = omp.readTree( source );
 		readRoot( parsedRoot );
-		dumpNode( parsedRoot, 0 );
 	}
 	
 	/**
@@ -46,12 +61,93 @@ public class QuestionnaireJsonParser {
 		name = parsedRoot.get("name").asText();
 		topLevelNames = new LinkedList<>();
 		// TODO add base tags here
-		for ( JsonNode nd : Iterator2Iterable.cnv(parsedRoot.get("children").iterator())) {
-			String nodeName = nd.get("name").textValue();
+		DecisionNode lastAdded = null;
+		for ( JsonNode jsNode : Iterator2Iterable.cnv(parsedRoot.get("children").iterator())) {
+			String nodeName = jsNode.get("name").textValue();
 			if ( Character.isDigit( nodeName.charAt(0)) ) {
-				topLevelNames.add( nodeName.split(" ",2)[1] );
+				topLevelNames.add( nodeName.split(" ",2)[1].split("\\.")[0].trim() );
+				NodeParseResult ndPr = parseBDD( jsNode );
+				if ( root == null ) {
+					root = ndPr.node;
+				} else {
+					assignOpenEndsTo( lastAdded, ndPr.node );
+				}
+				lastAdded = ndPr.node;
 			}
 		}
+	}
+	
+	private NodeParseResult parseBDD( JsonNode jsNode ) {
+		 final NameParseResult nmPr = parseNameField( jsNode.get("name").textValue() );
+		 
+		 final DecisionNode dNode = new DecisionNode(nmPr.id);
+		 dNode.setTitle( nmPr.title );
+		 dNode.setQuestionText( nmPr.info );
+		 
+		 dNode.setBaseAssumption( null ); // TODO parse tags field
+		 
+		 if ( jsNode.has("children") ) {
+			for ( JsonNode subJsNode : Iterator2Iterable.cnv(jsNode.get("children").iterator()) ) {
+				NodeParseResult ndPr = parseBDD( subJsNode );
+				if ( ndPr.ans != null ) {
+					dNode.setNodeFor(ndPr.ans, ndPr.node);
+				} else {
+					
+				}
+			}
+		 }
+		 return new NodeParseResult(){{
+			 ans  = nmPr.ans;
+			 node = dNode;
+		 }};
+	}
+	
+	/**
+	 * Assigns all the open answers in {@code tree} to {@code node}.
+	 * @param tree The root of the tree that might not be assigned yet
+	 * @param node the destination of the unanswered questions
+	 */
+	private void assignOpenEndsTo(DecisionNode tree, DecisionNode node) {
+		for ( Answer a : Answer.values() ) {
+			DecisionNode answerNode = tree.getNodeFor(a);
+			
+			if ( answerNode == node ) return;
+			
+			if ( answerNode == null ) {
+				tree.setNodeFor(a, node);
+			} else {
+				assignOpenEndsTo(answerNode, node);
+			}
+		}
+	}
+	
+	
+	/**
+	 * Takes the string value of the {@code name} field, and parses
+	 * it to a result. There are 2 possible formats, one with answer
+	 * type (YES/NO) and one without.
+	 * @param nameField
+	 * @return A parse result from which we can build a {@link DecisionNode}.
+	 */
+	NameParseResult parseNameField( String nameField ) {
+		NameParseResult npr = new NameParseResult();
+		
+		String comps[] = nameField.split("\\.",2);
+		npr.ans = Answer.valueOfOpt( comps[0].toUpperCase() );
+		
+		if ( npr.ans != null ) {
+			nameField = nameField.substring( comps[0].length() + 1 ).trim();
+		}
+		// INVARIANT: nameField does not contain an answer.
+		comps = nameField.split(" ",2);
+		npr.id = comps[0].trim();
+		
+		comps = comps[1].split("\\.",2);
+		npr.title = comps[0].trim();
+		npr.info = comps.length > 1 ? (comps[1].trim().isEmpty() ? null : comps[1].trim())
+									: null;
+		
+		return npr;
 	}
 	
 	private void dumpNode( JsonNode nd, int depth ) {

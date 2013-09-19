@@ -8,12 +8,17 @@ import edu.harvard.iq.datatags.tags.HarmLevel;
 import edu.harvard.iq.datatags.tags.DataTags;
 import edu.harvard.iq.datatags.questionnaire.Answer;
 import edu.harvard.iq.datatags.questionnaire.DecisionNode;
+import edu.harvard.iq.datatags.webapp.parsers.QuestionnaireJsonParser;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ApplicationScoped;
@@ -28,11 +33,23 @@ public class App {
 	private static final Logger logger = Logger.getLogger(App.class.getName());
 	private DecisionNode questionnaireRoot;
 	private final Map<String, DecisionNode> dtnById = new HashMap<>(); 
+	private List<String> topLevelTopics;
+	private String questionnareVersion;
+	
 	/**
 	 * Creates a new instance of App
 	 */
 	public App() {
-		setQuestionnaire( makeDummyQuestionnaire() );
+		try {
+			QuestionnaireJsonParser prsr = new QuestionnaireJsonParser();
+			prsr.parse(getClass().getClassLoader().getResource("META-INF/accord.json"));
+			setQuestionnaire( prsr.getRoot() );
+			topLevelTopics = prsr.getTopLevelNames();
+			questionnareVersion = prsr.getName();
+			
+		} catch (IOException ex) {
+			Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 	
 	public DecisionNode getDecisionNode( String id ) {
@@ -48,18 +65,30 @@ public class App {
 		questionnaireRoot = root;
 		List<DecisionNode> queue = new LinkedList<>();
 		queue.add( questionnaireRoot );
+		Set<DecisionNode> seen = new HashSet<>();
 		while ( ! queue.isEmpty() ) {
 			DecisionNode nd = queue.remove(0);
 			dtnById.put( nd.getId(), nd );
 			System.out.println("added " + nd);
 			for ( Answer a : Answer.values() ) {
 				DecisionNode subNode = nd.getNodeFor(a);
-				if ( subNode != null ) {
+				if ( subNode != null && ! seen.contains(subNode) ) {
+					seen.add( subNode );
 					queue.add( subNode );
 				}
 			}
 		}
 	}
+
+	public List<String> getTopLevelTopics() {
+		return topLevelTopics;
+	}
+
+	public String getQuestionnareVersion() {
+		return questionnareVersion;
+	}
+	
+	
 
 	private DecisionNode makeDummyQuestionnaire() {
 		DecisionNode root = new DecisionNode( Integer.toString(0) );

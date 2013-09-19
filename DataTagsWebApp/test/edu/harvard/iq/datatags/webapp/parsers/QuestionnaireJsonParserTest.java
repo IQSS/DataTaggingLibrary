@@ -1,10 +1,17 @@
 package edu.harvard.iq.datatags.webapp.parsers;
 
+import edu.harvard.iq.datatags.questionnaire.Answer;
+import edu.harvard.iq.datatags.questionnaire.DecisionNode;
+import edu.harvard.iq.datatags.webapp.parsers.QuestionnaireJsonParser.NameParseResult;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Set;
+import java.util.TreeSet;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import org.junit.Test;
 
 /**
- * Parsing test. Note that this is NOT a unit test (it uses files).
+ * Parsing test - contains both unit tests and file-based ones.
  * 
  * @author michael
  */
@@ -23,6 +30,61 @@ public class QuestionnaireJsonParserTest {
 		for ( String name : prsr.getTopLevelNames() ) {
 			System.out.println(" -> " + name );
 		}
+		System.out.println("Done. Creating GV... ");
+		gvNode( prsr.getRoot(), new TreeSet<String>() );
+		
+	}
+
+	private static void gvNode(DecisionNode root, Set<String> seen) {
+		System.out.println("\"" + root.getId() + "\"[label=\"" + root.getId() + "\\n" + root.getTitle()  +"\"]");
+		for ( Answer a : Answer.values() ) {
+			DecisionNode sn = root.getNodeFor(a);
+			if ( sn != null ) {
+				if ( ! seen.contains(sn.getId()) ) {
+					seen.add( sn.getId() );
+					gvNode( sn , seen );
+				}
+				System.out.println("\"" + root.getId() + "\" -> \"" + sn.getId() + "\" [label=\"" + a + "\"]");
+			}
+		}
+	}
+
+	@Test
+	public void textParseNameField_NoAns() {
+		QuestionnaireJsonParser sut = new QuestionnaireJsonParser();
+		String input = "4. Arrest and Conviction Records.";
+		NameParseResult res = sut.parseNameField(input);
+		assertNull( res.ans );
+		assertEquals( "4.", res.id );
+		assertEquals( "Arrest and Conviction Records", res.title );
+		assertNull( res.info );
+		
+		input = "4. Arrest and Conviction Records. Info text. about thi.g.s.  g.s";
+		res = sut.parseNameField(input);
+		assertNull( res.ans );
+		assertEquals( "4.", res.id );
+		assertEquals( "Arrest and Conviction Records", res.title );
+		assertEquals( "Info text. about thi.g.s.  g.s", res.info );
+				
+	}
+	
+	@Test
+	public void textParseNameField_Ans() {
+		QuestionnaireJsonParser sut = new QuestionnaireJsonParser();
+		String input = "No. 4. Arrest and Conviction Records.";
+		NameParseResult res = sut.parseNameField(input);
+		assertEquals( Answer.NO, res.ans );
+		assertEquals( "4.", res.id );
+		assertEquals( "Arrest and Conviction Records", res.title );
+		assertNull( res.info );
+		
+		input = "Yes. 4. Arrest and Conviction Records. Info text. about thi.g.s.  g.s";
+		res = sut.parseNameField(input);
+		assertEquals( Answer.YES, res.ans );
+		assertEquals( "4.", res.id );
+		assertEquals( "Arrest and Conviction Records", res.title );
+		assertEquals( "Info text. about thi.g.s.  g.s", res.info );
+				
 	}
 	
 }
