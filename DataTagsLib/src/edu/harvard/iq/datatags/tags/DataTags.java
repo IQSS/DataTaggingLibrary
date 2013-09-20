@@ -1,6 +1,10 @@
 package edu.harvard.iq.datatags.tags;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * The reason this whole project exists: the set of privacy tags that describe 
@@ -10,43 +14,59 @@ import java.util.Objects;
  * @author michael
  */
 public class DataTags  {
-	
-	private ApprovalType approvalType;
-	private AuthenticationType authenticationType;
-	private DataUseAgreement dataUseAgreement;
-	private EncryptionType transitEncryptionType;
-	private EncryptionType storageEncryptionType;
+	private final Map values;
 	
 	public DataTags(ApprovalType approvalType, AuthenticationType authenticationType, DataUseAgreement dataUseAgreement, EncryptionType transitEncryptionType, EncryptionType storageEncryptionType) {
-		this.approvalType = approvalType;
-		this.authenticationType = authenticationType;
-		this.dataUseAgreement = dataUseAgreement;
-		this.transitEncryptionType = transitEncryptionType;
-		this.storageEncryptionType = storageEncryptionType;
+		this();
+		put( DataKey.Approval, approvalType );
+		put( DataKey.Authentication, authenticationType );
+		put( DataKey.DataUseAgreement, dataUseAgreement );
+		put( DataKey.Transit, transitEncryptionType );
+		put( DataKey.Storage, storageEncryptionType );
 	}
 	
 	public DataTags() {
-		
+		values = new HashMap();
 	}
-
+	
+	private DataTags( Map m ) {
+		values = new HashMap(m);
+	}
+	
 	public DataTags makeCopy() {
-		return new DataTags(getApprovalType(),
-				getAuthenticationType(),
-				getDataUseAgreement(),
-				getTransitEncryptionType(),
-				getStorageEncryptionType()
-			);
+		return new DataTags(values);
+	}
+	
+	/**
+	 * Sets a tag key to a value
+	 * @param k the key
+	 * @param <T> the type of data the key can refer to
+	 * @param val the data
+	 * @return {@code this}, for call chaining.
+	 */
+	public final <T extends Comparable> DataTags put( DataKey<T> k, T val ) {
+		if ( val == null ) {
+			values.remove(k);
+		} else {
+			values.put(k,val);
+		}
+
+		return this;
+	}
+	
+	public final <T extends Comparable> T get( DataKey<T> k ) {
+		return k.getValueClass().cast(values.get(k));
+	}
+	
+	public Set<DataKey<?>> keys() {
+		return values.keySet();
 	}
 	
 	/**
 	 * @return {@literal true} iff all values are set (e.g non-null).
 	 */
 	public boolean isComplete() {
-		return (approvalType != null)            
-				&& (authenticationType != null )    
-				&& (dataUseAgreement != null )      
-				&& (transitEncryptionType != null ) 
-				&& (storageEncryptionType != null );
+		return keys().containsAll(DataKey.values());
 	}
 	
 	/**
@@ -60,55 +80,19 @@ public class DataTags  {
 	 * @return whether {@literal this} is stricter than {@literal other}.
 	 */
 	public boolean stricterThan( DataTags other ) {
-		int res;
-		int total=0;
 		
-		if ( getApprovalType() != null ) {
-			if ( other.getApprovalType() == null ) return false; // can't compare
-			res = (int)Math.signum(getApprovalType().compareTo(other.getApprovalType()));
-			if ( res < 0 ) return false;
-			total += res;
-		} else {
-			if ( other.getApprovalType() != null ) return false; // can't compare
+		// see if we can compare
+		if ( other == null ) return false;
+		if ( ! keys().equals(other.keys()) ) return false;
+		if ( equals(other) ) return false;
+		
+		for ( DataKey dk : keys() ) {
+			Comparable mine = get(dk);
+			Comparable hers = other.get(dk);
+			if ( mine.compareTo(hers) < 0 ) return false;
 		}
 		
-		if ( getAuthenticationType()!= null ) {
-			if ( other.getAuthenticationType() == null ) return false; // can't compare
-			res = (int)Math.signum(getAuthenticationType().compareTo(other.getAuthenticationType()));
-			if ( res < 0 ) return false;
-			total += res;
-		} else {
-			if ( other.getAuthenticationType() != null ) return false; // can't compare
-		}
-		
-		if ( getDataUseAgreement()!= null ) {
-			if ( other.getDataUseAgreement() == null ) return false; // can't compare
-			res = (int) Math.signum(getDataUseAgreement().compareTo(other.getDataUseAgreement()));
-			if ( res < 0 ) return false;
-			total += res;
-		} else {
-			if ( other.getDataUseAgreement() != null ) return false; // can't compare
-		}
-		
-		if ( getTransitEncryptionType()!= null ) {
-			if ( other.getTransitEncryptionType() == null ) return false; // can't compare
-			res = (int) Math.signum(getTransitEncryptionType().compareTo(other.getTransitEncryptionType()));
-			if ( res < 0 ) return false;
-			total += res;
-		} else {
-			if ( other.getTransitEncryptionType() != null ) return false; // can't compare
-		}
-		
-		if ( getStorageEncryptionType()!= null ) {
-			if ( other.getStorageEncryptionType() == null ) return false; // can't compare
-			res = (int) Math.signum(getStorageEncryptionType().compareTo(other.getStorageEncryptionType()));
-			if ( res < 0 ) return false;
-			total += res;
-		} else {
-			if ( other.getStorageEncryptionType() != null ) return false; // can't compare
-		}
-		
-		return total > 0;
+		return true;
 	}
 	
 	public boolean stricterOrEqualTo( DataTags other ) {
@@ -119,103 +103,87 @@ public class DataTags  {
 	public boolean stricterOrEqualTo( HarmLevel hl ) { return stricterOrEqualTo( hl.tags() ); }
 	
 	public DataTags composeWith( DataTags other ) {
-		return new DataTags(
-				getApprovalType()!=null ? getApprovalType() : other.getApprovalType(), 
-				getAuthenticationType()!=null ? getAuthenticationType() : other.getAuthenticationType(), 
-				getDataUseAgreement()!=null ? getDataUseAgreement() : other.getDataUseAgreement(), 
-				getTransitEncryptionType()!=null ? getTransitEncryptionType() : other.getTransitEncryptionType(), 
-				getStorageEncryptionType()!=null ? getStorageEncryptionType() : other.getStorageEncryptionType()
-			);
+		Map newMap = new HashMap();
+		Set<DataKey<?>> allKeys = new HashSet<>( keys() );
+		allKeys.addAll( other.keys() );
+		for ( DataKey dk : allKeys ) {
+			newMap.put(dk,  get(dk)!=null ? get(dk) : other.get(dk) );
+		}
+		return new DataTags( newMap );
 	}
 	
 	public ApprovalType getApprovalType() {
-		return approvalType;
+		return get( DataKey.Approval );
 	}
 
 	public DataTags setApprovalType(ApprovalType approvalType) {
-		this.approvalType = approvalType;
-		return this;
+		return put( DataKey.Approval, approvalType );
 	}
 
 	public AuthenticationType getAuthenticationType() {
-		return authenticationType;
+		return get( DataKey.Authentication );
 	}
 
 	public DataTags setAuthenticationType(AuthenticationType authenticationType) {
-		this.authenticationType = authenticationType;
-		return this;
+		return put( DataKey.Authentication, authenticationType );
 	}
 
 	public DataUseAgreement getDataUseAgreement() {
-		return dataUseAgreement;
+		return get( DataKey.DataUseAgreement );
 	}
 
 	public DataTags setDataUseAgreement(DataUseAgreement dataUseAgreement) {
-		this.dataUseAgreement = dataUseAgreement;
-		return this;
+		return put( DataKey.DataUseAgreement, dataUseAgreement );
 	}
 
 	public EncryptionType getTransitEncryptionType() {
-		return transitEncryptionType;
+		return get( DataKey.Transit );
 	}
 
 	public DataTags setTransitEncryptionType(EncryptionType transitEncryptionType) {
-		this.transitEncryptionType = transitEncryptionType;
-		return this;
+		return put( DataKey.Transit, transitEncryptionType );
 	}
 
 	public EncryptionType getStorageEncryptionType() {
-		return storageEncryptionType;
+		return get( DataKey.Storage );
 	}
 
 	public DataTags setStorageEncryptionType(EncryptionType storageEncryptionType) {
-		this.storageEncryptionType = storageEncryptionType;
-		return this;
+		return put( DataKey.Storage, storageEncryptionType );
 	}
-
+	
+	/**
+	 * Returns the underlying map of values.
+	 * Override with caution, as no type checks are done on this.
+	 * @return the internal map, holding all the values of the instance.
+	 */
+	protected Map getValuesMap() {
+		return values;
+	}
+	
 	@Override
 	public int hashCode() {
 		int hash = 3;
-		hash = 83 * hash + Objects.hashCode(this.approvalType);
-		hash = 83 * hash + Objects.hashCode(this.dataUseAgreement);
-		hash = 83 * hash + Objects.hashCode(this.storageEncryptionType);
+		hash = 83 * hash + Objects.hashCode(getApprovalType());
+		hash = 83 * hash + Objects.hashCode(getDataUseAgreement());
+		hash = 83 * hash + Objects.hashCode(getStorageEncryptionType());
 		return hash;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final DataTags other = (DataTags) obj;
-		if (this.approvalType != other.approvalType) {
-			return false;
-		}
-		if (this.authenticationType != other.authenticationType) {
-			return false;
-		}
-		if (this.dataUseAgreement != other.dataUseAgreement) {
-			return false;
-		}
-		if (this.transitEncryptionType != other.transitEncryptionType) {
-			return false;
-		}
-		if (this.storageEncryptionType != other.storageEncryptionType) {
-			return false;
-		}
-		return true;
+		if (obj == null) return false;
+		if ( ! (obj instanceof DataTags) ) return false;
+		return ((DataTags)obj).getValuesMap().equals(getValuesMap());
 	}
 
 	@Override
 	public String toString() {
-		return "[PrivacyTagSet approvalType:" + approvalType 
-			  	            + "authenticationType:" + authenticationType 
-							+ "dataUseAgreement:" + dataUseAgreement 
-							+ "transitEncryptionType:" + transitEncryptionType 
-						    + "storageEncryptionType:" + storageEncryptionType + ']';
+		StringBuilder sb = new StringBuilder();
+		for ( DataKey dk : keys() ) {
+			sb.append( dk ).append( ": " ).append( get( dk ) );
+		}
+		return "[PrivacyTagSet " + sb.toString() + ']';
 	}
 	
 }
