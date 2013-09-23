@@ -44,15 +44,13 @@
 												<th>#{hl.name()}</th>
 												<td>
 													<a id="tst#{hl.ordinal()}" href="#" 
-													   style="color: black"
 													   data-toggle="popover" data-trigger="hover" 
-													   title="#{msg['DuaAgreementMethod.'.concat(hl.tags().dataUseAgreement.name()).concat('.title')]}"
-													   data-content="#{msg['DuaAgreementMethod.'.concat(hl.tags().dataUseAgreement.name()).concat('.text')]}">
-														<components:EnumBadge enumVal="#{hl.tags().dataUseAgreement}" /></a>
+													   title="#{msg['DuaAgreementMethod.'.concat(hl.tags().duaAgreementMethod.name()).concat('.title')]}"
+													   data-content="#{msg['DuaAgreementMethod.'.concat(hl.tags().duaAgreementMethod.name()).concat('.text')]}">
+														<components:EnumBadge enumVal="#{hl.tags().duaAgreementMethod}" /></a>
 												</td>
 												<td>
 													<a id="tst#{hl.ordinal()}" href="#" 
-													   style="color: black"
 													   data-toggle="popover" data-trigger="hover" 
 													   title="#{msg['Authentication.'.concat(hl.tags().authenticationType.name()).concat('.title')]}"
 													   data-content="#{msg['Authentication.'.concat(hl.tags().authenticationType.name()).concat('.text')]}">
@@ -60,7 +58,6 @@
 												</td>
 												<td>
 													<a id="tst#{hl.ordinal()}" href="#" 
-													   style="color: black"
 													   data-toggle="popover" data-trigger="hover" 
 													   title="#{msg['Encryption.'.concat(hl.tags().transitEncryptionType.name()).concat('.title')]}"
 													   data-content="#{msg['Encryption.'.concat(hl.tags().transitEncryptionType.name()).concat('.text')]}">
@@ -68,7 +65,6 @@
 												</td>
 												<td>
 													<a id="tst#{hl.ordinal()}" href="#" 
-													   style="color: black"
 													   data-toggle="popover" data-trigger="hover" data-placement="left"
 													   title="#{msg['Encryption.'.concat(hl.tags().storageEncryptionType.name()).concat('.title')]}"
 													   data-content="#{msg['Encryption.'.concat(hl.tags().storageEncryptionType.name()).concat('.text')]}">

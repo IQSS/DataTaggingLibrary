@@ -16,11 +16,10 @@ import java.util.Set;
 public class DataTags  {
 	private final Map values;
 	
-	public DataTags(ApprovalType approvalType, AuthenticationType authenticationType, DataUseAgreement dataUseAgreement, EncryptionType transitEncryptionType, EncryptionType storageEncryptionType) {
+	public DataTags( DuaAgreementMethod dataUseAgreement, AuthenticationType authenticationType, EncryptionType transitEncryptionType, EncryptionType storageEncryptionType) {
 		this();
-		put( DataKey.Approval, approvalType );
 		put( DataKey.Authentication, authenticationType );
-		put( DataKey.DataUseAgreement, dataUseAgreement );
+		put( DataKey.DuaAgreementMethod, dataUseAgreement );
 		put( DataKey.Transit, transitEncryptionType );
 		put( DataKey.Storage, storageEncryptionType );
 	}
@@ -40,9 +39,9 @@ public class DataTags  {
 	/**
 	 * Sets a tag key to a value
 	 * @param k the key
-	 * @param <T> the type of data the key can refer to
+	 * @param <>> the type of data the key can refer to
 	 * @param val the data
-	 * @return {@code this}, for call chaining.
+	 * @return {@literal this}, for call chaining.
 	 */
 	public final <T extends Comparable> DataTags put( DataKey<T> k, T val ) {
 		if ( val == null ) {
@@ -112,14 +111,6 @@ public class DataTags  {
 		return new DataTags( newMap );
 	}
 	
-	public ApprovalType getApprovalType() {
-		return get( DataKey.Approval );
-	}
-
-	public DataTags setApprovalType(ApprovalType approvalType) {
-		return put( DataKey.Approval, approvalType );
-	}
-
 	public AuthenticationType getAuthenticationType() {
 		return get( DataKey.Authentication );
 	}
@@ -128,12 +119,12 @@ public class DataTags  {
 		return put( DataKey.Authentication, authenticationType );
 	}
 
-	public DataUseAgreement getDataUseAgreement() {
-		return get( DataKey.DataUseAgreement );
+	public DuaAgreementMethod getDuaAgreementMethod() {
+		return get( DataKey.DuaAgreementMethod );
 	}
 
-	public DataTags setDataUseAgreement(DataUseAgreement dataUseAgreement) {
-		return put( DataKey.DataUseAgreement, dataUseAgreement );
+	public DataTags setDuaAgreementMethod(DuaAgreementMethod dataUseAgreement) {
+		return put( DataKey.DuaAgreementMethod, dataUseAgreement );
 	}
 
 	public EncryptionType getTransitEncryptionType() {
@@ -164,8 +155,7 @@ public class DataTags  {
 	@Override
 	public int hashCode() {
 		int hash = 3;
-		hash = 83 * hash + Objects.hashCode(getApprovalType());
-		hash = 83 * hash + Objects.hashCode(getDataUseAgreement());
+		hash = 83 * hash + Objects.hashCode(getDuaAgreementMethod());
 		hash = 83 * hash + Objects.hashCode(getStorageEncryptionType());
 		return hash;
 	}

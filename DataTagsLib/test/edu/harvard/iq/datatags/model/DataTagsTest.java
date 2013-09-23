@@ -4,8 +4,7 @@
 package edu.harvard.iq.datatags.model;
 
 import edu.harvard.iq.datatags.tags.EncryptionType;
-import edu.harvard.iq.datatags.tags.ApprovalType;
-import edu.harvard.iq.datatags.tags.DataUseAgreement;
+import edu.harvard.iq.datatags.tags.DuaAgreementMethod;
 import edu.harvard.iq.datatags.tags.AuthenticationType;
 import edu.harvard.iq.datatags.tags.DataTags;
 import org.junit.After;
@@ -45,14 +44,12 @@ public class DataTagsTest {
 	 */
 	@Test
 	public void testIsComplete() {
-		assertTrue( new DataTags(ApprovalType.None, 
-									AuthenticationType.None,
-									DataUseAgreement.Sign, 
-									EncryptionType.DoubleEncryption, 
-									EncryptionType.DoubleEncryption).isComplete() );
-		assertFalse( new DataTags(ApprovalType.None, 
+		assertTrue( new DataTags( DuaAgreementMethod.Sign, 
+								  AuthenticationType.None,
+								  EncryptionType.DoubleEncryption, 
+								  EncryptionType.DoubleEncryption).isComplete() );
+		assertFalse( new DataTags( DuaAgreementMethod.Sign, 
 									null,
-									DataUseAgreement.Sign, 
 									EncryptionType.DoubleEncryption, 
 									EncryptionType.DoubleEncryption).isComplete() );
 	}
@@ -62,24 +59,24 @@ public class DataTagsTest {
 	 */
 	@Test
 	public void testComposeWith() {
-		DataTags a = new DataTags(null, 
+		DataTags a = new DataTags( 
+				DuaAgreementMethod.Sign, 
 				null, 
-				DataUseAgreement.Sign, 
 				EncryptionType.DoubleEncryption, 
-				EncryptionType.DoubleEncryption);
-		DataTags b = new DataTags(null, 
+				null);
+		DataTags b = new DataTags(
+				DuaAgreementMethod.None, 
 				AuthenticationType.Email_or_OAuth, 
-				DataUseAgreement.None, 
 				EncryptionType.DoubleEncryption, 
-				EncryptionType.DoubleEncryption);
+				null);
 		DataTags composed = a.composeWith(b);
 		
 		// null X null -> null 
-		assertNull( composed.getApprovalType() );
+		assertNull( composed.getStorageEncryptionType() );
 		// null X a -> a
 		assertEquals( AuthenticationType.Email_or_OAuth, composed.getAuthenticationType() );
 		// a X b -> a
-		assertEquals( DataUseAgreement.Sign, composed.getDataUseAgreement() );
+		assertEquals( DuaAgreementMethod.Sign, composed.getDuaAgreementMethod() );
 	}
 
 	/**
@@ -87,9 +84,9 @@ public class DataTagsTest {
 	 */
 	@Test
 	public void testStricterThan() {
-		DataTags a = new DataTags(null, 
+		DataTags a = new DataTags( 
+				null, 
 				AuthenticationType.Password, 
-				DataUseAgreement.Sign, 
 				EncryptionType.DoubleEncryption, 
 				EncryptionType.DoubleEncryption);
 		
@@ -99,7 +96,7 @@ public class DataTagsTest {
 				a.stricterThan(a.makeCopy().setStorageEncryptionType(null)));
 		
 		assertFalse( "Can't compare when there are different non-null fields",
-				a.stricterThan(a.makeCopy().setApprovalType(ApprovalType.None)));
+				a.stricterThan(a.makeCopy().setDuaAgreementMethod(DuaAgreementMethod.Sign)));
 		
 		assertFalse( "Copy is MORE strict",
 				a.stricterThan(a.makeCopy().setAuthenticationType(AuthenticationType.TwoFactor)));
@@ -113,9 +110,9 @@ public class DataTagsTest {
 	 */
 	@Test
 	public void testStricterOrEqualTo() {
-		DataTags a = new DataTags(null, 
+		DataTags a = new DataTags( 
+				DuaAgreementMethod.Sign, 
 				AuthenticationType.Password, 
-				DataUseAgreement.Sign, 
 				EncryptionType.DoubleEncryption, 
 				EncryptionType.DoubleEncryption);
 		

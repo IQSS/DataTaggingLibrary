@@ -1,8 +1,7 @@
 package edu.harvard.iq.datatags.webapp.boundary;
 
-import edu.harvard.iq.datatags.tags.ApprovalType;
 import edu.harvard.iq.datatags.tags.AuthenticationType;
-import edu.harvard.iq.datatags.tags.DataUseAgreement;
+import edu.harvard.iq.datatags.tags.DuaAgreementMethod;
 import edu.harvard.iq.datatags.tags.EncryptionType;
 import edu.harvard.iq.datatags.tags.HarmLevel;
 import edu.harvard.iq.datatags.tags.DataTags;
@@ -158,17 +157,13 @@ public class App {
 
 	private DataTags improveOn(DataTags asm) {
 		DataTags res = asm.makeCopy();
-		if ( res.getApprovalType() == null ) {
-			res.setApprovalType( randOf(ApprovalType.values()));
-			return res;
-		}
 		if ( res.getAuthenticationType() == null ) {
 			res.setAuthenticationType(randOf(AuthenticationType.values()));
 			return res;
 		}
 		
-		if ( res.getDataUseAgreement()== null ) {
-			res.setDataUseAgreement(randOf(DataUseAgreement.values()));
+		if ( res.getDuaAgreementMethod()== null ) {
+			res.setDuaAgreementMethod(randOf(DuaAgreementMethod.values()));
 			return res;
 		}
 		

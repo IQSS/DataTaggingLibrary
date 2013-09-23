@@ -154,6 +154,7 @@ table.harmLevelTable tbody tr th {
 }
 
 .popover-content {
+  font-weight: normal;
   color: black;
 }
 

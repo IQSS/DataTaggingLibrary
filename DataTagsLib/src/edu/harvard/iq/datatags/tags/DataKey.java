@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,27 +26,31 @@ public class DataKey< T extends Comparable> {
 		return new DataKey<>(klass);
 	}
 
-	public static DataKey<ApprovalType>   Approval = keyFor(ApprovalType.class);
-	public static DataKey<EncryptionType> Storage  = keyFor(EncryptionType.class);
-	public static DataKey<EncryptionType> Transit  = keyFor(EncryptionType.class);
-	public static DataKey<AuthenticationType> Authentication   = keyFor(AuthenticationType.class);
-	public static DataKey<DataUseAgreement>   DataUseAgreement = keyFor(DataUseAgreement.class);
+	public static final DataKey<DuaAgreementMethod>   DuaAgreementMethod = keyFor(DuaAgreementMethod.class);
+	public static final DataKey<EncryptionType> Storage  = keyFor(EncryptionType.class);
+	public static final DataKey<EncryptionType> Transit  = keyFor(EncryptionType.class);
+	public static final DataKey<AuthenticationType> Authentication   = keyFor(AuthenticationType.class);
+	
+	private static final AtomicReference<Set<DataKey<?>>> valueSet = new AtomicReference<>(null);
 	
 	// Automatically get all the static fields. This is in fact a "manual" enum.
 	public static Set<DataKey<?>> values() {
-		Set<DataKey<?>> out = new HashSet<>();
-		for ( Field f : DataKey.class.getDeclaredFields() ) {
-			if ( Modifier.isStatic(f.getModifiers()) ) {
-				if ( f.getType().equals(DataKey.class) ) {
-					try {
-						out.add( (DataKey<?>) f.get(null));
-					} catch ( IllegalArgumentException | IllegalAccessException ex) {
-						Logger.getLogger(DataKey.class.getName()).log(Level.SEVERE, null, ex);
+		if ( valueSet.get() == null ) {
+			Set<DataKey<?>> set = new HashSet<>();
+			for ( Field f : DataKey.class.getDeclaredFields() ) {
+				if ( Modifier.isStatic(f.getModifiers()) ) {
+					if ( f.getType().equals(DataKey.class) ) {
+						try {
+							set.add( (DataKey<?>) f.get(null));
+						} catch ( IllegalArgumentException | IllegalAccessException ex) {
+							Logger.getLogger(DataKey.class.getName()).log(Level.SEVERE, null, ex);
+						}
 					}
 				}
 			}
+			valueSet.set( set );
 		}
-		return out;
+		return valueSet.get();
 	}
 	
 	private final Class<T> kls;

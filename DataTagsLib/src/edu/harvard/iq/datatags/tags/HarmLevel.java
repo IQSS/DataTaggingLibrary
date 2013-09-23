@@ -7,17 +7,17 @@ package edu.harvard.iq.datatags.tags;
  */
 public enum HarmLevel {
 	NoRisk( 
-		1,   new DataTags(ApprovalType.None,   AuthenticationType.None,           DataUseAgreement.None,      EncryptionType.Clear,     EncryptionType.Clear) ),
+		1,   new DataTags( DuaAgreementMethod.None, AuthenticationType.None,           EncryptionType.Clear,     EncryptionType.Clear) ),
 	Forsaken( 
-		2,   new DataTags(ApprovalType.None,   AuthenticationType.Email_or_OAuth, DataUseAgreement.None,      EncryptionType.Clear,     EncryptionType.Clear) ),
+		2,   new DataTags( DuaAgreementMethod.None, AuthenticationType.Email_or_OAuth, EncryptionType.Clear,     EncryptionType.Clear) ),
 	Shamed( 
-		3,   new DataTags(ApprovalType.Online, AuthenticationType.Password,       DataUseAgreement.ClickThrough,  EncryptionType.Encrypted, EncryptionType.Encrypted) ),
+		3,   new DataTags( DuaAgreementMethod.ClickThrough,  AuthenticationType.Password,      EncryptionType.Encrypted, EncryptionType.Encrypted) ),
 	CivilPenalties( 
-		4,   new DataTags(ApprovalType.Signed, AuthenticationType.Password,       DataUseAgreement.Sign,  EncryptionType.Encrypted, EncryptionType.Encrypted) ),
+		4,   new DataTags(DuaAgreementMethod.Sign,  AuthenticationType.Password,       EncryptionType.Encrypted, EncryptionType.Encrypted) ),
 	CriminalPenalties(
-		4,   new DataTags(ApprovalType.Signed, AuthenticationType.TwoFactor,      DataUseAgreement.Sign,  EncryptionType.Encrypted, EncryptionType.Encrypted) ),
+		4,   new DataTags(DuaAgreementMethod.Sign,  AuthenticationType.TwoFactor,      EncryptionType.Encrypted, EncryptionType.Encrypted) ),
 	MaxControl( 
-		4.5, new DataTags(ApprovalType.Signed, AuthenticationType.TwoFactor,      DataUseAgreement.Sign,  EncryptionType.DoubleEncryption, EncryptionType.DoubleEncryption) );
+		4.5, new DataTags(DuaAgreementMethod.Sign,  AuthenticationType.TwoFactor,      EncryptionType.DoubleEncryption, EncryptionType.DoubleEncryption) );
 	
 	private final DataTags tags; 
 	private final double harvardSecurityLevel;
