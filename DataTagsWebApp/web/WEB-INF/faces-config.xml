@@ -16,8 +16,8 @@
             <var>bundle</var>
         </resource-bundle>
         <resource-bundle>
-            <base-name>/Bundle2</base-name>
-            <var>bundle2</var>
+            <base-name>/META-INF/msg</base-name>
+            <var>msg</var>
         </resource-bundle>
         <resource-bundle>
             <base-name>/BundleWiz</base-name>

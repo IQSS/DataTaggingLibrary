@@ -32,9 +32,8 @@
 									<thead>
 										<tr>
 											<th>Level</th>
-											<th>Approval</th>
+											<th>D.U.A. Agreement Method</th>
 											<th>Authentication</th>
-											<th>Data Usage Agreement</th>
 											<th>Transit Encryption</th>
 											<th>Storage Encryption</th>
 										</tr>
@@ -44,34 +43,51 @@
 											<tr class="harmLevel#{hl.ordinal()+1}">
 												<th>#{hl.name()}</th>
 												<td>
-													<a id="tst#{hl.ordinal()}" href="#" data-toggle="popover" data-trigger="hover" title="#{hl.name()}">
-														<components:EnumBadge enumVal="#{hl.tags().approvalType}" /></a></td>
-												<td><components:EnumBadge enumVal="#{hl.tags().authenticationType}" /></td>
-												<td><components:EnumBadge enumVal="#{hl.tags().dataUseAgreement}" /></td>
-												<td><components:EnumBadge enumVal="#{hl.tags().transitEncryptionType}" /></td>
-												<td><components:EnumBadge enumVal="#{hl.tags().storageEncryptionType}" /></td>
+													<a id="tst#{hl.ordinal()}" href="#" 
+													   style="color: black"
+													   data-toggle="popover" data-trigger="hover" 
+													   title="#{msg['DuaAgreementMethod.'.concat(hl.tags().dataUseAgreement.name()).concat('.title')]}"
+													   data-content="#{msg['DuaAgreementMethod.'.concat(hl.tags().dataUseAgreement.name()).concat('.text')]}">
+														<components:EnumBadge enumVal="#{hl.tags().dataUseAgreement}" /></a>
+												</td>
+												<td>
+													<a id="tst#{hl.ordinal()}" href="#" 
+													   style="color: black"
+													   data-toggle="popover" data-trigger="hover" 
+													   title="#{msg['Authentication.'.concat(hl.tags().authenticationType.name()).concat('.title')]}"
+													   data-content="#{msg['Authentication.'.concat(hl.tags().authenticationType.name()).concat('.text')]}">
+														<components:EnumBadge enumVal="#{hl.tags().authenticationType}" /></a>
+												</td>
+												<td>
+													<a id="tst#{hl.ordinal()}" href="#" 
+													   style="color: black"
+													   data-toggle="popover" data-trigger="hover" 
+													   title="#{msg['Encryption.'.concat(hl.tags().transitEncryptionType.name()).concat('.title')]}"
+													   data-content="#{msg['Encryption.'.concat(hl.tags().transitEncryptionType.name()).concat('.text')]}">
+														<components:EnumBadge enumVal="#{hl.tags().transitEncryptionType}" /></a>
+												</td>
+												<td>
+													<a id="tst#{hl.ordinal()}" href="#" 
+													   style="color: black"
+													   data-toggle="popover" data-trigger="hover" data-placement="left"
+													   title="#{msg['Encryption.'.concat(hl.tags().storageEncryptionType.name()).concat('.title')]}"
+													   data-content="#{msg['Encryption.'.concat(hl.tags().storageEncryptionType.name()).concat('.text')]}">
+														<components:EnumBadge enumVal="#{hl.tags().storageEncryptionType}" /></a>
+												</td>
 											</tr>
 										</ui:repeat>
 									</tbody>
 								</table>
 							</div>
 							<div class="panel-footer">
-								Final tags may not match the tags of a specific harm level.
+								Final tags may not match the tags of a specific harm level. Hover over the terms to view an explanation.
 							</div>
 						</div>
 					</div>
-					<h:link outcome="management/index" value="Manage" />
+					
 				</div>
 			</ui:define>
 		</ui:composition>
-		<br />
-		<h:link outcome="/wiz/explanation/List" value="Show All Explanation Items"/>
-		<br />
-		<h:link outcome="/management/ExtraData/decisionTreeNodeExtraData/List" value="Show All DecisionTreeNodeExtraData Items"/>
-		<br />
-		<h:link outcome="/management/wiz/decisionTreeNodeExtraData/List" value="Show All DecisionTreeNodeExtraData Items"/>
-		<br />
-		<h:link outcome="/management/wiz/explanation/List" value="Show All Explanation Items"/>
 	</h:body>
 
 

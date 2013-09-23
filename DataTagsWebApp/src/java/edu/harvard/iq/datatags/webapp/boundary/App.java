@@ -63,6 +63,7 @@ public class App {
 	private void setQuestionnaire( DecisionNode root ) {
 		dtnById.clear();
 		questionnaireRoot = root;
+		root.setBaseAssumption( new DataTags() );
 		List<DecisionNode> queue = new LinkedList<>();
 		queue.add( questionnaireRoot );
 		Set<DecisionNode> seen = new HashSet<>();
@@ -75,6 +76,9 @@ public class App {
 				if ( subNode != null && ! seen.contains(subNode) ) {
 					seen.add( subNode );
 					queue.add( subNode );
+					if ( subNode.getBaseAssumption() == null ) {
+						subNode.setBaseAssumption( improveOn(nd.getAbsoluteAssumption()));
+					}
 				}
 			}
 		}

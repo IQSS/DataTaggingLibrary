@@ -152,3 +152,12 @@ table.harmLevelTable tbody tr td .badge {
 table.harmLevelTable tbody tr th {
   border-top: none;
 }
+
+.popover-content {
+  color: black;
+}
+
+.popover-title {
+  font-weight: bold;
+  color: #444;
+}

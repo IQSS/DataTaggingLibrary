@@ -1,6 +1,3 @@
-/*
- *  (C) Michael Bar-Sinai
- */
 package edu.harvard.iq.datatags.tags;
 
 /**

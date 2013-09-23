@@ -9,14 +9,14 @@ import java.util.logging.Logger;
 
 /**
  * Keys for values of a tag. For example, a key
- * about storage may have values like {@code Clear}, {@code Encrypted}, etc.
+ * about storage may have values like {@literal Clear}, {@literal Encrypted}, etc.
  * While the data tags class can support any keys, 
  * this is where the "official" fields are stored - a data tag instance that
  * has all of these values is considered "complete".
  * 
  * @see DataTags#isComplete() 
  * 
- * @param <T> The type of the values 
+ * @param <>> The type of the values 
  * @author michael
  */
 public class DataKey< T extends Comparable> {
@@ -58,9 +58,13 @@ public class DataKey< T extends Comparable> {
 		return kls;
 	}
 	
+	public String title() {
+		String[] c = kls.getName().split("\\.");
+		return c[c.length-1];
+	}
+	
 	@Override
 	public String toString() {
-		String[] c = kls.getName().split("\\.");
-		return "(" + c[c.length-1] + ")";
+		return "(" + title() + ")";
 	}
 }
