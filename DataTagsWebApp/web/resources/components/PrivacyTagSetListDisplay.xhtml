@@ -32,8 +32,15 @@
 			</li>
 
 			<li class="list-group-item">
-				<h:outputText value="#{cc.attrs.tagSet.authenticationType}"
-							  class="badge bdg#{cc.attrs.tagSet.authenticationType.ordinal()}"/>
+				<c:if test="#{cc.attrs.tagSet.authenticationType!=null}">
+					<span class="badge bdg#{cc.attrs.tagSet.authenticationType.ordinal()}">
+						<a href="#"
+							data-toggle="popover" data-trigger="hover" data-placement="left"
+							title="#{msg['Authentication.'.concat(cc.attrs.tagSet.authenticationType.name()).concat('.title')]}"
+							data-content="#{msg['Authentication.'.concat(cc.attrs.tagSet.authenticationType.name()).concat('.text')]}">
+							 <components:EnumBadge enumVal="#{cc.attrs.tagSet.authenticationType}" /></a>
+					</span>
+				</c:if>
 				<h:outputText rendered="#{cc.attrs.tagSet.authenticationType==null}"
 							  value="unset"
 							  class="badge unset"/>
@@ -41,8 +48,15 @@
 			</li>
 
 			<li class="list-group-item">
-				<h:outputText value="#{cc.attrs.tagSet.transitEncryptionType}"
-							  class="badge bdg#{cc.attrs.tagSet.transitEncryptionType.ordinal()}"/>
+				<c:if test="#{cc.attrs.tagSet.transitEncryptionType!=null}">
+					<span class="badge bdg#{cc.attrs.tagSet.transitEncryptionType.ordinal()}">
+						<a href="#"
+							data-toggle="popover" data-trigger="hover" data-placement="left"
+							title="#{msg['Encryption.'.concat(cc.attrs.tagSet.transitEncryptionType.name()).concat('.title')]}"
+							data-content="#{msg['Encryption.'.concat(cc.attrs.tagSet.transitEncryptionType.name()).concat('.text')]}">
+							 <components:EnumBadge enumVal="#{cc.attrs.tagSet.transitEncryptionType}" /></a>
+					</span>
+				</c:if>
 				<h:outputText rendered="#{cc.attrs.tagSet.transitEncryptionType==null}"
 							  value="unset"
 							  class="badge unset"/>
@@ -50,8 +64,15 @@
 			</li>
 
 			<li class="list-group-item">
-				<h:outputText value="#{cc.attrs.tagSet.storageEncryptionType}"
-							  class="badge bdg#{cc.attrs.tagSet.storageEncryptionType.ordinal()}"/>
+				<c:if test="#{cc.attrs.tagSet.storageEncryptionType!=null}">
+					<span class="badge bdg#{cc.attrs.tagSet.storageEncryptionType.ordinal()}">
+						<a href="#"
+							data-toggle="popover" data-trigger="hover" data-placement="left"
+							title="#{msg['Encryption.'.concat(cc.attrs.tagSet.storageEncryptionType.name()).concat('.title')]}"
+							data-content="#{msg['Encryption.'.concat(cc.attrs.tagSet.storageEncryptionType.name()).concat('.text')]}">
+							 <components:EnumBadge enumVal="#{cc.attrs.tagSet.storageEncryptionType}" /></a>
+					</span>
+				</c:if>
 				<h:outputText rendered="#{cc.attrs.tagSet.storageEncryptionType==null}"
 							  value="unset"
 							  class="badge unset"/>
