@@ -92,38 +92,43 @@ footer a:active {
 	background-color: rgb(200,200,225);
 }
 
-@harmlevel-min-txt: #657b35;
+@harmlevel-min-txt: #33bb00;
 @harmlevel-min-bkg: lighten(@harmlevel-min-txt, 35%);
 
 @harmlevel-max-bkg: #f80c17;
 @harmlevel-max-txt: darken(@harmlevel-max-bkg, 30%);
 
-//@harmLevel2: #f5944d;
-// @harmLevel3: #f9c093;
+@harmLevel1: rgb(0, 175, 240);
+@harmLevel2: #33bb00;
+@harmLevel3: #33ff00;
+@harmLevel6: rgb(150, 52, 0);
+@harmLevel4: #f59898;
+@harmLevel5: mix( @harmLevel4, @harmLevel6, 50%);
+/*@harmLevel5: #33ff00;*/
 
 .harmLevel1 {
-	color: @harmlevel-min-txt;
-	background-color: @harmlevel-min-bkg;
+	color: white;
+	background-color: @harmLevel1;
 }
 .harmLevel2 {
-	color: mix(@harmlevel-min-txt, @harmlevel-max-txt, 80%);
-	background-color: mix(@harmlevel-min-bkg, @harmlevel-max-bkg, 80%);
+	color: black;
+	background-color: @harmLevel2;
 }
 .harmLevel3 {
-	color: mix(@harmlevel-min-txt, @harmlevel-max-txt, 60%);
-	background-color: mix(@harmlevel-min-bkg, @harmlevel-max-bkg, 60%);
+	color: black;
+	background-color: @harmLevel3;
 }
 .harmLevel4 {
-	color: mix(@harmlevel-min-txt, @harmlevel-max-txt, 40%);
-	background-color: mix(@harmlevel-min-bkg, @harmlevel-max-bkg, 40%);
+	color: black;
+	background-color: @harmLevel4;
 }
 .harmLevel5 {
-	color: mix(@harmlevel-min-txt, @harmlevel-max-txt, 20%);
-	background-color: mix(@harmlevel-min-bkg, @harmlevel-max-bkg, 20%);
+	color: black;
+	background-color: @harmLevel5;
 }
 .harmLevel6 {
-	color: @harmlevel-max-txt;
-	background-color: @harmlevel-max-bkg;
+	color: yellow;
+	background-color: @harmLevel6;
 }
 
 table.harmLevelTable {

@@ -103,34 +103,36 @@ footer a:active {
   box-shadow: 0 0 8px rgba(10, 10, 0, 0.75) inset;
 }
 
+/*@harmLevel5: #33ff00;*/
+
 .harmLevel1 {
-  color: #657b35;
-  background-color: #bdd092;
+  color: white;
+  background-color: #00aff0;
 }
 
 .harmLevel2 {
-  color: #66632c;
-  background-color: #c9a97a;
+  color: black;
+  background-color: #33bb00;
 }
 
 .harmLevel3 {
-  color: #664b23;
-  background-color: #d48261;
+  color: black;
+  background-color: #33ff00;
 }
 
 .harmLevel4 {
-  color: #67331a;
-  background-color: #e05a48;
+  color: black;
+  background-color: #f59898;
 }
 
 .harmLevel5 {
-  color: #671b11;
-  background-color: #ec3330;
+  color: black;
+  background-color: #c6664c;
 }
 
 .harmLevel6 {
-  color: #680308;
-  background-color: #f80c17;
+  color: yellow;
+  background-color: #963400;
 }
 
 table.harmLevelTable thead th {
