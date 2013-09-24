@@ -14,6 +14,7 @@
 			<ui:define name="title">Privacy Tags Question ##{decisionNodeView.nodeId}</ui:define>
 					   
 			<ui:define name="content">
+				<c:if test="#{! decisionNodeView.areTagsComplete()}">
 				<div class="row">
 					<div class="col-md-7">
 						<div class="panel panel-default qPanel">
@@ -61,15 +62,49 @@
 						<c:if test="#{decisionNodeView.hasNode()}">
 							<div id="currentTags">
 								<h3>
-									<span class="glyphicon glyphicon-tags pull-right"></span> 
-									Privacy Tags
+									<span class="glyphicon glyphicon-tags"></span>&nbsp; Data Tags
 								</h3>
 								<components:PrivacyTagSetListDisplay tagSet="#{decisionNodeView.tags()}" />
 							</div>
 						</c:if>
 					</div>
 				</div>
-
+			</c:if>
+				<c:if test="#{decisionNodeView.areTagsComplete()}">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="alert alert-success">
+							<h3><span class="glyphicon glyphicon-check"></span>
+								Tagging Complete!</h3>
+							</div>
+							
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 ">
+							<div class="panel panel-warning qPanel">
+								<div class="panel-heading">
+									<h3 class="panel-title">Direct Data Access</h3>
+								</div>
+								<div class="panel-body">
+									<components:HarmLevelView hl="#{decisionNodeView.harmLevelForTags()}"/>
+									<components:PrivacyTagSetListDisplay tagSet="#{decisionNodeView.tags()}" />
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="panel panel-info qPanel">
+								<div class="panel-heading">
+									<h3 class="panel-title">Access through Private Zelig</h3>
+								</div>
+								<div class="panel-body">
+									<components:HarmLevelView hl="#{decisionNodeView.harmLevelForDiffTags()}"/>
+									<components:PrivacyTagSetListDisplay tagSet="#{decisionNodeView.diffPrivacyTags()}" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</c:if>
 			</ui:define>
 		</ui:composition>
 

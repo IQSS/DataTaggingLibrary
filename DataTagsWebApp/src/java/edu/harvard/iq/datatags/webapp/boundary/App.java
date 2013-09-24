@@ -51,6 +51,10 @@ public class App {
 		}
 	}
 	
+	public DecisionNode getQuestionnaireRoot() {
+		return questionnaireRoot;
+	}
+	
 	public DecisionNode getDecisionNode( String id ) {
 		return dtnById.get(id);
 	}

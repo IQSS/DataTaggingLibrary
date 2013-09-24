@@ -34,4 +34,18 @@ public enum HarmLevel {
 	public double harvardSecurityLevel() {
 		return harvardSecurityLevel;
 	}
+	
+	/**
+	 * Finds the least strict level that still complies with the tags.
+	 * @param tags
+	 * @return lowest level that complies with the tags.
+	 */
+	public static HarmLevel levelFor( DataTags tags ) {
+		for ( HarmLevel l : values() ) {
+			if ( l.tags().stricterOrEqualTo(tags) ) {
+				return l;
+			}
+		}
+		return null;
+	}
 }

@@ -39,7 +39,7 @@ public class DataTags  {
 	/**
 	 * Sets a tag key to a value
 	 * @param k the key
-	 * @param <>> the type of data the key can refer to
+	 * @param <T> the type of data the key can refer to
 	 * @param val the data
 	 * @return {@literal this}, for call chaining.
 	 */

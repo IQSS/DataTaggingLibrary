@@ -3,7 +3,12 @@ package edu.harvard.iq.datatags.webapp.view;
 import edu.harvard.iq.datatags.tags.DataTags;
 import edu.harvard.iq.datatags.questionnaire.Answer;
 import edu.harvard.iq.datatags.questionnaire.DecisionNode;
+import edu.harvard.iq.datatags.tags.AuthenticationType;
+import edu.harvard.iq.datatags.tags.DuaAgreementMethod;
+import edu.harvard.iq.datatags.tags.EncryptionType;
+import edu.harvard.iq.datatags.tags.HarmLevel;
 import edu.harvard.iq.datatags.webapp.boundary.App;
+import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.RequestScoped;
@@ -15,6 +20,8 @@ import javax.faces.bean.RequestScoped;
 @ManagedBean
 @RequestScoped
 public class DecisionNodeView {
+	
+	private static final Logger logger = Logger.getLogger(DecisionNodeView.class.getName());
 	
 	@ManagedProperty(value="#{param.nodeId}")
 	private String nodeId;
@@ -82,5 +89,50 @@ public class DecisionNodeView {
 	
 	public DataTags tags() {
 		return hasNode() ? getNode().getAbsoluteAssumption() : null;
+	}
+	
+	public boolean areTagsComplete() {
+		return (tags() != null) && tags().isComplete();
+	}
+	
+	public DataTags diffPrivacyTags() {
+		DataTags dt = tags();
+		if ( dt == null ) return null;
+		
+		DataTags res = dt.makeCopy();
+		
+		if (res.getTransitEncryptionType() != EncryptionType.Clear ) {
+			res.setTransitEncryptionType(EncryptionType.Encrypted);
+		}
+		// Storage is not part of this access-only layer
+		res.setStorageEncryptionType(null);
+		
+		if ( res.getDuaAgreementMethod() != null ) {
+			if ( res.getDuaAgreementMethod().ordinal() > 0 ) { 
+				res.setDuaAgreementMethod(DuaAgreementMethod.values()[res.getDuaAgreementMethod().ordinal()-1]);
+			}
+			return res;
+		}
+		
+		if ( res.getAuthenticationType() != null ) {
+			if ( res.getAuthenticationType().ordinal() > 0 ) { 
+				res.setAuthenticationType(AuthenticationType.values()[res.getAuthenticationType().ordinal()-1]);
+			}
+			return res;
+		}
+		
+		return res;
+	}
+	
+	public HarmLevel harmLevelForTags() {
+		return HarmLevel.levelFor( tags() );
+	}
+	
+	public HarmLevel harmLevelForDiffTags() {
+		DataTags df = diffPrivacyTags();
+		df.setTransitEncryptionType(EncryptionType.Clear);
+		df.setStorageEncryptionType(EncryptionType.Clear);
+				
+		return HarmLevel.levelFor( df );
 	}
 }

@@ -29,7 +29,7 @@ dd {
 }
 
 .qPanel {
-	box-shadow: 0 2px 4px rgba(0,0,0,0.75);
+	box-shadow: 0 2px 4px rgba(0,0,0,0.50);
 }
 .backToParentBtn {
 	margin: 1em;
@@ -92,19 +92,22 @@ footer a:active {
 	background-color: rgb(200,200,225);
 }
 
+.alert h3 {
+	margin: 0.5em 0;
+}
+
 @harmlevel-min-txt: #33bb00;
 @harmlevel-min-bkg: lighten(@harmlevel-min-txt, 35%);
 
 @harmlevel-max-bkg: #f80c17;
 @harmlevel-max-txt: darken(@harmlevel-max-bkg, 30%);
 
-@harmLevel1: rgb(0, 175, 240);
-@harmLevel2: #33bb00;
-@harmLevel3: #33ff00;
-@harmLevel6: rgb(150, 52, 0);
-@harmLevel4: #f59898;
-@harmLevel5: mix( @harmLevel4, @harmLevel6, 50%);
-/*@harmLevel5: #33ff00;*/
+@harmLevel1: #3399FF;
+@harmLevel2: #00cc00;
+@harmLevel3: #FFFF00;
+@harmLevel4: #FF9900;
+@harmLevel5: #FF0000;
+@harmLevel6: #990000;
 
 .harmLevel1 {
 	color: white;
@@ -129,6 +132,14 @@ footer a:active {
 .harmLevel6 {
 	color: yellow;
 	background-color: @harmLevel6;
+}
+
+.harmLevelTag {
+	border-radius: 5px;
+	padding: 5px;
+	margin: 0.5em 0;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.60) inset;
+	text-shadow:  0 2px 4px rgba(0,0,0,0.40);
 }
 
 table.harmLevelTable {

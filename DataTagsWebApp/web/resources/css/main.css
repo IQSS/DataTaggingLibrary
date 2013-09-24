@@ -32,7 +32,7 @@ dd {
 }
 
 .qPanel {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.75);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .backToParentBtn {
@@ -103,36 +103,46 @@ footer a:active {
   box-shadow: 0 0 8px rgba(10, 10, 0, 0.75) inset;
 }
 
-/*@harmLevel5: #33ff00;*/
+.alert h3 {
+  margin: 0.5em 0;
+}
 
 .harmLevel1 {
   color: white;
-  background-color: #00aff0;
+  background-color: #3399ff;
 }
 
 .harmLevel2 {
   color: black;
-  background-color: #33bb00;
+  background-color: #00cc00;
 }
 
 .harmLevel3 {
   color: black;
-  background-color: #33ff00;
+  background-color: #ffff00;
 }
 
 .harmLevel4 {
   color: black;
-  background-color: #f59898;
+  background-color: #ff9900;
 }
 
 .harmLevel5 {
   color: black;
-  background-color: #c6664c;
+  background-color: #ff0000;
 }
 
 .harmLevel6 {
   color: yellow;
-  background-color: #963400;
+  background-color: #990000;
+}
+
+.harmLevelTag {
+  padding: 5px;
+  margin: 0.5em 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6) inset;
 }
 
 table.harmLevelTable thead th {
