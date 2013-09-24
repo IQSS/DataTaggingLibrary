@@ -56,7 +56,7 @@ public class QuestionnaireJsonParser {
 	
 	public QuestionnaireJsonParser() {
 		harmLevelNames.put( "none", HarmLevel.NoRisk );
-		harmLevelNames.put( "negligible", HarmLevel.Forsaken );
+		harmLevelNames.put( "negligible", HarmLevel.Minimal );
 		harmLevelNames.put( "criminal", HarmLevel.CivilPenalties );
 		
 		authTypeNames.put( "none", AuthenticationType.None );
@@ -129,7 +129,7 @@ public class QuestionnaireJsonParser {
 	}
 	
 	/**
-	 * Assigns all the open answers in {@code tree} to {@code node}.
+	 * Assigns all the open answers in {@literal tree} to {@literal node}.
 	 * @param tree The root of the tree that might not be assigned yet
 	 * @param node the destination of the unanswered questions
 	 */
@@ -150,7 +150,7 @@ public class QuestionnaireJsonParser {
 	
 	
 	/**
-	 * Takes the string value of the {@code name} field, and parses
+	 * Takes the string value of the {@literal name} field, and parses
 	 * it to a result. There are 2 possible formats, one with answer
 	 * type (YES/NO) and one without.
 	 * @param nameField

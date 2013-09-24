@@ -81,7 +81,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-md-6 ">
+						<div class="col-md-6 col-md-offset-3">
 							<div class="panel panel-warning qPanel">
 								<div class="panel-heading">
 									<h3 class="panel-title">Direct Data Access</h3>
@@ -89,17 +89,6 @@
 								<div class="panel-body">
 									<components:HarmLevelView hl="#{decisionNodeView.harmLevelForTags()}"/>
 									<components:PrivacyTagSetListDisplay tagSet="#{decisionNodeView.tags()}" />
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="panel panel-info qPanel">
-								<div class="panel-heading">
-									<h3 class="panel-title">Access through Private Zelig</h3>
-								</div>
-								<div class="panel-body">
-									<components:HarmLevelView hl="#{decisionNodeView.harmLevelForDiffTags()}"/>
-									<components:PrivacyTagSetListDisplay tagSet="#{decisionNodeView.diffPrivacyTags()}" />
 								</div>
 							</div>
 						</div>
