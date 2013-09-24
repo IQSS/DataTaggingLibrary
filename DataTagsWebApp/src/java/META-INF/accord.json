@@ -53,7 +53,7 @@
               {"name": "No. 1.1. Tags= [GREEN, store=clear, transfer=clear, auth=none, basis=not applicable, identity=not person-specific, harm=negligible]. END.", "tags": "[GREEN, store=clear, transfer=clear, auth=none, basis=not applicable, identity=not person-specific, harm=none]"}  ]},
      {"name": "2. Explicit consent. Did each person whose information appears in the data give explicit permission to share the data?", "tags": "[___, ___,___, ___,___, ___,___]" , "children": [
               {"name": "Yes. 2.1. Did the consent have any restrictions on sharing?", "tags": "[___, ___,___, ___,, basis=Consent, ___,___]", "children": [
-                   {"name": "No. 2.1.1. Tags= [GREEN, store=clear, transfer=clear, auth=none, basis=Consent, effort=___, harm=___]. END.", "tags": "[GREEN, store=clear, transfer=clear, auth=none, basis=Consent, effort=___, harm=___]"}, 
+                   {"name": "No. 2.1.1. Tags= [GREEN, store=clear, transfer=clear, auth=none, basis=Consent, effort=___, harm=___]. END.", "tags": "[GREEN, store=clear, transfer=clear, auth=none, basis=Consent, effort=___, harm=___, dua=none]"}, 
                    {"name": "Yes. 2.1.2. Add DUA terms and set tags from DUA specifics. Tags= [___, ___,___, ___,, basis=Consent, ___,___]. END.", "tags": "[___, ___,___, ___,, basis=Consent, ___,___]"} ]} ]},
      {"name": "3. Medical Records. Does the data contain personal health information?", "tags": "[___, ___,___, ___,___, ___,___]" , "children": [
           {"name": "Yes. 3.1. HIPAA. Was the data received from a HIPAA covered entity or a business associate of one?", "tags": "[___, ___,___, ___,___, ___,___]" , "children": [
@@ -79,10 +79,10 @@
                    {"name": "No. 3.2.1.1. Tags= [GREEN, store=clear, transfer=clear, auth=none, basis=Agreement, effort=___, harm=___]. END.", "tags": "[GREEN, store=clear, transfer=clear, auth=none, basis=Consent, effort=___, harm=___]"}, 
                    {"name": "Yes. 3.2.1.2. Add DUA terms and set tags from DUA specifics. Tags= [___, ___,___, ___,, basis=Agreement, ___,___]. END.", "tags": "[___, ___,___, ___,, basis=Agreement, ___,___]"} ]} ]} ]},
      {"name": "END. This version processes Consent and Medical data only.", "tags": "[___, ___,___, ___,___, ___,___]" },                        
-     {"name": "4. Arrest and Conviction Records.", "tags": "[store=encrypt, ___,___, ___,___, ___,___]" },                        
-     {"name": "5. Bank and Financial Records.", "tags": "[___, transfer=encrypt,___, ___,___, ___,___]" },                        
-     {"name": "6. Cable Television.", "tags": "[___, ___,___, auth=Approval,___, ___,___]" },                        
-     {"name": "7. Computer Crime.", "tags": "[___, ___,___, ___,___, ___,harm=criminal]" },                        
+     {"name": "4. (DEMO) Arrest and Conviction Records. This is a demo question.", "tags": "[store=encrypt, ___,___, ___,___, ___,___]" },                        
+     {"name": "5. (DEMO) Bank and Financial Records. This is a demo question.", "tags": "[___, transfer=encrypt,___, ___,___, ___,___]" },                        
+     {"name": "6. (DEMO) Cable Television. This is a demo question.", "tags": "[___, ___,___, auth=Approval,___, ___,___]" },                        
+     {"name": "7. (DEMO) Computer Crime. This is a demo question.", "tags": "[___, ___,___, ___,___, ___,harm=criminal]" },                        
      {"name": "8. Credit reporting and Investigations (including ‘Credit Repair,’ ‘Credit Clinics,’ Check-Cashing and Credit Cards).", "tags": "[___, ___,___, ___,___, ___,___]" },                        
      {"name": "9. Criminal Justice Information Systems.", "tags": "[___, ___,___, ___,___, ___,___]" },                        
      {"name": "10. Electronic Surveillance (including Wiretapping, Telephone Monitoring, and Video Cameras).", "tags": "[___, ___,___, ___,___, ___,___]" },                        

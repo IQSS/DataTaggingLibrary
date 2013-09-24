@@ -9,6 +9,7 @@ import edu.harvard.iq.datatags.questionnaire.Answer;
 import edu.harvard.iq.datatags.questionnaire.DecisionNode;
 import edu.harvard.iq.datatags.tags.AuthenticationType;
 import edu.harvard.iq.datatags.tags.DataTags;
+import edu.harvard.iq.datatags.tags.DuaAgreementMethod;
 import edu.harvard.iq.datatags.tags.EncryptionType;
 import edu.harvard.iq.datatags.tags.HarmLevel;
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class QuestionnaireJsonParser {
 	private final Map<String, HarmLevel> harmLevelNames = new HashMap<>();
 	private final Map<String, EncryptionType> encryptionNames = new HashMap<>();
 	private final Map<String, AuthenticationType> authTypeNames = new HashMap<>();
+	private final Map<String, DuaAgreementMethod> duaAgreementMenthodNames = new HashMap<>();
 	
 	
 	static class NameParseResult {
@@ -62,7 +64,11 @@ public class QuestionnaireJsonParser {
 		
 		encryptionNames.put( "clear", EncryptionType.Clear );
 		encryptionNames.put( "encrypt", EncryptionType.Encrypted );
-				
+		
+		duaAgreementMenthodNames.put("none", DuaAgreementMethod.None);
+		duaAgreementMenthodNames.put("online", DuaAgreementMethod.ClickThrough);
+		duaAgreementMenthodNames.put("sign", DuaAgreementMethod.Sign);
+		
 	}
 	
 	public void parse( URL source ) throws IOException {
@@ -218,9 +224,12 @@ public class QuestionnaireJsonParser {
 				case "auth" :
 					res.setAuthenticationType( authTypeNames.get(value) );
 					break;
+					
+				case "dua" :
+					res.setDuaAgreementMethod(duaAgreementMenthodNames.get(value) );
+					break;
 			}
 		}
-		
 		return res;
 	}
 	
