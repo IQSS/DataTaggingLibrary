@@ -7,12 +7,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.harvard.iq.datatags.questionnaire.Answer;
 import edu.harvard.iq.datatags.questionnaire.DecisionNode;
+import edu.harvard.iq.datatags.tags.AuthenticationType;
+import edu.harvard.iq.datatags.tags.DataTags;
+import edu.harvard.iq.datatags.tags.EncryptionType;
+import edu.harvard.iq.datatags.tags.HarmLevel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -29,7 +35,11 @@ public class QuestionnaireJsonParser {
 	private List<String> topLevelNames;
 	private DecisionNode root;
 	private String name;
-
+	private final Map<String, HarmLevel> harmLevelNames = new HashMap<>();
+	private final Map<String, EncryptionType> encryptionNames = new HashMap<>();
+	private final Map<String, AuthenticationType> authTypeNames = new HashMap<>();
+	
+	
 	static class NameParseResult {
 		Answer ans;
 		String id;
@@ -40,6 +50,19 @@ public class QuestionnaireJsonParser {
 	static class NodeParseResult {
 		Answer ans;
 		DecisionNode node;
+	}
+	
+	public QuestionnaireJsonParser() {
+		harmLevelNames.put( "none", HarmLevel.NoRisk );
+		harmLevelNames.put( "negligible", HarmLevel.Forsaken );
+		harmLevelNames.put( "criminal", HarmLevel.CivilPenalties );
+		
+		authTypeNames.put( "none", AuthenticationType.None );
+		authTypeNames.put( "approval", AuthenticationType.Password );
+		
+		encryptionNames.put( "clear", EncryptionType.Clear );
+		encryptionNames.put( "encrypt", EncryptionType.Encrypted );
+				
 	}
 	
 	public void parse( URL source ) throws IOException {
@@ -56,7 +79,6 @@ public class QuestionnaireJsonParser {
 	private void readRoot(JsonNode parsedRoot) {
 		name = parsedRoot.get("name").asText();
 		topLevelNames = new LinkedList<>();
-		// TODO add base tags here
 		DecisionNode lastAdded = null;
 		for ( JsonNode jsNode : Iterator2Iterable.cnv(parsedRoot.get("children").iterator())) {
 			String nodeName = jsNode.get("name").textValue();
@@ -80,16 +102,18 @@ public class QuestionnaireJsonParser {
 		 dNode.setTitle( nmPr.title );
 		 dNode.setQuestionText( nmPr.info );
 		 
-		 dNode.setBaseAssumption( null ); // TODO parse tags field
+		 JsonNode tags = jsNode.get("tags");
+		 if ( tags != null ) {
+			String tagsStr = jsNode.get("tags").textValue();
+			dNode.setBaseAssumption( parseTagsString(tagsStr) );
+		 }
 		 
 		 if ( jsNode.has("children") ) {
 			for ( JsonNode subJsNode : Iterator2Iterable.cnv(jsNode.get("children").iterator()) ) {
 				NodeParseResult ndPr = parseBDD( subJsNode );
 				if ( ndPr.ans != null ) {
 					dNode.setNodeFor(ndPr.ans, ndPr.node);
-				} else {
-					
-				}
+				} 
 			}
 		 }
 		 return new NodeParseResult(){{
@@ -104,6 +128,7 @@ public class QuestionnaireJsonParser {
 	 * @param node the destination of the unanswered questions
 	 */
 	private void assignOpenEndsTo(DecisionNode tree, DecisionNode node) {
+		if ( tree.getAbsoluteAssumption().isComplete() ) return;
 		for ( Answer a : Answer.values() ) {
 			DecisionNode answerNode = tree.getNodeFor(a);
 			
@@ -144,6 +169,59 @@ public class QuestionnaireJsonParser {
 									: null;
 		
 		return npr;
+	}
+	
+	private DataTags parseTagsString( String tags ) {
+		// initial  cleanning
+		tags = tags.trim();
+		if ( tags.startsWith("[") ) {
+			tags = tags.substring(1);
+		}
+		if ( tags.endsWith("]") ) {
+			tags = tags.substring(0, tags.length()-1);
+		}
+		tags = tags.trim();
+		String[] fields = tags.split(",");
+		
+		Map<String,String> values = new HashMap<>();
+		for ( String f : fields ) {
+			f = f.trim();
+			if ( f.isEmpty() || f.equals("___") ) continue;
+			String[] comps = f.split("=");
+			if ( comps.length == 1 ) {
+				values.put("__COLOR__", comps[0] );
+			} else {
+				comps[1] = comps[1].trim().toLowerCase();
+				if ( (!comps[1].isEmpty()) && (!comps[1].equals("___")) ) {
+					values.put( comps[0].trim().toLowerCase(), comps[1] );
+				}
+			}
+		}
+		
+		DataTags res = new DataTags();
+		for ( Map.Entry<String, String> e : values.entrySet() ) {
+			String key = e.getKey();
+			String value = e.getValue();
+
+			switch ( key ) {
+				case "harm":
+					return harmLevelNames.get(values.get("harm")).tags();
+					
+				case "store" : 
+					res.setStorageEncryptionType( encryptionNames.get(value) );
+					break;
+					
+				case "transfer" :
+					res.setTransitEncryptionType( encryptionNames.get(value) );
+					break;
+					
+				case "auth" :
+					res.setAuthenticationType( authTypeNames.get(value) );
+					break;
+			}
+		}
+		
+		return res;
 	}
 	
 	private void dumpNode( JsonNode nd, int depth ) {

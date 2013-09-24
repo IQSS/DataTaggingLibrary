@@ -35,16 +35,17 @@ public class QuestionnaireJsonParserTest {
 		
 	}
 
-	private static void gvNode(DecisionNode root, Set<String> seen) {
-		System.out.println("\"" + root.getId() + "\"[label=\"" + root.getId() + "\\n" + root.getTitle()  +"\"]");
+	private static void gvNode(DecisionNode dNode, Set<String> seen) {
+		System.out.println("\"" + dNode.getId() + "\"[label=\"" + dNode.getId() + "\\n" + dNode.getTitle() + "\\n" + dNode.getBaseAssumption() +"\"]");
+		
 		for ( Answer a : Answer.values() ) {
-			DecisionNode sn = root.getNodeFor(a);
+			DecisionNode sn = dNode.getNodeFor(a);
 			if ( sn != null ) {
 				if ( ! seen.contains(sn.getId()) ) {
 					seen.add( sn.getId() );
 					gvNode( sn , seen );
 				}
-				System.out.println("\"" + root.getId() + "\" -> \"" + sn.getId() + "\" [label=\"" + a + "\"]");
+				System.out.println("\"" + dNode.getId() + "\" -> \"" + sn.getId() + "\" [label=\"" + a + "\"]");
 			}
 		}
 	}

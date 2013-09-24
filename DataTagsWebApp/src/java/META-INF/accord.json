@@ -1,5 +1,5 @@
-{"name": "PrivacyWise v0.1 ", "tags": "[___, ___,___, ___,___, ___,___]",  "children": [
-     {"name": "PrivacyWise provides a unified walk through U.S. privacy jurisprudence to recommend practices for sharing a research dataset.", "tags": "[___, ___,___, ___,___, ___,___]",   "children": [
+{"name": "DataTags v0.1 ", "tags": "[___, ___,___, ___,___, ___,___]",  "children": [
+     {"name": "DataTags provides a unified walk through U.S. privacy jurisprudence to recommend practices for sharing data.", "tags": "[___, ___,___, ___,___, ___,___]",   "children": [
          {"name": ". A user walks through a decision-tree, answering questions about the data that is to be shared.", "tags": "[___, ___,___, ___,___, ___,___]" },
          {"name": ". The end result is a vector of tags that describe recommended security and handling requirements when sharing the data.", "tags": "[___, ___,___, ___,___, ___,___]"},
          {"name": ". The focus is on sharing research data widely, but much of the information and process should be generally useful for non-research data.", "tags": "[___, ___,___, ___,___, ___,___]"} ,
@@ -53,26 +53,36 @@
               {"name": "No. 1.1. Tags= [GREEN, store=clear, transfer=clear, auth=none, basis=not applicable, identity=not person-specific, harm=negligible]. END.", "tags": "[GREEN, store=clear, transfer=clear, auth=none, basis=not applicable, identity=not person-specific, harm=none]"}  ]},
      {"name": "2. Explicit consent. Did each person whose information appears in the data give explicit permission to share the data?", "tags": "[___, ___,___, ___,___, ___,___]" , "children": [
               {"name": "Yes. 2.1. Did the consent have any restrictions on sharing?", "tags": "[___, ___,___, ___,, basis=Consent, ___,___]", "children": [
-                   {"name": "No. Tags= [GREEN, store=clear, transfer=clear, auth=none, basis=Consent, effort=___, harm=___]. END.", "tags": "[GREEN, store=clear, transfer=clear, auth=none, basis=Consent, effort=___, harm=___]"} ]} ]},
+                   {"name": "No. 2.1.1. Tags= [GREEN, store=clear, transfer=clear, auth=none, basis=Consent, effort=___, harm=___]. END.", "tags": "[GREEN, store=clear, transfer=clear, auth=none, basis=Consent, effort=___, harm=___]"}, 
+                   {"name": "Yes. 2.1.2. Add DUA terms and set tags from DUA specifics. Tags= [___, ___,___, ___,, basis=Consent, ___,___]. END.", "tags": "[___, ___,___, ___,, basis=Consent, ___,___]"} ]} ]},
      {"name": "3. Medical Records. Does the data contain personal health information?", "tags": "[___, ___,___, ___,___, ___,___]" , "children": [
           {"name": "Yes. 3.1. HIPAA. Was the data received from a HIPAA covered entity or a business associate of one?", "tags": "[___, ___,___, ___,___, ___,___]" , "children": [
               {"name": "Yes. 3.1.1. Safe Harbor. Does the data visually adhere to the HIPAA Safe Harbor Provision (e.g., dates in years and first 2 digits of ZIPs)?", "tags": "[___, ___,___, ___,HIPAA, ___,___]" , "children": [
                    {"name": "Yes. 3.1.1.1. Do you know of a way to put names to the patients in the data?", "tags": "[___, ___,___, ___,HIPAA, ___,___]" , "children": [
                         {"name": "No. 3.1.1.1.1. Tags= [GREEN, store=clear, transfer=clear, auth=none, basis=HIPAA Safe Harbor, effort=de-identified, harm=negligible]. END.", 
                         "tags": "[GREEN, store=clear, transfer=clear, auth=none, basis=HIPAA Safe Harbor, effort=de-identified, harm=negligible]" }   ]}  ]},
-              {"name": "3.1.2. Statistician Provision. Has an expert certified the data as being of minimal risk?", "tags": "[___, ___,___, ___,HIPAA, ___,___]", "children": [
+              {"name": "Yes. 3.1.2. Statistician Provision. Has an expert certified the data as being of minimal risk?", "tags": "[___, ___,___, ___,HIPAA, ___,___]", "children": [
                    {"name": "Yes. 3.1.2.1. Tags= [GREEN, store=clear, transfer=clear, auth=none, basis=HIPAA Statistician, effort=de-identified, harm=negligible]. END.", 
                    "tags": "[GREEN, store=clear, transfer=clear, auth=none, basis=HIPAA Statistician, effort=de-identified, harm=negligible]" }    ]},
-              {"name": "3.1.3. Limited Data Set. Did you acquire the data under a HIPAA limited data use agreement?", "tags": "[___, ___,___, ___,HIPAA, ___,___]" , "children": [
-                   {"name": "Yes. 3.1.3.1. Did the limited data use agreement have any additional restrictions on sharing?", "tags": "[ORANGE, store=encrypt, transfer=encrypt, auth=none, basis=HIPAA Limited Dataset, effort=identifiable, harm=___]" , "children": [
-                        {"name": "No. 3.1.1.1.1. Tags= [ORANGE, store=encrypt, transfer=encrypt, auth=HIPAA LDUA, basis=HIPAA Limited Dataset, effort=identifiable, harm=___]. END.", 
-                        "tags": "[ORANGE, store=encrypt, transfer=encrypt, auth=none, basis=HIPAA Limited Dataset, effort=identifiable, harm=___]"}  ]} ]},
-              {"name": "3.1.4. Covered. Are you an entity that is directly or indirectly covered by HIPAA?", "tags": "[___, ___,___, ___,HIPAA, ___,___]" } ]},
-          {"name": "No. 3.2. Not HIPAA. Is this statewide discharge data?", "tags": "[___, ___,___, ___,___, ___,___]" }   ]},
-     {"name": "4. Arrest and Conviction Records.", "tags": "[___, ___,___, ___,___, ___,___]" },                        
-     {"name": "5. Bank and Financial Records.", "tags": "[___, ___,___, ___,___, ___,___]" },                        
-     {"name": "6. Cable Television.", "tags": "[___, ___,___, ___,___, ___,___]" },                        
-     {"name": "7. Computer Crime.", "tags": "[___, ___,___, ___,___, ___,___]" },                        
+              {"name": "Yes. 3.1.3. Limited Data Set. Did you acquire the data under a HIPAA limited data use agreement?", "tags": "[___, ___,___, ___,HIPAA, ___,___]" , "children": [
+                   {"name": "Yes. 3.1.3.1. Did the limited data use agreement have any additional restrictions on sharing?", "tags": "[ORANGE, store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA Limited Dataset, effort=identifiable, harm=criminal]" , "children": [
+                        {"name": "No. 3.1.3.1.1. Tags= [ORANGE, store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA Limited Dataset, effort=identifiable, harm=criminal]. END.", "tags": "[ORANGE, store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA Limited Dataset, effort=identifiable, harm=criminal]"},
+                        {"name": "Yes. 3.1.3.1.2. Add DUA terms and further set tags from DUA specifics. Tags= [ORANGE, store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA Limited Dataset, effort=identifiable, harm=criminal]. END.", "tags": "[ORANGE, store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA Limited Dataset, effort=identifiable, harm=criminal]"}  ]} ]},
+              {"name": "Yes. 3.1.4. Business Associate. Did you acquire the data under a HIPAA Business Associate agreement?", "tags": "[___, ___,___, ___,HIPAA, ___,___]" , "children": [
+                   {"name": "Yes. 3.1.4.1. Did the business associate agreement have any additional restrictions on sharing?", "tags": "[RED, store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA Business Associate, effort=identifiable, harm=criminal]" , "children": [
+                        {"name": "No. 3.1.4.1.1. Tags= [RED, store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA Business Associate, effort=identifiable, harm=criminal]. END.", "tags": "[RED, store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA BAA, effort=identifiable, harm=criminal]"},
+                        {"name": "Yes. 3.1.4.1.1. Add DUA terms and further set tags from DUA specifics. Tags= [RED, store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA Business Associate, effort=identifiable, harm=criminal]. END.", "tags": "[RED, store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA BAA, effort=identifiable, harm=criminal]"} ]} ]},
+              {"name": "Yes. 3.1.5. Covered. Are you an entity that is directly or indirectly covered by HIPAA?", "tags": "[___, ___,___, ___,HIPAA, ___,___]" , "children": [
+                        {"name": "Yes. 3.1.5.1. Tags= [RED, store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA Business Associate, effort=identifiable, harm=criminal]. END.", "tags": "[RED, store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA BAA, effort=identifiable, harm=criminal]"} ]} ]},
+          {"name": "No. 3.2. Not HIPAA. Examples include statewide discharge data, some prescription data, online and apps data.", "tags": "[___, ___,___, ___,basis=Agreement, ___,___]" , "children": [
+              {"name": "3.2.1. Did the data have any restrictions on sharing (e.g., stated in an agreement or policy statement)?", "tags": "[___, ___,___, ___,, basis=Agreement, ___,___]", "children": [
+                   {"name": "No. 3.2.1.1. Tags= [GREEN, store=clear, transfer=clear, auth=none, basis=Agreement, effort=___, harm=___]. END.", "tags": "[GREEN, store=clear, transfer=clear, auth=none, basis=Consent, effort=___, harm=___]"}, 
+                   {"name": "Yes. 3.2.1.2. Add DUA terms and set tags from DUA specifics. Tags= [___, ___,___, ___,, basis=Agreement, ___,___]. END.", "tags": "[___, ___,___, ___,, basis=Agreement, ___,___]"} ]} ]} ]},
+     {"name": "END. This version processes Consent and Medical data only.", "tags": "[___, ___,___, ___,___, ___,___]" },                        
+     {"name": "4. Arrest and Conviction Records.", "tags": "[store=encrypt, ___,___, ___,___, ___,___]" },                        
+     {"name": "5. Bank and Financial Records.", "tags": "[___, transfer=encrypt,___, ___,___, ___,___]" },                        
+     {"name": "6. Cable Television.", "tags": "[___, ___,___, auth=Approval,___, ___,___]" },                        
+     {"name": "7. Computer Crime.", "tags": "[___, ___,___, ___,___, ___,harm=criminal]" },                        
      {"name": "8. Credit reporting and Investigations (including ‘Credit Repair,’ ‘Credit Clinics,’ Check-Cashing and Credit Cards).", "tags": "[___, ___,___, ___,___, ___,___]" },                        
      {"name": "9. Criminal Justice Information Systems.", "tags": "[___, ___,___, ___,___, ___,___]" },                        
      {"name": "10. Electronic Surveillance (including Wiretapping, Telephone Monitoring, and Video Cameras).", "tags": "[___, ___,___, ___,___, ___,___]" },                        

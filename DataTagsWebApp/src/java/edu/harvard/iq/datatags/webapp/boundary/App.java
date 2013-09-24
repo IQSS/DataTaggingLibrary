@@ -79,9 +79,9 @@ public class App {
 				if ( subNode != null && ! seen.contains(subNode) ) {
 					seen.add( subNode );
 					queue.add( subNode );
-					if ( subNode.getBaseAssumption() == null ) {
-						subNode.setBaseAssumption( improveOn(nd.getAbsoluteAssumption()));
-					}
+//					if ( subNode.getBaseAssumption() == null ) {
+//						subNode.setBaseAssumption( improveOn(nd.getAbsoluteAssumption()));
+//					}
 				}
 			}
 		}
