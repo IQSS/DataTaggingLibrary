@@ -1,0 +1,80 @@
+@startuml
+
+package runtime {
+	class RuntimeEngine {
+		+ currentTags : DataTags
+		+ nodeStack: Stack<DecisionNode>
+	}
+
+	class DecisionNode {
+		+ title:String
+		+ assumption: DataTags
+		+ yes: DecisionNode
+		+ no:  DecisionNode
+	}
+}
+
+package model {
+	class DataTags {
+		+ tags : Map<TagType<TagValue>,TagValue>>
+		compose( t:DataTags ): DataTags
+	}
+
+	package types {
+		class TagType {
+			+ name:String
+			+ info:String
+		}
+
+		class ToDoType {
+			
+		}
+
+		class SingleValueType {
+			+ values: TagValue[]
+		}
+
+		class AggregateTagType {
+			
+		}
+	}
+	package values {
+		class TagValue {
+			+ name: String
+			+ type: TagType
+			+ info: String
+		}
+
+		class ToDoValue {
+			
+		}
+
+		class AggregateTagValue {
+			values: TagValue[]
+		}
+	}
+}
+
+DecisionNode --> DecisionNode: YES
+DecisionNode --> DecisionNode: NO
+
+RuntimeEngine --> DataTags : currentTags
+RuntimeEngine --> "1..*" DecisionNode : nodeStack
+
+TagType <|-- ToDoType
+TagType <|-- SingleValueType
+TagType <|-- AggregateTagType
+
+TagValue <|-- ToDoValue
+TagValue <|-- AggregateTagValue
+
+AggregateTagValue ---> "0..*" TagValue
+ToDoValue --> ToDoType
+
+DecisionNode --> DataTags : assumption
+
+TagValue --> TagType : type
+
+DataTags --> "0..*" TagValue 
+note on link: Mapped by TagType
+@enduml
