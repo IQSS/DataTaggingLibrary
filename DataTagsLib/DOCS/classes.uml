@@ -1,38 +1,129 @@
 @startuml
 
-class PrivacyTagSet {
-	+ storage
-	+ transit
-	+ authentication
-	+ approval
-	+ dataUseAgreement
-	+ isComplete() : boolean
-	+ composeWith( set:PrivacyTagSet ) : PrivacyTagSet
+package runtime {
+	class RuntimeEngine {
+		+ currentTags : DataTags
+		+ nodeStack: Stack<DecisionNode>
+	}
+
+	class Node {
+		+ id    : String
+		+ title : String
+		+ text  : String
+		+ chart : FlowChart
+		+ absoluteTags(): DataTags
+	}
+
+	class DecisionNode {
+		+ dataTags : DataTags
+		+ yes : DecisionNode
+		+ no  : DecisionNode
+	}
+
+	class CallNode {
+		+ calleeChartId : String
+		+ calleeNodeId  : String
+		+ nextNode : Node
+	}
+
+	class FlowChart {
+		+ name : String
+		+ info : String
+		+ source : URL
+		+ start  : DecisionNode
+		+ nodes  : DecisionNode[]
+	}
+
+	class FlowChartSet {
+		+ name : String
+		+ info : String
+		+ source : URL
+		+ charts : FlowChart[]
+	}
 }
 
-class DecisionNode {
-	+ id:String
-	+ title
-	+ text
-	+ absoluteResult() : PrivacyTagSet
-	+ decide( result:boolean, tags: PrivacyTags ) : DecisionResult
+package model {
+	class DataTags {
+		+ tags : Map<TagType<TagValue>,TagValue>>
+		compose( t:DataTags ): DataTags
+	}
+
+	package types {
+		class TagType {
+			+ name:String
+			+ info:String
+		}
+
+		class ToDoType {
+			
+		}
+
+		class SimpleValueType {
+			+ values: TagValue[]
+		}
+
+		class AggregateType {
+			+ itemType: TagType
+		}
+	}
+	package values {
+		class TagValue {
+			+ name: String
+			+ type: TagType
+			+ info: String
+		}
+
+		class SimpleValue <<Comparable>> {
+			+ ordinal: int
+		}
+
+		class ToDoValue {
+			
+		}
+
+		class AggregateValue {
+			values: TagValue[]
+		}
+	}
 }
 
-class DecisionResult {
-	+ node : DecisionNode
-	+ tags : PrivacyTagSet
-}
+RuntimeEngine --> DataTags : currentTags
+RuntimeEngine --> "1..*" Node : nodeStack
 
-enum HarmLevel {
+RuntimeEngine --> FlowChartSet : chartSet
+note on link
+	The program executed
+	by the runtime 
+end note
 
-}
 
-HarmLevel o--> "1" PrivacyTagSet
+Node <|-- DecisionNode
+Node <|-- CallNode
+TagType <|-- ToDoType
+TagType <|-- SimpleValueType
+TagType <|-- AggregateType
+TagValue <|-- ToDoValue
+TagValue <|-- AggregateValue
+TagValue <|-- SimpleValue
 
-DecisionNode o--> DecisionNode : parent
-DecisionNode <--> DecisionNode : yes
-DecisionNode <--> DecisionNode : no
+FlowChartSet "1" --> "1..*" FlowChart : charts
+note on link: Mapped by name
 
-DecisionResult o--- DecisionNode
-DecisionResult o--- PrivacyTagSet
+FlowChart --> Node : start
+CallNode --> Node : nextNode
+
+DecisionNode --> Node: YES
+DecisionNode --> Node: NO
+DecisionNode --> FlowChart : chart
+DecisionNode --> DataTags : assumption
+
+DataTags --> "0..*" TagType : types
+DataTags --> "0..*" TagValue 
+note on link: Mapped by TagType
+
+TagValue --> TagType : type
+AggregateValue ---> "0..*" TagValue
+
+AggregateType --> TagType : itemType
+
 @enduml
