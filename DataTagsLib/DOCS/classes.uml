@@ -4,6 +4,27 @@ package runtime {
 	class RuntimeEngine {
 		+ currentTags : DataTags
 		+ nodeStack: Stack<DecisionNode>
+		getState() : state
+		restoreState( state )
+		consume( ans:Answer )
+	}
+
+	class FlowChartSet {
+		+ id : String
+		+ title : String
+		+ info  : String
+		+ source : URL
+		+ charts : FlowChart[]
+		+ tagTypes : TagType[]
+	}
+
+	class FlowChart {
+		+ id : String
+		+ title : String
+		+ info  : String
+		+ source : URL
+		+ start  : DecisionNode
+		+ nodes  : DecisionNode[]
 	}
 
 	class Node {
@@ -26,20 +47,9 @@ package runtime {
 		+ nextNode : Node
 	}
 
-	class FlowChart {
-		+ name : String
-		+ info : String
-		+ source : URL
-		+ start  : DecisionNode
-		+ nodes  : DecisionNode[]
-	}
-
-	class FlowChartSet {
-		+ name : String
-		+ info : String
-		+ source : URL
-		+ charts : FlowChart[]
-		+ tagTypes : TagType[]
+	enum Answer {
+		YES
+		NO
 	}
 }
 
@@ -126,5 +136,9 @@ AggregateValue ---> "0..*" TagValue
 AggregateType --> TagType : itemType
 
 FlowChartSet --> "0..*" TagType : tagTypes
+
+TagValue --> TagType : type
+
+
 
 @enduml

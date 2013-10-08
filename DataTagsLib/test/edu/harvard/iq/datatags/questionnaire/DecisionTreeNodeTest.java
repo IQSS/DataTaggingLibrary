@@ -4,6 +4,7 @@
 
 package edu.harvard.iq.datatags.questionnaire;
 
+import edu.harvard.iq.datatags.runtime.Answer;
 import edu.harvard.iq.datatags.tags.AuthenticationType;
 import edu.harvard.iq.datatags.tags.DuaAgreementMethod;
 import edu.harvard.iq.datatags.tags.DataTags;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.harvard.iq.datatags.questionnaire.Answer;
+import edu.harvard.iq.datatags.runtime.Answer;
 import edu.harvard.iq.datatags.questionnaire.DecisionNode;
 import edu.harvard.iq.datatags.tags.AuthenticationType;
 import edu.harvard.iq.datatags.tags.DataTags;

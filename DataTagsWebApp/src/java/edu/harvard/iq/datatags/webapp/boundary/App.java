@@ -5,7 +5,7 @@ import edu.harvard.iq.datatags.tags.DuaAgreementMethod;
 import edu.harvard.iq.datatags.tags.EncryptionType;
 import edu.harvard.iq.datatags.tags.HarmLevel;
 import edu.harvard.iq.datatags.tags.DataTags;
-import edu.harvard.iq.datatags.questionnaire.Answer;
+import edu.harvard.iq.datatags.runtime.Answer;
 import edu.harvard.iq.datatags.questionnaire.DecisionNode;
 import edu.harvard.iq.datatags.webapp.parsers.QuestionnaireJsonParser;
 import java.io.IOException;

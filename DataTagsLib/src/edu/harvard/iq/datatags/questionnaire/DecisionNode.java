@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.questionnaire;
 
+import edu.harvard.iq.datatags.runtime.Answer;
 import edu.harvard.iq.datatags.tags.DataTags;
 import java.util.Collections;
 import java.util.EnumMap;
