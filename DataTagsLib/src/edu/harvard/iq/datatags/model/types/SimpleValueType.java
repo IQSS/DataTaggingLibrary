@@ -21,7 +21,6 @@ public class SimpleValueType extends TagType {
 	}
 	
 	public void addValue( SimpleValue aValue ) {
-		aValue.setType( this );
 		values.add( aValue );
 	}
 	

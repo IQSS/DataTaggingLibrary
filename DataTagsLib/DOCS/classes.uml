@@ -39,12 +39,13 @@ package runtime {
 		+ info : String
 		+ source : URL
 		+ charts : FlowChart[]
+		+ tagTypes : TagType[]
 	}
 }
 
 package model {
 	class DataTags {
-		+ tags : Map<TagType<TagValue>,TagValue>>
+		+ tags : Map<TagType<TagValue>,TagValue>
 		compose( t:DataTags ): DataTags
 	}
 
@@ -96,7 +97,6 @@ note on link
 	by the runtime 
 end note
 
-
 Node <|-- DecisionNode
 Node <|-- CallNode
 TagType <|-- ToDoType
@@ -121,9 +121,10 @@ DataTags --> "0..*" TagType : types
 DataTags --> "0..*" TagValue 
 note on link: Mapped by TagType
 
-TagValue --> TagType : type
 AggregateValue ---> "0..*" TagValue
 
 AggregateType --> TagType : itemType
+
+FlowChartSet --> "0..*" TagType : tagTypes
 
 @enduml

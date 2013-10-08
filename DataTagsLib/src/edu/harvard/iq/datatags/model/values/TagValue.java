@@ -6,14 +6,12 @@ import java.util.Objects;
 /**
  *
  * @author michael
+ * @param <T> The type class for value instances
  */
 public abstract class TagValue<T extends TagType> {
-	private String name;
-	private T type;
-	private String info;
-
-	public TagValue() {
-	}
+	private final String name;
+	private final T type;
+	private final String info;
 
 	public TagValue(String name, T type, String info) {
 		this.name = name;
@@ -25,26 +23,28 @@ public abstract class TagValue<T extends TagType> {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public T getType() {
 		return type;
-	}
-
-	public void setType(T type) {
-		this.type = type;
 	}
 
 	public String getInfo() {
 		return info;
 	}
-
-	public void setInfo(String info) {
-		this.info = info;
+	
+	public abstract <R> R accept( TagValueVisitor<R> visitor );
+	
+	/**
+	 * Returns an instance that can take part in private copies of value 
+	 * collections. In simple values, where all the data is immutable anyway,
+	 * it just returns {@code this}. In aggregate values, where state is mutable,
+	 * a new instance, created by deep-copying the state, is returned.
+	 * 
+	 * @return An instance that can be safely stored.
+	 */
+	public TagValue<T> getOwnableInstance() {
+		return this;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		int hash = 7;

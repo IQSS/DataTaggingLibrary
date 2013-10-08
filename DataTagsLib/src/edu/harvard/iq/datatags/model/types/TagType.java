@@ -7,7 +7,7 @@ import java.util.Objects;
  * 
  * @author michael
  */
-public class TagType {
+public abstract class TagType {
 	
 	private final String name;
 	private final String info;
