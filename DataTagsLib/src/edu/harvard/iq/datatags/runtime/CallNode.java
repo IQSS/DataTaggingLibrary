@@ -8,7 +8,7 @@ public class CallNode extends Node {
 	
 	private Node nextNode;
 	private String calleeChartId;
-	private String calleId;
+	private String calleeId;
 	
 	public CallNode(String id) {
 		super(id);
@@ -28,16 +28,14 @@ public class CallNode extends Node {
 
 	public void setCalleeChartId(String calleeChartId) {
 		this.calleeChartId = calleeChartId;
+	}	
+
+	public String getCalleeId() {
+		return calleeId;
 	}
 
-	public String getCalleId() {
-		return calleId;
+	public void setCalleeId(String calleeId) {
+		this.calleeId = calleeId;
 	}
-
-	public void setCalleId(String calleId) {
-		this.calleId = calleId;
-	}
-	
-	
 	
 }

@@ -11,7 +11,7 @@ import java.util.Map;
 public class DecisionNode extends Node {
 	
 	private DataTags tags;
-	private final Map<Answer, edu.harvard.iq.datatags.questionnaire.DecisionNode> nextNodeByAnswer = new EnumMap<>(Answer.class);
+	private final Map<Answer, DecisionNode> nextNodeByAnswer = new EnumMap<>(Answer.class);
 	
 	public DecisionNode(String id, String title) {
 		this(id, title, null, null);
@@ -34,11 +34,11 @@ public class DecisionNode extends Node {
 	}
 	
 	
-	public void setNodeFor( Answer answer, edu.harvard.iq.datatags.questionnaire.DecisionNode node ) {
+	public void setNodeFor( Answer answer, DecisionNode node ) {
 		nextNodeByAnswer.put(answer, node);
 	}
 	
-	public edu.harvard.iq.datatags.questionnaire.DecisionNode getNodeFor( Answer answer ) {
+	public DecisionNode getNodeFor( Answer answer ) {
 		return nextNodeByAnswer.get(answer);
 	}
 	

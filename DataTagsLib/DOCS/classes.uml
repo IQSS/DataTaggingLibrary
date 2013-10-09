@@ -9,30 +9,26 @@ package runtime {
 		consume( ans:Answer )
 	}
 
-	class FlowChartSet {
+	class RuntimeEntity {
 		+ id : String
 		+ title : String
 		+ info  : String
+	}
+
+	class FlowChartSet {
 		+ source : URL
 		+ charts : FlowChart[]
 		+ tagTypes : TagType[]
 	}
 
 	class FlowChart {
-		+ id : String
-		+ title : String
-		+ info  : String
 		+ source : URL
 		+ start  : DecisionNode
 		+ nodes  : DecisionNode[]
 	}
 
 	class Node {
-		+ id    : String
-		+ title : String
-		+ text  : String
 		+ chart : FlowChart
-		+ absoluteTags(): DataTags
 	}
 
 	class DecisionNode {
@@ -46,6 +42,8 @@ package runtime {
 		+ calleeNodeId  : String
 		+ nextNode : Node
 	}
+
+	class EndNode
 
 	enum Answer {
 		YES
@@ -106,9 +104,12 @@ note on link
 	The program executed
 	by the runtime 
 end note
-
+RuntimeEntity <|-- Node
+RuntimeEntity <|-- FlowChart
+RuntimeEntity <|-- FlowChartSet
 Node <|-- DecisionNode
 Node <|-- CallNode
+Node <|-- EndNode
 TagType <|-- ToDoType
 TagType <|-- SimpleValueType
 TagType <|-- AggregateType
