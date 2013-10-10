@@ -52,7 +52,12 @@ public abstract class TagValue<T extends TagType> {
 		hash = 37 * hash + Objects.hashCode(this.type);
 		return hash;
 	}
-
+	
+	/**
+	 * Base equality test - the type only.
+	 * @param obj the other object
+	 * @return can these objects be considered equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
@@ -62,13 +67,8 @@ public abstract class TagValue<T extends TagType> {
 			return false;
 		}
 		final TagValue<?> other = (TagValue<?>) obj;
-		if (!Objects.equals(this.name, other.name)) {
-			return false;
-		}
-		if (!Objects.equals(this.type, other.type)) {
-			return false;
-		}
-		return Objects.equals(this.info, other.info);
+	
+		return Objects.equals(this.type, other.type);
 	}
 
 	@Override

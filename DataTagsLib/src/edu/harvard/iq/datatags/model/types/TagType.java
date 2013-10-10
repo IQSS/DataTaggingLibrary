@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.model.types;
 
+import edu.harvard.iq.datatags.model.values.TagValue;
 import java.util.Objects;
 
 /**
@@ -25,6 +26,14 @@ public abstract class TagType {
 		return name;
 	}
 
+	/**
+	 * Generate a new instance of the type. Preferable over using direct construction.
+	 * @param name name of the new instance
+	 * @param info info about the new instance
+	 * @return the new instance.
+	 */
+	public abstract TagValue make( String name, String info );
+	
 	@Override
 	public int hashCode() {
 		int hash = 3;

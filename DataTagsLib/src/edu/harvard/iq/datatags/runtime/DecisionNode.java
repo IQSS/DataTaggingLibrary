@@ -11,7 +11,7 @@ import java.util.Map;
 public class DecisionNode extends Node {
 	
 	private DataTags tags;
-	private final Map<Answer, DecisionNode> nextNodeByAnswer = new EnumMap<>(Answer.class);
+	private final Map<Answer, Node> nextNodeByAnswer = new EnumMap<>(Answer.class);
 	
 	public DecisionNode(String id, String title) {
 		this(id, title, null, null);
@@ -33,12 +33,19 @@ public class DecisionNode extends Node {
 		this.tags = tags;
 	}
 	
-	
-	public void setNodeFor( Answer answer, DecisionNode node ) {
+	/**
+	 * Sets the node for the passed answer
+	 * @param <T> the actual type of the node
+	 * @param answer the answer for which the node applies
+	 * @param node the node
+	 * @return {@code node}, for convenience, call chaining, etc.
+	 */
+	public <T extends Node> T setNodeFor( Answer answer, T node ) {
 		nextNodeByAnswer.put(answer, node);
+		return node;
 	}
 	
-	public DecisionNode getNodeFor( Answer answer ) {
+	public Node getNodeFor( Answer answer ) {
 		return nextNodeByAnswer.get(answer);
 	}
 	

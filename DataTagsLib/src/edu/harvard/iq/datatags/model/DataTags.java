@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -24,12 +25,12 @@ public class DataTags {
 	
 	private final Map<TagType,TagValue> values = new HashMap<>();
 	
-	public void set( TagType tt, TagValue tv ) {
-		if ( tv == null ) {
-			values.remove(tt);
-		} else {
-			values.put( tt, tv );
-		}
+	public void add( TagValue tv ) {
+		values.put( tv.getType(), tv );
+	}
+	
+	public void remove( TagType tt ) {
+		values.remove(tt);
 	}
 	
 	public TagValue get( TagType tt ) {
@@ -46,8 +47,8 @@ public class DataTags {
 	public DataTags makeCopy() {
 		DataTags copy = new DataTags();
 		
-		for ( Map.Entry<TagType, TagValue> e : values.entrySet() ) {
-			copy.set( e.getKey(), e.getValue().getOwnableInstance() );
+		for ( TagValue e : values.values() ) {
+			copy.add( e.getOwnableInstance() );
 		}
 		
 		return copy;
@@ -76,13 +77,12 @@ public class DataTags {
 		TagValueVisitor<TagValueFunction> resolver = new TagValueVisitor<TagValueFunction>() {
 
 			@Override
-			public TagValueFunction visitSimpleValue( final SimpleValue op1) {
+			public TagValueFunction visitSimpleValue( final SimpleValue op1 ) {
 				return new TagValueFunction(){
 					@Override public TagValue apply(TagValue v) {
 						SimpleValue op2 = (SimpleValue) v;
-						return (op1.compareTo(op2) > 0 ? op1 : op2).getOwnableInstance();
-					}
-				};
+						return ( op1.compareTo(op2) > 0 ? op1 : op2).getOwnableInstance();
+				}};
 			}
 
 			@Override
@@ -92,11 +92,10 @@ public class DataTags {
 						AggregateValue op2 = (AggregateValue) v;
 						AggregateValue res = op1.getOwnableInstance();
 						for ( TagValue tv : op2.getValues() ) {
-							res.addValue(tv);
+							res.add(tv);
 						}
 						return res;
-					}
-				};
+				}};
 			}
 
 			@Override
@@ -104,13 +103,11 @@ public class DataTags {
 				return new TagValueFunction() {
 					@Override public TagValue apply(TagValue v) {
 						return v;
-					}
-				};
-			}
-		};
+				}};
+		}};
 		
 		Set<TagType> types = new HashSet<>();
-		types.addAll( values.keySet() );
+		types.addAll( getTypes() );
 		types.addAll( other.getTypes() );
 		DataTags result = new DataTags();
 		
@@ -119,14 +116,17 @@ public class DataTags {
 			TagValue<?> ours = get(tp);
 			TagValue<?> its  = other.get(tp);
 			
-			if ( ours == null && its == null ) {
-				throw new IllegalStateException( "Both [this] or [other] had null tag value for a tag type");
-			} else if ( ours == null && its != null ) {
-				result.set(tp, its);
-			} else if ( ours != null && its == null ) {
-				result.set(tp,ours);
+			if ( ours == null ) {
+				if ( its == null )
+					throw new IllegalStateException( "Both [this] or [other] had null tag value for a tag type");
+				else
+					result.add( its );
+			
+			} else if ( its == null ) {
+				result.add( ours );
+
 			} else {
-				result.set( tp, ours.accept(resolver).apply(its) );
+				result.add( ours.accept(resolver).apply(its) );
 			}
 		}
 		
@@ -134,5 +134,34 @@ public class DataTags {
 		
 	}
 
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 97 * hash + Objects.hashCode(this.values);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if ( ! (obj instanceof DataTags) ) {
+			return false;
+		}
+		final DataTags other = (DataTags) obj;
+		
+		return Objects.equals(this.values, other.values);
+	}
+	
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for ( Map.Entry<TagType, TagValue> e : values.entrySet() ) {
+			sb.append(e.getKey().getName()).append(":").append(e.getValue().getName()).append(" ");
+		}
+		return "[DataTags {" + sb.toString() +"}]";
+	}
 	
 }
