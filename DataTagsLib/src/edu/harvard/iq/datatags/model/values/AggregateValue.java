@@ -43,7 +43,7 @@ public class AggregateValue extends TagValue<AggregateType>{
 	}
 	
 	@Override
-	public <R> R  accept(TagValueVisitor<R> tv) {
+	public <R> R  accept(edu.harvard.iq.datatags.model.values.TagValue.Visitor<R> tv) {
 		return tv.visitAggregateValue(this);
 	}
 	

@@ -13,7 +13,12 @@ public class CallNode extends Node {
 	public CallNode(String id) {
 		super(id);
 	}
-
+	
+	@Override
+	public <R> R accept(Visitor<R> vr) {
+		return vr.visitCallNode(this);
+	}
+	
 	public Node getNextNode() {
 		return nextNode;
 	}

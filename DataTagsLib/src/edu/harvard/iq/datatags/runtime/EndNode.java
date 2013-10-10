@@ -17,5 +17,11 @@ public class EndNode extends Node {
 	public EndNode(String id, String title, String text, FlowChart chart) {
 		super(id, title, text, chart);
 	}
+		
+	@Override
+	public <R> R accept(Visitor<R> vr) {
+		return vr.visitEndNode(this);
+	}
+
 	
 }

@@ -33,6 +33,11 @@ public class DecisionNode extends Node {
 		this.tags = tags;
 	}
 	
+	@Override
+	public <R> R accept(Visitor<R> vr) {
+		return vr.visitDecisionNode(this);
+	}
+	
 	/**
 	 * Sets the node for the passed answer
 	 * @param <T> the actual type of the node

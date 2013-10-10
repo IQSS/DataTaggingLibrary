@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.runtime;
 
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import edu.harvard.iq.datatags.runtime.exceptions.MissingFlowChartException;
 import edu.harvard.iq.datatags.tags.DataTags;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -32,7 +33,11 @@ public class RuntimeEngine {
 	public DataTags getCurrentTags() {
 		return currentTags;
 	}
-
+	
+	public void start( String flowChartName ) throws MissingFlowChartException {
+		// TODO
+	}
+	
 	public void setCurrentTags(DataTags currentTags) {
 		this.currentTags = currentTags;
 	}

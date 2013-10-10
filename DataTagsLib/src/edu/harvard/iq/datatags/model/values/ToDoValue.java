@@ -16,7 +16,7 @@ public class ToDoValue extends TagValue<ToDoType> {
 	}
 
 	@Override
-	public <R> R accept(TagValueVisitor<R> tv) {
+	public <R> R accept(edu.harvard.iq.datatags.model.values.TagValue.Visitor<R> tv) {
 		return tv.visitToDoValue(this);
 	}
 	

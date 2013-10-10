@@ -6,7 +6,14 @@ package edu.harvard.iq.datatags.runtime;
  * 
  * @author michael
  */
-public class Node extends RuntimeEntity {
+public abstract class Node extends RuntimeEntity {
+	
+	public interface Visitor<R> {
+		R visitDecisionNode( DecisionNode nd );
+		R visitCallNode( CallNode nd );
+		R visitEndNode( EndNode nd );
+	}
+	
 	private FlowChart chart;
 
 	public Node(String id) {
@@ -24,6 +31,8 @@ public class Node extends RuntimeEntity {
 		this.chart = chart;
 	}
 
+	public abstract <R> R accept( Node.Visitor<R> vr );
+	
 	public FlowChart getChart() {
 		return chart;
 	}
@@ -31,4 +40,5 @@ public class Node extends RuntimeEntity {
 	public void setChart(FlowChart chart) {
 		this.chart = chart;
 	}
+	
 }

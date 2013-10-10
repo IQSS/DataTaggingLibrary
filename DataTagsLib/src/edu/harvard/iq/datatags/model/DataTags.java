@@ -4,8 +4,6 @@ import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.SimpleValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
-import edu.harvard.iq.datatags.model.values.TagValueFunction;
-import edu.harvard.iq.datatags.model.values.TagValueVisitor;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 import java.util.Collections;
 import java.util.HashMap;
@@ -74,11 +72,11 @@ public class DataTags {
 	 */
 	public DataTags composeWith( DataTags other ) {
 		
-		TagValueVisitor<TagValueFunction> resolver = new TagValueVisitor<TagValueFunction>() {
+		edu.harvard.iq.datatags.model.values.TagValue.Visitor<TagValue.Function> resolver = new edu.harvard.iq.datatags.model.values.TagValue.Visitor<TagValue.Function>() {
 
 			@Override
-			public TagValueFunction visitSimpleValue( final SimpleValue op1 ) {
-				return new TagValueFunction(){
+			public TagValue.Function visitSimpleValue( final SimpleValue op1 ) {
+				return new TagValue.Function(){
 					@Override public TagValue apply(TagValue v) {
 						SimpleValue op2 = (SimpleValue) v;
 						return ( op1.compareTo(op2) > 0 ? op1 : op2).getOwnableInstance();
@@ -86,8 +84,8 @@ public class DataTags {
 			}
 
 			@Override
-			public TagValueFunction visitAggregateValue( final AggregateValue op1 ) {
-				return new TagValueFunction(){
+			public TagValue.Function visitAggregateValue( final AggregateValue op1 ) {
+				return new TagValue.Function(){
 					@Override public TagValue apply(TagValue v) {
 						AggregateValue op2 = (AggregateValue) v;
 						AggregateValue res = op1.getOwnableInstance();
@@ -99,8 +97,8 @@ public class DataTags {
 			}
 
 			@Override
-			public TagValueFunction visitToDoValue( ToDoValue v ) {
-				return new TagValueFunction() {
+			public TagValue.Function visitToDoValue( ToDoValue v ) {
+				return new TagValue.Function() {
 					@Override public TagValue apply(TagValue v) {
 						return v;
 				}};

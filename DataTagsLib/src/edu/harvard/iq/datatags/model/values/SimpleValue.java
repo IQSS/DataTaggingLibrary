@@ -33,7 +33,7 @@ public class SimpleValue extends TagValue<SimpleValueType> implements Comparable
 	}
 	
 	@Override
-	public <R> R accept(TagValueVisitor<R> tv) {
+	public <R> R accept(Visitor<R> tv) {
 		return tv.visitSimpleValue(this);
 	}
 

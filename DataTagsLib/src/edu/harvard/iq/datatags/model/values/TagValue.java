@@ -9,6 +9,17 @@ import java.util.Objects;
  * @param <T> The type class for value instances
  */
 public abstract class TagValue<T extends TagType> {
+	
+	public interface Visitor<R> {
+		R visitSimpleValue(SimpleValue v);
+		R visitAggregateValue(AggregateValue v);
+		R visitToDoValue(ToDoValue v);
+	}
+
+	public interface Function {
+		public TagValue apply(TagValue v);
+	}
+
 	private final String name;
 	private final T type;
 	private final String info;
@@ -31,7 +42,7 @@ public abstract class TagValue<T extends TagType> {
 		return info;
 	}
 	
-	public abstract <R> R accept( TagValueVisitor<R> visitor );
+	public abstract <R> R accept( TagValue.Visitor<R> visitor );
 	
 	/**
 	 * Returns an instance that can take part in private copies of value 
