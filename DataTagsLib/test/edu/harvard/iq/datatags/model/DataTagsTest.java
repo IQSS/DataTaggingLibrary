@@ -10,10 +10,6 @@ import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.SimpleValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import java.util.Collections;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static edu.harvard.iq.util.CollectionHelper.C;
@@ -24,25 +20,6 @@ import static edu.harvard.iq.util.CollectionHelper.C;
  */
 public class DataTagsTest {
 	
-	public DataTagsTest() {
-	}
-	
-	@BeforeClass
-	public static void setUpClass() {
-	}
-	
-	@AfterClass
-	public static void tearDownClass() {
-	}
-	
-	@Before
-	public void setUp() {
-	}
-	
-	@After
-	public void tearDown() {
-	}
-
 	/**
 	 * Test of set method, of class DataTags.
 	 */

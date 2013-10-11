@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A compiled and loaded program for the runtime engine. This object contains
@@ -16,10 +17,15 @@ import java.util.TreeMap;
  * @author michael
  */
 public class FlowChartSet extends RuntimeEntity {
+	private static final AtomicInteger INDEX = new AtomicInteger(0);
 	
 	private URL source;
 	private final Map<String, FlowChart> charts = new TreeMap<>();
 	private final Set<TagType> types  = new HashSet<>();
+	
+	public FlowChartSet() {
+		this( "FlowChartSet-"+INDEX.incrementAndGet());
+	}
 	
 	public FlowChartSet(String anId) {
 		super(anId);

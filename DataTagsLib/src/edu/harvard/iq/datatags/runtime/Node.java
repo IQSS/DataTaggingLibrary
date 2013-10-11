@@ -1,5 +1,7 @@
 package edu.harvard.iq.datatags.runtime;
 
+import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+
 /**
  * An atomic part of the program - the equivalent of a line of code 
  * in a regular program.
@@ -9,9 +11,9 @@ package edu.harvard.iq.datatags.runtime;
 public abstract class Node extends RuntimeEntity {
 	
 	public interface Visitor<R> {
-		R visitDecisionNode( DecisionNode nd );
-		R visitCallNode( CallNode nd );
-		R visitEndNode( EndNode nd );
+		R visitDecisionNode( DecisionNode nd ) throws DataTagsRuntimeException;
+		R visitCallNode( CallNode nd ) throws DataTagsRuntimeException;
+		R visitEndNode( EndNode nd ) throws DataTagsRuntimeException;
 	}
 	
 	private FlowChart chart;
@@ -31,7 +33,7 @@ public abstract class Node extends RuntimeEntity {
 		this.chart = chart;
 	}
 
-	public abstract <R> R accept( Node.Visitor<R> vr );
+	public abstract <R> R accept( Node.Visitor<R> vr ) throws DataTagsRuntimeException ;
 	
 	public FlowChart getChart() {
 		return chart;

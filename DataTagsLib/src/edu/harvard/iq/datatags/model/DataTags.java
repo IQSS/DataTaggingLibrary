@@ -53,7 +53,7 @@ public class DataTags {
 	}
 	
 	/**
-	 * Returns a copy with values  of both {@code this} and {@code other}.
+	 * Returns a copy with values of both {@code this} and {@code other}.
 	 * For each value type T, the composition is as follows:
 	 * <ul>
 	 *	<li>If only one tag contains a value for T, that value is used in the
@@ -67,10 +67,13 @@ public class DataTags {
 	 *  </li>
 	 * </ul>
 	 * 
+	 * Note: if {@code other} is {@code null}, this method behaves as {@link #makeCopy()}.
+	 * 
 	 * @param other
-	 * @return 
+	 * @return A new DataTags object, composed from {@code this} and {@code other}.
 	 */
 	public DataTags composeWith( DataTags other ) {
+		if ( other == null ) return makeCopy();
 		
 		edu.harvard.iq.datatags.model.values.TagValue.Visitor<TagValue.Function> resolver = new edu.harvard.iq.datatags.model.values.TagValue.Visitor<TagValue.Function>() {
 

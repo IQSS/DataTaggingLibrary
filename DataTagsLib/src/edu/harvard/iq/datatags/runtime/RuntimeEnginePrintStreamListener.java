@@ -2,6 +2,7 @@ package edu.harvard.iq.datatags.runtime;
 
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.io.PrintStream;
+import java.util.Arrays;
 
 /**
  * A listener that logging data to a print stream, such as System.out.
@@ -43,7 +44,13 @@ public class RuntimeEnginePrintStreamListener implements RuntimeEngine.Listener 
 	}
 	
 	private String title( RuntimeEngine ngn ) {
-		return "Engine " + ngn.getId() + ": ";
+		return "Engine " + ngn.getId() + ": " + indent(ngn.getStack().size());
 	}
 	
+	private String indent( int d ) {
+		if ( d == 0 ) return "";
+		char[] arr = new char[d];
+		Arrays.fill(arr, 0, d, '>');
+		return new String(arr);
+	}
 }

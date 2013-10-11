@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.runtime;
 
-import edu.harvard.iq.datatags.tags.DataTags;
+import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import edu.harvard.iq.datatags.model.DataTags;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class DecisionNode extends Node {
 	}
 	
 	@Override
-	public <R> R accept(Visitor<R> vr) {
+	public <R> R accept(Visitor<R> vr) throws DataTagsRuntimeException {
 		return vr.visitDecisionNode(this);
 	}
 	

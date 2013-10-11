@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.runtime.exceptions;
 
+import edu.harvard.iq.datatags.runtime.CallNode;
 import edu.harvard.iq.datatags.runtime.FlowChartSet;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 
@@ -12,6 +13,7 @@ import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 public class LinkageException extends DataTagsRuntimeException {
 	
 	private FlowChartSet chartSet;
+	private CallNode sourceNode;
 
 	public LinkageException(FlowChartSet chartSet, RuntimeEngine engine, String message) {
 		super(engine, message);
@@ -39,6 +41,14 @@ public class LinkageException extends DataTagsRuntimeException {
 
 	public void setChartSet(FlowChartSet chartSet) {
 		this.chartSet = chartSet;
+	}
+
+	public CallNode getSourceNode() {
+		return sourceNode;
+	}
+
+	public void setSourceNode(CallNode sourceNode) {
+		this.sourceNode = sourceNode;
 	}
 	
 }
