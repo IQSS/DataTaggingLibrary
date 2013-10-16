@@ -1,7 +1,3 @@
-/*
- *  (C) Michael Bar-Sinai
- */
-
 package edu.harvard.iq.datatags.model;
 
 import edu.harvard.iq.datatags.model.types.AggregateType;
@@ -77,7 +73,7 @@ public class DataTagsTest {
 		instance.add( tt1tv2 );
 		assertEquals( Collections.singleton(tt1), instance.getTypes());
 		instance.add( tt2tv1 );
-		assertEquals( C.setOf(tt1, tt2), instance.getTypes());
+		assertEquals( C.set(tt1, tt2), instance.getTypes());
 	}
 
 	/**

@@ -10,10 +10,16 @@ public class CallNode extends Node {
 	
 	private Node nextNode;
 	private String calleeChartId;
-	private String calleeId;
+	private String calleeNodeId;
 	
 	public CallNode(String id) {
 		super(id);
+	}
+
+	public CallNode(String id, String calleeChartId, String calleeNodeId ) {
+		super(id);
+		this.calleeChartId = calleeChartId;
+		this.calleeNodeId = calleeNodeId;
 	}
 	
 	@Override
@@ -25,24 +31,27 @@ public class CallNode extends Node {
 		return nextNode;
 	}
 
-	public void setNextNode(Node nextNode) {
+	public <T extends Node> T setNextNode(T nextNode) {
 		this.nextNode = nextNode;
+		return nextNode;
 	}
 
 	public String getCalleeChartId() {
 		return calleeChartId;
 	}
 
-	public void setCalleeChartId(String calleeChartId) {
+	public String setCalleeChartId(String calleeChartId) {
 		this.calleeChartId = calleeChartId;
+		return calleeChartId;
 	}	
 
 	public String getCalleeNodeId() {
-		return calleeId;
+		return calleeNodeId;
 	}
 
-	public void setCalleeId(String calleeId) {
-		this.calleeId = calleeId;
+	public String setCalleeNodeId(String calleeId) {
+		this.calleeNodeId = calleeId;
+		return calleeId;
 	}
 	
 }

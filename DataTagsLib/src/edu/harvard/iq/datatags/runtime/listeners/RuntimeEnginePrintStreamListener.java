@@ -1,5 +1,7 @@
-package edu.harvard.iq.datatags.runtime;
+package edu.harvard.iq.datatags.runtime.listeners;
 
+import edu.harvard.iq.datatags.runtime.Node;
+import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -25,7 +27,7 @@ public class RuntimeEnginePrintStreamListener implements RuntimeEngine.Listener 
 	
 	@Override
 	public void runStarted(RuntimeEngine ngn) {
-		out.println( title(ngn) +"started");
+		out.println( title(ngn) +"started on " + ngn.getChartSet().getId());
 	}
 
 	@Override
