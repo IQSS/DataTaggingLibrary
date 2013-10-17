@@ -8,7 +8,7 @@ import edu.harvard.iq.datatags.runtime.RuntimeEngine;
  * a {@link FlowChartSet}.
  * @author michael
  */
-public class DataTagsRuntimeException extends Exception {
+public class DataTagsRuntimeException extends RuntimeException {
 	private final RuntimeEngine engine;
 
 	public DataTagsRuntimeException(RuntimeEngine engine, String message) {

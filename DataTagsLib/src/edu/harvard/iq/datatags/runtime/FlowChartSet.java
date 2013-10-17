@@ -54,4 +54,8 @@ public class FlowChartSet extends RuntimeEntity {
 	public Set<TagType> getTypes() {
 		return Collections.unmodifiableSet(types);
 	}
+
+	public Iterable<FlowChart> charts() {
+		return charts.values();
+	}
 }

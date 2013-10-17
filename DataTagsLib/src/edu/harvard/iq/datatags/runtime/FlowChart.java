@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.runtime;
 
+import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
@@ -51,5 +52,33 @@ public class FlowChart extends RuntimeEntity {
 		nodes.put( n.getId(), n );
 		return n;
 	}
+
+	public Iterable<Node> nodes() {
+		return nodes.values();
+	}
 	
+	public void connectOpenEnds( final Node defaultNode ) {
+		Node.Visitor connector = new Node.Visitor<Void>(){
+
+			@Override
+			public Void visitDecisionNode(DecisionNode nd) throws DataTagsRuntimeException {
+				for ( Answer a : Answer.values() ) {
+					if ( nd.getNodeFor(a) == null ) {
+						nd.setNodeFor(a, defaultNode);
+					}
+				}
+				return null;
+			}
+
+			@Override
+			public Void visitCallNode(CallNode nd) throws DataTagsRuntimeException {
+				if (nd.getNextNode() == null ) nd.setNextNode(defaultNode);
+				return null;
+			}
+
+			@Override
+			public Void visitEndNode(EndNode nd) throws DataTagsRuntimeException {return null;}
+		};
+		for ( Node n : nodes() ) n.accept(connector);
+	}
 }

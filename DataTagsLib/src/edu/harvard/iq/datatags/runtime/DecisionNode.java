@@ -1,7 +1,6 @@
 package edu.harvard.iq.datatags.runtime;
 
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
-import edu.harvard.iq.datatags.model.DataTags;
 import java.util.EnumMap;
 import java.util.Map;
 

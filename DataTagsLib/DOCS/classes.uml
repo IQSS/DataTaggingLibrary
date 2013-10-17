@@ -29,10 +29,10 @@ package runtime {
 
 	class Node {
 		+ chart : FlowChart
+		+ dataTags : DataTags
 	}
 
 	class DecisionNode {
-		+ dataTags : DataTags
 		+ yes : DecisionNode
 		+ no  : DecisionNode
 	}

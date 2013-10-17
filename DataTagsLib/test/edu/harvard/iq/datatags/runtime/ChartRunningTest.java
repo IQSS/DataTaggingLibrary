@@ -1,4 +1,4 @@
-package edu.harvard.iq.charts;
+package edu.harvard.iq.datatags.runtime;
 
 import edu.harvard.iq.datatags.runtime.Answer;
 import edu.harvard.iq.datatags.runtime.CallNode;
@@ -10,7 +10,7 @@ import java.util.Arrays;
 import org.junit.Test;
 import static edu.harvard.iq.datatags.runtime.Answer.*;
 import static edu.harvard.iq.util.CollectionHelper.*;
-import static edu.harvard.iq.charts.ChartHelper.*;
+import static edu.harvard.iq.util.ChartHelper.*;
 
 /**
  * Here we test chart runs.

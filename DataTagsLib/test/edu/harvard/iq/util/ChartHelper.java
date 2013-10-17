@@ -1,5 +1,6 @@
-package edu.harvard.iq.charts;
+package edu.harvard.iq.util;
 
+import edu.harvard.iq.datatags.runtime.ChartRunningTest;
 import edu.harvard.iq.datatags.runtime.Answer;
 import edu.harvard.iq.datatags.runtime.DecisionNode;
 import edu.harvard.iq.datatags.runtime.EndNode;
