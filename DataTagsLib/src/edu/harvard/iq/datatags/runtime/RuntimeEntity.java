@@ -1,5 +1,7 @@
 package edu.harvard.iq.datatags.runtime;
 
+import edu.harvard.iq.datatags.model.DataTags;
+
 /**
  * Base class for classes that take part in the execution of a chart set.
  * 
@@ -10,6 +12,7 @@ public abstract class RuntimeEntity {
 	protected final String id;
 	protected String info;
 	protected String title;
+	protected DataTags tags;
 	
 	protected RuntimeEntity( String anId ) {
 		id = anId;
@@ -49,5 +52,13 @@ public abstract class RuntimeEntity {
 	 */
 	protected String toStringExtras() {
 		return "";
+	}
+
+	public DataTags getTags() {
+		return tags;
+	}
+
+	public void setTags(DataTags tags) {
+		this.tags = tags;
 	}
 }

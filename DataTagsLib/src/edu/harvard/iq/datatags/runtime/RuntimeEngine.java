@@ -46,8 +46,6 @@ public class RuntimeEngine {
 		@Override
 		public Boolean visitDecisionNode(DecisionNode nd) {
 			stack.push(nd);
-			
-			setCurrentTags( getCurrentTags().composeWith(nd.getTags()) );
 			if ( listener != null ) listener.nodeEntered(RuntimeEngine.this, nd);
 			
 			return true;
@@ -118,7 +116,8 @@ public class RuntimeEngine {
 	}
 	
 	boolean enterNode( Node n ) throws DataTagsRuntimeException {
-		stack.pop(); // remove last chart node.
+		stack.pop(); // remove last chart node ("program counter")
+		setCurrentTags( getCurrentTags().composeWith(n.getTags()) );
 		return n.accept( enterNodeVisitor );
 	}
 	

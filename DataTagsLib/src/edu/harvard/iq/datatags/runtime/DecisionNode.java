@@ -10,8 +10,6 @@ import java.util.Map;
  * @author michael
  */
 public class DecisionNode extends Node {
-	
-	private DataTags tags;
 	private final Map<Answer, Node> nextNodeByAnswer = new EnumMap<>(Answer.class);
 	
 	public DecisionNode(String id, String title) {
@@ -24,14 +22,6 @@ public class DecisionNode extends Node {
 
 	public DecisionNode(String id, String title, String text, FlowChart chart) {
 		super(id, title, text, chart);
-	}
-
-	public DataTags getTags() {
-		return tags;
-	}
-
-	public void setTags(DataTags tags) {
-		this.tags = tags;
 	}
 	
 	@Override
