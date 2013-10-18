@@ -7,6 +7,7 @@ import edu.harvard.iq.datatags.runtime.EndNode;
 import edu.harvard.iq.datatags.runtime.FlowChart;
 import edu.harvard.iq.datatags.runtime.FlowChartSet;
 import edu.harvard.iq.datatags.runtime.Node;
+import edu.harvard.iq.datatags.runtime.RuntimeEntity;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -68,7 +69,8 @@ public class GraphvizCharsetVisualizer {
 				extras = " " + extras + " ";
 			}
 			
-			return String.format( "%s [label=\"%s: %s\"" + extras + "]", nodeId(n), n.getId(), n.getTitle());
+			return String.format( "%s [label=\"%s\" id=\"%s\"" + extras + "]", 
+					nodeId(n), humanTitle(n), nodeId(n) );
 		}
 		
 		private String edgeStr( Node n, String dest, String title, String extras ) {
@@ -80,6 +82,7 @@ public class GraphvizCharsetVisualizer {
 			return String.format( "%s -> %s [label=\"%s\"" + extras + "]", 
 					nodeId(n), dest, title);
 		}
+		
 	}
 	private final NodePainter nodePainter = new NodePainter();
 	
@@ -121,10 +124,10 @@ public class GraphvizCharsetVisualizer {
 		wrt.write( "subgraph cluster_" + sanitize(fc.getId()) + " {");
 		wrt.newLine();
 
-		wrt.write( String.format("label=\"%s\"", fc.getTitle()) );
+		wrt.write( String.format("label=\"%s\"", humanTitle(fc)) );
 		wrt.newLine();
 		
-		wrt.write( nodeId(fc.getStart()) +"[peropheries=2]" );
+		wrt.write( nodeId(fc.getStart()) +"[peripheries=2]" );
 		wrt.newLine();
 		
 		nodePainter.nodes.clear();
@@ -149,6 +152,10 @@ public class GraphvizCharsetVisualizer {
 	void printHeader( BufferedWriter out ) throws IOException {
 		out.write( "digraph ChartSet {");
 		out.newLine();
+		out.write( "edge [fontname=\"Helvetica\" fontsize=\"10\"]");
+		out.newLine();
+		out.write( "node [fillcolor=\"lightgray\" style=\"filled\" fontname=\"Helvetica\" fontsize=\"10\"]");
+		out.newLine();
 	}
 	
 	void printFooter( BufferedWriter out ) throws IOException {
@@ -162,6 +169,12 @@ public class GraphvizCharsetVisualizer {
 	
 	String nodeId( String chartId, String nodeId ) {
 		return sanitize(chartId) + "__" + sanitize( nodeId );
+	}
+	
+	private String humanTitle( RuntimeEntity ent ) {
+		return (ent.getTitle() != null ) ?
+					String.format("%s: %s", ent.getId(), ent.getTitle() )
+					: ent.getId();
 	}
 	
 	String sanitize( String s ) {
