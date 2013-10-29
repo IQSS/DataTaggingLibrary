@@ -10,17 +10,8 @@ import edu.harvard.iq.datatags.runtime.DecisionNode;
 import edu.harvard.iq.datatags.runtime.EndNode;
 import edu.harvard.iq.datatags.runtime.FlowChart;
 import edu.harvard.iq.datatags.runtime.FlowChartSet;
-import edu.harvard.iq.datatags.runtime.Node;
-import java.io.BufferedWriter;
-import java.io.Writer;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -60,6 +51,7 @@ public class GraphvizCharsetVisualizerTest {
 		
 		((CallNode)mainChart.getNode("c-m")).setCalleeChartId(subchartName);
 		((CallNode)mainChart.getNode("c-m")).setCalleeNodeId("A");
+		mainChart.getNode("c-m").setTitle("Calling A");
 		
 		mainChart.setStart( start );
 		
@@ -67,10 +59,10 @@ public class GraphvizCharsetVisualizerTest {
 		fcs.addChart(mainChart);
 		fcs.addChart(subChart);
 		
-		GraphvizCharsetVisualizer v = new GraphvizCharsetVisualizer();
+		GraphvizChartSetVisualizer v = new GraphvizChartSetVisualizer();
 		
 		v.setChartSet(fcs);
-		v.vizualize( Paths.get("SingleCall.gv") );
+		v.vizualize( Paths.get("WORK/SingleCall.gv") );
 		
 	}
 	

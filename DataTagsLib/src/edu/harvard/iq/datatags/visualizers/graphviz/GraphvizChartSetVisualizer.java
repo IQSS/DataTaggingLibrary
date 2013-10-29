@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * 
  * @author michael
  */
-public class GraphvizCharsetVisualizer {
+public class GraphvizChartSetVisualizer {
 	
 	private FlowChartSet chartSet;
 	private final Pattern whitespace = Pattern.compile("\\s|-");
@@ -59,7 +59,7 @@ public class GraphvizCharsetVisualizer {
 
 		@Override
 		public Void visitEndNode(EndNode nd) throws DataTagsRuntimeException {
-			nodes.add( nodeStr(nd, "shape=\"point\"") );
+			nodes.add( nodeStr(nd, "shape=\"point\" width=\"0.25\" fillcolor=\"#333333\" height=\"0.25\"") );
 			return null;
 		}
 		
@@ -135,7 +135,7 @@ public class GraphvizCharsetVisualizer {
 			try {
 				n.accept( nodePainter );
 			} catch (DataTagsRuntimeException ex) {
-				Logger.getLogger(GraphvizCharsetVisualizer.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(GraphvizChartSetVisualizer.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 		
@@ -155,6 +155,8 @@ public class GraphvizCharsetVisualizer {
 		out.write( "edge [fontname=\"Helvetica\" fontsize=\"10\"]");
 		out.newLine();
 		out.write( "node [fillcolor=\"lightgray\" style=\"filled\" fontname=\"Helvetica\" fontsize=\"10\"]");
+		out.newLine();
+		out.write( "rankdir=LR");
 		out.newLine();
 	}
 	

@@ -1,12 +1,12 @@
 package edu.harvard.iq.datatags.model.values;
 
-import edu.harvard.iq.datatags.model.types.SimpleValueType;
+import edu.harvard.iq.datatags.model.types.SimpleType;
 
 /**
  *
  * @author michael
  */
-public class SimpleValue extends TagValue<SimpleValueType> implements Comparable<SimpleValue>{
+public class SimpleValue extends TagValue<SimpleType> implements Comparable<SimpleValue>{
 	
 	private final int ordinal;
 
@@ -18,7 +18,7 @@ public class SimpleValue extends TagValue<SimpleValueType> implements Comparable
 	 * @param type the type of the value
 	 * @param info additional info
 	 */
-	public SimpleValue(int ordinal, String name, SimpleValueType type, String info) {
+	public SimpleValue(int ordinal, String name, SimpleType type, String info) {
 		super(name, type, info);
 		this.ordinal = ordinal;
 	}

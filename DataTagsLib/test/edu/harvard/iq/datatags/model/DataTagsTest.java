@@ -1,14 +1,18 @@
 package edu.harvard.iq.datatags.model;
 
 import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.SimpleValueType;
+import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.SimpleType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
+import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.SimpleValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import java.util.Collections;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static edu.harvard.iq.util.CollectionHelper.C;
+import static edu.harvard.iq.datatags.util.CollectionHelper.C;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -21,7 +25,7 @@ public class DataTagsTest {
 	 */
 	@Test
 	public void testSet() {
-		SimpleValueType tt1 = new SimpleValueType("Test", "info");
+		SimpleType tt1 = new SimpleType("Test", "info");
 		TagValue tt1tv1 = tt1.make( "TestValue1", null);
 		TagValue tt1tv2 = tt1.make( "TestValue2", null);
 		
@@ -32,7 +36,7 @@ public class DataTagsTest {
 		instance.add( tt1tv2 );
 		assertSame( tt1tv2, instance.get(tt1) );
 		
-		SimpleValueType tt2 = new SimpleValueType("Test2", null );
+		SimpleType tt2 = new SimpleType("Test2", null );
 		SimpleValue tt2tv1 = tt2.make( "TestValue2Type2", null );
 		
 		instance.add( tt2tv1 );
@@ -44,7 +48,7 @@ public class DataTagsTest {
 	public void testRemove() {
 		DataTags instance = new DataTags();
 		
-		SimpleValueType tt = new SimpleValueType("Test2", null );
+		SimpleType tt = new SimpleType("Test2", null );
 		SimpleValue tttv1 = tt.make("TestValue2Type2", null);
 		
 		instance.add( tttv1 );
@@ -59,8 +63,8 @@ public class DataTagsTest {
 	 */
 	@Test
 	public void testGetTypes() {
-		SimpleValueType tt1 = new SimpleValueType("Test", "info");
-		SimpleValueType tt2 = new SimpleValueType("Test2", "info");
+		SimpleType tt1 = new SimpleType("Test", "info");
+		SimpleType tt2 = new SimpleType("Test2", "info");
 		
 		TagValue tt1tv1 = tt1.make( "TestValue1", null );
 		TagValue tt1tv2 = tt1.make( "TestValue2", null );
@@ -81,8 +85,8 @@ public class DataTagsTest {
 	 */
 	@Test
 	public void testMakeCopy() {
-		SimpleValueType simple_t = new SimpleValueType("svt", null);
-		SimpleValueType aggregated_t = new SimpleValueType("agg-ed", null);
+		SimpleType simple_t = new SimpleType("svt", null);
+		SimpleType aggregated_t = new SimpleType("agg-ed", null);
 		AggregateType aggregator_t = new AggregateType("agg-er", null, aggregated_t);
 		
 		SimpleValue sVal = simple_t.make("sval", null);
@@ -106,8 +110,8 @@ public class DataTagsTest {
 
 	@Test
 	public void testComposeWith_simple() {
-		SimpleValueType simple_t1 = new SimpleValueType("st1", null);
-		SimpleValueType simple_t2 = new SimpleValueType("st2", null);
+		SimpleType simple_t1 = new SimpleType("st1", null);
+		SimpleType simple_t2 = new SimpleType("st2", null);
 		
 		SimpleValue v1_t1 = simple_t1.make("1", null);
 		SimpleValue v2_t1 = simple_t1.make("2", null);
@@ -137,7 +141,7 @@ public class DataTagsTest {
 
 	@Test
 	public void testComposeWith_aggregate() {
-		SimpleValueType simple_t = new SimpleValueType( "t1", null );
+		SimpleType simple_t = new SimpleType( "t1", null );
 		AggregateType agg_t = new AggregateType( "a1", null, simple_t );
 		
 		AggregateValue agg_1 = agg_t.make("av1", null);
@@ -164,5 +168,95 @@ public class DataTagsTest {
 		expected.add( expectedAgg_t );
 		
 		assertEquals( expected, actual );
+	}
+	
+	@Test
+	public void testComposeWith_compound_single() {
+		SimpleType simple_t1 = new SimpleType( "OnA", null );
+		SimpleType simple_t2 = new SimpleType( "OnB", null );
+		SimpleType simple_t3 = new SimpleType( "OnBoth-A bigger", null );
+		SimpleType simple_t4 = new SimpleType( "OnBoth-B bigger", null );
+		
+		List<SimpleType> simpleTypes = Arrays.asList( simple_t1, simple_t2, simple_t3, simple_t4 );
+		
+		CompoundType compound_t = new CompoundType("SUT", "The type we test");
+		for ( SimpleType st : simpleTypes ) compound_t.addFieldType(st);
+		
+		for ( SimpleType st : simpleTypes ) {
+			int idx=0;
+			st.make(st.getName() + (++idx), null);
+			st.make(st.getName() + (++idx), null);
+		}
+		
+		CompoundValue cv1 = compound_t.make("cv1", null);
+		cv1.setField(C.first(simple_t1.values()) );
+		cv1.setField(C.list(simple_t3.values()).get(1) );
+		cv1.setField(C.first(simple_t4.values()) );
+		
+		CompoundValue cv2 = compound_t.make("cv2", null);
+		cv2.setField(C.first(simple_t2.values()) );
+		cv2.setField(C.first(simple_t3.values()) );
+		cv2.setField(C.list(simple_t4.values()).get(1) );
+
+		CompoundValue cvExpected = compound_t.make("expected", null);
+		cvExpected.setField(C.first(simple_t1.values()) );
+		cvExpected.setField(C.first(simple_t2.values()) );
+		cvExpected.setField(C.list(simple_t3.values()).get(1) );
+		cvExpected.setField(C.list(simple_t4.values()).get(1) );
+		
+		DataTags a = new DataTags();
+		a.add(cv1);
+		DataTags b = new DataTags();
+		b.add(cv2);
+		DataTags expected = new DataTags();
+		expected.add(cvExpected);
+		DataTags actual = a.composeWith(b);
+		
+		assertEquals( expected, actual );
+	}
+	
+	@Test
+	public void testComposeWith_compound_aggregate() {
+		SimpleType items_t = new SimpleType("Type of items", null);
+		
+		for ( int i=0; i<3; i++ ) items_t.make("item " + i, null);
+		
+		AggregateType agg_t = new AggregateType("agg1",null, items_t);
+		
+		AggregateValue agg_v1 = agg_t.make("aggV1", null);
+		AggregateValue agg_v2 = agg_t.make("aggV2", null);
+		
+		agg_v1.add( C.list(items_t.values()).get(0) );
+		agg_v1.add( C.list(items_t.values()).get(1) );
+		
+		agg_v2.add( C.list(items_t.values()).get(1) );
+		agg_v2.add( C.list(items_t.values()).get(2) );
+		
+		AggregateValue agg_ex = agg_t.make("expected", null);
+		agg_ex.add( C.list(items_t.values()).get(0) );
+		agg_ex.add( C.list(items_t.values()).get(1) );
+		agg_ex.add( C.list(items_t.values()).get(2) );
+		
+		CompoundType cmp_t = new CompoundType("SUT",null);
+		cmp_t.addFieldType(agg_t);
+		
+		CompoundValue cv1 = cmp_t.make("cv1", null);
+		cv1.setField(agg_v1);
+		CompoundValue cv2 = cmp_t.make("cv2", null);
+		cv2.setField(agg_v2);
+		CompoundValue cvE = cmp_t.make("cv-expected", null);
+		cvE.setField(agg_ex);
+		
+		DataTags a = new DataTags();
+		a.add(cv1);
+		DataTags b = new DataTags();
+		b.add(cv2);
+		DataTags expected = new DataTags();
+		expected.add(cvE);
+		DataTags actual = a.composeWith(b);
+		
+		assertEquals( expected, actual );
+		
+		
 	}
 }

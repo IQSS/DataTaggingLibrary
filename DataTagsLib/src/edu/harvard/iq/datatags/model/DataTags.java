@@ -2,12 +2,13 @@ package edu.harvard.iq.datatags.model;
 
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
+import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.SimpleValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
+import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -20,6 +21,9 @@ import java.util.Set;
  * @author michael
  */
 public class DataTags {
+	
+	/** A TagValue visitor used in the composing process. */
+	private final static Resolver RESOLVER = new Resolver();
 	
 	private final Map<TagType,TagValue> values = new HashMap<>();
 	
@@ -63,6 +67,8 @@ public class DataTags {
 	 *			    for the result tag.</li>
 	 *			<li>If the value is an aggregate value, the result tag will contain
 	 *			    the union of the two values</li>
+	 *			<li>If the value is a compound value, the result will be calculated
+	 *				recursively. </li>
 	 *	    </ul>
 	 *  </li>
 	 * </ul>
@@ -75,45 +81,10 @@ public class DataTags {
 	public DataTags composeWith( DataTags other ) {
 		if ( other == null ) return makeCopy();
 		
-		edu.harvard.iq.datatags.model.values.TagValue.Visitor<TagValue.Function> resolver = new edu.harvard.iq.datatags.model.values.TagValue.Visitor<TagValue.Function>() {
-
-			@Override
-			public TagValue.Function visitSimpleValue( final SimpleValue op1 ) {
-				return new TagValue.Function(){
-					@Override public TagValue apply(TagValue v) {
-						SimpleValue op2 = (SimpleValue) v;
-						return ( op1.compareTo(op2) > 0 ? op1 : op2).getOwnableInstance();
-				}};
-			}
-
-			@Override
-			public TagValue.Function visitAggregateValue( final AggregateValue op1 ) {
-				return new TagValue.Function(){
-					@Override public TagValue apply(TagValue v) {
-						AggregateValue op2 = (AggregateValue) v;
-						AggregateValue res = op1.getOwnableInstance();
-						for ( TagValue tv : op2.getValues() ) {
-							res.add(tv);
-						}
-						return res;
-				}};
-			}
-
-			@Override
-			public TagValue.Function visitToDoValue( ToDoValue v ) {
-				return new TagValue.Function() {
-					@Override public TagValue apply(TagValue v) {
-						return v;
-				}};
-		}};
-		
-		Set<TagType> types = new HashSet<>();
-		types.addAll( getTypes() );
-		types.addAll( other.getTypes() );
 		DataTags result = new DataTags();
 		
 		// Composing. Note that for each type in types, at least one object has a non-null value
-		for ( TagType tp : types ) {
+		for ( TagType tp : C.unionSet(getTypes(), other.getTypes()) ) {
 			TagValue<?> ours = get(tp);
 			TagValue<?> its  = other.get(tp);
 			
@@ -127,7 +98,7 @@ public class DataTags {
 				result.add( ours );
 
 			} else {
-				result.add( ours.accept(resolver).apply(its) );
+				result.add( ours.accept(RESOLVER).apply(its) );
 			}
 		}
 		
@@ -165,4 +136,56 @@ public class DataTags {
 		return "[DataTags {" + sb.toString() +"}]";
 	}
 	
+}
+
+class Resolver implements TagValue.Visitor<TagValue.Function> {
+
+	@Override
+	public TagValue.Function visitSimpleValue( final SimpleValue op1 ) {
+		return new TagValue.Function(){
+			@Override public TagValue apply(TagValue v) {
+				if ( v==null ) return op1.getOwnableInstance();
+				SimpleValue op2 = (SimpleValue) v;
+				return ( op1.compareTo(op2) > 0 ? op1 : op2).getOwnableInstance();
+		}};
+	}
+
+	@Override
+	public TagValue.Function visitAggregateValue( final AggregateValue op1 ) {
+		return new TagValue.Function(){
+			@Override public TagValue apply(TagValue v) {
+				AggregateValue res = op1.getOwnableInstance();
+				if ( v==null ) return res;
+				AggregateValue op2 = (AggregateValue) v;
+				for ( TagValue tv : op2.getValues() ) {
+					res.add(tv);
+				}
+				return res;
+		}};
+	}
+
+	@Override
+	public TagValue.Function visitToDoValue( ToDoValue v ) {
+		return new TagValue.Function() {
+			@Override public TagValue apply(TagValue v) {
+				return v;
+		}};
+	}
+
+
+	@Override
+	public TagValue.Function visitCompoundValue( final CompoundValue cv ) {
+		return new TagValue.Function() {
+			@Override public TagValue apply(TagValue v) {
+				CompoundValue res = cv.getOwnableInstance();
+				if ( v==null ) return res;
+				CompoundValue cv2 = (CompoundValue) v;
+				for ( TagType tt : C.unionSet(cv2.getSetFields(), cv.getSetFields())) {
+					res.setField(
+							(res.getField(tt)==null) ? cv2.getField(tt)
+									: ((TagValue.Function)cv.getField(tt).accept(Resolver.this)).apply(cv2.getField(tt)));
+				}
+				return res;
+		}};
+	}
 }

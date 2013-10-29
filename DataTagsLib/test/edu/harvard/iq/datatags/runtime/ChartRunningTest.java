@@ -9,7 +9,7 @@ import edu.harvard.iq.datatags.runtime.FlowChartSet;
 import java.util.Arrays;
 import org.junit.Test;
 import static edu.harvard.iq.datatags.runtime.Answer.*;
-import static edu.harvard.iq.util.CollectionHelper.*;
+import static edu.harvard.iq.datatags.util.CollectionHelper.*;
 import static edu.harvard.iq.util.ChartHelper.*;
 
 /**

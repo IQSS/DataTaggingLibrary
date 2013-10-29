@@ -67,12 +67,16 @@ package model {
 			
 		}
 
-		class SimpleValueType {
+		class SimpleType {
 			+ values: TagValue[]
 		}
 
 		class AggregateType {
 			+ itemType: TagType
+		}
+
+		class CompoundType {
+			+ fields: List<TagType>
 		}
 	}
 	package values {
@@ -93,6 +97,10 @@ package model {
 		class AggregateValue {
 			values: TagValue[]
 		}
+
+		class CompoundValue {
+			values: Map<TagType<TagValue>,TagValue>
+		}
 	}
 }
 
@@ -111,10 +119,13 @@ Node <|-- DecisionNode
 Node <|-- CallNode
 Node <|-- EndNode
 TagType <|-- ToDoType
-TagType <|-- SimpleValueType
+TagType <|-- SimpleType
 TagType <|-- AggregateType
+TagType <|-- CompoundType
+
 TagValue <|-- ToDoValue
 TagValue <|-- AggregateValue
+TagValue <|-- CompoundValue
 TagValue <|-- SimpleValue
 
 FlowChartSet "1" --> "1..*" FlowChart : charts
@@ -132,9 +143,13 @@ DataTags --> "0..*" TagType : types
 DataTags --> "0..*" TagValue 
 note on link: Mapped by TagType
 
-AggregateValue ---> "0..*" TagValue
+AggregateValue ---> "0..*" TagValue : items
 
 AggregateType --> TagType : itemType
+
+CompoundType --> "0..*" TagType : fieldTypes
+
+CompoundValue --> "0..*" TagValue : fieldValues
 
 FlowChartSet --> "0..*" TagType : tagTypes
 

@@ -10,8 +10,7 @@ body {
 	height: 100px;
 	position: fixed;
 	background-color: #DDD;
-	box-shadow: 0 -2px 4px rgba(0,0,0,0.75);
-	border-top: 1px solid black;
+	box-shadow: 0 -2px 8px rgba(0,0,0,0.5);
 	padding: 4px;
 }
 

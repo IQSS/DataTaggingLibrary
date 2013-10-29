@@ -11,9 +11,10 @@ import java.util.Objects;
 public abstract class TagValue<T extends TagType> {
 	
 	public interface Visitor<R> {
+		R visitToDoValue(ToDoValue v);
 		R visitSimpleValue(SimpleValue v);
 		R visitAggregateValue(AggregateValue v);
-		R visitToDoValue(ToDoValue v);
+		R visitCompoundValue(CompoundValue aThis);
 	}
 
 	public interface Function {

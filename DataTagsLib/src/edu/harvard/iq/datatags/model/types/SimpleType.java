@@ -11,13 +11,13 @@ import edu.harvard.iq.datatags.model.values.*;
  * 
  * @author michael
  */
-public class SimpleValueType extends TagType {
+public class SimpleType extends TagType {
 	
 	private int nextOrdinal = 0;
 	
 	SortedSet<SimpleValue> values = new TreeSet<>(); 
 
-	public SimpleValueType(String name, String info) {
+	public SimpleType(String name, String info) {
 		super(name, info);
 	}
 

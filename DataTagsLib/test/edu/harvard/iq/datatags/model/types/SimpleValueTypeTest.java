@@ -38,11 +38,11 @@ public class SimpleValueTypeTest {
 	}
 
 	/**
-	 * Test of make method, of class SimpleValueType.
+	 * Test of make method, of class SimpleType.
 	 */
 	@Test
 	public void testMake() {
-		SimpleValueType instance = new SimpleValueType("Test", null);
+		SimpleType instance = new SimpleType("Test", null);
 		
 		assertTrue( instance.values().isEmpty() );
 		
