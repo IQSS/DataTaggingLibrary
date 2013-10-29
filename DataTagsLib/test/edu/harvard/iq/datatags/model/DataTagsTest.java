@@ -30,16 +30,16 @@ public class DataTagsTest {
 		TagValue tt1tv2 = tt1.make( "TestValue2", null);
 		
 		DataTags instance = new DataTags();
-		instance.add( tt1tv1 );
+		instance.set( tt1tv1 );
 		assertSame( tt1tv1, instance.get(tt1) );
 		
-		instance.add( tt1tv2 );
+		instance.set( tt1tv2 );
 		assertSame( tt1tv2, instance.get(tt1) );
 		
 		SimpleType tt2 = new SimpleType("Test2", null );
 		SimpleValue tt2tv1 = tt2.make( "TestValue2Type2", null );
 		
-		instance.add( tt2tv1 );
+		instance.set( tt2tv1 );
 		assertSame( tt1tv2, instance.get(tt1) );
 		assertSame( tt2tv1, instance.get(tt2) );
 	}
@@ -51,10 +51,10 @@ public class DataTagsTest {
 		SimpleType tt = new SimpleType("Test2", null );
 		SimpleValue tttv1 = tt.make("TestValue2Type2", null);
 		
-		instance.add( tttv1 );
+		instance.set( tttv1 );
 		assertSame( tttv1, instance.get(tt) );
 		
-		instance.remove( tt );
+		instance.clear( tt );
 		assertNull( instance.get(tt) );
 	}
 	
@@ -72,12 +72,12 @@ public class DataTagsTest {
 		
 		DataTags instance = new DataTags();
 		
-		instance.add( tt1tv1 );
-		assertEquals( Collections.singleton(tt1), instance.getTypes());
-		instance.add( tt1tv2 );
-		assertEquals( Collections.singleton(tt1), instance.getTypes());
-		instance.add( tt2tv1 );
-		assertEquals( C.set(tt1, tt2), instance.getTypes());
+		instance.set( tt1tv1 );
+		assertEquals( Collections.singleton(tt1), instance.getSetFieldTypes());
+		instance.set( tt1tv2 );
+		assertEquals( Collections.singleton(tt1), instance.getSetFieldTypes());
+		instance.set( tt2tv1 );
+		assertEquals( C.set(tt1, tt2), instance.getSetFieldTypes());
 	}
 
 	/**
@@ -97,10 +97,10 @@ public class DataTagsTest {
 		aVal.add( aggregated_t.make("agg3", null) );
 		
 		DataTags orig = new DataTags();
-		orig.add( aVal );
-		orig.add( sVal );
+		orig.set( aVal );
+		orig.set( sVal );
 		
-		DataTags copy = orig.makeCopy();
+		DataTags copy = orig.getOwnableInstance();
 		
 		assertNotSame( "Result of copy should be a different instance", orig, copy);
 		assertNotSame( "Aggregated values should return a copy", orig.get(aggregator_t), copy.get(aggregator_t) );
@@ -121,19 +121,19 @@ public class DataTagsTest {
 		DataTags a = new DataTags();
 		DataTags b = new DataTags();
 		
-		a.add( v1_t1 );
+		a.set( v1_t1 );
 		
-		b.add( v2_t1 );
-		b.add( v1_t2 );
+		b.set( v2_t1 );
+		b.set( v1_t2 );
 		
 		DataTags expected = new DataTags();
-		expected.add( v2_t1 ); // as v2_t1.ordinal > v1_t1.ordinal
-		expected.add( v1_t2 );
+		expected.set( v2_t1 ); // as v2_t1.ordinal > v1_t1.ordinal
+		expected.set( v1_t2 );
 		
 		assertEquals( expected, a.composeWith(b) );
 		
-		a.add( v2_t1 );
-		b.add( v1_t1 );
+		a.set( v2_t1 );
+		b.set( v1_t1 );
 
 		assertEquals( expected, a.composeWith(b) );
 		
@@ -157,15 +157,15 @@ public class DataTagsTest {
 		agg_2.add(inBoth);
 		
 		DataTags dt1 = new DataTags();
-		dt1.add( agg_1 );
+		dt1.set( agg_1 );
 		DataTags dt2 = new DataTags();
-		dt2.add( agg_2 );
+		dt2.set( agg_2 );
 		
 		DataTags actual = dt1.composeWith(dt2);
 		DataTags expected = new DataTags();
 		AggregateValue expectedAgg_t = agg_t.make("expected", null);
 		expectedAgg_t.add( simple_t.values() );
-		expected.add( expectedAgg_t );
+		expected.set( expectedAgg_t );
 		
 		assertEquals( expected, actual );
 	}
@@ -189,27 +189,27 @@ public class DataTagsTest {
 		}
 		
 		CompoundValue cv1 = compound_t.make("cv1", null);
-		cv1.setField(C.first(simple_t1.values()) );
-		cv1.setField(C.list(simple_t3.values()).get(1) );
-		cv1.setField(C.first(simple_t4.values()) );
+		cv1.set(C.first(simple_t1.values()) );
+		cv1.set(C.list(simple_t3.values()).get(1) );
+		cv1.set(C.first(simple_t4.values()) );
 		
 		CompoundValue cv2 = compound_t.make("cv2", null);
-		cv2.setField(C.first(simple_t2.values()) );
-		cv2.setField(C.first(simple_t3.values()) );
-		cv2.setField(C.list(simple_t4.values()).get(1) );
+		cv2.set(C.first(simple_t2.values()) );
+		cv2.set(C.first(simple_t3.values()) );
+		cv2.set(C.list(simple_t4.values()).get(1) );
 
 		CompoundValue cvExpected = compound_t.make("expected", null);
-		cvExpected.setField(C.first(simple_t1.values()) );
-		cvExpected.setField(C.first(simple_t2.values()) );
-		cvExpected.setField(C.list(simple_t3.values()).get(1) );
-		cvExpected.setField(C.list(simple_t4.values()).get(1) );
+		cvExpected.set(C.first(simple_t1.values()) );
+		cvExpected.set(C.first(simple_t2.values()) );
+		cvExpected.set(C.list(simple_t3.values()).get(1) );
+		cvExpected.set(C.list(simple_t4.values()).get(1) );
 		
 		DataTags a = new DataTags();
-		a.add(cv1);
+		a.set(cv1);
 		DataTags b = new DataTags();
-		b.add(cv2);
+		b.set(cv2);
 		DataTags expected = new DataTags();
-		expected.add(cvExpected);
+		expected.set(cvExpected);
 		DataTags actual = a.composeWith(b);
 		
 		assertEquals( expected, actual );
@@ -241,18 +241,18 @@ public class DataTagsTest {
 		cmp_t.addFieldType(agg_t);
 		
 		CompoundValue cv1 = cmp_t.make("cv1", null);
-		cv1.setField(agg_v1);
+		cv1.set(agg_v1);
 		CompoundValue cv2 = cmp_t.make("cv2", null);
-		cv2.setField(agg_v2);
+		cv2.set(agg_v2);
 		CompoundValue cvE = cmp_t.make("cv-expected", null);
-		cvE.setField(agg_ex);
+		cvE.set(agg_ex);
 		
 		DataTags a = new DataTags();
-		a.add(cv1);
+		a.set(cv1);
 		DataTags b = new DataTags();
-		b.add(cv2);
+		b.set(cv2);
 		DataTags expected = new DataTags();
-		expected.add(cvE);
+		expected.set(cvE);
 		DataTags actual = a.composeWith(b);
 		
 		assertEquals( expected, actual );

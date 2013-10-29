@@ -19,7 +19,7 @@ public class CompoundValue extends TagValue<CompoundType> {
 		super(name, type, info);
 	}
 	
-	public void setField( TagValue value ) {
+	public void set( TagValue value ) {
 		if ( getType().getFieldTypes().contains(value.getType()) ) {
 			fields.put(value.getType(), value);
 		} else {
@@ -27,11 +27,11 @@ public class CompoundValue extends TagValue<CompoundType> {
 		}
 	}
 	
-	public void clearField( TagType type ) {
+	public void clear( TagType type ) {
 		fields.remove(type);
 	}
 
-	public TagValue getField( TagType type ) {
+	public TagValue get( TagType type ) {
 		if ( getType().getFieldTypes().contains(type) ) {
 			return fields.get(type);
 		} else {
@@ -39,7 +39,7 @@ public class CompoundValue extends TagValue<CompoundType> {
 		}
 	}
 	
-	public Set<TagType> getSetFields() {
+	public Set<TagType> getSetFieldTypes() {
 		return fields.keySet();
 	}
 	
@@ -50,12 +50,15 @@ public class CompoundValue extends TagValue<CompoundType> {
 	
 	@Override
 	public CompoundValue getOwnableInstance() {
-		CompoundValue out = new CompoundValue( getName(), getType(), getInfo() );
-		for ( TagType tt : getSetFields() ) {
-			out.setField(getField(tt).getOwnableInstance());
+		return buildOwnableInstance( new CompoundValue( getName(), getType(), getInfo() ));
+	}
+	
+	protected <T extends CompoundValue> T buildOwnableInstance( T startingPoint ) {
+		for ( TagType tt : getSetFieldTypes() ) {
+			startingPoint.set(get(tt).getOwnableInstance());
 		}
 		
-		return out;
+		return startingPoint;
 	}
 
 	@Override

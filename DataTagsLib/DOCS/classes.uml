@@ -1,5 +1,57 @@
 @startuml
 
+package model {
+	class DataTags {
+		composeWith( t:DataTags ): DataTags
+	}
+
+	package types {
+		class TagType {
+			+ name:String
+			+ info:String
+		}
+
+		class ToDoType {
+			
+		}
+
+		class SimpleType {
+			+ values: TagValue[]
+		}
+
+		class AggregateType {
+			+ itemType: TagType
+		}
+
+		class CompoundType {
+			+ fields: List<TagType>
+		}
+	}
+	package values {
+		class TagValue {
+			+ name: String
+			+ type: TagType
+			+ info: String
+		}
+
+		class SimpleValue <<Comparable>> {
+			+ ordinal: int
+		}
+
+		class ToDoValue {
+			
+		}
+
+		class AggregateValue {
+			values: TagValue[]
+		}
+
+		class CompoundValue {
+			values: Map<TagType<TagValue>,TagValue>
+		}
+	}
+}
+
 package runtime {
 	class RuntimeEngine {
 		+ currentTags : DataTags
@@ -51,59 +103,6 @@ package runtime {
 	}
 }
 
-package model {
-	class DataTags {
-		+ tags : Map<TagType<TagValue>,TagValue>
-		compose( t:DataTags ): DataTags
-	}
-
-	package types {
-		class TagType {
-			+ name:String
-			+ info:String
-		}
-
-		class ToDoType {
-			
-		}
-
-		class SimpleType {
-			+ values: TagValue[]
-		}
-
-		class AggregateType {
-			+ itemType: TagType
-		}
-
-		class CompoundType {
-			+ fields: List<TagType>
-		}
-	}
-	package values {
-		class TagValue {
-			+ name: String
-			+ type: TagType
-			+ info: String
-		}
-
-		class SimpleValue <<Comparable>> {
-			+ ordinal: int
-		}
-
-		class ToDoValue {
-			
-		}
-
-		class AggregateValue {
-			values: TagValue[]
-		}
-
-		class CompoundValue {
-			values: Map<TagType<TagValue>,TagValue>
-		}
-	}
-}
-
 RuntimeEngine --> DataTags : currentTags
 RuntimeEngine --> "1..*" Node : nodeStack
 
@@ -128,6 +127,8 @@ TagValue <|-- AggregateValue
 TagValue <|-- CompoundValue
 TagValue <|-- SimpleValue
 
+CompoundValue <|-- DataTags
+
 FlowChartSet "1" --> "1..*" FlowChart : charts
 note on link: Mapped by name
 
@@ -139,9 +140,7 @@ DecisionNode --> Node: NO
 DecisionNode --> FlowChart : chart
 DecisionNode --> DataTags : assumption
 
-DataTags --> "0..*" TagType : types
-DataTags --> "0..*" TagValue 
-note on link: Mapped by TagType
+DataTags "1" --> "1" CompoundType
 
 AggregateValue ---> "0..*" TagValue : items
 
@@ -154,7 +153,5 @@ CompoundValue --> "0..*" TagValue : fieldValues
 FlowChartSet --> "0..*" TagType : tagTypes
 
 TagValue --> TagType : type
-
-
 
 @enduml

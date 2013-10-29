@@ -26,6 +26,10 @@ public class CompoundType extends TagType {
 	public Set<TagType> getFieldTypes() {
 		return Collections.unmodifiableSet(fieldTypes);
 	}
+	
+	public void removeFieldType( TagType tt ) {
+		fieldTypes.remove(tt);
+	}
 
 	@Override
 	public CompoundValue make(String name, String info) {
