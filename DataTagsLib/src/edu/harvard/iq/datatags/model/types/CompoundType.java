@@ -3,7 +3,6 @@ package edu.harvard.iq.datatags.model.types;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -34,6 +33,11 @@ public class CompoundType extends TagType {
 	@Override
 	public CompoundValue make(String name, String info) {
 		return new CompoundValue(name, this, info);
+	}
+
+	@Override
+	public <T> T accept(Visitor<T> v) {
+		return v.visitCompoundType(this);
 	}
 
 }

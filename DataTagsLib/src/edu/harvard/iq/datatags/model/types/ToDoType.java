@@ -16,5 +16,10 @@ public class ToDoType extends TagType {
 	public ToDoValue make( String name, String info ) {
 		return new ToDoValue(name, this, info);
 	}
+
+	@Override
+	public <T> T accept(Visitor<T> v) {
+		return v.visitTodoType(this);
+	}
 	
 }

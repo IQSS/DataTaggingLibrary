@@ -10,6 +10,13 @@ import java.util.Objects;
  */
 public abstract class TagType {
 	
+	public interface Visitor<T> {
+		T visitSimpleType( SimpleType t );
+		T visitAggregateType( AggregateType t );
+		T visitCompoundType( CompoundType t );
+		T visitTodoType( ToDoType t );
+	}
+	
 	private final String name;
 	private String info;
 
@@ -37,6 +44,8 @@ public abstract class TagType {
 	 * @return the new instance.
 	 */
 	public abstract TagValue make( String name, String info );
+	
+	public abstract <T> T accept( Visitor<T> v );
 	
 	@Override
 	public int hashCode() {

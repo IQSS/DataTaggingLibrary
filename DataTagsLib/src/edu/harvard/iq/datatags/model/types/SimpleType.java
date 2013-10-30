@@ -42,6 +42,11 @@ public class SimpleType extends TagType {
 		values.add( v );
 		return v;
 	}
+
+	@Override
+	public <T> T accept(Visitor<T> v) {
+		return v.visitSimpleType(this);
+	}
 	
 	
 }

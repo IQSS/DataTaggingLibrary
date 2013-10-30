@@ -142,9 +142,9 @@ DecisionNode --> DataTags : assumption
 
 DataTags "1" --> "1" CompoundType
 
-AggregateValue ---> "0..*" TagValue : items
+AggregateValue ---> "0..*" SimpleValue : items
 
-AggregateType --> TagType : itemType
+AggregateType --> SimpleType : itemType
 
 CompoundType --> "0..*" TagType : fieldTypes
 

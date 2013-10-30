@@ -7,19 +7,13 @@ import edu.harvard.iq.datatags.runtime.EndNode;
 import edu.harvard.iq.datatags.runtime.FlowChart;
 import edu.harvard.iq.datatags.runtime.FlowChartSet;
 import edu.harvard.iq.datatags.runtime.Node;
-import edu.harvard.iq.datatags.runtime.RuntimeEntity;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /**
  * Given a {@link FlowChartSet}, instances of this class create gravphviz files
@@ -27,11 +21,10 @@ import java.util.regex.Pattern;
  * 
  * @author michael
  */
-public class GraphvizChartSetVisualizer {
+public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 	
 	private FlowChartSet chartSet;
-	private final Pattern whitespace = Pattern.compile("\\s|-");
-	
+
 	private class NodePainter implements  Node.Visitor<Void> {
 		
 		List<String> nodes = new LinkedList<>(), edges = new LinkedList<>();
@@ -86,38 +79,15 @@ public class GraphvizChartSetVisualizer {
 	}
 	private final NodePainter nodePainter = new NodePainter();
 	
-	/**
-	 * Convenience method to write to a file.
-	 * @param outputFile
-	 * @throws IOException 
-	 */
-	public void vizualize( Path outputFile ) throws IOException {
-		
-		try( BufferedWriter out = Files.newBufferedWriter(outputFile, StandardCharsets.UTF_8) ) {
-			visualize( out );
-		}		
-	}
-	
-	/**
-	 * Writes the representation to the output stream
-	 * @param out
-	 * @throws IOException 
-	 */
-	public void visualize( Writer out ) throws IOException {
-		BufferedWriter bOut = ( out instanceof BufferedWriter ) ?
-											(BufferedWriter)out : 
-											new BufferedWriter(out);
-		printHeader( bOut );
-		for ( FlowChart fc : chartSet.charts() ) {
-			printChart( fc, bOut );
+	@Override
+	protected void printBody(BufferedWriter out) throws IOException {
+		for (FlowChart fc : chartSet.charts()) {
+			printChart(fc, out);
 		}
-		for ( String s : nodePainter.edges ) {
-			bOut.write(s);
-			bOut.newLine();
+		for (String s : nodePainter.edges) {
+			out.write(s);
+			out.newLine();
 		}
-		printFooter( bOut );
-		
-		bOut.flush();
 	}
 	
 	void printChart( FlowChart fc, BufferedWriter wrt ) throws IOException {
@@ -148,22 +118,6 @@ public class GraphvizChartSetVisualizer {
 		wrt.newLine();
 		
 	}
-	
-	void printHeader( BufferedWriter out ) throws IOException {
-		out.write( "digraph ChartSet {");
-		out.newLine();
-		out.write( "edge [fontname=\"Helvetica\" fontsize=\"10\"]");
-		out.newLine();
-		out.write( "node [fillcolor=\"lightgray\" style=\"filled\" fontname=\"Helvetica\" fontsize=\"10\"]");
-		out.newLine();
-		out.write( "rankdir=LR");
-		out.newLine();
-	}
-	
-	void printFooter( BufferedWriter out ) throws IOException {
-		out.write( "}");
-		out.newLine();
-	}
 
 	String nodeId( Node nd ) {
 		return nodeId( nd.getChart().getId(), nd.getId() );
@@ -171,16 +125,6 @@ public class GraphvizChartSetVisualizer {
 	
 	String nodeId( String chartId, String nodeId ) {
 		return sanitize(chartId) + "__" + sanitize( nodeId );
-	}
-	
-	private String humanTitle( RuntimeEntity ent ) {
-		return (ent.getTitle() != null ) ?
-					String.format("%s: %s", ent.getId(), ent.getTitle() )
-					: ent.getId();
-	}
-	
-	String sanitize( String s ) {
-		return whitespace.matcher(s.trim()).replaceAll("_");
 	}
 	
 	public FlowChartSet getChartSet() {
