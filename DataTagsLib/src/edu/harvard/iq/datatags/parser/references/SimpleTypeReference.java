@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class SimpleTypeReference extends TypeReference {
 
-	public SimpleTypeReference( String typeName, List<String> valueNames ) {
+	public SimpleTypeReference( String typeName, List<?> valueNames ) {
 		super(typeName, valueNames);
 	}
 	

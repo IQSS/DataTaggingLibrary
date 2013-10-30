@@ -1,7 +1,6 @@
 package edu.harvard.iq.datatags.parser.references;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A parsed reference of a compound type.
@@ -9,7 +8,7 @@ import java.util.Objects;
  */
 public class CompoundTypeReference extends TypeReference {
 
-	public CompoundTypeReference(String typeName, List<String> fieldTypeNames) {
+	public CompoundTypeReference(String typeName, List<?> fieldTypeNames) {
 		super( typeName, fieldTypeNames ); 
 	}
 

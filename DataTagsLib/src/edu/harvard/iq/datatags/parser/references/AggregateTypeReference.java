@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class AggregateTypeReference extends TypeReference {
 
-	public AggregateTypeReference(String typeName, List<String> someSubValueNames) {
+	public AggregateTypeReference(String typeName, List<?> someSubValueNames) {
 		super(typeName, someSubValueNames);
 	}
 	

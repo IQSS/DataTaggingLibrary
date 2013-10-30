@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.parser.references;
 
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,12 +11,18 @@ import java.util.Objects;
  */
 public class TypeReference {
 	private final String typeName;
-	private final List<String> subValueNames;
+	private final List<NamedReference> subValueNames;
 	
-	public TypeReference(String typeName, List<String> someSubValueNames) {
+	public TypeReference(String typeName, List<?> someSubValueNames) {
 		this.typeName = typeName;
-		subValueNames = someSubValueNames;
+		subValueNames = new ArrayList<>(someSubValueNames.size());
+		for ( Object o : someSubValueNames ) {
+			subValueNames.add( (o instanceof NamedReference) ?
+									(NamedReference)o
+									:new NamedReference(o.toString()) );
+		}
 	}
+	
 	
 	public String getTypeName() {
 		return typeName;
@@ -33,7 +40,8 @@ public class TypeReference {
 		}
 		if ( obj.getClass().isAssignableFrom(obj.getClass()) ) {
 			final TypeReference other = (TypeReference) obj;
-			return Objects.equals(this.typeName, other.typeName);
+			return Objects.equals(this.typeName, other.typeName)
+					&& this.subValueNames.equals(other.getSubValueNames());
 		}
 		return false;
 	}
@@ -48,7 +56,7 @@ public class TypeReference {
 		return "";
 	}
 
-	public List<String> getSubValueNames() {
+	public List<NamedReference> getSubValueNames() {
 		return subValueNames;
 	}
 	
