@@ -13,4 +13,8 @@ public class AggregateTypeReference extends TypeReference {
 		super(typeName, someSubValueNames);
 	}
 	
+	@Override
+	public <T> T accept(Visitor<T> v) {
+		return v.visitAggregateTypeReference(this);
+	}
 }

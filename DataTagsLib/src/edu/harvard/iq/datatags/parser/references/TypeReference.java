@@ -9,7 +9,14 @@ import java.util.Objects;
  * An result of parsing an expression that defines a type.
  * @author michael
  */
-public class TypeReference {
+public abstract class TypeReference {
+	
+	public interface Visitor<T> {
+		T visitSimpleTypeReference( SimpleTypeReference ref );
+		T visitAggregateTypeReference( AggregateTypeReference ref );
+		T visitCompoundTypeReference( CompoundTypeReference ref );
+	}
+	
 	private final String typeName;
 	private final List<NamedReference> subValueNames;
 	
@@ -60,4 +67,5 @@ public class TypeReference {
 		return subValueNames;
 	}
 	
+	public abstract <T> T accept( Visitor<T> v );
 }

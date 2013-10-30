@@ -13,21 +13,7 @@ public class CompoundTypeReference extends TypeReference {
 	}
 
 	@Override
-	public int hashCode() {
-		int hash = 5;
-		hash = 29 * hash + super.hashCode();
-		return hash;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if ( obj instanceof CompoundTypeReference ) {
-			final CompoundTypeReference other = (CompoundTypeReference) obj;
-			return super.equals(obj);
-		}
-		return false;
+	public <T> T accept(Visitor<T> v) {
+		return v.visitCompoundTypeReference(this);
 	}
 }

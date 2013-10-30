@@ -22,11 +22,11 @@ import static org.junit.Assert.*;
  */
 public class DataDefinitionParserTest {
 	
-	private DataDefinitionParser sut;
+	private DataDefinitionASTParser sut;
 		
 	@Before
 	public void setUp() {
-		sut = new DataDefinitionParser();
+		sut = new DataDefinitionASTParser();
 	}
 	
 	@Test

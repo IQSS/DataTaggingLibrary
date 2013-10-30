@@ -11,7 +11,7 @@ import java.util.Objects;
 public abstract class TagType {
 	
 	private final String name;
-	private final String info;
+	private String info;
 
 	public TagType(String name, String info) {
 		this.name = name;
@@ -22,6 +22,10 @@ public abstract class TagType {
 		return info;
 	}
 
+	public void setInfo(String info) {
+		this.info = info;
+	}
+	
 	public String getName() {
 		return name;
 	}

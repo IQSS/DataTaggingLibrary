@@ -11,5 +11,10 @@ public class SimpleTypeReference extends TypeReference {
 	public SimpleTypeReference( String typeName, List<?> valueNames ) {
 		super(typeName, valueNames);
 	}
+
+	@Override
+	public <T> T accept(Visitor<T> v) {
+		return v.visitSimpleTypeReference(this);
+	}
 	
 }

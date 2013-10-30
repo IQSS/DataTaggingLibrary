@@ -1,127 +1,136 @@
 package edu.harvard.iq.datatags.parser;
 
+import edu.harvard.iq.datatags.model.types.AggregateType;
+import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.SimpleType;
+import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
+import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import edu.harvard.iq.datatags.parser.references.AggregateTypeReference;
+import edu.harvard.iq.datatags.parser.references.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.references.CompoundTypeReference;
 import edu.harvard.iq.datatags.parser.references.NamedReference;
 import edu.harvard.iq.datatags.parser.references.SimpleTypeReference;
 import edu.harvard.iq.datatags.parser.references.TypeReference;
 import java.util.List;
-import org.codehaus.jparsec.Parser;
-import org.codehaus.jparsec.Parsers;
-import org.codehaus.jparsec.Scanners;
-import org.codehaus.jparsec.functors.Map;
-import org.codehaus.jparsec.functors.Pair;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import org.codehaus.jparsec.error.Location;
 
 /**
- * Parses definitions language files into a type structure.
+ * Parses a string of DTL into {@lint TagType}s.
+ * TODO allow identifiers to start with numbers as well (no arithamtics)
  * @author michael
  */
 public class DataDefinitionParser {
 	
-	Parser<List<TypeReference>> typeDefinitionList() {
-		return typeDefinition().sepBy( Scanners.WHITESPACES );
-	}
-	
-	Parser<TypeReference> typeDefinition() {
-		return Parsers.or( simpleTypeDefinition(), aggregateTypeDefinition(), compoundTypeDefinition() );
-	}
-	
-	Parser<SimpleTypeReference> longSimpleType() {
-		return null;
-	}
-	
-	
-	Parser<NamedReference> namedReference() {
-		return Parsers.or( commentedNamedReference(),
-				Scanners.IDENTIFIER.map( new Map<String, NamedReference>(){
-					@Override
-					public NamedReference map(String from) {
-						return new NamedReference(from);
-					}}
-				));
-	}
-	
-	/**
-	 * @return A parser that parses detailed value definitions, of the form 
-	 *			"valueName: value description."                 
-	 */
-	Parser<NamedReference> commentedNamedReference() {
-		return Parsers.tuple(Scanners.IDENTIFIER.followedBy( Scanners.WHITESPACES.optional()),
-				Scanners.quoted('(',')'))
-				.map( new Map<Pair<String, String>, NamedReference>(){
-					@Override
-					public NamedReference map(Pair<String, String> from) {
-						return new NamedReference(from.a, from.b.substring(1, from.b.length()-1).trim());
-			}});
-	}
-	
-	Parser<CompoundTypeReference> compoundTypeDefinition() {
-		return Parsers.tuple( Scanners.IDENTIFIER.followedBy( Scanners.WHITESPACES.optional()),
-							  definitionSeparator()
-									  .next(namedReferenceList())
-									  .followedBy( dotDefinitionTerminator() )
-				).map( new Map< Pair<String, List<NamedReference>>, CompoundTypeReference>(){
-					@Override public CompoundTypeReference map(Pair<String, List<NamedReference>> from) {
-						return new CompoundTypeReference(from.a, from.b);
-				}});
-	}
-	
-	Parser<SimpleTypeReference> simpleTypeDefinition() {
-		return Parsers.tuple( Scanners.IDENTIFIER.followedBy( Scanners.WHITESPACES.optional()),
-							  definitionSeparator()
-									  .next( whitespaced("one", "of") )
-									  .next( namedReferenceList() )
-									  .followedBy( dotDefinitionTerminator() )
-				).map( new Map< Pair<String, List<NamedReference>>, SimpleTypeReference>(){
-					@Override public SimpleTypeReference map(Pair<String, List<NamedReference>> from) {
-						return new SimpleTypeReference(from.a, from.b);
-				}});
-	}
-	
-	Parser<AggregateTypeReference> aggregateTypeDefinition() {
-		return Parsers.tuple( Scanners.IDENTIFIER.followedBy( Scanners.WHITESPACES.optional()),
-							  definitionSeparator()
-									  .next( whitespaced("some", "of")  )
-									  .next( namedReferenceList() )
-									  .followedBy( dotDefinitionTerminator() )
-				).map( new Map< Pair<String, List<NamedReference>>, AggregateTypeReference>(){
-					@Override public AggregateTypeReference map(Pair<String, List<NamedReference>> from) {
-						return new AggregateTypeReference(from.a, from.b);
-				}});
-	}
-	
-	
-	Parser<List<NamedReference>> namedReferenceList() {
-		return namedReference().followedBy( Scanners.WHITESPACES.optional())
-								   .sepBy( listSeparator() );
-	}
-	
-	Parser<Void> definitionSeparator() {
-		return separatorWithWhitespace(":");
-	}
-	
-	Parser<Void> listSeparator() {
-		return separatorWithWhitespace(",");
-	}
-	
-	Parser<Void> dotDefinitionTerminator() {
-		return Scanners.WHITESPACES.skipMany()
-				.next(Scanners.string("."));
-	}
-	
-	Parser<Void> separatorWithWhitespace( String sep ) {
-			return Scanners.WHITESPACES.skipMany()
-				.next(Scanners.string( sep ))
-				.next(Scanners.WHITESPACES.skipMany());
-	}
-	
-	Parser<Void> whitespaced( String... words ) {
-		Parser<Void> out = Scanners.string(words[0]);
-		for ( int i=1; i<words.length; i++ ) {
-			out = out.next( Scanners.WHITESPACES.skipMany1())
-					.next( Scanners.string(words[i]));
+	public TagType parseTagDefinitions( String dtl, String unitName ) throws DataTagsParseException {
+		try {
+			DataDefinitionASTParser astParser = new DataDefinitionASTParser();
+			List<TypeReference> typeRefs = astParser.typeDefinitionList().parse(dtl);
+			
+			// map each type from its name. Cry about duplicates.
+			Map<String, TypeReference> typesByName = mapTypes(typeRefs);
+			
+			// BFS from DataTags to the rest
+			Set<String> usedTypes = new TreeSet<>();
+			TagType top = buildType("DataTags", typesByName, usedTypes);
+			
+			// Warn on any unused type
+			
+			return top;
+			
+		} catch ( SemanticsErrorException dtpe ) {
+			dtpe.getWhere().setLocation(unitName);
+			throw dtpe;
+			
+		} catch ( org.codehaus.jparsec.error.ParserException pe ) {
+			throw new SyntaxErrorException(locationRef(unitName, pe.getLocation()),
+											pe.getMessage(),
+											pe);
 		}
-		out = out.next( Scanners.WHITESPACES.skipMany1() );
+	}
+	
+	interface TagTypeFunc {
+		public TagType apply(  Map<String, TypeReference> refs, Set<String> usedTypes ) throws SemanticsErrorException;
+	}
+	
+	private TypeReference.Visitor<TagTypeFunc> typeBuilder = new TypeReference.Visitor<TagTypeFunc>() {
+
+		@Override
+		public TagTypeFunc visitSimpleTypeReference(SimpleTypeReference ref) {
+			final SimpleType res = new SimpleType(ref.getTypeName(), null );
+			for ( NamedReference nr : ref.getSubValueNames() ) {
+				res.make(nr.getName(), nr.getComment() );
+			}
+			return new TagTypeFunc() {
+				@Override
+				public TagType apply(Map<String, TypeReference> refs, Set<String> usedTypes) {
+					return res;
+			}};
+		}
+
+		@Override
+		public TagTypeFunc visitAggregateTypeReference(AggregateTypeReference ref) {
+			SimpleType itemType = new SimpleType( ref.getTypeName() + "#item",
+					"Synthetic item type for " + ref.getTypeName());
+			for ( NamedReference nr : ref.getSubValueNames() ) {
+				itemType.make(nr.getName(), nr.getComment() );
+			}
+			final AggregateType res = new AggregateType(ref.getTypeName(), null, itemType );
+			return new TagTypeFunc() {
+				@Override
+				public TagType apply(Map<String, TypeReference> refs, Set<String> usedTypes) {
+					return res;
+			}};
+		}
+
+		@Override
+		public TagTypeFunc visitCompoundTypeReference(final CompoundTypeReference ref) {
+			return new TagTypeFunc() {
+				@Override
+				public TagType apply(Map<String, TypeReference> refs, Set<String> usedTypes) throws SemanticsErrorException {
+					CompoundType ret = new CompoundType(ref.getTypeName(), null);
+					for ( NamedReference nr : ref.getSubValueNames() ) {
+						TagType fieldType = buildType(nr.getName(), refs, usedTypes);
+						fieldType.setInfo( nr.getComment() );
+						ret.addFieldType( fieldType );
+					}
+					return ret;
+				}
+			};
+		}
+	};
+	
+	private TagType buildType( String typeName, Map<String, TypeReference> refs, Set<String> usedTypes ) throws SemanticsErrorException {
+		TypeReference ref = refs.get(typeName);
+		if ( ref == null ) {
+			throw new SemanticsErrorException(emptyLoc(), "Type '" + typeName +"' not defined.");
+		}
+		usedTypes.add( typeName );
+		return ref.accept(typeBuilder).apply(refs, usedTypes);
+	}
+	
+	private CompilationUnitLocationReference locationRef( String unitName, Location loc ) {
+		return new CompilationUnitLocationReference(loc.line, loc.column, unitName);
+	}
+
+	private Map<String, TypeReference> mapTypes(List<TypeReference> typeRefs) throws SemanticsErrorException {
+		Map<String, TypeReference> out = new TreeMap<>();
+		for ( TypeReference tr : typeRefs ) {
+			if (out.containsKey(tr.getTypeName()) ) {
+				throw new SemanticsErrorException( emptyLoc(), "Type '" + tr.getTypeName() + "' has multiple definitions");
+			}
+			out.put(tr.getTypeName(), tr);
+		}
+		
 		return out;
+	}
+
+	private CompilationUnitLocationReference emptyLoc() {
+		return new CompilationUnitLocationReference(-1, -1);
 	}
 }
