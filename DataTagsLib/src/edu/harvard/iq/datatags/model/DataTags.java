@@ -142,7 +142,6 @@ class Resolver implements TagValue.Visitor<TagValue.Function> {
 		}};
 	}
 
-
 	@Override
 	public TagValue.Function visitCompoundValue( final CompoundValue cv ) {
 		return new TagValue.Function() {

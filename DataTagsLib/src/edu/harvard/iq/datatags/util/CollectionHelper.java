@@ -41,6 +41,14 @@ public class CollectionHelper {
 		return arr;
 	}
 	
+	public <T> T last ( T[] arr ) {
+		return arr[arr.length-1];
+	}
+	
+	public <T> T last( List<T> list ) {
+		return list.get( list.size()-1 );
+	}
+	
 	public <T> Set<T> set( T... items ) {
 		return new HashSet<>( Arrays.asList(items) );
 	}
