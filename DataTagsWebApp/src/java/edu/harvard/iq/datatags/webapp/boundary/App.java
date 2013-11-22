@@ -5,7 +5,7 @@ import edu.harvard.iq.datatags.tags.DuaAgreementMethod;
 import edu.harvard.iq.datatags.tags.EncryptionType;
 import edu.harvard.iq.datatags.tags.HarmLevel;
 import edu.harvard.iq.datatags.tags.DataTags;
-import edu.harvard.iq.datatags.runtime.Answer;
+import edu.harvard.iq.datatags.questionnaire.Answer;
 import edu.harvard.iq.datatags.questionnaire.DecisionNode;
 import edu.harvard.iq.datatags.webapp.parsers.QuestionnaireJsonParser;
 import java.io.IOException;
@@ -73,7 +73,7 @@ public class App {
 		while ( ! queue.isEmpty() ) {
 			DecisionNode nd = queue.remove(0);
 			dtnById.put( nd.getId(), nd );
-			System.out.println("added " + nd);
+			System.out.println("added " + nd + "=>" + HarmLevel.levelFor(nd.getAbsoluteAssumption()));
 			for ( Answer a : Answer.values() ) {
 				DecisionNode subNode = nd.getNodeFor(a);
 				if ( subNode != null && ! seen.contains(subNode) ) {

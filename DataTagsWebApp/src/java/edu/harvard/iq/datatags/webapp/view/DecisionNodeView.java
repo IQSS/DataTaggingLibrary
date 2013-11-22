@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.webapp.view;
 
 import edu.harvard.iq.datatags.tags.DataTags;
-import edu.harvard.iq.datatags.runtime.Answer;
+import edu.harvard.iq.datatags.questionnaire.Answer;
 import edu.harvard.iq.datatags.questionnaire.DecisionNode;
 import edu.harvard.iq.datatags.tags.AuthenticationType;
 import edu.harvard.iq.datatags.tags.DuaAgreementMethod;
@@ -88,6 +88,10 @@ public class DecisionNodeView {
 	}
 	
 	public DataTags tags() {
+		return hasNode() ? getNode().getAbsoluteAssumption() : null;
+	}
+	
+	public DataTags localTags() {
 		return hasNode() ? getNode().getAbsoluteAssumption() : null;
 	}
 	

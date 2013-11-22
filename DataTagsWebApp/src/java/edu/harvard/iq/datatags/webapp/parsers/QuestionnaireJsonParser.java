@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.harvard.iq.datatags.runtime.Answer;
+import edu.harvard.iq.datatags.questionnaire.Answer;
 import edu.harvard.iq.datatags.questionnaire.DecisionNode;
 import edu.harvard.iq.datatags.tags.AuthenticationType;
 import edu.harvard.iq.datatags.tags.DataTags;
@@ -61,6 +61,7 @@ public class QuestionnaireJsonParser {
 		
 		authTypeNames.put( "none", AuthenticationType.None );
 		authTypeNames.put( "approval", AuthenticationType.Password );
+		authTypeNames.put( "twofactor", AuthenticationType.TwoFactor );
 		
 		encryptionNames.put( "clear", EncryptionType.Clear );
 		encryptionNames.put( "encrypt", EncryptionType.Encrypted );
@@ -68,6 +69,7 @@ public class QuestionnaireJsonParser {
 		duaAgreementMenthodNames.put("none", DuaAgreementMethod.None);
 		duaAgreementMenthodNames.put("online", DuaAgreementMethod.ClickThrough);
 		duaAgreementMenthodNames.put("sign", DuaAgreementMethod.Sign);
+		duaAgreementMenthodNames.put("signed", DuaAgreementMethod.Sign);
 		
 	}
 	
@@ -103,7 +105,7 @@ public class QuestionnaireJsonParser {
 	
 	private NodeParseResult parseBDD( JsonNode jsNode ) {
 		 final NameParseResult nmPr = parseNameField( jsNode.get("name").textValue() );
-		 
+
 		 final DecisionNode dNode = new DecisionNode(nmPr.id);
 		 dNode.setTitle( nmPr.title );
 		 dNode.setQuestionText( nmPr.info );
@@ -111,7 +113,8 @@ public class QuestionnaireJsonParser {
 		 JsonNode tags = jsNode.get("tags");
 		 if ( tags != null ) {
 			String tagsStr = jsNode.get("tags").textValue();
-			dNode.setBaseAssumption( parseTagsString(tagsStr) );
+			DataTags baseAssumption = parseTagsString(tagsStr);
+			dNode.setBaseAssumption(  baseAssumption);
 		 }
 		 
 		 if ( jsNode.has("children") ) {
@@ -199,7 +202,7 @@ public class QuestionnaireJsonParser {
 			} else {
 				comps[1] = comps[1].trim().toLowerCase();
 				if ( (!comps[1].isEmpty()) && (!comps[1].equals("___")) ) {
-					values.put( comps[0].trim().toLowerCase(), comps[1] );
+					values.put( comps[0].trim().toLowerCase(), comps[1].trim() );
 				}
 			}
 		}
@@ -208,7 +211,7 @@ public class QuestionnaireJsonParser {
 		for ( Map.Entry<String, String> e : values.entrySet() ) {
 			String key = e.getKey();
 			String value = e.getValue();
-
+			
 			switch ( key ) {
 				case "harm":
 					return harmLevelNames.get(values.get("harm")).tags();

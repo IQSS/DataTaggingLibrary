@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.webapp.parsers;
 
-import edu.harvard.iq.datatags.runtime.Answer;
+import edu.harvard.iq.datatags.questionnaire.Answer;
 import edu.harvard.iq.datatags.questionnaire.DecisionNode;
 import edu.harvard.iq.datatags.webapp.parsers.QuestionnaireJsonParser.NameParseResult;
 import java.io.IOException;
