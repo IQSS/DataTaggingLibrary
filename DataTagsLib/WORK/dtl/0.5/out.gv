@@ -2,7 +2,7 @@ digraph ChartSet {
 edge [fontname="Helvetica" fontsize="10"]
 node [fillcolor="lightgray" style="filled" fontname="Helvetica" fontsize="10"]
 rankdir=LR
-
+graph [overlap=true ranksep=3]
 DataTags[label="DataTags" shape="octagon" peripheries="2"]
 DUA[label="DUA" shape="octagon" peripheries="2"]
 Sharing[label="Sharing" shape="egg"]
@@ -59,8 +59,7 @@ Effort_Identified[label="Identified" shape="box"]
 Effort_Identifiable[label="Identifiable" shape="box"]
 Effort_DeIdentified[label="DeIdentified" shape="box"]
 Effort_Anonymous[label="Anonymous" shape="box"]
-IP[label="IP" shape="egg"]
-IP_todo[label="todo" shape="box"]
+IP[label="IP (todo)" shape="plaintext" peripheries="2"]
 Code[label="Code" shape="egg"]
 Code_BLUE[label="BLUE" shape="box"]
 Code_GREEN[label="GREEN" shape="box"]
@@ -138,7 +137,6 @@ Effort -> Effort_Identifiable
 Effort -> Effort_DeIdentified
 Effort -> Effort_Anonymous
 DataTags -> IP
-IP -> IP_todo
 DataTags -> Code
 Code -> Code_BLUE
 Code -> Code_GREEN

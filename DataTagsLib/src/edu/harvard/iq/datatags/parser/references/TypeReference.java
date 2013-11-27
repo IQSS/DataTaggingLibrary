@@ -13,6 +13,7 @@ public abstract class TypeReference {
 	
 	public interface Visitor<T> {
 		T visitSimpleTypeReference( SimpleTypeReference ref );
+		T visitToDoTypeReference( ToDoTypeReference ref );
 		T visitAggregateTypeReference( AggregateTypeReference ref );
 		T visitCompoundTypeReference( CompoundTypeReference ref );
 	}

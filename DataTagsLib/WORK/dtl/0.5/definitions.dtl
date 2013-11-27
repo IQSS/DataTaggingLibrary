@@ -1,5 +1,6 @@
 DataTags: Code, Handling, DataType, DUA, IP.
 
+TODO: IP, Thingy.
 
 Code: one of
 	BLUE    (Non-confidential information that can be stored and shared freely.),
@@ -23,7 +24,8 @@ Authentication: some of
 	None     (Available to anonymous individuals.),
 	Email    (Available to individuals with verified email address.),
 	OAuth    (Available to individuals with verified online identity or a mobile phone.),
-	Password (Available to individuals having a password accounts on system.).
+	Password (Available to individuals having a password accounts on system.)
+.
 
 
 DataType:
@@ -46,9 +48,13 @@ Sharing: one of
 		Organization,
 		Group,
 		NoOne.
+
 Reidentify: one of NoMatching, NoEntities, NoPeople, NoProhibition, Reidentify, Contact.
+
 Publication: one of NoRestriction, Notify, PreApprove, Prohibited.
+
 Use: one of NoRestriction, Research, IRB, NoProduct.
+
 Acceptance: one of Click, Signed, SignWithID.
+
 Approval: one of None, Email, Signed.
-IP: one of todo.

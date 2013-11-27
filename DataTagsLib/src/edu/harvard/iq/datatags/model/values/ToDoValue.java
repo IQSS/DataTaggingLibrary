@@ -5,7 +5,8 @@ import edu.harvard.iq.datatags.model.types.ToDoType;
 /**
  * A placeholder value, to be filled in later in the
  * development of the ChartSet. Still, needs to be represented
- * in this system.
+ * in this system for completeness. TODO types don't have real values
+ * anyway, since then they would not have been on the TODO list.
  * 
  * @author michael
  */

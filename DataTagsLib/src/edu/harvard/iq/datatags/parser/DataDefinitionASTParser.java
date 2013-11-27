@@ -4,7 +4,12 @@ import edu.harvard.iq.datatags.parser.references.AggregateTypeReference;
 import edu.harvard.iq.datatags.parser.references.CompoundTypeReference;
 import edu.harvard.iq.datatags.parser.references.NamedReference;
 import edu.harvard.iq.datatags.parser.references.SimpleTypeReference;
+import edu.harvard.iq.datatags.parser.references.ToDoTypeReference;
 import edu.harvard.iq.datatags.parser.references.TypeReference;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
@@ -18,12 +23,25 @@ import org.codehaus.jparsec.functors.Pair;
  */
 public class DataDefinitionASTParser {
 	
-	Parser<List<TypeReference>> typeDefinitionList() {
-		return typeDefinition().sepBy( Scanners.WHITESPACES );
+	Parser<Collection<TypeReference>> typeDefinitionList() {
+		// we take all the type defined, and combine to a single list.
+		// Basically "flatmap"
+		return typeDefinition().sepBy( Scanners.WHITESPACES.optional() )
+					.followedBy( Scanners.WHITESPACES.optional() )
+				.map( new Map<List<List<? extends TypeReference>>, Collection<TypeReference>>(){
+			@Override
+			public Collection<TypeReference> map(List<List<? extends TypeReference>> from) {
+				List<TypeReference> types = new LinkedList<>();
+				for ( List<? extends TypeReference> l : from ) {
+					types.addAll( l );
+				}
+				return types;
+			}
+		});
 	}
 	
-	Parser<TypeReference> typeDefinition() {
-		return Parsers.or( simpleTypeDefinition(), aggregateTypeDefinition(), compoundTypeDefinition() );
+	Parser<List<? extends TypeReference>> typeDefinition() {
+		return Parsers.or( todoTypesDefinition(), simpleTypeDefinition(), aggregateTypeDefinition(), compoundTypeDefinition() );
 	}
 	
 	Parser<SimpleTypeReference> longSimpleType() {
@@ -55,38 +73,56 @@ public class DataDefinitionASTParser {
 			}});
 	}
 	
-	Parser<CompoundTypeReference> compoundTypeDefinition() {
+	Parser<List<ToDoTypeReference>> todoTypesDefinition() {
+		return Parsers.tuple( Scanners.string("TODO")
+					.followedBy( Scanners.WHITESPACES.optional() )
+					.followedBy( definitionSeparator() ),
+				namedReferenceList()
+					.followedBy( dotDefinitionTerminator() )
+				).map( new Map<Pair<Void, List<NamedReference>>, List<ToDoTypeReference>>(){
+					@Override public List<ToDoTypeReference> map(Pair<Void, List<NamedReference>> from) {
+						List<ToDoTypeReference> types = new ArrayList<>( from.b.size() );
+						
+						for ( NamedReference nref : from.b ) {
+							types.add(new ToDoTypeReference(nref.getName(), nref.getComment()) );
+						}
+						
+						return types;
+				}});
+	}
+	
+	Parser<List<CompoundTypeReference>> compoundTypeDefinition() {
 		return Parsers.tuple( Scanners.IDENTIFIER.followedBy( Scanners.WHITESPACES.optional()),
 							  definitionSeparator()
 									  .next(namedReferenceList())
 									  .followedBy( dotDefinitionTerminator() )
-				).map( new Map< Pair<String, List<NamedReference>>, CompoundTypeReference>(){
-					@Override public CompoundTypeReference map(Pair<String, List<NamedReference>> from) {
-						return new CompoundTypeReference(from.a, from.b);
+				).map( new Map< Pair<String, List<NamedReference>>, List<CompoundTypeReference>>(){
+					@Override public List<CompoundTypeReference> map(Pair<String, List<NamedReference>> from) {
+						return Collections.singletonList(new CompoundTypeReference(from.a, from.b) );
 				}});
 	}
 	
-	Parser<SimpleTypeReference> simpleTypeDefinition() {
+	Parser<List<SimpleTypeReference>> simpleTypeDefinition() {
 		return Parsers.tuple( Scanners.IDENTIFIER.followedBy( Scanners.WHITESPACES.optional()),
 							  definitionSeparator()
 									  .next( whitespaced("one", "of") )
 									  .next( namedReferenceList() )
 									  .followedBy( dotDefinitionTerminator() )
-				).map( new Map< Pair<String, List<NamedReference>>, SimpleTypeReference>(){
-					@Override public SimpleTypeReference map(Pair<String, List<NamedReference>> from) {
-						return new SimpleTypeReference(from.a, from.b);
+				).map( new Map< Pair<String, List<NamedReference>>, List<SimpleTypeReference>>(){
+					@Override public List<SimpleTypeReference> map(Pair<String, List<NamedReference>> from) {
+						return Collections.singletonList(new SimpleTypeReference(from.a, from.b));
 				}});
 	}
 	
-	Parser<AggregateTypeReference> aggregateTypeDefinition() {
+	Parser<List<AggregateTypeReference>> aggregateTypeDefinition() {
 		return Parsers.tuple( Scanners.IDENTIFIER.followedBy( Scanners.WHITESPACES.optional()),
 							  definitionSeparator()
 									  .next( whitespaced("some", "of")  )
 									  .next( namedReferenceList() )
 									  .followedBy( dotDefinitionTerminator() )
-				).map( new Map< Pair<String, List<NamedReference>>, AggregateTypeReference>(){
-					@Override public AggregateTypeReference map(Pair<String, List<NamedReference>> from) {
-						return new AggregateTypeReference(from.a, from.b);
+				).map( new Map< Pair<String, List<NamedReference>>, List<AggregateTypeReference>>(){
+					@Override public List<AggregateTypeReference> map(Pair<String, List<NamedReference>> from) {
+						return Collections.singletonList(new AggregateTypeReference(from.a, from.b));
 				}});
 	}
 	

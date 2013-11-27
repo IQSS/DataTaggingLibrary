@@ -4,6 +4,7 @@ import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.SimpleType;
 import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.types.ToDoType;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
@@ -12,8 +13,9 @@ import edu.harvard.iq.datatags.parser.references.CompilationUnitLocationReferenc
 import edu.harvard.iq.datatags.parser.references.CompoundTypeReference;
 import edu.harvard.iq.datatags.parser.references.NamedReference;
 import edu.harvard.iq.datatags.parser.references.SimpleTypeReference;
+import edu.harvard.iq.datatags.parser.references.ToDoTypeReference;
 import edu.harvard.iq.datatags.parser.references.TypeReference;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -22,7 +24,7 @@ import org.codehaus.jparsec.error.Location;
 
 /**
  * Parses a string of DTL into {@lint TagType}s.
- * TODO allow identifiers to start with numbers as well (no arithamtics)
+ * TODO allow identifiers to start with numbers as well (no arithmetics)
  * @author michael
  */
 public class DataDefinitionParser {
@@ -30,7 +32,7 @@ public class DataDefinitionParser {
 	public TagType parseTagDefinitions( String dtl, String unitName ) throws DataTagsParseException {
 		try {
 			DataDefinitionASTParser astParser = new DataDefinitionASTParser();
-			List<TypeReference> typeRefs = astParser.typeDefinitionList().parse(dtl);
+			Collection<TypeReference> typeRefs = astParser.typeDefinitionList().parse(dtl);
 			
 			// map each type from its name. Cry about duplicates.
 			Map<String, TypeReference> typesByName = mapTypes(typeRefs);
@@ -58,7 +60,7 @@ public class DataDefinitionParser {
 		public TagType apply(  Map<String, TypeReference> refs, Set<String> usedTypes ) throws SemanticsErrorException;
 	}
 	
-	private TypeReference.Visitor<TagTypeFunc> typeBuilder = new TypeReference.Visitor<TagTypeFunc>() {
+	private final TypeReference.Visitor<TagTypeFunc> typeBuilder = new TypeReference.Visitor<TagTypeFunc>() {
 
 		@Override
 		public TagTypeFunc visitSimpleTypeReference(SimpleTypeReference ref) {
@@ -66,6 +68,17 @@ public class DataDefinitionParser {
 			for ( NamedReference nr : ref.getSubValueNames() ) {
 				res.make(nr.getName(), nr.getComment() );
 			}
+			return new TagTypeFunc() {
+				@Override
+				public TagType apply(Map<String, TypeReference> refs, Set<String> usedTypes) {
+					return res;
+			}};
+		}
+		
+		@Override
+		public TagTypeFunc visitToDoTypeReference(ToDoTypeReference ref) {
+			final ToDoType res = new ToDoType(ref.getTypeName(), ref.getComment() );
+			
 			return new TagTypeFunc() {
 				@Override
 				public TagType apply(Map<String, TypeReference> refs, Set<String> usedTypes) {
@@ -103,6 +116,8 @@ public class DataDefinitionParser {
 				}
 			};
 		}
+		
+		
 	};
 	
 	private TagType buildType( String typeName, Map<String, TypeReference> refs, Set<String> usedTypes ) throws SemanticsErrorException {
@@ -118,7 +133,7 @@ public class DataDefinitionParser {
 		return new CompilationUnitLocationReference(loc.line, loc.column, unitName);
 	}
 
-	private Map<String, TypeReference> mapTypes(List<TypeReference> typeRefs) throws SemanticsErrorException {
+	private Map<String, TypeReference> mapTypes(Collection<TypeReference> typeRefs) throws SemanticsErrorException {
 		Map<String, TypeReference> out = new TreeMap<>();
 		for ( TypeReference tr : typeRefs ) {
 			if (out.containsKey(tr.getTypeName()) ) {
