@@ -1,9 +1,10 @@
 package edu.harvard.iq.datatags.runtime;
 
-import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
-import edu.harvard.iq.datatags.runtime.exceptions.MissingFlowChartException;
-import edu.harvard.iq.datatags.runtime.exceptions.MissingNodeException;
+import edu.harvard.iq.datatags.model.charts.*;
+import edu.harvard.iq.datatags.model.charts.nodes.*;
+import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.model.DataTags;
+import edu.harvard.iq.datatags.runtime.exceptions.*;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
@@ -43,16 +44,30 @@ public class RuntimeEngine {
 	private Listener listener;
 	
 	private final Node.Visitor<Boolean> enterNodeVisitor = new Node.Visitor<Boolean>() {
+		
 		@Override
-		public Boolean visitDecisionNode(DecisionNode nd) {
+		public Boolean visitAskNode( AskNode nd ) {
 			stack.push(nd);
 			if ( listener != null ) listener.nodeEntered(RuntimeEngine.this, nd);
 			
 			return true;
 		}
+		
+		@Override
+		public Boolean visitTodoNode( TodoNode nd ) {
+			// FIXME implement
+			return true;
+		}
+		
+		@Override
+		public Boolean visitSetNode( SetNode nd ) {
+			// FIXME implement
+			setCurrentTags( getCurrentTags().composeWith(nd.getTags()) );
+			return true;
+		}
 
 		@Override
-		public Boolean visitCallNode(CallNode nd) throws DataTagsRuntimeException {
+		public Boolean visitCallNode( CallNode nd ) throws DataTagsRuntimeException {
 			stack.push(nd);
 			stack.push(CHART_ENTRY_DUMMY_NODE);
 			// try to make the link
@@ -72,7 +87,7 @@ public class RuntimeEngine {
 		}
 
 		@Override
-		public Boolean visitEndNode(EndNode nd) throws DataTagsRuntimeException {
+		public Boolean visitEndNode( EndNode nd ) throws DataTagsRuntimeException {
 			if ( stack.isEmpty() ) {
 				// done running
 				if ( listener != null ) listener.runTerminated(RuntimeEngine.this);
@@ -110,14 +125,13 @@ public class RuntimeEngine {
 			setCurrentTags( new DataTags() );
 		}
 		if ( listener!=null ) listener.runStarted(this);
-		stack.push( CHART_ENTRY_DUMMY_NODE);
+		stack.push( CHART_ENTRY_DUMMY_NODE );
 		enterNode( fs.getStart() );
 		
 	}
 	
 	boolean enterNode( Node n ) throws DataTagsRuntimeException {
 		stack.pop(); // remove last chart node ("program counter")
-		setCurrentTags( getCurrentTags().composeWith(n.getTags()) );
 		return n.accept( enterNodeVisitor );
 	}
 	
@@ -129,7 +143,7 @@ public class RuntimeEngine {
 	 * @throws DataTagsRuntimeException 
 	 */
 	public boolean consume( Answer ans ) throws DataTagsRuntimeException {
-		DecisionNode current = (DecisionNode) stack.peek();
+		AskNode current = (AskNode) stack.peek();
 		Node next = current.getNodeFor(ans);
 		return enterNode( next );
 	}

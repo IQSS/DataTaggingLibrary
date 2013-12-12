@@ -1,5 +1,7 @@
-package edu.harvard.iq.datatags.runtime;
+package edu.harvard.iq.datatags.model.charts.nodes;
 
+import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.EnumMap;
 import java.util.Map;
@@ -8,24 +10,24 @@ import java.util.Map;
  * A node where the user has to decide on a yes/no question.
  * @author michael
  */
-public class DecisionNode extends Node {
+public class AskNode extends Node {
 	private final Map<Answer, Node> nextNodeByAnswer = new EnumMap<>(Answer.class);
 	
-	public DecisionNode(String id, String title) {
+	public AskNode(String id, String title) {
 		this(id, title, null, null);
 	}
 
-	public DecisionNode(String id) {
+	public AskNode(String id) {
 		this(id, null);
 	}
 
-	public DecisionNode(String id, String title, String text, FlowChart chart) {
+	public AskNode(String id, String title, String text, FlowChart chart) {
 		super(id, title, text, chart);
 	}
 	
 	@Override
 	public <R> R accept(Visitor<R> vr) throws DataTagsRuntimeException {
-		return vr.visitDecisionNode(this);
+		return vr.visitAskNode(this);
 	}
 	
 	/**

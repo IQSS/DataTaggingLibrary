@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.runtime;
+package edu.harvard.iq.datatags.model.values;
 
 /**
  * A single answer, given to a {@link DecisionTreeNode} by the user.

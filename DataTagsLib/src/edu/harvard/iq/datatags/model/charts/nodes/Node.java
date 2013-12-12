@@ -1,5 +1,7 @@
-package edu.harvard.iq.datatags.runtime;
+package edu.harvard.iq.datatags.model.charts.nodes;
 
+import edu.harvard.iq.datatags.model.charts.FlowChart;
+import edu.harvard.iq.datatags.model.charts.ChartEntity;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 
 /**
@@ -8,11 +10,13 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
  * 
  * @author michael
  */
-public abstract class Node extends RuntimeEntity {
+public abstract class Node extends ChartEntity {
 	
 	public interface Visitor<R> {
-		R visitDecisionNode( DecisionNode nd ) throws DataTagsRuntimeException;
+		R visitAskNode( AskNode nd ) throws DataTagsRuntimeException;
+		R visitSetNode( SetNode nd ) throws DataTagsRuntimeException;
 		R visitCallNode( CallNode nd ) throws DataTagsRuntimeException;
+		R visitTodoNode( TodoNode nd ) throws DataTagsRuntimeException;
 		R visitEndNode( EndNode nd ) throws DataTagsRuntimeException;
 	}
 	

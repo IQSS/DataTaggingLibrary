@@ -1,5 +1,12 @@
-package edu.harvard.iq.datatags.runtime;
+package edu.harvard.iq.datatags.model.charts;
 
+import edu.harvard.iq.datatags.model.charts.nodes.Node;
+import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
+import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
+import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
+import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
+import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URL;
 import java.util.Map;
@@ -11,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * @author michael
  */
-public class FlowChart extends RuntimeEntity {
+public class FlowChart extends ChartEntity {
 	
 	private static final AtomicInteger INDEX = new AtomicInteger(0);
 	
@@ -61,7 +68,7 @@ public class FlowChart extends RuntimeEntity {
 		Node.Visitor connector = new Node.Visitor<Void>(){
 
 			@Override
-			public Void visitDecisionNode(DecisionNode nd) throws DataTagsRuntimeException {
+			public Void visitAskNode(AskNode nd) throws DataTagsRuntimeException {
 				for ( Answer a : Answer.values() ) {
 					if ( nd.getNodeFor(a) == null ) {
 						nd.setNodeFor(a, defaultNode);
@@ -72,6 +79,18 @@ public class FlowChart extends RuntimeEntity {
 
 			@Override
 			public Void visitCallNode(CallNode nd) throws DataTagsRuntimeException {
+				if (nd.getNextNode() == null ) nd.setNextNode(defaultNode);
+				return null;
+			}
+			
+			@Override
+			public Void visitTodoNode(TodoNode nd) throws DataTagsRuntimeException {
+				if (nd.getNextNode() == null ) nd.setNextNode(defaultNode);
+				return null;
+			}
+			
+			@Override
+			public Void visitSetNode(SetNode nd) throws DataTagsRuntimeException {
 				if (nd.getNextNode() == null ) nd.setNextNode(defaultNode);
 				return null;
 			}

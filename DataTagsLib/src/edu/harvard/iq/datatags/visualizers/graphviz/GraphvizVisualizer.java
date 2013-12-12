@@ -4,7 +4,7 @@
 
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.runtime.RuntimeEntity;
+import edu.harvard.iq.datatags.model.charts.ChartEntity;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -62,7 +62,7 @@ public abstract class GraphvizVisualizer {
 		out.newLine();
 	}
 
-	protected String humanTitle(RuntimeEntity ent) {
+	protected String humanTitle(ChartEntity ent) {
 		return (ent.getTitle() != null) ? String.format("%s: %s", ent.getId(), ent.getTitle()) : ent.getId();
 	}
 

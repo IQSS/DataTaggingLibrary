@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.runtime;
+package edu.harvard.iq.datatags.model.charts.nodes;
 
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 
@@ -6,9 +6,8 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
  * A node that calls another node, possibly in another chart as well.
  * @author michael
  */
-public class CallNode extends Node {
+public class CallNode extends ThroughNode {
 	
-	private Node nextNode;
 	private String calleeChartId;
 	private String calleeNodeId;
 	
@@ -27,15 +26,6 @@ public class CallNode extends Node {
 		return vr.visitCallNode(this);
 	}
 	
-	public Node getNextNode() {
-		return nextNode;
-	}
-
-	public <T extends Node> T setNextNode(T nextNode) {
-		this.nextNode = nextNode;
-		return nextNode;
-	}
-
 	public String getCalleeChartId() {
 		return calleeChartId;
 	}

@@ -1,11 +1,11 @@
 package edu.harvard.iq.util;
 
 import edu.harvard.iq.datatags.runtime.ChartRunningTest;
-import edu.harvard.iq.datatags.runtime.Answer;
-import edu.harvard.iq.datatags.runtime.DecisionNode;
-import edu.harvard.iq.datatags.runtime.EndNode;
-import edu.harvard.iq.datatags.runtime.FlowChart;
-import edu.harvard.iq.datatags.runtime.FlowChartSet;
+import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
+import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
+import edu.harvard.iq.datatags.model.charts.FlowChart;
+import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.runtime.listeners.RuntimeEnginePrintStreamListener;
@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 public class ChartHelper {
 	
 	/**
-	 * Generates a chart with {@code length} {@link DecisionNode}s, terminated by an {@link EndNode}.
+	 * Generates a chart with {@code length} {@link AskNode}s, terminated by an {@link EndNode}.
 	 * The ids of the nodes are the id of the chart + "_" + ordinal.
 	 * @param id id of the chart
 	 * @param length amount of decision nodes - not including the end node.
@@ -34,10 +34,10 @@ public class ChartHelper {
 	public static FlowChart linearYesChart( String id, int length ) {
 		FlowChart retVal = new FlowChart(id);
 		
-		DecisionNode last = retVal.add( new DecisionNode( id + "_1" ) );
+		AskNode last = retVal.add( new AskNode( id + "_1" ) );
 		retVal.setStart( last );
 		for ( int count=0; count<length-1; count++ ) {
-			last = last.setNodeFor(Answer.YES, retVal.add(new DecisionNode(id + "_" + (count+2))));
+			last = last.setNodeFor(Answer.YES, retVal.add(new AskNode(id + "_" + (count+2))));
 		}
 		last.setNodeFor(Answer.YES, new EndNode( id + "_END") );
 		return retVal;

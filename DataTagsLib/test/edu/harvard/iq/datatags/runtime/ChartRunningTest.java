@@ -1,14 +1,14 @@
 package edu.harvard.iq.datatags.runtime;
 
-import edu.harvard.iq.datatags.runtime.Answer;
-import edu.harvard.iq.datatags.runtime.CallNode;
-import edu.harvard.iq.datatags.runtime.DecisionNode;
-import edu.harvard.iq.datatags.runtime.EndNode;
-import edu.harvard.iq.datatags.runtime.FlowChart;
-import edu.harvard.iq.datatags.runtime.FlowChartSet;
+import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
+import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
+import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
+import edu.harvard.iq.datatags.model.charts.FlowChart;
+import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import java.util.Arrays;
 import org.junit.Test;
-import static edu.harvard.iq.datatags.runtime.Answer.*;
+import static edu.harvard.iq.datatags.model.values.Answer.*;
 import static edu.harvard.iq.datatags.util.CollectionHelper.*;
 import static edu.harvard.iq.util.ChartHelper.*;
 
@@ -23,10 +23,10 @@ public class ChartRunningTest {
 		String flowChartName = "flowChart";
 		FlowChart c1 = new FlowChart( flowChartName );
 		
-		DecisionNode start = c1.add( new DecisionNode("1") );
-		start.setNodeFor( YES, c1.add(new DecisionNode("2")) )
-			 .setNodeFor( YES, c1.add(new DecisionNode("3")) )
-			 .setNodeFor( YES, c1.add(new DecisionNode("4")) )
+		AskNode start = c1.add( new AskNode("1") );
+		start.setNodeFor( YES, c1.add(new AskNode("2")) )
+			 .setNodeFor( YES, c1.add(new AskNode("3")) )
+			 .setNodeFor( YES, c1.add(new AskNode("4")) )
 			 .setNodeFor( YES, c1.add(new EndNode("END")) );
 		
 		c1.setStart(start);
@@ -44,16 +44,16 @@ public class ChartRunningTest {
 		String flowChartName = "flowChart";
 		FlowChart c1 = new FlowChart( flowChartName );
 		
-		DecisionNode start = c1.add( new DecisionNode("1") );
-		start.setNodeFor( YES, c1.add(new DecisionNode("2")) )
-			 .setNodeFor( NO,  c1.add(new DecisionNode("3")) )
-			 .setNodeFor( YES, c1.add(new DecisionNode("4")) )
+		AskNode start = c1.add( new AskNode("1") );
+		start.setNodeFor( YES, c1.add(new AskNode("2")) )
+			 .setNodeFor( NO,  c1.add(new AskNode("3")) )
+			 .setNodeFor( YES, c1.add(new AskNode("4")) )
 			 .setNodeFor( NO, c1.add(new EndNode("END")) );
 		
-		((DecisionNode)c1.getNode("1")).setNodeFor(NO,  c1.add( new DecisionNode("x")) );
-		((DecisionNode)c1.getNode("2")).setNodeFor(YES, c1.add( new DecisionNode("xx")) );
-		((DecisionNode)c1.getNode("3")).setNodeFor(NO,  c1.add( new DecisionNode("xxx")) );
-		((DecisionNode)c1.getNode("4")).setNodeFor(YES, c1.add( new EndNode("xxxx")) );
+		((AskNode)c1.getNode("1")).setNodeFor(NO,  c1.add( new AskNode("x")) );
+		((AskNode)c1.getNode("2")).setNodeFor(YES, c1.add( new AskNode("xx")) );
+		((AskNode)c1.getNode("3")).setNodeFor(NO,  c1.add( new AskNode("xxx")) );
+		((AskNode)c1.getNode("4")).setNodeFor(YES, c1.add( new EndNode("xxxx")) );
 		
 		c1.setStart(start);
 		
@@ -71,18 +71,18 @@ public class ChartRunningTest {
 		String subchartName = "flowChart-sub";
 		FlowChart subChart = new FlowChart( subchartName );
 		
-		DecisionNode start = subChart.add( new DecisionNode("A") );
-		start.setNodeFor( Answer.YES, subChart.add(new DecisionNode("B")) )
+		AskNode start = subChart.add( new AskNode("A") );
+		start.setNodeFor( Answer.YES, subChart.add(new AskNode("B")) )
 			 .setNodeFor( Answer.YES, subChart.add(new EndNode("SUB_END")) );
 		subChart.setStart(start);
 		
 		String mainChartName = "flowChart-main";
 		FlowChart mainChart = new FlowChart( mainChartName );
 		
-		start = mainChart.add( new DecisionNode("1") );
-		start.setNodeFor( Answer.YES, mainChart.add(new DecisionNode("2")) )
+		start = mainChart.add( new AskNode("1") );
+		start.setNodeFor( Answer.YES, mainChart.add(new AskNode("2")) )
 			 .setNodeFor( Answer.YES, mainChart.add(new CallNode("c-m")) )
-			 .setNextNode(mainChart.add(new DecisionNode("3")) )
+			 .setNextNode(mainChart.add(new AskNode("3")) )
 			 .setNodeFor( Answer.YES, mainChart.add(new EndNode("5")) );
 		
 		((CallNode)mainChart.getNode("c-m")).setCalleeChartId(subchartName);
@@ -102,16 +102,16 @@ public class ChartRunningTest {
 		String subchartName = "flowChart-sub";
 		FlowChart subChart = new FlowChart( subchartName );
 		
-		DecisionNode start = subChart.add( new DecisionNode("A") );
-		start.setNodeFor( Answer.YES, subChart.add(new DecisionNode("B")) )
+		AskNode start = subChart.add( new AskNode("A") );
+		start.setNodeFor( Answer.YES, subChart.add(new AskNode("B")) )
 			 .setNodeFor( Answer.YES, subChart.add(new EndNode("SUB_END")) );
 		subChart.setStart(start);
 		
 		String mainChartName = "flowChart-main";
 		FlowChart mainChart = new FlowChart( mainChartName );
 		
-		start = mainChart.add( new DecisionNode("1") );
-		start.setNodeFor( Answer.YES, mainChart.add(new DecisionNode("2")) )
+		start = mainChart.add( new AskNode("1") );
+		start.setNodeFor( Answer.YES, mainChart.add(new AskNode("2")) )
 			 .setNodeFor( Answer.YES, mainChart.add(new CallNode("c-m")) )
 			 .setNextNode(mainChart.add(new EndNode("3end")) );
 		
@@ -132,7 +132,7 @@ public class ChartRunningTest {
 		String chartId = "rec";
 		FlowChart rec = linearYesChart(chartId, 3);
 		
-		DecisionNode n2 = (DecisionNode)rec.getNode(chartId+"_2");
+		AskNode n2 = (AskNode)rec.getNode(chartId+"_2");
 		CallNode caller = n2.setNodeFor(NO, rec.add(new CallNode("Caller")));
 		caller.setCalleeChartId(chartId);
 		caller.setCalleeNodeId( chartId + "_1");
@@ -159,7 +159,7 @@ public class ChartRunningTest {
 		String chartId = "rec";
 		FlowChart rec = linearYesChart(chartId, 3);
 		
-		DecisionNode n2 = (DecisionNode)rec.getNode(chartId+"_2");
+		AskNode n2 = (AskNode)rec.getNode(chartId+"_2");
 		CallNode caller = n2.setNodeFor(NO, rec.add(new CallNode("Caller")));
 		caller.setCalleeChartId(chartId);
 		caller.setCalleeNodeId( chartId + "_1");

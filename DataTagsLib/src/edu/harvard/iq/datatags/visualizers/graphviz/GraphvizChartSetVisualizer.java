@@ -1,12 +1,14 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.runtime.Answer;
-import edu.harvard.iq.datatags.runtime.CallNode;
-import edu.harvard.iq.datatags.runtime.DecisionNode;
-import edu.harvard.iq.datatags.runtime.EndNode;
-import edu.harvard.iq.datatags.runtime.FlowChart;
-import edu.harvard.iq.datatags.runtime.FlowChartSet;
-import edu.harvard.iq.datatags.runtime.Node;
+import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
+import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
+import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
+import edu.harvard.iq.datatags.model.charts.FlowChart;
+import edu.harvard.iq.datatags.model.charts.FlowChartSet;
+import edu.harvard.iq.datatags.model.charts.nodes.Node;
+import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
+import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -35,7 +37,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		}
 		
 		@Override
-		public Void visitDecisionNode(DecisionNode nd) throws DataTagsRuntimeException {
+		public Void visitAskNode(AskNode nd) throws DataTagsRuntimeException {
 			nodes.add( nodeStr(nd, "shape=\"oval\"") );
 			edges.add( edgeStr(nd, nodeId(nd.getNodeFor(Answer.YES)), "Y", "color=\"green\""));
 			edges.add( edgeStr(nd, nodeId(nd.getNodeFor(Answer.NO)), "N", "color=\"red\""));
@@ -46,6 +48,20 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		public Void visitCallNode(CallNode nd) throws DataTagsRuntimeException {
 			nodes.add( nodeStr(nd, "shape=\"diamond\"") );
 			edges.add( edgeStr(nd, nodeId(nd.getCalleeChartId(), nd.getCalleeNodeId()), "call", "color=\"#0000FF\" style=\"dashed\""));
+			edges.add( edgeStr(nd, nodeId(nd.getNextNode()), "next", ""));
+			return null;
+		}
+		
+		@Override
+		public Void visitTodoNode(TodoNode nd) throws DataTagsRuntimeException {
+			nodes.add( nodeStr(nd, "shape=\"cds\"") );
+			edges.add( edgeStr(nd, nodeId(nd.getNextNode()), "next", ""));
+			return null;
+		}
+		
+		@Override
+		public Void visitSetNode(SetNode nd) throws DataTagsRuntimeException {
+			nodes.add( nodeStr(nd, "shape=\"invtrapezium\"") );
 			edges.add( edgeStr(nd, nodeId(nd.getNextNode()), "next", ""));
 			return null;
 		}
@@ -75,8 +91,8 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 			return String.format( "%s -> %s [label=\"%s\"" + extras + "]", 
 					nodeId(n), dest, title);
 		}
-		
 	}
+	
 	private final NodePainter nodePainter = new NodePainter();
 	
 	@Override

@@ -4,12 +4,12 @@
 
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.runtime.Answer;
-import edu.harvard.iq.datatags.runtime.CallNode;
-import edu.harvard.iq.datatags.runtime.DecisionNode;
-import edu.harvard.iq.datatags.runtime.EndNode;
-import edu.harvard.iq.datatags.runtime.FlowChart;
-import edu.harvard.iq.datatags.runtime.FlowChartSet;
+import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
+import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
+import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
+import edu.harvard.iq.datatags.model.charts.FlowChart;
+import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import java.nio.file.Paths;
 import org.junit.Test;
 
@@ -31,9 +31,9 @@ public class GraphvizCharsetVisualizerTest {
 		String subchartName = "flowChart-sub";
 		FlowChart subChart = new FlowChart( subchartName );
 		
-		DecisionNode start = subChart.add( new DecisionNode("A") );
+		AskNode start = subChart.add( new AskNode("A") );
 		EndNode end = subChart.add(new EndNode("SUB_END"));
-		start.setNodeFor( Answer.YES, subChart.add(new DecisionNode("B")) )
+		start.setNodeFor( Answer.YES, subChart.add(new AskNode("B")) )
 			 .setNodeFor( Answer.YES, end);
 		subChart.setStart(start);
 		subChart.connectOpenEnds(end);
@@ -41,11 +41,11 @@ public class GraphvizCharsetVisualizerTest {
 		String mainChartName = "flowChart-main";
 		FlowChart mainChart = new FlowChart( mainChartName );
 		
-		start = mainChart.add( new DecisionNode("1") );
+		start = mainChart.add( new AskNode("1") );
 		end = mainChart.add(new EndNode("5"));
-		start.setNodeFor( Answer.YES, mainChart.add(new DecisionNode("2")) )
+		start.setNodeFor( Answer.YES, mainChart.add(new AskNode("2")) )
 			 .setNodeFor( Answer.YES, mainChart.add(new CallNode("c-m")) )
-			 .setNextNode(mainChart.add(new DecisionNode("3")) )
+			 .setNextNode(mainChart.add(new AskNode("3")) )
 			 .setNodeFor( Answer.YES, end );
 		mainChart.connectOpenEnds(end);
 		

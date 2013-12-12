@@ -102,10 +102,7 @@ public class DataTags extends CompoundValue {
 		}
 		
 		return result;
-		
 	}
-
-	
 }
 
 class Resolver implements TagValue.Visitor<TagValue.Function> {

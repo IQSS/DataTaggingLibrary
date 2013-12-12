@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.runtime;
+package edu.harvard.iq.datatags.model.charts;
 
 import edu.harvard.iq.datatags.model.types.TagType;
 import java.net.URL;
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * @author michael
  */
-public class FlowChartSet extends RuntimeEntity {
+public class FlowChartSet extends ChartEntity {
 	private static final AtomicInteger INDEX = new AtomicInteger(0);
 	
 	private URL source;
