@@ -12,94 +12,93 @@ import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 
+ * Intended useage pattern:
+ * <code>
+ *	if ( engine.start(node) ) {
+ *		while ( engine.consume( getAns() ) ) {}
+ *  }
+ * </code>
  * The engine that executes {@link FlowChartSet}s.
  * 
  * @author michael
  */
 public class RuntimeEngine {
 	
+	public enum Status { Idle, Running, Terminated, Error }
+	
 	public interface Listener {
 		public void runStarted( RuntimeEngine ngn );
 		public void nodeEntered( RuntimeEngine ngn, Node node );
 		public void runTerminated( RuntimeEngine ngn );
+		// TODO find usages, consider removing, as we throw exceptions anyway.
 		public void runError( RuntimeEngine ngn, DataTagsRuntimeException e );
 	}
 	
 	/** Used to give instances meaningful names. */
 	private static final AtomicInteger COUNTER = new AtomicInteger(0);
-	
-	/** This node is used upon entering charts, to satisfy invariants about the stack state. */
-	private static final Node CHART_ENTRY_DUMMY_NODE = new Node("DUMMY") {
-		@Override
-		public <R> R accept(Node.Visitor<R> vr) throws DataTagsRuntimeException {
-			throw new IllegalStateException("Dummy node should never be run.");
-		}
-	};
-	
+		
 	private String id = "RuntimeEngine-" + COUNTER.incrementAndGet();
 	private FlowChartSet chartSet;
 	private DataTags currentTags;
-	private final Deque<Node> stack = new LinkedList<>();
+	private final Deque<CallNode> stack = new LinkedList<>();
+	private Node currentNode;
+	private Status status = Status.Idle;
 	private Listener listener;
 	
-	private final Node.Visitor<Boolean> enterNodeVisitor = new Node.Visitor<Boolean>() {
+		private final Node.Visitor<Node> processNodeVisitor = new Node.Visitor<Node>() {
 		
 		@Override
-		public Boolean visitAskNode( AskNode nd ) {
-			stack.push(nd);
-			if ( listener != null ) listener.nodeEntered(RuntimeEngine.this, nd);
-			
-			return true;
+		public Node visitAskNode( AskNode nd ) {
+			// stop and consult the user.
+			return null;
 		}
 		
 		@Override
-		public Boolean visitTodoNode( TodoNode nd ) {
-			// FIXME implement
-			return true;
+		public Node visitTodoNode( TodoNode nd ) {
+			// Skip!
+			return nd.getNextNode();
 		}
 		
 		@Override
-		public Boolean visitSetNode( SetNode nd ) {
-			// FIXME implement
+		public Node visitSetNode( SetNode nd ) {
+			// Apply changes
 			setCurrentTags( getCurrentTags().composeWith(nd.getTags()) );
-			return true;
+			
+			// Off we go to the next node.
+			return nd.getNextNode();
 		}
 
 		@Override
-		public Boolean visitCallNode( CallNode nd ) throws DataTagsRuntimeException {
+		public Node visitCallNode( CallNode nd ) throws DataTagsRuntimeException {
 			stack.push(nd);
-			stack.push(CHART_ENTRY_DUMMY_NODE);
-			// try to make the link
+			// Dynamic linking to the destination node.
 			FlowChart fs = getChartSet().getFlowChart(nd.getCalleeChartId());
 			if ( fs == null ) {
 				MissingFlowChartException mfce = new MissingFlowChartException(nd.getCalleeChartId(), chartSet, RuntimeEngine.this, "Can't find chart " + nd.getCalleeChartId() );
 				mfce.setSourceNode(nd);
+				status = Status.Error;
 				throw mfce;
 			}
-			Node nextNode = fs.getNode(nd.getCalleeNodeId());
-			if ( nextNode == null ) {
+			Node calleeNode = fs.getNode(nd.getCalleeNodeId());
+			if ( calleeNode == null ) {
+				status = Status.Error;
 				throw new MissingNodeException(chartSet, RuntimeEngine.this, nd);
 			}
 			
 			// enter the linked node
-			return enterNode( nextNode );
+			return calleeNode;
 		}
 
 		@Override
-		public Boolean visitEndNode( EndNode nd ) throws DataTagsRuntimeException {
+		public Node visitEndNode( EndNode nd ) throws DataTagsRuntimeException {
 			if ( stack.isEmpty() ) {
-				// done running
-				if ( listener != null ) listener.runTerminated(RuntimeEngine.this);
-				return false;
+				status = Status.Terminated;
+				return null;
 			} else {
-				// stack top has to be a call node.
-				CallNode cn = (CallNode) stack.peek();
-				return enterNode( cn.getNextNode() );
+				return stack.pop().getNextNode();
 			}
 		}
 	};
-	
 	
 	public DataTags getCurrentTags() {
 		return currentTags;
@@ -111,9 +110,10 @@ public class RuntimeEngine {
 	 * the current data tags are retained.
 	 * 
 	 * @param flowChartName name of the chart to start running at.
+	 * @return {@code true} iff there is a need to consume answers.
 	 * @throws MissingFlowChartException if that chart does not exist.
 	 */
-	public void start( String flowChartName ) throws DataTagsRuntimeException {
+	public boolean start( String flowChartName ) throws DataTagsRuntimeException {
 		FlowChart fs = chartSet.getFlowChart(flowChartName);
 		if ( fs == null ) {
 			throw new MissingFlowChartException(flowChartName, 
@@ -124,15 +124,20 @@ public class RuntimeEngine {
 		if ( getCurrentTags() == null ) {
 			setCurrentTags( new DataTags() );
 		}
+		status = Status.Running;
 		if ( listener!=null ) listener.runStarted(this);
-		stack.push( CHART_ENTRY_DUMMY_NODE );
-		enterNode( fs.getStart() );
-		
+		return processNode( fs.getStart() );
 	}
 	
-	boolean enterNode( Node n ) throws DataTagsRuntimeException {
-		stack.pop(); // remove last chart node ("program counter")
-		return n.accept( enterNodeVisitor );
+	protected boolean processNode( Node n ) throws DataTagsRuntimeException {
+		Node next = n;
+		do {
+			currentNode = next; // advance program counter
+			next = currentNode.accept(processNodeVisitor);
+			if ( listener != null ) listener.nodeEntered(this, getCurrentNode()); // TODO change to "processedNode"
+		} while ( next != null );
+
+		return getStatus() == Status.Running;
 	}
 	
 	/**
@@ -143,9 +148,9 @@ public class RuntimeEngine {
 	 * @throws DataTagsRuntimeException 
 	 */
 	public boolean consume( Answer ans ) throws DataTagsRuntimeException {
-		AskNode current = (AskNode) stack.peek();
+		AskNode current = (AskNode) currentNode;
 		Node next = current.getNodeFor(ans);
-		return enterNode( next );
+		return processNode( next );
 	}
 	
 	/**
@@ -184,10 +189,17 @@ public class RuntimeEngine {
 	 * @return The current stack of nodes. This is enough to know where 
 	 * the engine is, but not what the data tags state is.
 	 */
-	public Deque<Node> getStack() {
+	public Deque<CallNode> getStack() {
 		return stack;
 	}
-
+	
+	/**
+	 * @return The node the engine is currently in.
+	 */
+	public Node getCurrentNode() { 
+		return currentNode;
+	}
+	
 	public Listener getListener() {
 		return listener;
 	}
@@ -214,6 +226,10 @@ public class RuntimeEngine {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public Status getStatus() {
+		return status;
 	}
 	
 }

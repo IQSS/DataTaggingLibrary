@@ -35,7 +35,7 @@ public class ChartRunningTest {
 		fcs.addChart(c1);
 		
 		assertExecutionTrace( fcs, flowChartName,
-				Arrays.asList("1", "2", "3", "4"), false);
+				Arrays.asList("1", "2", "3", "4", "END"), false);
 				
 	}
 
@@ -62,7 +62,7 @@ public class ChartRunningTest {
 		
 		assertExecutionTrace( fcs, flowChartName,
 				C.list( YES, NO, YES, NO ),
-				C.list("1", "2", "3", "4"), false);
+				C.list("1", "2", "3", "4", "END"), false);
 		
 	}
 	
@@ -83,7 +83,7 @@ public class ChartRunningTest {
 		start.setNodeFor( Answer.YES, mainChart.add(new AskNode("2")) )
 			 .setNodeFor( Answer.YES, mainChart.add(new CallNode("c-m")) )
 			 .setNextNode(mainChart.add(new AskNode("3")) )
-			 .setNodeFor( Answer.YES, mainChart.add(new EndNode("5")) );
+			 .setNodeFor( Answer.YES, mainChart.add(new EndNode("END")) );
 		
 		((CallNode)mainChart.getNode("c-m")).setCalleeChartId(subchartName);
 		((CallNode)mainChart.getNode("c-m")).setCalleeNodeId("A");
@@ -94,7 +94,9 @@ public class ChartRunningTest {
 		fcs.addChart(mainChart);
 		fcs.addChart(subChart);
 		
-		assertExecutionTrace(fcs, mainChartName, Arrays.asList("1","2","A","B","3"), false );
+		assertExecutionTrace(fcs, mainChartName, Arrays.asList("1","2","c-m",
+																	"A","B", "SUB_END",
+																"3", "END"), false );
 	}
 	
 	@Test
@@ -113,7 +115,7 @@ public class ChartRunningTest {
 		start = mainChart.add( new AskNode("1") );
 		start.setNodeFor( Answer.YES, mainChart.add(new AskNode("2")) )
 			 .setNodeFor( Answer.YES, mainChart.add(new CallNode("c-m")) )
-			 .setNextNode(mainChart.add(new EndNode("3end")) );
+			 .setNextNode(mainChart.add(new EndNode("END")) );
 		
 		((CallNode)mainChart.getNode("c-m")).setCalleeChartId(subchartName);
 		((CallNode)mainChart.getNode("c-m")).setCalleeNodeId("A");
@@ -124,7 +126,7 @@ public class ChartRunningTest {
 		fcs.addChart(mainChart);
 		fcs.addChart(subChart);
 		
-		assertExecutionTrace( fcs, mainChartName, C.list("1","2","A","B"), false );
+		assertExecutionTrace( fcs, mainChartName, C.list("1","2", "c-m","A","B","SUB_END","END"), false );
 	}
 	
 	@Test
@@ -144,9 +146,10 @@ public class ChartRunningTest {
 				C.list(YES, NO, 
 						YES, NO,
 						YES, YES, YES ),
-				C.list("rec_1", "rec_2", 
-						"rec_1", "rec_2", 
-						"rec_1", "rec_2", "rec_3"),
+				C.list("rec_1", "rec_2", "Caller",
+						"rec_1", "rec_2", "Caller", 
+						"rec_1", "rec_2", "rec_3", "rec_END",
+						"CallerEnd", "CallerEnd"),
 				true );
 		
 	}
@@ -174,12 +177,13 @@ public class ChartRunningTest {
 						YES, NO,
 						YES, NO,
 						YES, YES, YES ),
-				C.list("rec_1", "rec_2", 
-						"rec_1", "rec_2", 
-						"rec_1", "rec_2", 
-						"rec_1", "rec_2", 
-						"rec_1", "rec_2", 
-						"rec_1", "rec_2", "rec_3"),
+				C.list("rec_1", "rec_2", "Caller",
+						"rec_1", "rec_2", "Caller",
+						"rec_1", "rec_2", "Caller", 
+						"rec_1", "rec_2", "Caller", 
+						"rec_1", "rec_2", "Caller", 
+						"rec_1", "rec_2", "rec_3", "rec_END",
+						"CallerEnd","CallerEnd","CallerEnd","CallerEnd","CallerEnd"),
 				true );
 		
 	}
@@ -204,9 +208,10 @@ public class ChartRunningTest {
 		main.setStart(start);
 		
 		assertExecutionTrace( chartSet(main, subA, subB, subC), "threaded-main",
-				C.list("sub_a_1", "sub_a_2","sub_a_3",
-						"sub_b_1", "sub_b_2","sub_b_3",
-						"sub_c_1", "sub_c_2","sub_c_3"),
+				C.list("1","sub_a_1", "sub_a_2","sub_a_3", "sub_a_END",
+						"2","sub_b_1", "sub_b_2","sub_b_3","sub_b_END",
+						"3","sub_c_1", "sub_c_2","sub_c_3","sub_c_END", 
+						"END"),
 				false);
 	}
 	
