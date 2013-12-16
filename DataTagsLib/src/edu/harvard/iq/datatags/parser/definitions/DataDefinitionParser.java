@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser;
+package edu.harvard.iq.datatags.parser.definitions;
 
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
@@ -8,13 +8,13 @@ import edu.harvard.iq.datatags.model.types.ToDoType;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
-import edu.harvard.iq.datatags.parser.references.AggregateTypeReference;
-import edu.harvard.iq.datatags.parser.references.CompilationUnitLocationReference;
-import edu.harvard.iq.datatags.parser.references.CompoundTypeReference;
-import edu.harvard.iq.datatags.parser.references.NamedReference;
-import edu.harvard.iq.datatags.parser.references.SimpleTypeReference;
-import edu.harvard.iq.datatags.parser.references.ToDoTypeReference;
-import edu.harvard.iq.datatags.parser.references.TypeReference;
+import edu.harvard.iq.datatags.parser.definitions.references.AggregateTypeReference;
+import edu.harvard.iq.datatags.parser.definitions.references.CompilationUnitLocationReference;
+import edu.harvard.iq.datatags.parser.definitions.references.CompoundTypeReference;
+import edu.harvard.iq.datatags.parser.definitions.references.NamedReference;
+import edu.harvard.iq.datatags.parser.definitions.references.SimpleTypeReference;
+import edu.harvard.iq.datatags.parser.definitions.references.ToDoTypeReference;
+import edu.harvard.iq.datatags.parser.definitions.references.TypeReference;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;

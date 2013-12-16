@@ -48,7 +48,7 @@ public class ChartRunningTest {
 		start.setNodeFor( YES, c1.add(new AskNode("2")) )
 			 .setNodeFor( NO,  c1.add(new AskNode("3")) )
 			 .setNodeFor( YES, c1.add(new AskNode("4")) )
-			 .setNodeFor( NO, c1.add(new EndNode("END")) );
+			 .setNodeFor( NO,  c1.add(new EndNode("END")) );
 		
 		((AskNode)c1.getNode("1")).setNodeFor(NO,  c1.add( new AskNode("x")) );
 		((AskNode)c1.getNode("2")).setNodeFor(YES, c1.add( new AskNode("xx")) );

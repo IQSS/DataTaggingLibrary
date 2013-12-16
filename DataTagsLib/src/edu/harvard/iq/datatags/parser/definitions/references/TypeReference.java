@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.references;
+package edu.harvard.iq.datatags.parser.definitions.references;
 
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.ArrayList;

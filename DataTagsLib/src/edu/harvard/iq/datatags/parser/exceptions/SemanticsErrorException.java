@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.parser.exceptions;
 
-import edu.harvard.iq.datatags.parser.references.CompilationUnitLocationReference;
+import edu.harvard.iq.datatags.parser.definitions.references.CompilationUnitLocationReference;
 
 /**
  * Indicates an error in the semantics of a construct. For example, a

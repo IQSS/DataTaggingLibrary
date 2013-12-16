@@ -2,14 +2,15 @@
  *  (C) Michael Bar-Sinai
  */
 
-package edu.harvard.iq.datatags.parser;
+package edu.harvard.iq.datatags.parser.definitions;
 
-import edu.harvard.iq.datatags.parser.references.AggregateTypeReference;
-import edu.harvard.iq.datatags.parser.references.CompoundTypeReference;
-import edu.harvard.iq.datatags.parser.references.NamedReference;
-import edu.harvard.iq.datatags.parser.references.SimpleTypeReference;
-import edu.harvard.iq.datatags.parser.references.ToDoTypeReference;
-import edu.harvard.iq.datatags.parser.references.TypeReference;
+import edu.harvard.iq.datatags.parser.definitions.DataDefinitionASTParser;
+import edu.harvard.iq.datatags.parser.definitions.references.AggregateTypeReference;
+import edu.harvard.iq.datatags.parser.definitions.references.CompoundTypeReference;
+import edu.harvard.iq.datatags.parser.definitions.references.NamedReference;
+import edu.harvard.iq.datatags.parser.definitions.references.SimpleTypeReference;
+import edu.harvard.iq.datatags.parser.definitions.references.ToDoTypeReference;
+import edu.harvard.iq.datatags.parser.definitions.references.TypeReference;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.List;
 import org.junit.Before;

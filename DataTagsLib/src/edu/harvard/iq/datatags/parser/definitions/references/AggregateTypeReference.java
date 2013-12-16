@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.references;
+package edu.harvard.iq.datatags.parser.definitions.references;
 
 import java.util.List;
 

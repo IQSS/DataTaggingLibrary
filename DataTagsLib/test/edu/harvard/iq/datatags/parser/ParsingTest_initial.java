@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.parser;
 
+import edu.harvard.iq.datatags.parser.definitions.DataDefinitionParser;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDataStructureVisualizer;

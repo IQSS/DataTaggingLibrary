@@ -1,11 +1,12 @@
-package edu.harvard.iq.datatags.parser;
+package edu.harvard.iq.datatags.parser.definitions;
 
-import edu.harvard.iq.datatags.parser.references.AggregateTypeReference;
-import edu.harvard.iq.datatags.parser.references.CompoundTypeReference;
-import edu.harvard.iq.datatags.parser.references.NamedReference;
-import edu.harvard.iq.datatags.parser.references.SimpleTypeReference;
-import edu.harvard.iq.datatags.parser.references.ToDoTypeReference;
-import edu.harvard.iq.datatags.parser.references.TypeReference;
+import edu.harvard.iq.datatags.parser.AbstractASTParser;
+import edu.harvard.iq.datatags.parser.definitions.references.AggregateTypeReference;
+import edu.harvard.iq.datatags.parser.definitions.references.CompoundTypeReference;
+import edu.harvard.iq.datatags.parser.definitions.references.NamedReference;
+import edu.harvard.iq.datatags.parser.definitions.references.SimpleTypeReference;
+import edu.harvard.iq.datatags.parser.definitions.references.ToDoTypeReference;
+import edu.harvard.iq.datatags.parser.definitions.references.TypeReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +22,7 @@ import org.codehaus.jparsec.functors.Pair;
  * Parses definitions language files into a list of type definitions.
  * @author michael
  */
-public class DataDefinitionASTParser {
+public class DataDefinitionASTParser extends AbstractASTParser {
 	
 	Parser<Collection<TypeReference>> typeDefinitionList() {
 		// we take all the type defined, and combine to a single list.
@@ -43,11 +44,6 @@ public class DataDefinitionASTParser {
 	Parser<List<? extends TypeReference>> typeDefinition() {
 		return Parsers.or( todoTypesDefinition(), simpleTypeDefinition(), aggregateTypeDefinition(), compoundTypeDefinition() );
 	}
-	
-	Parser<SimpleTypeReference> longSimpleType() {
-		return null;
-	}
-	
 	
 	Parser<NamedReference> namedReference() {
 		return Parsers.or( commentedNamedReference(),
@@ -136,28 +132,10 @@ public class DataDefinitionASTParser {
 		return separatorWithWhitespace(":");
 	}
 	
-	Parser<Void> listSeparator() {
-		return separatorWithWhitespace(",");
-	}
 	
 	Parser<Void> dotDefinitionTerminator() {
 		return Scanners.WHITESPACES.skipMany()
 				.next(Scanners.string("."));
 	}
 	
-	Parser<Void> separatorWithWhitespace( String sep ) {
-			return Scanners.WHITESPACES.skipMany()
-				.next(Scanners.string( sep ))
-				.next(Scanners.WHITESPACES.skipMany());
-	}
-	
-	Parser<Void> whitespaced( String... words ) {
-		Parser<Void> out = Scanners.string(words[0]);
-		for ( int i=1; i<words.length; i++ ) {
-			out = out.next( Scanners.WHITESPACES.skipMany1())
-					.next( Scanners.string(words[i]));
-		}
-		out = out.next( Scanners.WHITESPACES.skipMany1() );
-		return out;
-	}
 }
