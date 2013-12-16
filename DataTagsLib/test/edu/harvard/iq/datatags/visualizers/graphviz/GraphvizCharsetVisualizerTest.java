@@ -26,7 +26,7 @@ public class GraphvizCharsetVisualizerTest {
 	/**
 	 * Test of vizualize method, of class GraphivzCharsetVisualizer.
 	 */
-	@Test
+//	@Test
 	public void testVizualize() throws Exception {
 		String subchartName = "flowChart-sub";
 		FlowChart subChart = new FlowChart( subchartName );
