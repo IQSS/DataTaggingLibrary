@@ -11,22 +11,21 @@ import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import java.nio.file.Paths;
-import org.junit.Test;
 
 /**
  *
  * @author michael
  */
-public class GraphvizCharsetVisualizerTest {
+public class GraphvizCharsetVisualizerTestRun {
 	
-	public GraphvizCharsetVisualizerTest() {
+	public static void main(String[] args) throws Exception {
+		new GraphvizCharsetVisualizerTestRun().testVizualize();
 	}
 	
 	
 	/**
 	 * Test of vizualize method, of class GraphivzCharsetVisualizer.
 	 */
-//	@Test
 	public void testVizualize() throws Exception {
 		String subchartName = "flowChart-sub";
 		FlowChart subChart = new FlowChart( subchartName );
