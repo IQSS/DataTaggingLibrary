@@ -1,33 +1,44 @@
 package edu.harvard.iq.datatags.parser.flowcharts.references;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 /**
- * A reference to a node in the parsed AST.
+ * A reference to a single parsed node. Created by the AST parser.
  * @author michael
  */
 public class NodeReference {
-	private final String id;
-	private final NodeType type;
+	private final NodeHeadReference head;
+	private final Map<String, NodeBodyPart<?>> body = new TreeMap<>();
 
-	public NodeReference(String id, NodeType type) {
-		this.id = id;
-		this.type = type;
+	public NodeReference(NodeHeadReference head) {
+		this.head = head;
 	}
-
-	public String getId() {
-		return id;
+	
+	public void add( NodeBodyPart<?> part ) {
+		body.put(part.getTitle(), part);
 	}
-
-	public NodeType getType() {
-		return type;
+	
+	public NodeBodyPart<?> get( String bodyPartName ) {
+		return body.get(bodyPartName);
+	}
+	
+	public <T> NodeBodyPart<T> getAs( String bodyPartName, Class<T> t ) {
+		if ( body.containsKey(bodyPartName) ) {
+			NodeBodyPart<?> nbp = get( bodyPartName );
+			if ( t.isAssignableFrom(nbp.getValue().getClass()) ) {
+				return (NodeBodyPart<T>)nbp;
+			}
+			throw new ClassCastException("Cannot cast " + nbp.getValue().getClass() + " to " + t );
+		}
+		return null;
 	}
 
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 29 * hash + Objects.hashCode(this.id);
-		hash = 29 * hash + Objects.hashCode(this.type);
+		hash = 37 * hash + Objects.hashCode(this.head);
 		return hash;
 	}
 
@@ -36,16 +47,18 @@ public class NodeReference {
 		if (obj == null) {
 			return false;
 		}
-		if (getClass() != obj.getClass()) {
+		if ( ! (obj instanceof NodeReference) ) {
 			return false;
 		}
 		final NodeReference other = (NodeReference) obj;
-		if (!Objects.equals(this.id, other.id)) {
+		if (!Objects.equals(this.head, other.head)) {
 			return false;
 		}
-		return this.type == other.type;
+		if (!Objects.equals(this.body, other.body)) {
+			return false;
+		}
+		return true;
 	}
-	
 	
 	
 }

@@ -4,6 +4,7 @@
 
 package edu.harvard.iq.datatags.parser.flowcharts;
 
+import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadReference;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.error.ParserException;
@@ -48,6 +49,13 @@ public class FlowChartSetASTParserTest {
 		for ( NodeType nd: NodeType.values() ) {
 			assertEquals( nd, subParser.parse( nd.name().toLowerCase() ) );
 		}
+	}
+	
+	@Test
+	public void testNodeHead() {
+		Parser<NodeHeadReference> subParser = instance.nodeHead();
+		assertEquals( new NodeHeadReference("setNode", NodeType.Set), subParser.parse("setNode set") );
+		assertEquals( new NodeHeadReference(null, NodeType.Call), subParser.parse("call") );
 	}
 
 	@Test( expected=ParserException.class)
