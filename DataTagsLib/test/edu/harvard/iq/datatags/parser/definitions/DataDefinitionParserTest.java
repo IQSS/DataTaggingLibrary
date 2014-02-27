@@ -4,7 +4,6 @@
 
 package edu.harvard.iq.datatags.parser.definitions;
 
-import edu.harvard.iq.datatags.parser.definitions.DataDefinitionASTParser;
 import edu.harvard.iq.datatags.parser.definitions.references.AggregateTypeReference;
 import edu.harvard.iq.datatags.parser.definitions.references.CompoundTypeReference;
 import edu.harvard.iq.datatags.parser.definitions.references.NamedReference;

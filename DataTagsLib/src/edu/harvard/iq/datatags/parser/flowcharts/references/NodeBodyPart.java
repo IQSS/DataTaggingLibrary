@@ -47,6 +47,4 @@ public class NodeBodyPart<ValueType> {
 		}
 		return Objects.equals(this.value, other.value);
 	}
-	
-	
 }

@@ -6,8 +6,12 @@ package edu.harvard.iq.datatags.parser.flowcharts;
 
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadReference;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
+import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import org.codehaus.jparsec.Parser;
+import org.codehaus.jparsec.Parsers;
+import org.codehaus.jparsec.Scanners;
 import org.codehaus.jparsec.error.ParserException;
+import org.codehaus.jparsec.functors.Pair;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -76,6 +80,54 @@ public class FlowChartSetASTParserTest {
 	public void testNodeId_fail() {
 		Parser<String> sut = instance.nodeId();
 		assertEquals("hello", sut.parse("hello world") );
+	}
+	
+    @Test
+    public void testTermNode() {
+        assertEquals( new TermNodeRef("simpleTerm", "simpleExplanation"),
+                      instance.termNode().parse("(simpleTerm:simpleExplanation)"));
+        assertEquals( new TermNodeRef("simpleTerm", "simpleExplanation"),
+                      instance.termNode().parse("(simpleTerm : simpleExplanation)"));
+        assertEquals( new TermNodeRef("simpleTerm", "simpleExplanation"),
+                      instance.termNode().parse("(   simpleTerm : simpleExplanation   )"));
+        assertEquals( new TermNodeRef("simpleTerm", "simpleExplanation"),
+                      instance.termNode().parse("(   simpleTerm :  \n\t\tsimpleExplanation   )"));
+        String longExplanation = "lorem ipsum dolor sit amet. lorem ipsum 0183274018375  AAIIrejrgwhgootutuhwo Many Chars\n\t+_!@)$*!@$&^@$()^@&$%!(*$_!#(!%^!^&$#_%^*(&#_%(^*@?>||}}?{<";
+        
+        assertEquals( new TermNodeRef("multi word Term", longExplanation),
+                      instance.termNode().parse("(   multi word Term : " + longExplanation + ")"));
+    }
+    
+    @Test( expected=ParserException.class )
+    public void testTermNode_fail() {
+        assertEquals( new TermNodeRef("we won't get here", "hopefully"),
+                      instance.termNode().parse("(simpleTerm)"));
+        assertEquals( new TermNodeRef("we won't get here", "hopefully"),
+                      instance.termNode().parse("(:simpleTerm)"));
+        assertEquals( new TermNodeRef("we won't get here", "hopefully"),
+                      instance.termNode().parse("(abc:simpleTerm"));
+    }
+    
+    @Test
+    public void testCompleteNode() {
+        assertEquals( "test", instance.completeNode( Scanners.ANY_CHAR.many().source()).parse("(test)") );
+        assertEquals( "test", instance.completeNode( Scanners.ANY_CHAR.many().source()).parse("( test)") );
+        assertEquals( "test", instance.completeNode( Scanners.ANY_CHAR.many().source()).parse("(    test)") );
+    }
+    
+	@Test
+	public void testSample() {
+        Parser<Pair<String,String>> sut = Parsers.tuple(Scanners.IDENTIFIER.followedBy(Scanners.among(":")),
+            Scanners.ANY_CHAR.many().source()
+            ).reluctantBetween(instance.startNode(), instance.endNode());
+
+        Pair<String, String> value = sut.parse("(hello:world))");
+
+        assertEquals( new Pair<>("hello","world)"), value );
+        
+        Parser<Pair<String, String>> tupleParser = Parsers.tuple( Scanners.notChar(':').many().source().followedBy(Scanners.among(":")),
+                Scanners.ANY_CHAR.many().source());
+        assertEquals( new Pair<>("hello","world"), tupleParser.parse("hello:world") );
 	}
 	
 }

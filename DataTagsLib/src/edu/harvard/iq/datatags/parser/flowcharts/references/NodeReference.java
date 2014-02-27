@@ -54,10 +54,7 @@ public class NodeReference {
 		if (!Objects.equals(this.head, other.head)) {
 			return false;
 		}
-		if (!Objects.equals(this.body, other.body)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(this.body, other.body);
 	}
 	
 	
