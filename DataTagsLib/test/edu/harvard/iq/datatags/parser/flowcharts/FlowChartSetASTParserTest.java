@@ -4,7 +4,8 @@
 
 package edu.harvard.iq.datatags.parser.flowcharts;
 
-import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadReference;
+import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
+import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import org.codehaus.jparsec.Parser;
@@ -57,9 +58,12 @@ public class FlowChartSetASTParserTest {
 	
 	@Test
 	public void testNodeHead() {
-		Parser<NodeHeadReference> subParser = instance.nodeHead();
-		assertEquals( new NodeHeadReference("setNode", NodeType.Set), subParser.parse("setNode set") );
-		assertEquals( new NodeHeadReference(null, NodeType.Call), subParser.parse("call") );
+		Parser<NodeHeadRef> subParser = instance.nodeHead();
+		assertEquals( new NodeHeadRef("setNode", NodeType.Set), 
+                      subParser.parse(">setNode<set") );
+		assertEquals( new NodeHeadRef("setNode", NodeType.Set), 
+                      subParser.parse(">setNode< set") );
+		assertEquals( new NodeHeadRef(null, NodeType.Call), subParser.parse("call") );
 	}
 
 	@Test( expected=ParserException.class)
@@ -71,9 +75,12 @@ public class FlowChartSetASTParserTest {
 	@Test
 	public void testNodeId() {
 		Parser<String> sut = instance.nodeId();
-		assertEquals("hello", sut.parse("hello") );
-		assertEquals("@@hello", sut.parse("@@hello") );
-		assertEquals("!@$%", sut.parse("!@$%") );
+		assertEquals("hello", sut.parse(">hello<") );
+		assertEquals("hello", sut.parse(">  hello    <") );
+		assertEquals("@@hello", sut.parse(">@@hello<") );
+		assertEquals("!@$%", sut.parse(">!@$%<") );
+		assertEquals("hello, world! This is indeed a very long id for a node",
+                     sut.parse(">hello, world! This is indeed a very long id for a node<") );
 	}
 	
 	@Test(expected = ParserException.class)
@@ -113,6 +120,24 @@ public class FlowChartSetASTParserTest {
         assertEquals( "test", instance.completeNode( Scanners.ANY_CHAR.many().source()).parse("(test)") );
         assertEquals( "test", instance.completeNode( Scanners.ANY_CHAR.many().source()).parse("( test)") );
         assertEquals( "test", instance.completeNode( Scanners.ANY_CHAR.many().source()).parse("(    test)") );
+    }
+    
+    @Test
+    public void testInstcutionNode() {
+        assertEquals( new InstructionNodeRef( new NodeHeadRef("id",NodeType.End)),
+                      instance.instructionNode().parse("(>id< end)"));
+        assertEquals( new InstructionNodeRef( new NodeHeadRef("id",NodeType.End)),
+                      instance.instructionNode().parse("( >id< end  )"));
+        assertEquals( new InstructionNodeRef( new NodeHeadRef("id",NodeType.End)),
+                      instance.instructionNode().parse("(>id<end)"));
+        assertEquals( new InstructionNodeRef( new NodeHeadRef(null,NodeType.End)),
+                      instance.instructionNode().parse("(end)"));
+        assertEquals( new InstructionNodeRef( new NodeHeadRef(null,NodeType.End)),
+                      instance.instructionNode().parse("(end  )"));
+        assertEquals( new InstructionNodeRef( new NodeHeadRef(null,NodeType.End)),
+                      instance.instructionNode().parse("(   end)"));
+        assertEquals( new InstructionNodeRef( new NodeHeadRef(null,NodeType.End)),
+                      instance.instructionNode().parse("(   end  )"));
     }
     
 	@Test

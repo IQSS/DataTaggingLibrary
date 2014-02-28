@@ -1,8 +1,9 @@
 package edu.harvard.iq.datatags.parser.flowcharts;
 
 import edu.harvard.iq.datatags.parser.AbstractASTParser;
+import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeBodyPart;
-import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadReference;
+import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import org.codehaus.jparsec.Parser;
@@ -22,7 +23,7 @@ import org.codehaus.jparsec.pattern.Patterns;
  */
 public class FlowChartSetASTParser extends AbstractASTParser {
 	
-	Pattern NODE_ID = Patterns.among("!@$%^&*_+-").or(Patterns.range('a', 'z')).or(Patterns.range('A', 'Z')).many1();
+	Pattern NODE_ID = Patterns.among(" \t,/~?!@$%^&*_+-").or(Patterns.range('a', 'z')).or(Patterns.range('A', 'Z')).many1();
 	
 	<T> Parser<NodeBodyPart<T>> nodeBodyPart( Parser<T> bodyParser ) { 
 		return Parsers.tuple( Scanners.pattern(NODE_ID, "Node body part").source()
@@ -36,23 +37,31 @@ public class FlowChartSetASTParser extends AbstractASTParser {
 		}).between(startNode(), Scanners.WHITESPACES.optional().followedBy(endNode()));
 	}
 	
-	Parser<NodeHeadReference> nodeHead() {
-		return Parsers.tuple(nodeId().followedBy(Scanners.WHITESPACES), nodeType()).map( new Map<Pair<String, NodeType>, NodeHeadReference>(){
+	Parser<NodeHeadRef> nodeHead() {
+		return Parsers.tuple(nodeId().followedBy(Scanners.WHITESPACES.optional()), nodeType()).map( new Map<Pair<String, NodeType>, NodeHeadRef>(){
                     @Override
-                    public NodeHeadReference map(Pair<String, NodeType> from) {
-                            return new NodeHeadReference(from.a, from.b);
+                    public NodeHeadRef map(Pair<String, NodeType> from) {
+                            return new NodeHeadRef(from.a, from.b);
                     }
 		} )
-		.or( nodeType().map( new Map<NodeType, NodeHeadReference>() {
+		.or( nodeType().map( new Map<NodeType, NodeHeadRef>() {
                     @Override
-                    public NodeHeadReference map(NodeType from) {
-                            return new NodeHeadReference(null, from);
+                    public NodeHeadRef map(NodeType from) {
+                            return new NodeHeadRef(null, from);
                     }
 		}));
 	}
 	
 	Parser<String> nodeId() {
-		return Scanners.pattern(NODE_ID, "Node id").source();
+        return
+            Scanners.isChar('>').followedBy(
+                Scanners.pattern(NODE_ID, "Node id")).source().followedBy(
+                    Scanners.isChar('<'))
+            .map( new Map<String, String>(){
+                @Override
+                public String map(String from) {
+                    return from.substring(1).trim();
+            }});
 	}
 	
 	Parser<NodeType> nodeType() {
@@ -75,6 +84,18 @@ public class FlowChartSetASTParser extends AbstractASTParser {
                                 return new TermNodeRef(from.a.trim(), from.b.trim());
         }}));
     }
+    
+    Parser<InstructionNodeRef> instructionNode() {
+        return completeNode(
+            nodeHead()
+        ).map( new Map<NodeHeadRef, InstructionNodeRef>(){
+            @Override
+            public InstructionNodeRef map(NodeHeadRef from) {
+                return new InstructionNodeRef(from);
+            }
+        });
+    }
+    
     
     <T> Parser<T> completeNode( Parser<T> nodeBodyParser ) {
         return nodeBodyParser.reluctantBetween(startNode(), endNode() );

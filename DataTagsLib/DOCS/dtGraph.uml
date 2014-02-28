@@ -6,7 +6,7 @@ package reference {
 	}
 
 	class InstructionNodeRef {
-		+ head : HeadRef
+		+ head : NodeHeadRef
 	}
 
 	class SimpleNodeRef {
@@ -17,7 +17,7 @@ package reference {
 		+ body: List<NodeRef>
 	}
 
-	class HeadRef {
+	class NodeHeadRef {
 		+ id: String
 		+ name: String
 	}
@@ -32,7 +32,7 @@ package reference {
 	InstructionNodeRef <|-- SimpleNodeRef
 	InstructionNodeRef <|-- CompoundNodeRed
 
-	InstructionNodeRef "1" -> HeadRef
+	InstructionNodeRef "1" -> NodeHeadRef
 
 }
 

@@ -8,11 +8,11 @@ import java.util.Objects;
  * 
  * @author michael
  */
-public class NodeHeadReference {
+public class NodeHeadRef {
 	private final String id;
 	private final NodeType type;
 
-	public NodeHeadReference(String id, NodeType type) {
+	public NodeHeadRef(String id, NodeType type) {
 		this.id = id;
 		this.type = type;
 	}
@@ -38,10 +38,10 @@ public class NodeHeadReference {
 		if (obj == null) {
 			return false;
 		}
-		if ( ! (obj instanceof NodeHeadReference) ) {
+		if ( ! (obj instanceof NodeHeadRef) ) {
 			return false;
 		}
-		final NodeHeadReference other = (NodeHeadReference) obj;
+		final NodeHeadRef other = (NodeHeadRef) obj;
 		if (!Objects.equals(this.id, other.id)) {
 			return false;
 		}
