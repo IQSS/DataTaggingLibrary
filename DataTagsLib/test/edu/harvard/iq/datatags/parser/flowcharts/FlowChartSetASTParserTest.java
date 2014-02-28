@@ -7,6 +7,7 @@ package edu.harvard.iq.datatags.parser.flowcharts;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
+import edu.harvard.iq.datatags.parser.flowcharts.references.SimpleNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
@@ -65,7 +66,17 @@ public class FlowChartSetASTParserTest {
                       subParser.parse(">setNode< set") );
 		assertEquals( new NodeHeadRef(null, NodeType.Call), subParser.parse("call") );
 	}
-
+    
+    @Test
+    public void testSimpleNode() {
+        Parser<SimpleNodeRef> sut = instance.simpleNodeRef();
+        
+        assertEquals( new SimpleNodeRef( new NodeHeadRef(null,NodeType.Call), "Some other id"),
+                      sut.parse("(call: Some other id)"));
+        assertEquals( new SimpleNodeRef( new NodeHeadRef("call-other",NodeType.Call), "Some other id"),
+                      sut.parse("(>call-other< call: Some other id)"));
+    }
+    
 	@Test( expected=ParserException.class)
 	public void testNodeType_fail() {
 		Parser<NodeType> subParser = instance.nodeType();
@@ -89,6 +100,46 @@ public class FlowChartSetASTParserTest {
 		assertEquals("hello", sut.parse("hello world") );
 	}
 	
+    @Test
+    public void testSetAssignment() {
+        Parser<Pair<String, String>> sut = instance.setAssignmentPair();
+        assertEquals( new Pair<>("hello","world"), sut.parse("hello=world"));
+        assertEquals( new Pair<>("this/hello","world"), sut.parse("this/hello=world"));
+        assertEquals( new Pair<>("that/this/hello","world"), sut.parse("that/this/hello=world"));
+    }
+
+    @Test( expected = ParserException.class )
+    public void testSetAssignment_fail1() {
+        Parser<Pair<String, String>> sut = instance.setAssignmentPair();
+        assertEquals( null, sut.parse("hello="));
+    }
+    @Test( expected = ParserException.class )
+    public void testSetAssignment_fail2() {
+        Parser<Pair<String, String>> sut = instance.setAssignmentPair();
+        assertEquals( null, sut.parse("=world"));
+    }
+    @Test( expected = ParserException.class )
+    public void testSetAssignment_fail3() {
+        Parser<Pair<String, String>> sut = instance.setAssignmentPair();
+        assertEquals( null, sut.parse("/=world"));
+    }
+    @Test( expected = ParserException.class )
+    public void testSetAssignment_fail4() {
+        Parser<Pair<String, String>> sut = instance.setAssignmentPair();
+        assertEquals( null, sut.parse("hello/=world"));
+    }
+    @Test( expected = ParserException.class )
+    public void testSetAssignment_fail5() {
+        Parser<Pair<String, String>> sut = instance.setAssignmentPair();
+        assertEquals( null, sut.parse("/hello=world"));
+    }
+    
+    @Test
+    public void testSlotReferece() {
+        Parser<String> sut = instance.slotReference();
+        assertEquals("hello", sut.parse("hello"));
+    }
+    
     @Test
     public void testTermNode() {
         assertEquals( new TermNodeRef("simpleTerm", "simpleExplanation"),
@@ -140,19 +191,12 @@ public class FlowChartSetASTParserTest {
                       instance.instructionNode().parse("(   end  )"));
     }
     
-	@Test
-	public void testSample() {
-        Parser<Pair<String,String>> sut = Parsers.tuple(Scanners.IDENTIFIER.followedBy(Scanners.among(":")),
-            Scanners.ANY_CHAR.many().source()
-            ).reluctantBetween(instance.startNode(), instance.endNode());
-
-        Pair<String, String> value = sut.parse("(hello:world))");
-
-        assertEquals( new Pair<>("hello","world)"), value );
-        
-        Parser<Pair<String, String>> tupleParser = Parsers.tuple( Scanners.notChar(':').many().source().followedBy(Scanners.among(":")),
-                Scanners.ANY_CHAR.many().source());
-        assertEquals( new Pair<>("hello","world"), tupleParser.parse("hello:world") );
-	}
+//	@Test
+//	public void testSample() {
+//        Parser<String> sut = Scanners.IDENTIFIER.sepBy1(Scanners.isChar('/')).source();
+//        assertEquals( "hello", sut.parse("hello") );
+//        assertEquals( "he/llo", sut.parse("he/llo") );
+//        assertEquals( "he/ll/o", sut.parse("he/ll/o") );
+//	}
 	
 }

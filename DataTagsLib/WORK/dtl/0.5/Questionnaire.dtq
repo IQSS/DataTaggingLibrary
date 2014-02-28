@@ -31,7 +31,7 @@
          (no:  (set: basis=agreement)
                (ask: (text:Did the data have any restrictions on sharing (e.g., stated in an agreement or policy statement)?)
                      (yes: (call: dua))
-                     (no: (set: code=green, store=clear, transfer=clear, auth=none, basis=Consent) )
+                     (no: (set: code=green, store=clear, Handling/Transfer=clear, auth=none, basis=Consent) )
                )
          )
 )

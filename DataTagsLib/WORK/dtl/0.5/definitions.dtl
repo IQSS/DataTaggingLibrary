@@ -10,6 +10,7 @@ Code: one of
 	RED     (Very sensitive identifiable personal information, shared with strong verification of approved recipients under signed agreement.),
 	CRIMSON (Requires explicit permission for each transaction, using strong verification of approved recipients under signed agreement.)
 .
+
 Handling: Storage, Transit, Authentication.
 
 Storage: one of Clear, Encrypt, DoubleEncrypt.
@@ -27,18 +28,17 @@ Authentication: some of
 	Password (Available to individuals having a password accounts on system.)
 .
 
-
 DataType:
 	Standards, Effort, Harm.
 
 Standards: some of HIPAA, FERPA, ElectronicWiretapping, CommonRule.
-Effort:    one of   Identified, Identifiable, DeIdentified, Anonymous.
-Harm:      one of   NoRisk, Minimal, Shame, Civil, Criminal, MaxControl.
+Effort:    one of  Identified, Identifiable, DeIdentified, Anonymous.
+Harm:      one of  NoRisk, Minimal, Shame, Civil, Criminal, MaxControl.
 
 DUA:
 	TimeLimit,
 	Sharing, Reidentify, Publication,
-	Use, Acceptance,	Approval
+	Use, Acceptance, Approval
 .
 
 TimeLimit: one of none, _1yr, _2yr, _5yr.

@@ -27,9 +27,14 @@ package reference {
 		+ explanation: String
 	}
 
+	class SetNodeRef {
+		+ map: Map<String, String>
+	}
+
 	NodeRef <|-- TermNodeRef
 	NodeRef <|-- InstructionNodeRef
 	InstructionNodeRef <|-- SimpleNodeRef
+	InstructionNodeRef <|-- SetNodeRef
 	InstructionNodeRef <|-- CompoundNodeRed
 
 	InstructionNodeRef "1" -> NodeHeadRef

@@ -32,7 +32,15 @@ public class InstructionNodeRef {
         if ( ! (obj instanceof InstructionNodeRef) ) {
             return false;
         }
-        final InstructionNodeRef other = (InstructionNodeRef) obj;
-        return Objects.equals(this.head, other.head);
+        return equalsAsInstructionNodeRef((InstructionNodeRef) obj);
+    }
+    
+    public boolean equalsAsInstructionNodeRef( InstructionNodeRef other ) {
+        return Objects.equals(head, other.getHead());
+    }
+    
+    @Override
+    public String toString() {
+        return "[InstructionNodeRef head:" + getHead().toString() + " ]";
     }
 }

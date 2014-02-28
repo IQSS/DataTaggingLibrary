@@ -48,6 +48,9 @@ public class NodeHeadRef {
 		return this.type == other.type;
 	}
 	
-	
+	@Override
+    public String toString() {
+        return "[headref id:" + getId() + " type:" + getType() + "]";
+    }
 	
 }
