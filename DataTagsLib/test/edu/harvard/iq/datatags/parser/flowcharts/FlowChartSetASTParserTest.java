@@ -1,16 +1,12 @@
-/*
- *  (C) Michael Bar-Sinai
- */
-
 package edu.harvard.iq.datatags.parser.flowcharts;
 
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
+import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SimpleNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import org.codehaus.jparsec.Parser;
-import org.codehaus.jparsec.Parsers;
 import org.codehaus.jparsec.Scanners;
 import org.codehaus.jparsec.error.ParserException;
 import org.codehaus.jparsec.functors.Pair;
@@ -189,6 +185,26 @@ public class FlowChartSetASTParserTest {
                       instance.instructionNode().parse("(   end)"));
         assertEquals( new InstructionNodeRef( new NodeHeadRef(null,NodeType.End)),
                       instance.instructionNode().parse("(   end  )"));
+    }
+    
+    @Test
+    public void testSetNode() {
+        SetNodeRef expected = new SetNodeRef( new NodeHeadRef("set-id", NodeType.Set) );
+        expected.addAssignment("slot1", "value1");
+        
+        Parser<SetNodeRef> sut = instance.setNode();
+        assertEquals( expected, sut.parse("(>set-id< set: slot1=value1)"));
+        
+        expected.addAssignment("slot/number/two", "value2");
+        assertEquals( expected, sut.parse("(>set-id< set: slot1=value1,slot/number/two=value2)"));
+        assertEquals( expected, sut.parse("(>set-id< set: slot1=value1, slot/number/two=value2)"));
+        assertEquals( expected, sut.parse("(>set-id< set: slot1 = value1, slot/number/two = value2)"));
+        assertEquals( expected, sut.parse("(>set-id< set: slot1 = value1,\n\t\tslot/number/two = value2)"));
+        
+        expected = new SetNodeRef( new NodeHeadRef(null, NodeType.Set) );
+        expected.addAssignment("slot1", "value1");
+        expected.addAssignment("slot/number/two", "value2");
+        assertEquals( expected, sut.parse("(set: slot1=value1,slot/number/two=value2)"));
     }
     
 //	@Test

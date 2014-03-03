@@ -47,5 +47,10 @@ public class SetNodeRef extends InstructionNodeRef {
         final SetNodeRef other = (SetNodeRef) obj;
         return other.assignments.equals(assignments) && super.equalsAsInstructionNodeRef(other);
     }
+    
+    @Override
+    public String toString() {
+        return "[SetNodeRef " + super.toString() + " assignments:" + assignments + "]";
+    }
    
 }

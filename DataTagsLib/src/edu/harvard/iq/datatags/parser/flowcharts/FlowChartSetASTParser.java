@@ -8,15 +8,16 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SimpleNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
+import java.util.List;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
 import static org.codehaus.jparsec.Parsers.*;
 import org.codehaus.jparsec.Scanners;
 import static org.codehaus.jparsec.Scanners.*;
-import org.codehaus.jparsec.pattern.Patterns;
 import org.codehaus.jparsec.functors.Map;
 import org.codehaus.jparsec.functors.Pair;
 import org.codehaus.jparsec.pattern.Pattern;
+import org.codehaus.jparsec.pattern.Patterns;
 
 /**
  * Parser for the AST of the DataTags flowchart language.
@@ -42,7 +43,11 @@ public class FlowChartSetASTParser extends AbstractASTParser {
 	}
 	
 	Parser<NodeHeadRef> nodeHead() {
-		return tuple(nodeId().followedBy(WHITESPACES.optional()), nodeType()).map( new Map<Pair<String, NodeType>, NodeHeadRef>(){
+        return nodeHeadWithType( nodeType() );
+	}
+    
+	Parser<NodeHeadRef> nodeHeadWithType(Parser<NodeType> nodeTypeParser) {
+		return tuple(nodeId().followedBy(WHITESPACES.optional()), nodeTypeParser).map( new Map<Pair<String, NodeType>, NodeHeadRef>(){
                     @Override
                     public NodeHeadRef map(Pair<String, NodeType> from) {
                             return new NodeHeadRef(from.a, from.b);
@@ -54,6 +59,15 @@ public class FlowChartSetASTParser extends AbstractASTParser {
                             return new NodeHeadRef(null, from);
                     }
 		}));
+	}
+	
+    Parser<NodeHeadRef> nodeHeadWithType( String type ) {
+        return nodeHeadWithType( Scanners.string(type).source().map( new Map<String, NodeType>(){
+            @Override
+            public NodeType map(String from) {
+                return NodeType.valueOf(toEnumCase(from));
+            }
+        }));
 	}
 	
 	Parser<String> nodeId() {
@@ -70,17 +84,16 @@ public class FlowChartSetASTParser extends AbstractASTParser {
 	
 	Parser<NodeType> nodeType() {
 		return IDENTIFIER.map( new Map<String, NodeType>(){
-                    @Override
-                    public NodeType map(String from) {
-                            char[] raw = from.trim().toLowerCase().toCharArray();
-                            raw[0] = Character.toUpperCase(raw[0]);
-                            return NodeType.valueOf(new String(raw));
-                    }
+            @Override
+            public NodeType map(String from) {
+                return NodeType.valueOf(toEnumCase(from));
+            }
 		} );
 	}
     
     Parser<Pair<String, String>> setAssignmentPair() {
-        return Parsers.tuple( slotReference().followedBy( Scanners.isChar('=') ),
+        return Parsers.tuple( slotReference().followedBy( WHITESPACES.many().optional())
+                                .followedBy( Scanners.isChar('=') ).followedBy( WHITESPACES.many().optional()),
                 Scanners.IDENTIFIER.many1().source() );
     }
 
@@ -89,9 +102,19 @@ public class FlowChartSetASTParser extends AbstractASTParser {
     }
     
     Parser<SetNodeRef> setNode()  {
-        // TODO continue from here.
-        // CONTPOINT
-        return null;
+        return completeNode( tuple( nodeHeadWithType("set").followedBy( nodeHeadEnd() ), 
+                setAssignmentPair().sepBy(Scanners.isChar(',').followedBy( WHITESPACES.many().optional()))))
+                .map( new Map<Pair<NodeHeadRef, List<Pair<String,String>>>,SetNodeRef>(){
+
+            @Override
+            public SetNodeRef map(Pair<NodeHeadRef, List<Pair<String,String>>> from) {
+                SetNodeRef ref = new SetNodeRef( from.a );
+                for ( Pair<String,String> ap : from.b ) {
+                    ref.addAssignment(ap.a, ap.b);
+                }
+                return ref;
+            }
+        });
     }
     
     Parser<TermNodeRef> termNode() {
@@ -141,6 +164,12 @@ public class FlowChartSetASTParser extends AbstractASTParser {
     
     Parser<Void> nodeHeadEnd() {
         return Scanners.isChar(':', "NODE_HEAD_END").followedBy( Scanners.WHITESPACES.optional() );
+    }
+    
+    String toEnumCase( String val ) {
+        char[] raw = val.trim().toLowerCase().toCharArray();
+        raw[0] = Character.toUpperCase(raw[0]);
+        return new String( raw );
     }
     
 }
