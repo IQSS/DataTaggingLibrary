@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.parser.flowcharts;
 
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadRef;
+import edu.harvard.iq.datatags.parser.flowcharts.references.TypedNodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.SimpleNodeRef;
+import edu.harvard.iq.datatags.parser.flowcharts.references.StringBodyNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Scanners;
@@ -55,21 +55,21 @@ public class FlowChartSetASTParserTest {
 	
 	@Test
 	public void testNodeHead() {
-		Parser<NodeHeadRef> subParser = instance.nodeHead();
-		assertEquals( new NodeHeadRef("setNode", NodeType.Set), 
+		Parser<TypedNodeHeadRef> subParser = instance.nodeHead();
+		assertEquals( new TypedNodeHeadRef("setNode", NodeType.Set), 
                       subParser.parse(">setNode<set") );
-		assertEquals( new NodeHeadRef("setNode", NodeType.Set), 
+		assertEquals( new TypedNodeHeadRef("setNode", NodeType.Set), 
                       subParser.parse(">setNode< set") );
-		assertEquals( new NodeHeadRef(null, NodeType.Call), subParser.parse("call") );
+		assertEquals( new TypedNodeHeadRef(null, NodeType.Call), subParser.parse("call") );
 	}
     
     @Test
     public void testSimpleNode() {
-        Parser<SimpleNodeRef> sut = instance.simpleNodeRef();
+        Parser<StringBodyNodeRef> sut = instance.simpleNodeRef();
         
-        assertEquals( new SimpleNodeRef( new NodeHeadRef(null,NodeType.Call), "Some other id"),
+        assertEquals( new StringBodyNodeRef( new TypedNodeHeadRef(null,NodeType.Call), "Some other id"),
                       sut.parse("(call: Some other id)"));
-        assertEquals( new SimpleNodeRef( new NodeHeadRef("call-other",NodeType.Call), "Some other id"),
+        assertEquals( new StringBodyNodeRef( new TypedNodeHeadRef("call-other",NodeType.Call), "Some other id"),
                       sut.parse("(>call-other< call: Some other id)"));
     }
     
@@ -171,25 +171,25 @@ public class FlowChartSetASTParserTest {
     
     @Test
     public void testInstcutionNode() {
-        assertEquals( new InstructionNodeRef( new NodeHeadRef("id",NodeType.End)),
+        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef("id",NodeType.End)),
                       instance.instructionNode().parse("(>id< end)"));
-        assertEquals( new InstructionNodeRef( new NodeHeadRef("id",NodeType.End)),
+        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef("id",NodeType.End)),
                       instance.instructionNode().parse("( >id< end  )"));
-        assertEquals( new InstructionNodeRef( new NodeHeadRef("id",NodeType.End)),
+        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef("id",NodeType.End)),
                       instance.instructionNode().parse("(>id<end)"));
-        assertEquals( new InstructionNodeRef( new NodeHeadRef(null,NodeType.End)),
+        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef(null,NodeType.End)),
                       instance.instructionNode().parse("(end)"));
-        assertEquals( new InstructionNodeRef( new NodeHeadRef(null,NodeType.End)),
+        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef(null,NodeType.End)),
                       instance.instructionNode().parse("(end  )"));
-        assertEquals( new InstructionNodeRef( new NodeHeadRef(null,NodeType.End)),
+        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef(null,NodeType.End)),
                       instance.instructionNode().parse("(   end)"));
-        assertEquals( new InstructionNodeRef( new NodeHeadRef(null,NodeType.End)),
+        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef(null,NodeType.End)),
                       instance.instructionNode().parse("(   end  )"));
     }
     
     @Test
     public void testSetNode() {
-        SetNodeRef expected = new SetNodeRef( new NodeHeadRef("set-id", NodeType.Set) );
+        SetNodeRef expected = new SetNodeRef( new TypedNodeHeadRef("set-id", NodeType.Set) );
         expected.addAssignment("slot1", "value1");
         
         Parser<SetNodeRef> sut = instance.setNode();
@@ -201,7 +201,7 @@ public class FlowChartSetASTParserTest {
         assertEquals( expected, sut.parse("(>set-id< set: slot1 = value1, slot/number/two = value2)"));
         assertEquals( expected, sut.parse("(>set-id< set: slot1 = value1,\n\t\tslot/number/two = value2)"));
         
-        expected = new SetNodeRef( new NodeHeadRef(null, NodeType.Set) );
+        expected = new SetNodeRef( new TypedNodeHeadRef(null, NodeType.Set) );
         expected.addAssignment("slot1", "value1");
         expected.addAssignment("slot/number/two", "value2");
         assertEquals( expected, sut.parse("(set: slot1=value1,slot/number/two=value2)"));

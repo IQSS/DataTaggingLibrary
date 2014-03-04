@@ -8,17 +8,12 @@ import java.util.Objects;
  * 
  * @author michael
  */
-public class NodeHeadRef {
-	private final String id;
+public class TypedNodeHeadRef extends AbstractNodeHeadRef {
 	private final NodeType type;
 
-	public NodeHeadRef(String id, NodeType type) {
-		this.id = id;
+	public TypedNodeHeadRef(String id, NodeType type) {
+		super( id );
 		this.type = type;
-	}
-
-	public String getId() {
-		return id;
 	}
 
 	public NodeType getType() {
@@ -28,7 +23,6 @@ public class NodeHeadRef {
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 29 * hash + Objects.hashCode(this.id);
 		hash = 29 * hash + Objects.hashCode(this.type);
 		return hash;
 	}
@@ -38,11 +32,11 @@ public class NodeHeadRef {
 		if (obj == null) {
 			return false;
 		}
-		if ( ! (obj instanceof NodeHeadRef) ) {
+		if ( ! (obj instanceof TypedNodeHeadRef) ) {
 			return false;
 		}
-		final NodeHeadRef other = (NodeHeadRef) obj;
-		if (!Objects.equals(this.id, other.id)) {
+		final TypedNodeHeadRef other = (TypedNodeHeadRef) obj;
+		if (!Objects.equals(getId(), other.getId())) {
 			return false;
 		}
 		return this.type == other.type;

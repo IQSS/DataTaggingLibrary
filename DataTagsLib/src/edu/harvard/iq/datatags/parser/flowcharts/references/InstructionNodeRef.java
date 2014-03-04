@@ -7,13 +7,13 @@ import java.util.Objects;
  * @author Michael Bar-Sinai
  */
 public class InstructionNodeRef {
-    private final NodeHeadRef head;
+    private final TypedNodeHeadRef head;
 
-    public InstructionNodeRef(NodeHeadRef head) {
+    public InstructionNodeRef(TypedNodeHeadRef head) {
         this.head = head;
     }
 
-    public NodeHeadRef getHead() {
+    public TypedNodeHeadRef getHead() {
         return head;
     }
 

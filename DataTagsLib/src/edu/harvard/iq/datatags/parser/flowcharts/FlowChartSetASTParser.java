@@ -1,13 +1,15 @@
 package edu.harvard.iq.datatags.parser.flowcharts;
 
 import edu.harvard.iq.datatags.parser.AbstractASTParser;
+import edu.harvard.iq.datatags.parser.flowcharts.references.AskNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeBodyPart;
-import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadRef;
+import edu.harvard.iq.datatags.parser.flowcharts.references.TypedNodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.SimpleNodeRef;
+import edu.harvard.iq.datatags.parser.flowcharts.references.StringBodyNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
+import java.util.Collections;
 import java.util.List;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
@@ -42,26 +44,26 @@ public class FlowChartSetASTParser extends AbstractASTParser {
 		}).between(nodeEnd(), WHITESPACES.optional().followedBy(nodeStart()));
 	}
 	
-	Parser<NodeHeadRef> nodeHead() {
+	Parser<TypedNodeHeadRef> nodeHead() {
         return nodeHeadWithType( nodeType() );
 	}
     
-	Parser<NodeHeadRef> nodeHeadWithType(Parser<NodeType> nodeTypeParser) {
-		return tuple(nodeId().followedBy(WHITESPACES.optional()), nodeTypeParser).map( new Map<Pair<String, NodeType>, NodeHeadRef>(){
+	Parser<TypedNodeHeadRef> nodeHeadWithType(Parser<NodeType> nodeTypeParser) {
+		return tuple(nodeId().followedBy(WHITESPACES.optional()), nodeTypeParser).map( new Map<Pair<String, NodeType>, TypedNodeHeadRef>(){
                     @Override
-                    public NodeHeadRef map(Pair<String, NodeType> from) {
-                            return new NodeHeadRef(from.a, from.b);
+                    public TypedNodeHeadRef map(Pair<String, NodeType> from) {
+                            return new TypedNodeHeadRef(from.a, from.b);
                     }
 		} )
-		.or( nodeType().map( new Map<NodeType, NodeHeadRef>() {
+		.or( nodeType().map( new Map<NodeType, TypedNodeHeadRef>() {
                     @Override
-                    public NodeHeadRef map(NodeType from) {
-                            return new NodeHeadRef(null, from);
+                    public TypedNodeHeadRef map(NodeType from) {
+                            return new TypedNodeHeadRef(null, from);
                     }
 		}));
 	}
 	
-    Parser<NodeHeadRef> nodeHeadWithType( String type ) {
+    Parser<TypedNodeHeadRef> nodeHeadWithType( String type ) {
         return nodeHeadWithType( Scanners.string(type).source().map( new Map<String, NodeType>(){
             @Override
             public NodeType map(String from) {
@@ -104,10 +106,10 @@ public class FlowChartSetASTParser extends AbstractASTParser {
     Parser<SetNodeRef> setNode()  {
         return completeNode( tuple( nodeHeadWithType("set").followedBy( nodeHeadEnd() ), 
                 setAssignmentPair().sepBy(Scanners.isChar(',').followedBy( WHITESPACES.many().optional()))))
-                .map( new Map<Pair<NodeHeadRef, List<Pair<String,String>>>,SetNodeRef>(){
+                .map( new Map<Pair<TypedNodeHeadRef, List<Pair<String,String>>>,SetNodeRef>(){
 
             @Override
-            public SetNodeRef map(Pair<NodeHeadRef, List<Pair<String,String>>> from) {
+            public SetNodeRef map(Pair<TypedNodeHeadRef, List<Pair<String,String>>> from) {
                 SetNodeRef ref = new SetNodeRef( from.a );
                 for ( Pair<String,String> ap : from.b ) {
                     ref.addAssignment(ap.a, ap.b);
@@ -127,27 +129,76 @@ public class FlowChartSetASTParser extends AbstractASTParser {
         }}));
     }
     
+    Parser<List<TermNodeRef>> termsNode() {
+        return completeNode(
+                Parsers.tuple(nodeHeadWithType("terms").followedBy( nodeHeadEnd() ),
+                        termNode().sepBy(WHITESPACES.many().optional()))
+                .map( new Map<Pair<TypedNodeHeadRef,List<TermNodeRef>>, List<TermNodeRef>>(){
+            @Override
+            public List<TermNodeRef> map(Pair<TypedNodeHeadRef, List<TermNodeRef>> from) {
+                return from.b;
+            }
+        }));
+    }
+    
     Parser<InstructionNodeRef> instructionNode() {
         return completeNode(
             nodeHead()
-        ).map( new Map<NodeHeadRef, InstructionNodeRef>(){
+        ).map( new Map<TypedNodeHeadRef, InstructionNodeRef>(){
             @Override
-            public InstructionNodeRef map(NodeHeadRef from) {
+            public InstructionNodeRef map(TypedNodeHeadRef from) {
                 return new InstructionNodeRef(from);
             }
         });
     }
     
-    Parser<SimpleNodeRef> simpleNodeRef() {
+    Parser<StringBodyNodeRef> simpleNodeRef() {
         return completeNode(
             Parsers.tuple( nodeHead().followedBy( nodeHeadEnd() ),
                  Scanners.ANY_CHAR.many1().source())
-            ).map( new Map<Pair<NodeHeadRef, String>, SimpleNodeRef>(){
+            ).map( new Map<Pair<TypedNodeHeadRef, String>, StringBodyNodeRef>(){
             @Override
-            public SimpleNodeRef map(Pair<NodeHeadRef, String> from) {
-                return new SimpleNodeRef(from.a, from.b);
+            public StringBodyNodeRef map(Pair<TypedNodeHeadRef, String> from) {
+                return new StringBodyNodeRef(from.a, from.b);
             }
         } );
+    }
+    
+    Parser<StringBodyNodeRef> simpleNodeRef( String type ) {
+        return completeNode(
+            Parsers.tuple( nodeHeadWithType(type).followedBy( nodeHeadEnd() ),
+                 Scanners.ANY_CHAR.many1().source())
+            ).map( new Map<Pair<TypedNodeHeadRef, String>, StringBodyNodeRef>(){
+            @Override
+            public StringBodyNodeRef map(Pair<TypedNodeHeadRef, String> from) {
+                return new StringBodyNodeRef(from.a, from.b);
+            }
+        } );
+    }
+    
+    Parser<AskNodeRef> askNode() {
+        Parser<Pair<StringBodyNodeRef, List<TermNodeRef>>> onlyText = 
+                simpleNodeRef("text").map( new Map<StringBodyNodeRef, Pair<StringBodyNodeRef, List<TermNodeRef>>>(){
+            @Override
+            public Pair<StringBodyNodeRef, List<TermNodeRef>> map(StringBodyNodeRef from) {
+                return new Pair<>(from, Collections.<TermNodeRef>emptyList());
+            }
+        });
+        Parser<Pair<StringBodyNodeRef, List<TermNodeRef>>> textThenTerms = 
+                Parsers.tuple(simpleNodeRef("text"), termsNode());
+        Parser<Pair<StringBodyNodeRef, List<TermNodeRef>>> termsThenText = 
+                Parsers.tuple(termsNode(), simpleNodeRef("text"))
+                        .map( new Map<Pair<List<TermNodeRef>,StringBodyNodeRef>, Pair<StringBodyNodeRef, List<TermNodeRef>>>(){
+            @Override
+            public Pair<StringBodyNodeRef, List<TermNodeRef>> map(Pair<List<TermNodeRef>,StringBodyNodeRef> from) {
+                return new Pair<>(from.b, from.a);
+            }
+        });
+        
+        Parser<Pair<StringBodyNodeRef, List<TermNodeRef>>> questionPart = onlyText.or( textThenTerms ).or( termsThenText );
+        
+        // CONTPOINT make the answer part (yes+no?| no+yes? | answers)
+        return null;
     }
     
     <T> Parser<T> completeNode( Parser<T> nodeBodyParser ) {

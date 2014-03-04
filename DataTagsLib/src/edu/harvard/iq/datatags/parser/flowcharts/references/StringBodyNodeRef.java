@@ -6,10 +6,10 @@ import java.util.Objects;
  * A reference to a node that has a String body.
  * @author Michael Bar-Sinai
  */
-public class SimpleNodeRef extends InstructionNodeRef {
+public class StringBodyNodeRef extends InstructionNodeRef {
     private final String body;
 
-    public SimpleNodeRef(NodeHeadRef head, String body) {
+    public StringBodyNodeRef(TypedNodeHeadRef head, String body) {
         super(head);
         this.body = body;
     }
@@ -30,10 +30,10 @@ public class SimpleNodeRef extends InstructionNodeRef {
         if (obj == null) {
             return false;
         }
-        if ( ! (obj instanceof SimpleNodeRef)) {
+        if ( ! (obj instanceof StringBodyNodeRef)) {
             return false;
         }
-        final SimpleNodeRef other = (SimpleNodeRef) obj;
+        final StringBodyNodeRef other = (StringBodyNodeRef) obj;
         return other.body.equals( getBody() ) && equalsAsInstructionNodeRef(other);
     }
     

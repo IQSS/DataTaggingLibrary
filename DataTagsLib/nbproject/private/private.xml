@@ -5,6 +5,7 @@
         <group>
             <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/test/edu/harvard/iq/datatags/parser/flowcharts/FlowChartSetASTParserTest.java</file>
             <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/parser/flowcharts/FlowChartSetASTParser.java</file>
+            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/parser/flowcharts/references/SetNodeRef.java</file>
         </group>
     </open-files>
 </project-private>

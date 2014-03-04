@@ -3,6 +3,10 @@
 # HEAD := cmd | >id< cmd
 # BODY := (param-id: param-value)+ | (slot=value)(slot=value,)*
 # NODE := (HEAD) | (HEAD:BODY)
+# Top level nodes: end, call, ask, set
+# Answer options: if we have an (answers:*) node, use them as explicit answers.
+# Otherwise, use yes,no. This should also mean should have a "title only" answer/s, 
+# s.t. we move to next node (similar to default yes/no answers)
 
 (>person specific< ask:
 	(text: Person-specific. Does your data include personal information?)
@@ -27,13 +31,23 @@
 	)
 )
 (>medical-recs< ask: (text:Medical Records. Does the data contain personal health information?)
-		 (yes: (call: hipaaCompliance) )
-         (no:  (set: basis=agreement)
-               (ask: (text:Did the data have any restrictions on sharing (e.g., stated in an agreement or policy statement)?)
-                     (yes: (call: dua))
-                     (no: (set: code=green, store=clear, Handling/Transfer=clear, auth=none, basis=Consent) )
-               )
-         )
+	 (yes: (call: hipaaCompliance) )
+     (no:  (set: basis=agreement)
+           (ask: (text:Did the data have any restrictions on sharing (e.g., stated in an agreement or policy statement)?)
+                 (yes: (call: dua))
+                 (no: (set: code=green, store=clear, Handling/Transfer=clear, auth=none, basis=Consent) )
+           )
+     )
+)
+(>dua< ask: 
+	(text:For how long should we keep the data?)
+	(answers:
+		(forever:  (set: storage=Forever) )
+		(50 years: (set: storage=_50yr) )
+		(5 years:  (set: storage=_5yr) )
+		(1 year:   (set: storage=_1yr) )
+		(whatever:)
+	)
 )
 (end)
 
