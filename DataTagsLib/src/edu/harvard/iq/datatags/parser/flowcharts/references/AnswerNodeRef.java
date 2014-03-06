@@ -9,9 +9,9 @@ import java.util.Objects;
  */
 public class AnswerNodeRef extends NodeRef {
     private final StringNodeHeadRef head;
-    private final List<NodeRef> implementation;
+    private final List<InstructionNodeRef> implementation;
 
-    public AnswerNodeRef(StringNodeHeadRef head, List<NodeRef> implementation) {
+    public AnswerNodeRef(StringNodeHeadRef head, List<InstructionNodeRef> implementation) {
         this.head = head;
         this.implementation = implementation;
     }
@@ -20,7 +20,7 @@ public class AnswerNodeRef extends NodeRef {
         return head;
     }
 
-    public List<NodeRef> getImplementation() {
+    public List<InstructionNodeRef> getImplementation() {
         return implementation;
     }
 

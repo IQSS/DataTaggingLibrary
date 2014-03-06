@@ -11,9 +11,7 @@ import org.codehaus.jparsec.Scanners;
 import org.codehaus.jparsec.error.ParserException;
 import org.codehaus.jparsec.functors.Pair;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -26,14 +24,6 @@ public class FlowChartSetASTParserTest {
 	FlowChartSetASTParser instance;
 			
 	public FlowChartSetASTParserTest() {
-	}
-	
-	@BeforeClass
-	public static void setUpClass() {
-	}
-	
-	@AfterClass
-	public static void tearDownClass() {
 	}
 	
 	@Before
@@ -55,7 +45,7 @@ public class FlowChartSetASTParserTest {
 	
 	@Test
 	public void testNodeHead() {
-		Parser<TypedNodeHeadRef> subParser = instance.nodeHead();
+		Parser<TypedNodeHeadRef> subParser = instance.typedNodeHead();
 		assertEquals( new TypedNodeHeadRef("setNode", NodeType.Set), 
                       subParser.parse(">setNode<set") );
 		assertEquals( new TypedNodeHeadRef("setNode", NodeType.Set), 
@@ -65,7 +55,7 @@ public class FlowChartSetASTParserTest {
     
     @Test
     public void testSimpleNode() {
-        Parser<StringBodyNodeRef> sut = instance.simpleNodeRef();
+        Parser<StringBodyNodeRef> sut = instance.stringBodyNode();
         
         assertEquals( new StringBodyNodeRef( new TypedNodeHeadRef(null,NodeType.Call), "Some other id"),
                       sut.parse("(call: Some other id)"));

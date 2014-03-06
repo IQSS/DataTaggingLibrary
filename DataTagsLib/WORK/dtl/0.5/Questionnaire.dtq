@@ -3,10 +3,25 @@
 # HEAD := cmd | >id< cmd
 # BODY := (param-id: param-value)+ | (slot=value)(slot=value,)*
 # NODE := (HEAD) | (HEAD:BODY)
-# Top level nodes: end, call, ask, set
-# Answer options: if we have an (answers:*) node, use them as explicit answers.
-# Otherwise, use yes,no. This should also mean should have a "title only" answer/s, 
-# s.t. we move to next node (similar to default yes/no answers)
+# Top level nodes: end, call, ask, set, todo
+# Answer semantics: If an ask node contains a single answer, we implicitly add another one whose implementation starts at the next node. The title of the answer is "yes" if the one specified answer is "no". Otherwise, the title is "no".
+# so, these are equal:
+# 1:
+# (ask: (text:....)
+#  (yes: (call: yesImpl))
+#  (no: (call: noImpl))
+# )
+# (>noImpl< ...)
+# 
+# 2:
+# (ask: (text:....)
+#  (yes: (call: yesImpl))
+# )
+# (>noImpl< ...)
+
+# Can (call:) nodes contain graph parts (i.g. be recursive)?
+
+
 
 (>person specific< ask:
 	(text: Person-specific. Does your data include personal information?)
@@ -41,13 +56,11 @@
 )
 (>dua< ask: 
 	(text:For how long should we keep the data?)
-	(answers:
-		(forever:  (set: storage=Forever) )
-		(50 years: (set: storage=_50yr) )
-		(5 years:  (set: storage=_5yr) )
-		(1 year:   (set: storage=_1yr) )
-		(whatever:)
-	)
+	(forever:  (set: storage=Forever) )
+	(50 years: (set: storage=_50yr) )
+	(5 years:  (set: storage=_5yr) )
+	(1 year:   (set: storage=_1yr) )
+	(whatever:)
 )
 (end)
 
@@ -55,5 +68,4 @@
 	
 # TODO task: define the lang structure in it.
 # TODO comments as in Pascal? (* kjadhslfkjahsdlfkjadhlsf *)
-# TODO question: Set nodes now cannot make tags less restrictive (they use compose). Is this a problem? We could use (set: X=x) for compose, and (set: X=x!) for set even if it is lower (compose vs. impose).
-# TODO If allowing more than Yes,No, we also need to say which answers are implicit (or turn yes/no off), otherwise the set of possible answers is ambiguous.
+# TODO Modularity, i.e. calls to another file. Namespaces.

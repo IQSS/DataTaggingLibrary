@@ -6,7 +6,7 @@ import java.util.Objects;
  * 
  * @author Michael Bar-Sinai
  */
-public class InstructionNodeRef {
+public class InstructionNodeRef extends NodeRef {
     private final TypedNodeHeadRef head;
 
     public InstructionNodeRef(TypedNodeHeadRef head) {

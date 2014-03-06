@@ -11,29 +11,18 @@ import java.util.Objects;
  */
 public class AskNodeRef extends InstructionNodeRef {
     
-    private final String text;
-    private final Map<String, String> terms = new HashMap<>();
-    private final Map<String, List<NodeRef>> answers = new HashMap<>();
+    private final StringBodyNodeRef text;
+    private final List<TermNodeRef> terms;
+    private final List<AnswerNodeRef> answers;
 
-    public AskNodeRef(TypedNodeHeadRef head, String text, List<TermNodeRef> termNodes ) {
+    public AskNodeRef(TypedNodeHeadRef head, StringBodyNodeRef aTextNode, List<TermNodeRef> someTerms, List<AnswerNodeRef> someAnswers ) {
         super( head );
-        this.text = text;
-        for ( TermNodeRef tnr : termNodes ) {
-            terms.put( tnr.getTerm(), tnr.getExplanation() );
-        }
+        text = aTextNode;
+        terms = someTerms;
+        answers = someAnswers;
     }
 
-    public String getText() {
-        return text;
-    }
     
-    public Map<String, String> getTerms() {
-        return terms;
-    }
-
-    public Map<String, List<NodeRef>> getAnswers() {
-        return answers;
-    }
 
     @Override
     public int hashCode() {
@@ -56,6 +45,9 @@ public class AskNodeRef extends InstructionNodeRef {
             return false;
         }
         if (!Objects.equals(this.terms, other.terms)) {
+            return false;
+        }
+        if (!Objects.equals(this.answers, other.answers)) {
             return false;
         }
         return equalsAsInstructionNodeRef(other);

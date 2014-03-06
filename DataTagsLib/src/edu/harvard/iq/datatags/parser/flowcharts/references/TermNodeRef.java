@@ -7,7 +7,7 @@ import java.util.Objects;
  * These nodes are not as structured: Both their heads and their body are just plain text.
  * @author Michael Bar-Sinai
  */
-public class TermNodeRef {
+public class TermNodeRef extends NodeRef {
     private final String term;
     private final String explanation;
 
