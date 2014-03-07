@@ -3,7 +3,7 @@ package edu.harvard.iq.datatags.parser.flowcharts.references;
 /**
  * @author michael
  */
-// TODO unclear if this is possible, given the multiple answer future and the term explanation nodes.
+// TODO remove this, we use classes to define node type.
 public enum NodeType {
-	Ask, Call, Set, Todo, End;
+	Ask, Call, Set, Todo, End, Text;
 }

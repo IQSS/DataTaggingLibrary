@@ -1,8 +1,6 @@
 package edu.harvard.iq.datatags.parser.flowcharts.references;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -15,8 +13,8 @@ public class AskNodeRef extends InstructionNodeRef {
     private final List<TermNodeRef> terms;
     private final List<AnswerNodeRef> answers;
 
-    public AskNodeRef(TypedNodeHeadRef head, StringBodyNodeRef aTextNode, List<TermNodeRef> someTerms, List<AnswerNodeRef> someAnswers ) {
-        super( head );
+    public AskNodeRef(String id, StringBodyNodeRef aTextNode, List<TermNodeRef> someTerms, List<AnswerNodeRef> someAnswers ) {
+        super( new TypedNodeHeadRef(id, NodeType.Ask) );
         text = aTextNode;
         terms = someTerms;
         answers = someAnswers;

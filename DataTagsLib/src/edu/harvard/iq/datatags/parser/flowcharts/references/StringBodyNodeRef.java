@@ -39,6 +39,6 @@ public class StringBodyNodeRef extends InstructionNodeRef {
     
     @Override
     public String toString() {
-        return "[SimpleNodeRef super:" + super.toString() + " body:" + getBody() + "]";
+        return "[StringBodyNodeRef super:" + super.toString() + " body:" + getBody() + "]";
     }
 }

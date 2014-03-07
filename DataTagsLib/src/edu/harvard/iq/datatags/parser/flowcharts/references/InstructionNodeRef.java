@@ -7,6 +7,7 @@ import java.util.Objects;
  * @author Michael Bar-Sinai
  */
 public class InstructionNodeRef extends NodeRef {
+    // TODO no need for the head, as the type is determined by the class.
     private final TypedNodeHeadRef head;
 
     public InstructionNodeRef(TypedNodeHeadRef head) {

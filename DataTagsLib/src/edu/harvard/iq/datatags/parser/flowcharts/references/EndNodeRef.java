@@ -6,8 +6,12 @@ package edu.harvard.iq.datatags.parser.flowcharts.references;
  */
 public class EndNodeRef extends InstructionNodeRef {
 
-    public EndNodeRef(TypedNodeHeadRef head) {
-        super(head);
+    public EndNodeRef(String id) {
+        super(new TypedNodeHeadRef(id, NodeType.End));
+    }
+    
+    public EndNodeRef() {
+        this( null );
     }
     
     
