@@ -5,5 +5,15 @@ package edu.harvard.iq.datatags.parser.flowcharts.references;
  * @author Michael Bar-Sinai
  */
 public class NodeRef {
+    
+    private String id;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+    
 }

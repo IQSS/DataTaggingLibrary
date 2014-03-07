@@ -82,7 +82,6 @@ public class FlowChartSetASTParser extends AbstractASTParser {
     
     Parser<CallNodeRef> callNode() {
         return stringBodyNode("call").map( new Map<StringBodyNodeRef, CallNodeRef>(){
-
             @Override
             public CallNodeRef map(StringBodyNodeRef from) {
                 return new CallNodeRef( from.getHead(), from.getBody() );
@@ -282,15 +281,15 @@ public class FlowChartSetASTParser extends AbstractASTParser {
     }
     
     <T> Parser<T> completeNode( Parser<T> nodeBodyParser ) {
-        return nodeBodyParser.between(nodeEnd(), nodeStart() );
+        return nodeBodyParser.between(nodeStart(), nodeEnd() );
     }
 	
 	Parser<Void> nodeEnd() { 
-            return Scanners.isChar('(', "NODE_START").followedBy(Scanners.WHITESPACES.optional()); 
+            return Scanners.isChar(')', "NODE_END"); 
 	}
 	
 	Parser<Void> nodeStart() { 
-            return Scanners.isChar(')', "NODE_END");
+            return Scanners.isChar('(', "NODE_START").followedBy(Scanners.WHITESPACES.optional());
 	}
     
     Parser<Void> nodeHeadEnd() {

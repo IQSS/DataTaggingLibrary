@@ -12,8 +12,10 @@ public class InstructionNodeRef extends NodeRef {
 
     public InstructionNodeRef(TypedNodeHeadRef head) {
         this.head = head;
+        setId( head.getId() );
     }
 
+    @Deprecated
     public TypedNodeHeadRef getHead() {
         return head;
     }

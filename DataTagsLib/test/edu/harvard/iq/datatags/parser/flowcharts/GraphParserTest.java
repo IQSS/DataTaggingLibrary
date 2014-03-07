@@ -1,14 +1,12 @@
 package edu.harvard.iq.datatags.parser.flowcharts;
 
-import edu.harvard.iq.datatags.parser.flowcharts.references.AnswerNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.AskNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.CallNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.EndNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
-import edu.harvard.iq.datatags.parser.flowcharts.references.StringBodyNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.StringNodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TypedNodeHeadRef;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeRefVizalizer;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.List;
 import org.codehaus.jparsec.Parser;
@@ -45,17 +43,12 @@ public class GraphParserTest {
 	}
 	
     @Test
-	public void testSingleRec() {
-		String code = "(ask: (text: to be or not to be) (yes: (call: be)) (no: (ask: (text: really?) (yes: (end)))) )";
-        AnswerNodeRef base_no_ask_yes = new AnswerNodeRef(new StringNodeHeadRef(null, "yes"), Arrays.<InstructionNodeRef>asList( new EndNodeRef()) );
-        AskNodeRef base_no_ask = new AskNodeRef( null, new StringBodyNodeRef(), null, null, null)
-        List<InstructionNodeRef> expected = 
-                Arrays.asList(
-                        new CallNodeRef(new TypedNodeHeadRef(null, NodeType.Call), "hello"),
-                        new CallNodeRef(new TypedNodeHeadRef(null, NodeType.Call), "world"),
-                        new InstructionNodeRef( new TypedNodeHeadRef(null, NodeType.End) ) 
-                );
-        assertEquals( expected, sut.parse(code) );
+	public void testSingleRec() throws IOException {
+		String code = "(ask:(text:question)(yes:(end))(no:(end)))";
+        List<InstructionNodeRef> res = sut.parse(code);
+        GraphvizGraphNodeRefVizalizer v = new GraphvizGraphNodeRefVizalizer(res);
+        v.visualize( new OutputStreamWriter(System.out) );
+        
 	}
     
     @Test

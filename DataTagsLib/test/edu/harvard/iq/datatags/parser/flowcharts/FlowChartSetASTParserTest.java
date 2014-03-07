@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.parser.flowcharts;
 
+import edu.harvard.iq.datatags.parser.flowcharts.references.EndNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TypedNodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
@@ -136,7 +137,7 @@ public class FlowChartSetASTParserTest {
                       instance.termNode().parse("(   simpleTerm : simpleExplanation   )"));
         assertEquals( new TermNodeRef("simpleTerm", "simpleExplanation"),
                       instance.termNode().parse("(   simpleTerm :  \n\t\tsimpleExplanation   )"));
-        String longExplanation = "lorem ipsum dolor sit amet. lorem ipsum 0183274018375  AAIIrejrgwhgootutuhwo Many Chars\n\t+_!@)$*!@$&^@$()^@&$%!(*$_!#(!%^!^&$#_%^*(&#_%(^*@?>||}}?{<";
+        String longExplanation = "lorem ipsum dolor sit amet. lorem ipsum 0183274018375  AAIIrejrgwhgootutuhwo Many Chars\n\t+_!@$*!@$&^@$^@&$%!*$_!!%^!^&$#_%^*&#_%^*@?>||}}?{<";
         
         assertEquals( new TermNodeRef("multi word Term", longExplanation),
                       instance.termNode().parse("(   multi word Term : " + longExplanation + ")"));
@@ -154,27 +155,15 @@ public class FlowChartSetASTParserTest {
     
     @Test
     public void testCompleteNode() {
-        assertEquals( "test", instance.completeNode( Scanners.ANY_CHAR.many().source()).parse("(test)") );
-        assertEquals( "test", instance.completeNode( Scanners.ANY_CHAR.many().source()).parse("( test)") );
-        assertEquals( "test", instance.completeNode( Scanners.ANY_CHAR.many().source()).parse("(    test)") );
+        assertEquals( "test", instance.completeNode( Scanners.notChar(')').many().source() ).parse("(test)") );
+        assertEquals( "test", instance.completeNode( Scanners.notChar(')').many().source() ).parse("( test)") );
+        assertEquals( "test", instance.completeNode( Scanners.notChar(')').many().source() ).parse("(    test)") );
     }
     
     @Test
-    public void testInstcutionNode() {
-        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef("id",NodeType.End)),
-                      instance.instructionNode().parse("(>id< end)"));
-        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef("id",NodeType.End)),
-                      instance.instructionNode().parse("( >id< end  )"));
-        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef("id",NodeType.End)),
-                      instance.instructionNode().parse("(>id<end)"));
-        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef(null,NodeType.End)),
-                      instance.instructionNode().parse("(end)"));
-        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef(null,NodeType.End)),
-                      instance.instructionNode().parse("(end  )"));
-        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef(null,NodeType.End)),
-                      instance.instructionNode().parse("(   end)"));
-        assertEquals( new InstructionNodeRef( new TypedNodeHeadRef(null,NodeType.End)),
-                      instance.instructionNode().parse("(   end  )"));
+    public void testEndNode() {
+        assertEquals( new EndNodeRef("this is the"), instance.endNode().parse("(>this is the< end)") );
+        assertEquals( new EndNodeRef(null), instance.endNode().parse("(end)") );
     }
     
     @Test

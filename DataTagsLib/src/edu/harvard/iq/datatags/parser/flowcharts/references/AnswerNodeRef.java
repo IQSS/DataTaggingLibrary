@@ -14,8 +14,10 @@ public class AnswerNodeRef extends NodeRef {
     public AnswerNodeRef(StringNodeHeadRef head, List<InstructionNodeRef> implementation) {
         this.head = head;
         this.implementation = implementation;
+        setId( head.getId() );
     }
 
+    @Deprecated
     public StringNodeHeadRef getHead() {
         return head;
     }

@@ -9,19 +9,29 @@ import java.util.Objects;
  */
 public class AskNodeRef extends InstructionNodeRef {
     
-    private final StringBodyNodeRef text;
+    private final TextNodeRef text;
     private final List<TermNodeRef> terms;
     private final List<AnswerNodeRef> answers;
 
-    public AskNodeRef(String id, StringBodyNodeRef aTextNode, List<TermNodeRef> someTerms, List<AnswerNodeRef> someAnswers ) {
+    public AskNodeRef(String id, TextNodeRef aTextNode, List<TermNodeRef> someTerms, List<AnswerNodeRef> someAnswers ) {
         super( new TypedNodeHeadRef(id, NodeType.Ask) );
         text = aTextNode;
         terms = someTerms;
         answers = someAnswers;
     }
 
-    
+    public List<AnswerNodeRef> getAnswers() {
+        return answers;
+    }
 
+    public List<TermNodeRef> getTerms() {
+        return terms;
+    }
+
+    public TextNodeRef getText() {
+        return text;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;
