@@ -35,13 +35,18 @@ import org.codehaus.jparsec.pattern.Patterns;
  * 
  * @author michael
  */
-public class FlowChartSetASTParser extends AbstractASTParser {
+public class FlowChartASTParser extends AbstractASTParser {
 	
 	Pattern NODE_ID = Patterns.among(" \t,/~?!@$%^&*_+-").or(Patterns.range('a', 'z'))
                                 .or(Patterns.range('A', 'Z')).or(Patterns.range('0','9')).many1();
-	
     
-    Parser<List<InstructionNodeRef>> graphParser() {
+    // TODO sync with the data tag defintion!
+    Pattern VALUE_NAME = Patterns.among("!-_?").or(Patterns.range('a', 'z'))
+                                .or(Patterns.range('A', 'Z')).or(Patterns.range('0','9')).many1();
+	
+    static final Parser<List<Void>> whitespaces = WHITESPACES.many().optional();
+    
+    public Parser<List<InstructionNodeRef>> graphParser() {
         Parser.Reference<List<InstructionNodeRef>> ref = Parser.newReference();
         Parser<InstructionNodeRef> topLevelNodes = Parsers.or( callNode(), endNode(), todoNode(), setNode(), askNode(ref.lazy()) );
         Parser<List<InstructionNodeRef>> graphParser =  topLevelNodes.followedBy( WHITESPACES.many().optional() ).many();
@@ -75,16 +80,21 @@ public class FlowChartSetASTParser extends AbstractASTParser {
         return stringBodyNode("todo").map( new Map<StringBodyNodeRef,TodoNodeRef>(){
             @Override
             public TodoNodeRef map(StringBodyNodeRef from) {
-                return new TodoNodeRef( from.getHead().getId(), from.getBody() );
+                return new TodoNodeRef( from.getId(), from.getBody() );
             }
-        });
+        }).or( completeNode( nodeHeadWithType(NodeType.Todo)).map( new Map<TypedNodeHeadRef, TodoNodeRef>(){
+            @Override
+            public TodoNodeRef map(TypedNodeHeadRef from) {
+                return new TodoNodeRef( from.getId(), null);
+            }
+        } ));
     }
     
     Parser<CallNodeRef> callNode() {
         return stringBodyNode("call").map( new Map<StringBodyNodeRef, CallNodeRef>(){
             @Override
             public CallNodeRef map(StringBodyNodeRef from) {
-                return new CallNodeRef( from.getHead(), from.getBody() );
+                return new CallNodeRef( from.getId(), from.getBody() );
         }});
     }
     
@@ -116,13 +126,14 @@ public class FlowChartSetASTParser extends AbstractASTParser {
     }
     
 	Parser<TypedNodeHeadRef> nodeHeadWithType(Parser<NodeType> nodeTypeParser) {
-		return tuple(nodeId().followedBy(WHITESPACES.optional()), nodeTypeParser).map( new Map<Pair<String, NodeType>, TypedNodeHeadRef>(){
+		return tuple(nodeId().followedBy(WHITESPACES.optional()), nodeTypeParser)
+               .map( new Map<Pair<String, NodeType>, TypedNodeHeadRef>(){
                     @Override
                     public TypedNodeHeadRef map(Pair<String, NodeType> from) {
                             return new TypedNodeHeadRef(from.a, from.b);
                     }
 		} )
-		.or( nodeType().map( new Map<NodeType, TypedNodeHeadRef>() {
+		.or( nodeTypeParser.map( new Map<NodeType, TypedNodeHeadRef>() {
                     @Override
                     public TypedNodeHeadRef map(NodeType from) {
                             return new TypedNodeHeadRef(null, from);
@@ -130,12 +141,8 @@ public class FlowChartSetASTParser extends AbstractASTParser {
 		}));
 	}
 	
-    Parser<TypedNodeHeadRef> nodeHeadWithType( NodeType type ) {
-        return nodeHeadWithType( type.name().toLowerCase() );
-    }
-    
     Parser<TypedNodeHeadRef> nodeHeadWithType( String type ) {
-        return nodeHeadWithType( Scanners.string(type).source().map( new Map<String, NodeType>(){
+        return nodeHeadWithType( Scanners.string(type, "NODE_TYPE").source().map( new Map<String, NodeType>(){
             @Override
             public NodeType map(String from) {
                 return NodeType.valueOf(toEnumCase(from));
@@ -143,6 +150,10 @@ public class FlowChartSetASTParser extends AbstractASTParser {
         }));
 	}
 	
+    Parser<TypedNodeHeadRef> nodeHeadWithType( NodeType type ) {
+        return nodeHeadWithType( type.name().toLowerCase() );
+    }
+    
 	Parser<String> nodeId() {
         return
             isChar('>').followedBy(
@@ -164,10 +175,14 @@ public class FlowChartSetASTParser extends AbstractASTParser {
 		} );
 	}
     
+    Parser<String> valueName() {
+        return pattern(VALUE_NAME, "Value name").source();
+    }
+    
     Parser<Pair<String, String>> setAssignmentPair() {
-        return Parsers.tuple( slotReference().followedBy( WHITESPACES.many().optional())
-                                .followedBy( Scanners.isChar('=') ).followedBy( WHITESPACES.many().optional()),
-                Scanners.IDENTIFIER.many1().source() );
+        return Parsers.tuple( slotReference().followedBy( whitespaces )
+                                .followedBy( Scanners.isChar('=') ).followedBy( whitespaces ),
+                valueName() );
     }
 
     Parser<String> slotReference() {
@@ -176,7 +191,7 @@ public class FlowChartSetASTParser extends AbstractASTParser {
     
     Parser<SetNodeRef> setNode()  {
         return completeNode( tuple( nodeHeadWithType("set").followedBy( nodeHeadEnd() ), 
-                setAssignmentPair().sepBy(Scanners.isChar(',').followedBy( WHITESPACES.many().optional()))))
+                setAssignmentPair().sepBy(Scanners.isChar(',').followedBy(whitespaces))))
                 .map( new Map<Pair<TypedNodeHeadRef, List<Pair<String,String>>>,SetNodeRef>(){
 
             @Override
@@ -202,8 +217,8 @@ public class FlowChartSetASTParser extends AbstractASTParser {
     
     Parser<List<TermNodeRef>> termsNode() {
         return completeNode(
-                Parsers.tuple(nodeHeadWithType("terms").followedBy( nodeHeadEnd() ),
-                        termNode().sepBy(WHITESPACES.many().optional()))
+                Parsers.tuple(nodeHeadWithType(NodeType.Terms).followedBy( nodeHeadEnd() ),
+                        termNode().sepBy(whitespaces).followedBy(whitespaces))
                 .map( new Map<Pair<TypedNodeHeadRef,List<TermNodeRef>>, List<TermNodeRef>>(){
             @Override
             public List<TermNodeRef> map(Pair<TypedNodeHeadRef, List<TermNodeRef>> from) {
@@ -233,46 +248,57 @@ public class FlowChartSetASTParser extends AbstractASTParser {
     
     Parser<AskNodeRef> askNode( Parser<List<InstructionNodeRef>> bodyParser ) {
         
-        Parser<Pair<TextNodeRef, List<TermNodeRef>>> onlyText = 
-                stringBodyNode("text").map( new Map<StringBodyNodeRef, Pair<TextNodeRef, List<TermNodeRef>>>(){
-            @Override
-            public Pair<TextNodeRef, List<TermNodeRef>> map(StringBodyNodeRef from) {
-                return new Pair<>(new TextNodeRef(from), Collections.<TermNodeRef>emptyList());
-            }
-        });
-        final Map<StringBodyNodeRef,TextNodeRef> stringToText = new Map<StringBodyNodeRef,TextNodeRef>(){
-            @Override
-            public TextNodeRef map(StringBodyNodeRef from) {
-                return new TextNodeRef( from );
-        }};
-        Parser<Pair<TextNodeRef, List<TermNodeRef>>> textThenTerms = 
-                Parsers.tuple(stringBodyNode("text").map(stringToText), termsNode());
-        Parser<Pair<TextNodeRef, List<TermNodeRef>>> termsThenText = 
-                Parsers.tuple(termsNode(), stringBodyNode("text"))
-                        .map( new Map<Pair<List<TermNodeRef>,StringBodyNodeRef>, Pair<TextNodeRef, List<TermNodeRef>>>(){
-            @Override
-            public Pair<TextNodeRef, List<TermNodeRef>> map(Pair<List<TermNodeRef>,StringBodyNodeRef> from) {
-                return new Pair<>(stringToText.map(from.b), from.a);
-            }
-        });
+        Parser<Pair<TextNodeRef, List<TermNodeRef>>> questionPart = 
+                askNodeQuestionPart( );
         
-        Parser<Pair<TextNodeRef, List<TermNodeRef>>> questionPart = onlyText.or( textThenTerms ).or( termsThenText );
-        
-        
-        return completeNode( Parsers.tuple(nodeHeadWithType("ask").followedBy(nodeHeadEnd()).followedBy(WHITESPACES.many().optional()),
-                                            questionPart,
-                                            answerNode(bodyParser).sepBy(WHITESPACES.many().optional())))
-                            .map( new Map<Tuple3<TypedNodeHeadRef, Pair<TextNodeRef, List<TermNodeRef>>, List<AnswerNodeRef>>, AskNodeRef>(){
+        return completeNode( Parsers.tuple(nodeHeadWithType("ask").followedBy(nodeHeadEnd()),
+                                            questionPart.followedBy(whitespaces),
+                                            answerNode(bodyParser).sepBy(whitespaces)).followedBy(whitespaces))
+          .map( new Map<Tuple3<TypedNodeHeadRef, Pair<TextNodeRef, List<TermNodeRef>>, List<AnswerNodeRef>>, AskNodeRef>(){
             @Override
             public AskNodeRef map(Tuple3<TypedNodeHeadRef, Pair<TextNodeRef, List<TermNodeRef>>, List<AnswerNodeRef>> from) {
                 return new AskNodeRef(from.a.getId(), from.b.a, from.b.b, from.c );
             }
         } );
     }
+
+    Parser<Pair<TextNodeRef, List<TermNodeRef>>> askNodeQuestionPart() {
+        Parser<Pair<TextNodeRef, List<TermNodeRef>>> textOnly =
+                textNode().map( new Map<StringBodyNodeRef, Pair<TextNodeRef, List<TermNodeRef>>>(){
+                    @Override
+                    public Pair<TextNodeRef, List<TermNodeRef>> map(StringBodyNodeRef from) {
+                        return new Pair<>(new TextNodeRef(from), Collections.<TermNodeRef>emptyList());
+                    }
+                });
+        
+        Parser<Pair<TextNodeRef, List<TermNodeRef>>> textThenTerms = 
+                Parsers.tuple(textNode().followedBy(whitespaces),termsNode());
+        
+        Parser<Pair<TextNodeRef, List<TermNodeRef>>> termsThenText = 
+                Parsers.tuple(termsNode().followedBy(whitespaces),textNode()
+                ).map( new Map<Pair<List<TermNodeRef>,TextNodeRef>, Pair<TextNodeRef, List<TermNodeRef>>>(){
+                    @Override
+                    public Pair<TextNodeRef, List<TermNodeRef>> map(Pair<List<TermNodeRef>,TextNodeRef> from) {
+                        return new Pair<>(from.b, from.a);
+                    }});
+        
+        Parser<Pair<TextNodeRef, List<TermNodeRef>>> questionPart = textThenTerms.or( termsThenText ).or( textOnly );
+        
+        return questionPart;
+    }
+    
+    Parser<TextNodeRef> textNode() {
+        return stringBodyNode( nodeHeadWithType(NodeType.Text) ).map( new Map<StringBodyNodeRef, TextNodeRef>(){
+            @Override
+            public TextNodeRef map(StringBodyNodeRef from) {
+                return new TextNodeRef(from.getId(), from.getBody());
+            }
+        });
+    }
     
     
     Parser<AnswerNodeRef> answerNode( Parser<List<InstructionNodeRef>> bodyParser ) {
-        return completeNode( Parsers.tuple(stringNodeHead(), bodyParser).map( new Map<Pair<StringNodeHeadRef,List<InstructionNodeRef>>, AnswerNodeRef>(){
+        return completeNode( Parsers.tuple(stringNodeHead().followedBy(nodeHeadEnd()), bodyParser).map( new Map<Pair<StringNodeHeadRef,List<InstructionNodeRef>>, AnswerNodeRef>(){
             @Override
             public AnswerNodeRef map(Pair<StringNodeHeadRef, List<InstructionNodeRef>> from) {
                 return new AnswerNodeRef(from.a, from.b);
@@ -283,15 +309,18 @@ public class FlowChartSetASTParser extends AbstractASTParser {
     <T> Parser<T> completeNode( Parser<T> nodeBodyParser ) {
         return nodeBodyParser.between(nodeStart(), nodeEnd() );
     }
-	
+    
+    // TODO make static final
 	Parser<Void> nodeEnd() { 
             return Scanners.isChar(')', "NODE_END"); 
 	}
 	
+    // TODO make static final
 	Parser<Void> nodeStart() { 
             return Scanners.isChar('(', "NODE_START").followedBy(Scanners.WHITESPACES.optional());
 	}
     
+    // TODO make static final
     Parser<Void> nodeHeadEnd() {
         return Scanners.isChar(':', "NODE_HEAD_END").followedBy( Scanners.WHITESPACES.optional() );
     }

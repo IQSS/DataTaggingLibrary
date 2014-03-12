@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser;
+package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.parser.definitions.DataDefinitionParser;
 import edu.harvard.iq.datatags.model.types.TagType;
@@ -15,7 +15,7 @@ import java.nio.file.Paths;
  * 
  * @author michael
  */
-public class ParsingTest_initial {
+public class DefinitionsParsing {
 	
 	public static void main(String[] args) throws IOException {
 		DataDefinitionParser parser = new DataDefinitionParser();

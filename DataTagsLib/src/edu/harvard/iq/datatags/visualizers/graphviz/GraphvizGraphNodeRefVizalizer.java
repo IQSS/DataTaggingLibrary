@@ -8,7 +8,6 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.TextNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,6 +15,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 
 /**
  * 
@@ -36,22 +37,33 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
     
     int nextId = 0;
     
-    public GraphvizGraphNodeRefVizalizer(List<InstructionNodeRef> nodeList) {
-        this.nodeList = nodeList;
+    public GraphvizGraphNodeRefVizalizer(List<InstructionNodeRef> aNodeList) {
+        nodeList = aNodeList;
         initMap();
+        setChartName("ParsedChart");
     }
+    
+    
     
     @Override
     protected void printBody(BufferedWriter out) throws IOException {
-        // TODO implement
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        visualizeNodeList(nodeList);
+        for ( String node : nodes ) {
+            out.write(node);
+            out.newLine();
+        }
+        out.newLine();
+        for ( String edge : edges ) {
+            out.write(edge);
+            out.newLine();
+        }
     }
     
-    void vizualizeNodeList( List<InstructionNodeRef> list ) {
+    void visualizeNodeList( List<? extends InstructionNodeRef> list ) {
         InstructionNodeRef last = null;
         for ( InstructionNodeRef inr : list ) {
             if ( last != null ) {
-                edges.add( getNodeId(last) + "->" + getNodeId(inr) );
+                edges.add( getNodeId(last) + "->" + getNodeId(inr) + "[label=\"next\"]");
             }
             
             handlers.get(inr.getClass()).handle(inr, this);
@@ -62,12 +74,19 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
     }
     
     void writeTermNode( TermNodeRef node ) {
-        nodes.add( getNodeId(node) + "[" + nodeLabel(node, "term\\n" + node.getTerm()) + "]" );
+        nodes.add( node(getNodeId(node))
+                    .label( nodeLabel(node, "term\\n" + node.getTerm()))
+                    .fillColor("#AAAA22")
+                    .fontSize(9)
+                    .gv() );
     }
     
     void writeAnswerNode( AnswerNodeRef node ) {
-        nodes.add( getNodeId(node) + "[" + nodeLabel(node,"answer") + "]" );
-        vizualizeNodeList( node.getImplementation() );
+        nodes.add( node(getNodeId(node)).label(nodeLabel(node,"answer")).gv() );
+        if ( ! node.getImplementation().isEmpty() ) {
+            edges.add( getNodeId(node) + "->" + getNodeId(node.getImplementation().get(0)) + " [label=\"impl\"]");
+        }
+        visualizeNodeList( node.getImplementation() );
     }
     
     private void initMap() {
@@ -75,48 +94,51 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
         addNode( AskNodeRef.class, new NodeRefHandler<AskNodeRef>() {
             @Override
             public void handle(AskNodeRef node, GraphvizGraphNodeRefVizalizer ctxt) {
-                nodes.add( getNodeId(node) + "[" + nodeLabel(node, "") +"]" );
-                edges.add( getNodeId(node) + "->" + getNodeId( node.getText()) );
+                nodes.add( node(getNodeId(node))
+                        .label(nodeLabel(node, "ask"))
+                        .fillColor("#BBBBFF")
+                        .gv() );
+                
+                edges.add( getNodeId(node) + "->" + getNodeId( node.getText()) +"[label=\"text\"]");
+                
+                nodes.add( node(getNodeId(node.getText())).label(nodeLabel(node.getText(),node.getText().getBody())).gv() );
                 for ( AnswerNodeRef a : node.getAnswers() ) {
                     edges.add( getNodeId(node) + "->" + getNodeId(a) + "[label=\"" + a.getHead().getTitle() + "\"]" );
+                    writeAnswerNode(a);
                 }
                 for ( TermNodeRef a : node.getTerms()) {
                     edges.add( getNodeId(node) + "->" + getNodeId(a) );
                     writeTermNode(a);
                 }
+                
             }
         } );
         
         addNode( CallNodeRef.class, new NodeRefHandler<CallNodeRef>() {
             @Override
             public void handle(CallNodeRef node, GraphvizGraphNodeRefVizalizer ctxt) {
-                nodes.add( getNodeId(node) + " [" + nodeLabel(node, "call\\n"+ node.getCalleeId()) +"]" );
+                nodes.add( node(getNodeId(node)).label(nodeLabel(node, "call\\n"+ node.getCalleeId())).gv() );
             }
         });
         addNode( EndNodeRef.class, new NodeRefHandler<EndNodeRef>(){
             @Override
             public void handle(EndNodeRef node, GraphvizGraphNodeRefVizalizer ctxt) {
-                nodes.add( getNodeId(node) + " ["+ nodeLabel(node, "end") + "]");
+                nodes.add( node(getNodeId(node)).label(nodeLabel(node, "end")).shape(GvNode.Shape.point).gv() );
             }
         } );
         addNode( SetNodeRef.class, new NodeRefHandler<SetNodeRef>() {
             @Override
             public void handle(SetNodeRef node, GraphvizGraphNodeRefVizalizer ctxt) {
-                nodes.add( getNodeId(node) + "[" + nodeLabel(node, "set\\n" + node.getSlotNames()) + "]" );
+                nodes.add( node(getNodeId(node)).label(nodeLabel(node, "set\\n" + node.getSlotNames())).gv() );
             }
         });
         addNode( TodoNodeRef.class, new NodeRefHandler<TodoNodeRef>() {
             @Override
             public void handle(TodoNodeRef node, GraphvizGraphNodeRefVizalizer ctxt) {
-                nodes.add( getNodeId(node) + "[" + nodeLabel(node, "todo") + "]" );
+                nodes.add( node(getNodeId(node)).fillColor("#AAFFAA").shape(GvNode.Shape.parallelogram).label(nodeLabel(node, "todo")).gv() );
             }
         });
-        addNode( TextNodeRef.class, new NodeRefHandler<TextNodeRef>() {
-            @Override
-            public void handle(TextNodeRef node, GraphvizGraphNodeRefVizalizer ctxt) {
-                nodes.add( getNodeId(node) + "[" + nodeLabel(node, "text") + "]" );
-            }
-        });
+        
         
     }
     
@@ -125,14 +147,14 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
     }
     
     String nodeLabel( NodeRef n, String extras ) {
-        return "label=\">" + getNodeId(n) +"<" + extras + "\"";
+        return ">" + getNodeId(n) +"<\\n" + extras;
     }
     
     String getNodeId( NodeRef nr ) {
         if ( nr.getId() == null ) {
             nr.setId( nextId() );
         }
-        return nr.getId();
+        return sanitize(nr.getId());
     }
     
     private String nextId() { return "autoId" + (++nextId); }

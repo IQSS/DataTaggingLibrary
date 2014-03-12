@@ -19,7 +19,10 @@ import java.util.regex.Pattern;
  */
 public abstract class GraphvizVisualizer {
 	protected final Pattern whitespace = Pattern.compile("\\s|-");
-
+    
+    
+    private String chartName = "ChartSet";
+    
 	/**
 	 * Convenience method to write to a file.
 	 * @param outputFile
@@ -47,7 +50,7 @@ public abstract class GraphvizVisualizer {
 	protected abstract void printBody( BufferedWriter out ) throws IOException;
 	
 	void printHeader(BufferedWriter out) throws IOException {
-		out.write("digraph ChartSet {");
+		out.write("digraph " + getChartName() + " {");
 		out.newLine();
 		out.write("edge [fontname=\"Helvetica\" fontsize=\"10\"]");
 		out.newLine();
@@ -69,5 +72,13 @@ public abstract class GraphvizVisualizer {
 	String sanitize(String s) {
 		return whitespace.matcher(s.trim()).replaceAll("_");
 	}
-	
+
+    public String getChartName() {
+        return chartName;
+    }
+
+    public void setChartName(String chartName) {
+        this.chartName = chartName;
+    }
+    
 }

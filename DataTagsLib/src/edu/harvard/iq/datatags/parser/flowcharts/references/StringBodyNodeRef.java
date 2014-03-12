@@ -34,7 +34,8 @@ public class StringBodyNodeRef extends InstructionNodeRef {
             return false;
         }
         final StringBodyNodeRef other = (StringBodyNodeRef) obj;
-        return other.body.equals( getBody() ) && equalsAsInstructionNodeRef(other);
+        return Objects.equals( getBody(), other.getBody() )
+                && equalsAsInstructionNodeRef(other);
     }
     
     @Override

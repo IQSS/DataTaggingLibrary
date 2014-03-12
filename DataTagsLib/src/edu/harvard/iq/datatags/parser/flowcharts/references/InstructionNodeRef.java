@@ -6,7 +6,7 @@ import java.util.Objects;
  * 
  * @author Michael Bar-Sinai
  */
-public class InstructionNodeRef extends NodeRef {
+public abstract class InstructionNodeRef extends NodeRef {
     // TODO no need for the head, as the type is determined by the class.
     private final TypedNodeHeadRef head;
 
@@ -44,6 +44,7 @@ public class InstructionNodeRef extends NodeRef {
     
     @Override
     public String toString() {
-        return "[InstructionNodeRef head:" + getHead().toString() + " ]";
+        String[] classNameComps = getClass().getCanonicalName().split("\\.");
+        return "[" + classNameComps[classNameComps.length-1] + " head:" + getHead().toString() + " ]";
     }
 }

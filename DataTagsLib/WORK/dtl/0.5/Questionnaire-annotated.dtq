@@ -1,10 +1,35 @@
+# v2: Added a "set" node type. Each node has a single action: ask, set, call, end. and todo.
+# so, node formats are:
+# HEAD := cmd | >id< cmd
+# BODY := (param-id: param-value)+ | (slot=value)(slot=value,)*
+# NODE := (HEAD) | (HEAD:BODY)
+# Top level nodes: end, call, ask, set, todo
+# Answer semantics: If an ask node contains a single answer, we implicitly add another one whose implementation starts at the next node. The title of the answer is "yes" if the one specified answer is "no". Otherwise, the title is "no".
+# so, these are equal:
+# 1:
+# (ask: (text:....)
+#  (yes: (call: yesImpl))
+#  (no: (call: noImpl))
+# )
+# (>noImpl< ...)
+# 
+# 2:
+# (ask: (text:....)
+#  (yes: (call: yesImpl))
+# )
+# (>noImpl< ...)
+
+# Can (call:) nodes contain graph parts (i.g. be recursive)?
+
+
+
 (>person specific< ask:
 	(text: Person-specific. Does your data include personal information?)
 	(terms:
 		(data: 0s and 1s in some structured way)
 		(personal information: as defined by HIPAA))
 	(no: (set: code=green, store=clear, transfer=clear, auth=none, 
-				basis=nonApplicable, identity=not-person-specific, 
+				basis=non-applicable, identity=not-person-specific, 
 				harm=negligible)
 		 (end))
 )
@@ -23,7 +48,7 @@
 (>medical-recs< ask: (text:Medical Records. Does the data contain personal health information?)
 	 (yes: (call: hipaaCompliance) )
      (no:  (set: basis=agreement)
-           (ask: (text:Did the data have any restrictions on sharing, such as stated in an agreement or policy statement?)
+           (ask: (text:Did the data have any restrictions on sharing (e.g., stated in an agreement or policy statement)?)
                  (yes: (call: dua))
                  (no: (set: code=green, store=clear, Handling/Transfer=clear, auth=none, basis=Consent) )
            )
@@ -40,3 +65,7 @@
 (end)
 
 (>hipaaCompliance< todo)
+	
+# TODO task: define the lang structure in it.
+# TODO comments as in Pascal? (* kjadhslfkjahsdlfkjadhlsf *)
+# TODO Modularity, i.e. calls to another file. Namespaces.

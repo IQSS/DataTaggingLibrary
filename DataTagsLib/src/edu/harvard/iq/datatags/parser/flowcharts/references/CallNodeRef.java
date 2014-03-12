@@ -8,7 +8,16 @@ import java.util.Objects;
  */
 public class CallNodeRef extends InstructionNodeRef {
     private final String calleeId;
-
+    
+    public CallNodeRef( String calleeId ) {
+        this( (String)null, calleeId );
+    }
+    public CallNodeRef( String id, String calleeId ) {
+        super( new TypedNodeHeadRef(id, NodeType.Call));
+        this.calleeId = calleeId;
+    }
+       
+    @Deprecated
     public CallNodeRef(TypedNodeHeadRef head, String calleeId) {
         super(head);
         this.calleeId = calleeId;
