@@ -107,7 +107,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 	}
 	
 	void printChart( FlowChart fc, BufferedWriter wrt ) throws IOException {
-		wrt.write( "subgraph cluster_" + sanitize(fc.getId()) + " {");
+		wrt.write( "subgraph cluster_" + sanitizeId(fc.getId()) + " {");
 		wrt.newLine();
 
 		wrt.write( String.format("label=\"%s\"", humanTitle(fc)) );
@@ -140,7 +140,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 	}
 	
 	String nodeId( String chartId, String nodeId ) {
-		return sanitize(chartId) + "__" + sanitize( nodeId );
+		return sanitizeId(chartId) + "__" + sanitizeId( nodeId );
 	}
 	
 	public FlowChartSet getChartSet() {

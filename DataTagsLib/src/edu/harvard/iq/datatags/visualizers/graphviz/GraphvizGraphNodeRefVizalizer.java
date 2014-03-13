@@ -75,9 +75,10 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
     
     void writeTermNode( TermNodeRef node ) {
         nodes.add( node(getNodeId(node))
-                    .label( nodeLabel(node, "term\\n" + node.getTerm()))
-                    .fillColor("#AAAA22")
+                    .label( nodeLabel(node, "term\\n" + node.getExplanation()))
+                    .fillColor("#BBBB22")
                     .fontSize(9)
+					.shape(GvNode.Shape.tab)
                     .gv() );
     }
     
@@ -107,7 +108,7 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
                     writeAnswerNode(a);
                 }
                 for ( TermNodeRef a : node.getTerms()) {
-                    edges.add( getNodeId(node) + "->" + getNodeId(a) );
+                    edges.add( getNodeId(node) + "->" + getNodeId(a) + "[label=\""+a.getTerm()+"\"]" );
                     writeTermNode(a);
                 }
                 
@@ -117,7 +118,10 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
         addNode( CallNodeRef.class, new NodeRefHandler<CallNodeRef>() {
             @Override
             public void handle(CallNodeRef node, GraphvizGraphNodeRefVizalizer ctxt) {
-                nodes.add( node(getNodeId(node)).label(nodeLabel(node, "call\\n"+ node.getCalleeId())).gv() );
+                nodes.add( node(getNodeId(node))
+						.shape( GvNode.Shape.cds )
+						.fillColor("#BBDDFF")
+						.label(nodeLabel(node, "call\\n"+ node.getCalleeId())).gv() );
             }
         });
         addNode( EndNodeRef.class, new NodeRefHandler<EndNodeRef>(){
@@ -129,13 +133,26 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
         addNode( SetNodeRef.class, new NodeRefHandler<SetNodeRef>() {
             @Override
             public void handle(SetNodeRef node, GraphvizGraphNodeRefVizalizer ctxt) {
-                nodes.add( node(getNodeId(node)).label(nodeLabel(node, "set\\n" + node.getSlotNames())).gv() );
+				StringBuilder sb = new StringBuilder();
+				for ( String slot: node.getSlotNames() ) {
+					sb.append( slot ).append("=").append(node.getValue(slot) )
+						.append(" ");
+							
+				}
+                nodes.add( 
+						node(getNodeId(node))
+						.label(nodeLabel(node, "set\\n" + sb.toString()))
+						.shape(GvNode.Shape.box)
+						.gv()
+				);
             }
         });
         addNode( TodoNodeRef.class, new NodeRefHandler<TodoNodeRef>() {
             @Override
             public void handle(TodoNodeRef node, GraphvizGraphNodeRefVizalizer ctxt) {
-                nodes.add( node(getNodeId(node)).fillColor("#AAFFAA").shape(GvNode.Shape.parallelogram).label(nodeLabel(node, "todo")).gv() );
+                nodes.add( node(getNodeId(node))
+							.fillColor("#AAFFAA")
+							.shape(GvNode.Shape.note).label(nodeLabel(node, "todo\\n"+node.getBody())).gv() );
             }
         });
         
@@ -147,14 +164,17 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
     }
     
     String nodeLabel( NodeRef n, String extras ) {
-        return ">" + getNodeId(n) +"<\\n" + extras;
+		String nodeId = getNodeId(n);
+		return ( nodeId.startsWith("autoId") )
+				? extras
+				: ">" + nodeId +"<\\n" + extras;
     }
     
     String getNodeId( NodeRef nr ) {
         if ( nr.getId() == null ) {
             nr.setId( nextId() );
         }
-        return sanitize(nr.getId());
+        return sanitizeId(nr.getId());
     }
     
     private String nextId() { return "autoId" + (++nextId); }

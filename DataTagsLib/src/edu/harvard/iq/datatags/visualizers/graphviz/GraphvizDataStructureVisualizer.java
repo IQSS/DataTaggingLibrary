@@ -42,10 +42,10 @@ public class GraphvizDataStructureVisualizer extends GraphvizVisualizer {
 
 			@Override
 			public Void visitSimpleType(SimpleType t) {
-				String sTypeName = sanitize(t.getName());
+				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[label=\""+t.getName()+"\" shape=\"egg\"]");
 				for ( TagValue val : t.values() ) {
-					String sValue = sTypeName+"_"+sanitize( val.getName() );
+					String sValue = sTypeName+"_"+sanitizeId( val.getName() );
 					nodes.add( sValue + "[label=\""+val.getName()+"\" shape=\"box\"]");
 					edges.add( sTypeName + " -> " + sValue );
 				}
@@ -54,10 +54,10 @@ public class GraphvizDataStructureVisualizer extends GraphvizVisualizer {
 
 			@Override
 			public Void visitAggregateType(AggregateType t) {
-				String sTypeName = sanitize(t.getName());
+				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[label=\""+t.getName()+"\" shape=\"egg\" peripheries=\"2\"]");
 				for ( TagValue val : t.getItemType().values() ) {
-					String sValue = sTypeName+"_"+sanitize( val.getName() );
+					String sValue = sTypeName+"_"+sanitizeId( val.getName() );
 					nodes.add( sValue + "[label=\""+val.getName()+"\" shape=\"box\"]");
 					edges.add( sTypeName + " -> " + sValue );
 				}
@@ -66,10 +66,10 @@ public class GraphvizDataStructureVisualizer extends GraphvizVisualizer {
 
 			@Override
 			public Void visitCompoundType(CompoundType t) {
-				String sTypeName = sanitize(t.getName());
+				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[label=\""+t.getName()+"\" shape=\"octagon\" peripheries=\"2\"]");
 				for ( TagType val : t.getFieldTypes() ) {
-					edges.add( sTypeName + " -> " + sanitize(val.getName()) );
+					edges.add( sTypeName + " -> " + sanitizeId(val.getName()) );
 					val.accept(this);
 				}
 				return null;
@@ -77,7 +77,7 @@ public class GraphvizDataStructureVisualizer extends GraphvizVisualizer {
 
 			@Override
 			public Void visitTodoType(ToDoType t) {
-				nodes.add( sanitize(t.getName()) + "[label=\""+t.getName()+" (todo)\" shape=\"plaintext\" peripheries=\"2\"]");
+				nodes.add( sanitizeId(t.getName()) + "[label=\""+t.getName()+" (todo)\" shape=\"plaintext\" peripheries=\"2\"]");
 				return null;
 			}
 		};

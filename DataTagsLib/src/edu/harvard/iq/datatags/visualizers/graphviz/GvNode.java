@@ -77,8 +77,6 @@ public class GvNode {
         return this;
     }
     
-   
-    
     public String gv() {
         StringBuilder sb = new StringBuilder();
         sb.append( id );

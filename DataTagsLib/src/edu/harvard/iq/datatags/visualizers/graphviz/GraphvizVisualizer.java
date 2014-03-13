@@ -69,8 +69,10 @@ public abstract class GraphvizVisualizer {
 		return (ent.getTitle() != null) ? String.format("%s: %s", ent.getId(), ent.getTitle()) : ent.getId();
 	}
 
-	String sanitize(String s) {
-		return whitespace.matcher(s.trim()).replaceAll("_");
+	String sanitizeId(String s) {
+		String candidate = whitespace.matcher(s.trim()).replaceAll("_").replaceAll("\\.", "_").trim();
+		char first = candidate.charAt(0);
+		return (first > '0' && first < '9') ? "_"+candidate : candidate;
 	}
 
     public String getChartName() {

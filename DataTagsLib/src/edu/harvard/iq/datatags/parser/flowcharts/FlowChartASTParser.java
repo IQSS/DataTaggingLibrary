@@ -37,7 +37,7 @@ import org.codehaus.jparsec.pattern.Patterns;
  */
 public class FlowChartASTParser extends AbstractASTParser {
 	
-	Pattern NODE_ID = Patterns.among(" \t,/~?!@$%^&*_+-").or(Patterns.range('a', 'z'))
+	Pattern NODE_ID = Patterns.among(" .\t,/~?!@$%^&*_+-").or(Patterns.range('a', 'z'))
                                 .or(Patterns.range('A', 'Z')).or(Patterns.range('0','9')).many1();
     
     // TODO sync with the data tag defintion!
@@ -191,7 +191,7 @@ public class FlowChartASTParser extends AbstractASTParser {
     
     Parser<SetNodeRef> setNode()  {
         return completeNode( tuple( nodeHeadWithType("set").followedBy( nodeHeadEnd() ), 
-                setAssignmentPair().sepBy(Scanners.isChar(',').followedBy(whitespaces))))
+                setAssignmentPair().sepBy(Scanners.isChar(',').followedBy(whitespaces)).followedBy(whitespaces)))
                 .map( new Map<Pair<TypedNodeHeadRef, List<Pair<String,String>>>,SetNodeRef>(){
 
             @Override
