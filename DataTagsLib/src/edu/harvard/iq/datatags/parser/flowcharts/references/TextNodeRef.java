@@ -11,6 +11,6 @@ public class TextNodeRef extends StringBodyNodeRef {
     }
     
     public TextNodeRef( StringBodyNodeRef src ) {
-        this( src.getHead().getId(), src.getBody() );
+        this( src.getId(), src.getBody() );
     }
 }

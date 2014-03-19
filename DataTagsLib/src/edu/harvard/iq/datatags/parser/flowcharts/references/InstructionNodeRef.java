@@ -45,6 +45,6 @@ public abstract class InstructionNodeRef extends NodeRef {
     @Override
     public String toString() {
         String[] classNameComps = getClass().getCanonicalName().split("\\.");
-        return "[" + classNameComps[classNameComps.length-1] + " head:" + getHead().toString() + " ]";
+        return "[" + classNameComps[classNameComps.length-1] + " id:" + getId() + " ]";
     }
 }

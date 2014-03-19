@@ -5,6 +5,7 @@ import java.util.Objects;
 /**
  * A reference to a head of node in the parsed AST. Node heads
  * contain node type, and may contain ID.
+ * TODO this class should probably go.
  * 
  * @author michael
  */

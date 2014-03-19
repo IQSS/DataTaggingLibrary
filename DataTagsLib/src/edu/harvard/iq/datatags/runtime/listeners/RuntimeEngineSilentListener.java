@@ -14,7 +14,7 @@ public class RuntimeEngineSilentListener implements RuntimeEngine.Listener {
 	public void runStarted(RuntimeEngine ngn) {}
 
 	@Override
-	public void nodeEntered(RuntimeEngine ngn, Node node) {}
+	public void processedNode(RuntimeEngine ngn, Node node) {}
 
 	@Override
 	public void runTerminated(RuntimeEngine ngn) {}

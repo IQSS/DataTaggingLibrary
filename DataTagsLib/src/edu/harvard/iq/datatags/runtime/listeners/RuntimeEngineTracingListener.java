@@ -45,9 +45,9 @@ public class RuntimeEngineTracingListener implements  RuntimeEngine.Listener {
 	}
 
 	@Override
-	public void nodeEntered(RuntimeEngine ngn, Node node) {
+	public void processedNode(RuntimeEngine ngn, Node node) {
 		visitedNodes.add( node );
-		decorated.nodeEntered(ngn, node);
+		decorated.processedNode(ngn, node);
 	}
 
 	@Override

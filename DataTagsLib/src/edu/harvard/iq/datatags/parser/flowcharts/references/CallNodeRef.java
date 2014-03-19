@@ -51,7 +51,7 @@ public class CallNodeRef extends InstructionNodeRef {
     
     @Override
     public String toString() {
-        return "[CallNodeRef id:" + getHead().getId() + " callee:" + getCalleeId() + "]";
+        return "[CallNodeRef id:" + getId() + " callee:" + getCalleeId() + "]";
     }
     
 }

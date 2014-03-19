@@ -31,7 +31,7 @@ public class RuntimeEnginePrintStreamListener implements RuntimeEngine.Listener 
 	}
 
 	@Override
-	public void nodeEntered(RuntimeEngine ngn, Node node) {
+	public void processedNode(RuntimeEngine ngn, Node node) {
 		out.println( title(ngn) +"entered: " + node.getId() + "(" + node.getTitle() + ")");
 	}
 

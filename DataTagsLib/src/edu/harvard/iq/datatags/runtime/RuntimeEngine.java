@@ -28,7 +28,7 @@ public class RuntimeEngine {
 	
 	public interface Listener {
 		public void runStarted( RuntimeEngine ngn );
-		public void nodeEntered( RuntimeEngine ngn, Node node );
+		public void processedNode( RuntimeEngine ngn, Node node );
 		public void runTerminated( RuntimeEngine ngn );
 		// TODO find usages, consider removing, as we throw exceptions anyway.
 		public void runError( RuntimeEngine ngn, DataTagsRuntimeException e );
@@ -134,7 +134,7 @@ public class RuntimeEngine {
 		do {
 			currentNode = next; // advance program counter
 			next = currentNode.accept(processNodeVisitor);
-			if ( listener != null ) listener.nodeEntered(this, getCurrentNode()); // TODO change to "processedNode"
+			if ( listener != null ) listener.processedNode(this, getCurrentNode());
 		} while ( next != null );
 
 		return getStatus() == Status.Running;
