@@ -9,6 +9,7 @@ import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.charts.nodes.Node;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
+import static edu.harvard.iq.datatags.model.values.Answer.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -39,8 +40,8 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		@Override
 		public Void visitAskNode(AskNode nd) throws DataTagsRuntimeException {
 			nodes.add( nodeStr(nd, "shape=\"oval\"") );
-			edges.add( edgeStr(nd, nodeId(nd.getNodeFor(Answer.YES)), "Y", "color=\"green\""));
-			edges.add( edgeStr(nd, nodeId(nd.getNodeFor(Answer.NO)), "N", "color=\"red\""));
+			edges.add( edgeStr(nd, nodeId(nd.getNodeFor(Answer("YES"))), "Y", "color=\"green\"") );
+			edges.add( edgeStr(nd, nodeId(nd.getNodeFor(Answer("No"))), "N", "color=\"red\"") );
 			return null;
 		}
 

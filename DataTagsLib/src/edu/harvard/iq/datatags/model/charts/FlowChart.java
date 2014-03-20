@@ -7,8 +7,11 @@ import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.values.Answer;
+import static edu.harvard.iq.datatags.model.values.Answer.NO;
+import static edu.harvard.iq.datatags.model.values.Answer.YES;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -64,12 +67,13 @@ public class FlowChart extends ChartEntity {
 		return nodes.values();
 	}
 	
+	@Deprecated // As part of the unrestricted answer design, this should be done by the parser.
 	public void connectOpenEnds( final Node defaultNode ) {
 		Node.Visitor connector = new Node.Visitor<Void>(){
 
 			@Override
 			public Void visitAskNode(AskNode nd) throws DataTagsRuntimeException {
-				for ( Answer a : Answer.values() ) {
+				for ( Answer a : Arrays.asList( YES, NO) ) {
 					if ( nd.getNodeFor(a) == null ) {
 						nd.setNodeFor(a, defaultNode);
 					}
