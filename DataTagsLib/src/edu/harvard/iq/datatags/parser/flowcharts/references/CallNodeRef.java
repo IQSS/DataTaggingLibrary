@@ -17,12 +17,6 @@ public class CallNodeRef extends InstructionNodeRef {
         this.calleeId = calleeId;
     }
        
-    @Deprecated
-    public CallNodeRef(TypedNodeHeadRef head, String calleeId) {
-        super(head);
-        this.calleeId = calleeId;
-    }
-
     public String getCalleeId() {
         return calleeId;
     }
@@ -33,6 +27,11 @@ public class CallNodeRef extends InstructionNodeRef {
         hash = 23 * hash + Objects.hashCode(this.calleeId);
         return hash;
     }
+	
+	@Override
+	public <T> T accept( Visitor<T> v ) {
+		return v.visit(this);
+	}
 
     @Override
     public boolean equals(Object obj) {

@@ -1,16 +1,43 @@
 package edu.harvard.iq.datatags.parser.flowcharts.references;
 
+import java.util.Objects;
+
 /**
  * 
  * @author Michael Bar-Sinai
  */
-public class TextNodeRef extends StringBodyNodeRef {
+public class TextNodeRef extends NodeRef {
     
+	private final String bodyText;
+	
     public TextNodeRef( String id, String text ) {
-        super( new TypedNodeHeadRef(id, NodeType.Text), text );
+        super( id );
+		bodyText = text;
     }
     
-    public TextNodeRef( StringBodyNodeRef src ) {
-        this( src.getId(), src.getBody() );
-    }
+    public String getText() { 
+		return bodyText;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 41 * hash + Objects.hashCode(this.bodyText);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if ( ! (obj instanceof TextNodeRef) ) {
+			return false;
+		}
+		final TextNodeRef other = (TextNodeRef) obj;
+		
+		return Objects.equals(this.bodyText, other.bodyText);
+	}
+	
+	
 }

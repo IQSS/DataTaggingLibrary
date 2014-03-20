@@ -27,8 +27,13 @@ public class SetNodeRef extends InstructionNodeRef {
     public String getValue( String slotName ) {
         return assignments.get(slotName);
     }
-
-    @Override
+	
+	@Override
+	public <T> T accept( Visitor<T> v ) {
+		return v.visit(this);
+	}
+    
+	@Override
     public int hashCode() {
         int hash = super.hashCode();
         hash = 97 * hash + Objects.hashCode(this.assignments);

@@ -14,5 +14,9 @@ public class EndNodeRef extends InstructionNodeRef {
         this( null );
     }
     
+	@Override
+	public <T> T accept( Visitor<T> v ) {
+		return v.visit(this);
+	}
     
 }

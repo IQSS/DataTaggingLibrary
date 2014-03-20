@@ -1,6 +1,5 @@
 package edu.harvard.iq.datatags.parser.flowcharts;
 
-import static edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser.whitespaces;
 import edu.harvard.iq.datatags.parser.flowcharts.references.AnswerNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.AskNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.CallNodeRef;
@@ -8,7 +7,6 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.EndNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TypedNodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.StringBodyNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.StringNodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TextNodeRef;
@@ -18,10 +16,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.codehaus.jparsec.Parser;
-import org.codehaus.jparsec.Parsers;
 import org.codehaus.jparsec.Scanners;
 import org.codehaus.jparsec.error.ParserException;
-import org.codehaus.jparsec.functors.Map;
 import org.codehaus.jparsec.functors.Pair;
 import org.junit.After;
 import org.junit.Before;
@@ -143,11 +139,11 @@ public class FlowChartASTParserTest {
     
     @Test
     public void testSimpleNode() {
-        Parser<StringBodyNodeRef> sut = instance.stringBodyNode();
+        Parser<CallNodeRef> sut = instance.callNode();
         
-        assertEquals( new StringBodyNodeRef( new TypedNodeHeadRef(null,NodeType.Call), "Some other id"),
+        assertEquals( new CallNodeRef( null, "Some other id"),
                       sut.parse("(call: Some other id)"));
-        assertEquals( new StringBodyNodeRef( new TypedNodeHeadRef("call-other",NodeType.Call), "Some other id"),
+        assertEquals( new CallNodeRef( "call-other", "Some other id"),
                       sut.parse("(>call-other< call: Some other id)"));
     }
     

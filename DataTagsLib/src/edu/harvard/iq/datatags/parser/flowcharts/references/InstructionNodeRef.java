@@ -3,13 +3,23 @@ package edu.harvard.iq.datatags.parser.flowcharts.references;
 import java.util.Objects;
 
 /**
+ * Base class for instruction nodes, which are the top-level
+ * nodes on flowcharts.
  * 
  * @author Michael Bar-Sinai
  */
 public abstract class InstructionNodeRef extends NodeRef {
     // TODO no need for the head, as the type is determined by the class.
     private final TypedNodeHeadRef head;
-
+	
+	public interface Visitor<T> {
+		public T visit( AskNodeRef askRef );
+		public T visit( CallNodeRef callRef );
+		public T visit( EndNodeRef endRef );
+		public T visit( SetNodeRef setRef );
+		public T visit( TodoNodeRef todoRef );
+	}
+	
     public InstructionNodeRef(TypedNodeHeadRef head) {
         this.head = head;
         setId( head.getId() );
@@ -20,6 +30,8 @@ public abstract class InstructionNodeRef extends NodeRef {
         return head;
     }
 
+	public abstract <T> T accept( Visitor<T> v );
+	
     @Override
     public int hashCode() {
         int hash = 3;

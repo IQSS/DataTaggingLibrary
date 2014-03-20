@@ -10,7 +10,6 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.NodeBodyPart;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TypedNodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.StringBodyNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.StringNodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TextNodeRef;
@@ -80,12 +79,13 @@ public class FlowChartASTParser extends AbstractASTParser {
     }
     
     Parser<TodoNodeRef> todoNode() {
-        return stringBodyNode("todo").map( new Map<StringBodyNodeRef,TodoNodeRef>(){
+        return stringBodyNode("todo").map( new Map<Pair<StringNodeHeadRef, String>,TodoNodeRef>(){
             @Override
-            public TodoNodeRef map(StringBodyNodeRef from) {
-                return new TodoNodeRef( from.getId(), from.getBody() );
+            public TodoNodeRef map(Pair<StringNodeHeadRef, String> from) {
+                return new TodoNodeRef( from.a.getId(), from.b );
             }
-        }).or( completeNode( nodeHeadWithType(NodeType.Todo)).map( new Map<TypedNodeHeadRef, TodoNodeRef>(){
+        }).or( completeNode( nodeHeadWithType(NodeType.Todo))
+				.map( new Map<TypedNodeHeadRef, TodoNodeRef>(){
             @Override
             public TodoNodeRef map(TypedNodeHeadRef from) {
                 return new TodoNodeRef( from.getId(), null);
@@ -94,10 +94,10 @@ public class FlowChartASTParser extends AbstractASTParser {
     }
     
     Parser<CallNodeRef> callNode() {
-        return stringBodyNode("call").map( new Map<StringBodyNodeRef, CallNodeRef>(){
+        return stringBodyNode("call").map( new Map<Pair<StringNodeHeadRef, String>, CallNodeRef>(){
             @Override
-            public CallNodeRef map(StringBodyNodeRef from) {
-                return new CallNodeRef( from.getId(), from.getBody() );
+            public CallNodeRef map(Pair<StringNodeHeadRef, String> from) {
+                return new CallNodeRef( from.a.getId(), from.b );
         }});
     }
     
@@ -230,23 +230,15 @@ public class FlowChartASTParser extends AbstractASTParser {
         }));
     }
     
-    Parser<StringBodyNodeRef> stringBodyNode() {
-        return stringBodyNode( typedNodeHead() );
+    Parser<Pair<StringNodeHeadRef, String>> stringBodyNode( String type ) {
+        return stringBodyNode(nodeHeadTitled(type));
     }
-    
-    Parser<StringBodyNodeRef> stringBodyNode( String type ) {
-        return stringBodyNode(nodeHeadWithType(type));
-    }
-    Parser<StringBodyNodeRef> stringBodyNode( Parser<TypedNodeHeadRef> nodeHead ) {
+	
+    Parser<Pair<StringNodeHeadRef, String>> stringBodyNode( Parser<StringNodeHeadRef> nodeHead ) {
         return completeNode(
             Parsers.tuple( nodeHead.followedBy( nodeHeadEnd ),
                  notChar(')').many1().source())
-            ).map( new Map<Pair<TypedNodeHeadRef, String>, StringBodyNodeRef>(){
-            @Override
-            public StringBodyNodeRef map(Pair<TypedNodeHeadRef, String> from) {
-                return new StringBodyNodeRef(from.a, from.b);
-            }
-        });
+            );
     }
     
     Parser<AskNodeRef> askNode( Parser<List<InstructionNodeRef>> bodyParser ) {
@@ -267,10 +259,10 @@ public class FlowChartASTParser extends AbstractASTParser {
 
     Parser<Pair<TextNodeRef, List<TermNodeRef>>> askNodeQuestionPart() {
         Parser<Pair<TextNodeRef, List<TermNodeRef>>> textOnly =
-                textNode().map( new Map<StringBodyNodeRef, Pair<TextNodeRef, List<TermNodeRef>>>(){
+                textNode().map( new Map<TextNodeRef, Pair<TextNodeRef, List<TermNodeRef>>>(){
                     @Override
-                    public Pair<TextNodeRef, List<TermNodeRef>> map(StringBodyNodeRef from) {
-                        return new Pair<>(new TextNodeRef(from), Collections.<TermNodeRef>emptyList());
+                    public Pair<TextNodeRef, List<TermNodeRef>> map(TextNodeRef from) {
+                        return new Pair<>(from, Collections.<TermNodeRef>emptyList());
                     }
                 });
         
@@ -291,10 +283,10 @@ public class FlowChartASTParser extends AbstractASTParser {
     }
     
     Parser<TextNodeRef> textNode() {
-        return stringBodyNode( nodeHeadWithType(NodeType.Text) ).map( new Map<StringBodyNodeRef, TextNodeRef>(){
+        return stringBodyNode( "text" ).map( new Map<Pair<StringNodeHeadRef, String>, TextNodeRef>(){
             @Override
-            public TextNodeRef map(StringBodyNodeRef from) {
-                return new TextNodeRef(from.getId(), from.getBody());
+            public TextNodeRef map(Pair<StringNodeHeadRef, String> from) {
+                return new TextNodeRef(from.a.getId(), from.b);
             }
         });
     }

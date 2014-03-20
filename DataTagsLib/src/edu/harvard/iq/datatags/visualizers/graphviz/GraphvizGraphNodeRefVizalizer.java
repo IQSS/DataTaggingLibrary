@@ -100,9 +100,9 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
                         .fillColor("#BBBBFF")
                         .gv() );
                 
-                edges.add( getNodeId(node) + "->" + getNodeId( node.getText()) +"[label=\"text\"]");
+                edges.add( getNodeId(node) + "->" + getNodeId( node.getTextNode()) +"[label=\"text\"]");
                 
-                nodes.add( node(getNodeId(node.getText())).label(nodeLabel(node.getText(),node.getText().getBody())).gv() );
+                nodes.add( node(getNodeId(node.getTextNode())).label(nodeLabel(node.getTextNode(),node.getTextNode().getText())).gv() );
                 for ( AnswerNodeRef a : node.getAnswers() ) {
                     edges.add( getNodeId(node) + "->" + getNodeId(a) + "[label=\"" + a.getHead().getTitle() + "\"]" );
                     writeAnswerNode(a);
@@ -152,7 +152,7 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
             public void handle(TodoNodeRef node, GraphvizGraphNodeRefVizalizer ctxt) {
                 nodes.add( node(getNodeId(node))
 							.fillColor("#AAFFAA")
-							.shape(GvNode.Shape.note).label(nodeLabel(node, "todo\\n"+node.getBody())).gv() );
+							.shape(GvNode.Shape.note).label(nodeLabel(node, "todo\\n"+node.getTodoText())).gv() );
             }
         });
         

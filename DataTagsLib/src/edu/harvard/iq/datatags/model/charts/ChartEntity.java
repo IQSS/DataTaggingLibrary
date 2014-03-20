@@ -1,14 +1,12 @@
 package edu.harvard.iq.datatags.model.charts;
 
-import edu.harvard.iq.datatags.model.DataTags;
-
 /**
  * Base class for classes that take part in a chart set.
  * 
  * @author michael
  */
 public abstract class ChartEntity {
-
+	
 	protected final String id;
 	protected String info;
 	protected String title;

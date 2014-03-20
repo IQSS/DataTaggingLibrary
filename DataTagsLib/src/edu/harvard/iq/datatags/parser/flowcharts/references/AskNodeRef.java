@@ -28,10 +28,15 @@ public class AskNodeRef extends InstructionNodeRef {
         return terms;
     }
 
-    public TextNodeRef getText() {
+    public TextNodeRef getTextNode() {
         return text;
     }
     
+	@Override
+	public <T> T accept( Visitor<T> v ) {
+		return v.visit(this);
+	}
+	
     @Override
     public int hashCode() {
         int hash = 7;

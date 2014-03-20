@@ -8,6 +8,13 @@ public class NodeRef {
     
     private String id;
 
+	public NodeRef() {
+	}
+
+	public NodeRef(String id) {
+		this.id = id;
+	}
+
     public String getId() {
         return id;
     }
