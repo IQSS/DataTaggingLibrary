@@ -28,13 +28,53 @@ public class FlowChart extends ChartEntity {
 	private URL source;
 	private Node start;
 	private final Map<String, Node> nodes = new TreeMap<>();
+	private final EndNode endNode;
+	
+	private final Node.Visitor<Node> nodeAdder = new Node.Visitor<Node>() {
 
+		@Override
+		public Node visitAskNode(AskNode nd) throws DataTagsRuntimeException {
+			for ( Answer ans : nd.getAnswers() ) {
+				nd.getNodeFor(ans).accept(this);
+			}
+			return visitSimpleNode(nd);
+		}
+
+		@Override
+		public Node visitSetNode(SetNode nd) throws DataTagsRuntimeException {
+			return visitSimpleNode(nd);
+		}
+
+		@Override
+		public Node visitCallNode(CallNode nd) throws DataTagsRuntimeException {
+			return visitSimpleNode(nd);
+		}
+
+		@Override
+		public Node visitTodoNode(TodoNode nd) throws DataTagsRuntimeException {
+			return visitSimpleNode(nd);
+		}
+
+		@Override
+		public Node visitEndNode(EndNode nd) throws DataTagsRuntimeException {
+			return visitSimpleNode(nd);
+		}
+		
+		Node visitSimpleNode( Node n ) {
+			n.setChart(FlowChart.this);
+			nodes.put( n.getId(), n );
+			return n;
+		}
+	};
+	
 	public FlowChart() {
 		this( "FlowChart-"+INDEX.incrementAndGet());
 	}
 	
 	public FlowChart(String anId) {
 		super(anId);
+		endNode = new EndNode(anId + "-end", "");
+		nodes.put( endNode.getId(), endNode);
 	}
 
 	public URL getSource() {
@@ -57,14 +97,23 @@ public class FlowChart extends ChartEntity {
 		return nodes.get(nodeId);
 	}
 	
+	/**
+	 * Adds the node, and its descendents, to the chart.
+	 * @param <T> the static type of the node
+	 * @param n the node
+	 * @return the node, for call chaining.
+	 */
 	public <T extends Node> T add( T n ) {
-		n.setChart(this);
-		nodes.put( n.getId(), n );
+		n.accept( nodeAdder );
 		return n;
 	}
 
 	public Iterable<Node> nodes() {
 		return nodes.values();
+	}
+
+	public EndNode getEndNode() {
+		return endNode;
 	}
 	
 	@Deprecated // As part of the unrestricted answer design, this should be done by the parser.

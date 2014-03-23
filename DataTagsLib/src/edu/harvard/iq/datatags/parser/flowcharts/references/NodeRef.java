@@ -1,5 +1,7 @@
 package edu.harvard.iq.datatags.parser.flowcharts.references;
 
+import org.codehaus.jparsec.util.Objects;
+
 /**
  * Top level class of node references. Nothing much here.
  * @author Michael Bar-Sinai
@@ -22,5 +24,9 @@ public class NodeRef {
     public void setId(String id) {
         this.id = id;
     }
+	
+	protected boolean equalsAsNodeRef( NodeRef other ) {
+		return Objects.equals(id, other.getId());
+	}
     
 }

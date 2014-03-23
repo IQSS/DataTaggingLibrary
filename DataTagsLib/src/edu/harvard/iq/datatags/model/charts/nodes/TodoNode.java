@@ -7,7 +7,9 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
  * @author michael
  */
 public class TodoNode extends ThroughNode {
-
+	
+	private String todoText;
+	
 	public TodoNode(String id) {
 		super(id);
 	}
@@ -16,5 +18,12 @@ public class TodoNode extends ThroughNode {
 	public <R> R accept(Visitor<R> vr) throws DataTagsRuntimeException {
 		return vr.visitTodoNode( this );
 	}
-	
+
+	public String getTodoText() {
+		return todoText;
+	}
+
+	public void setTodoText(String todoText) {
+		this.todoText = todoText;
+	}
 }

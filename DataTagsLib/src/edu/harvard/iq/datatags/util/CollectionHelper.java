@@ -53,6 +53,16 @@ public class CollectionHelper {
 		return new HashSet<>( Arrays.asList(items) );
 	}
 	
+	public <T> T head( List<T> list ) {
+		return list.get(0);
+	}
+	
+	public <T> List<T> tail( List<T> list ) {
+		return ( list.size() < 2 )
+				? Collections.<T>emptyList()
+				: list.subList(1, list.size());
+	}
+	
 	public <T> OneOfFunction item( T t ) {
 		return new OneOfFunction(t);
 	}

@@ -23,6 +23,13 @@ public class FlowChartSet extends ChartEntity {
 	private final Map<String, FlowChart> charts = new TreeMap<>();
 	private final Set<TagType> types  = new HashSet<>();
 	
+	/**
+	 * The id of the chart from which, in the absence of any other requirement,
+	 * the execution should start. Normally this means the first chart in the 
+	 * file.
+	 */
+	private String defaultChartId;
+	
 	public FlowChartSet() {
 		this( "FlowChartSet-"+INDEX.incrementAndGet());
 	}
@@ -58,4 +65,16 @@ public class FlowChartSet extends ChartEntity {
 	public Iterable<FlowChart> charts() {
 		return charts.values();
 	}
+
+	/**
+	 * @return the id of the default chart, if any
+	 */
+	public String getDefaultChartId() {
+		return defaultChartId;
+	}
+
+	public void setDefaultChartId(String defaultChartId) {
+		this.defaultChartId = defaultChartId;
+	}
+	
 }

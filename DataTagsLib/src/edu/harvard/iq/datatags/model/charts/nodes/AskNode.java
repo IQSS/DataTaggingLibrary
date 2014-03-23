@@ -13,6 +13,8 @@ import java.util.Set;
  */
 public class AskNode extends Node {
 	private final Map<Answer, Node> nextNodeByAnswer = new HashMap<>();
+	private final Map<String, String> terms = new HashMap<>();
+	private String text;
 	
 	public AskNode(String id, String title) {
 		this(id, title, null, null);
@@ -50,5 +52,24 @@ public class AskNode extends Node {
 	public Node getNodeFor( Answer answer ) {
 		return nextNodeByAnswer.get(answer);
 	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
 	
+	public Set<String> getTermsNames() {
+		return terms.keySet();
+	}
+	
+	public String getTermText( String termName ) {
+		return terms.get(termName);
+	}
+	
+	public void addTerm( String termName, String termText ) {
+		terms.put( termName, termText );
+	}
 }

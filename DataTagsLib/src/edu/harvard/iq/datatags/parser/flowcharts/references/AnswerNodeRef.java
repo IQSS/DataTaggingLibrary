@@ -8,20 +8,19 @@ import java.util.Objects;
  * @author Michael Bar-Sinai
  */
 public class AnswerNodeRef extends NodeRef {
-    private final StringNodeHeadRef head;
     private final List<? extends InstructionNodeRef> implementation;
+	private final String answerText;
 
     public AnswerNodeRef(StringNodeHeadRef head, List<? extends InstructionNodeRef> implementation) {
-        this.head = head;
+		super( head.getId() );
+        answerText = head.getTitle();
         this.implementation = implementation;
-        setId( head.getId() );
     }
 
-    @Deprecated
-    public StringNodeHeadRef getHead() {
-        return head;
-    }
-
+	public String getAnswerText() {
+		return answerText;
+	}
+	
     public List<? extends InstructionNodeRef> getImplementation() {
         return implementation;
     }
@@ -29,7 +28,7 @@ public class AnswerNodeRef extends NodeRef {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 13 * hash + Objects.hashCode(this.head);
+        hash = 13 * hash + Objects.hashCode(this.answerText);
         return hash;
     }
 
@@ -38,17 +37,17 @@ public class AnswerNodeRef extends NodeRef {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if ( ! (obj instanceof AnswerNodeRef)) {
             return false;
         }
         final AnswerNodeRef other = (AnswerNodeRef) obj;
-        if (!Objects.equals(this.head, other.head)) {
+        if (!Objects.equals(this.answerText, other.answerText)) {
             return false;
         }
         if (!Objects.equals(this.implementation, other.implementation)) {
             return false;
         }
-        return true;
+        return equalsAsNodeRef(other);
     }
 
     

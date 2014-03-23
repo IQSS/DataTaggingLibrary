@@ -8,6 +8,8 @@ import java.util.Set;
 /**
  * A type whose values contain fields. As there is only one field of each type,
  * the fields are accessible by using the type as key.
+ * <br />
+ * Corollary: Instances of compound types are maps from types to fields of those types.
  * 
  * @author michael
  */

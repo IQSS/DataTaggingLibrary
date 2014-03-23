@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 
 /**
  * Given a {@link FlowChartSet}, instances of this class create gravphviz files
@@ -39,24 +40,38 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		
 		@Override
 		public Void visitAskNode(AskNode nd) throws DataTagsRuntimeException {
-			nodes.add( nodeStr(nd, "shape=\"oval\"") );
-			edges.add( edgeStr(nd, nodeId(nd.getNodeFor(Answer("YES"))), "Y", "color=\"green\"") );
-			edges.add( edgeStr(nd, nodeId(nd.getNodeFor(Answer("No"))), "N", "color=\"red\"") );
+			nodes.add( node(nodeId(nd))
+					.shape(GvNode.Shape.oval)
+					.label( "ask\\n" + nd.getText() )
+					.gv());
+			for ( Answer ans : nd.getAnswers() ) {
+				edges.add( edgeStr(nd, nodeId(nd.getNodeFor(ans)), ans.getAnswerText(), "") );
+				
+			}
+
 			return null;
 		}
 
 		@Override
 		public Void visitCallNode(CallNode nd) throws DataTagsRuntimeException {
-			nodes.add( nodeStr(nd, "shape=\"diamond\"") );
+			nodes.add( node(nodeId(nd))
+						.label( nd.getCalleeChartId() +"/" + nd.getCalleeNodeId())
+						.shape(GvNode.Shape.cds)
+						.fillColor("#BBBBFF")
+						.gv() );
 			edges.add( edgeStr(nd, nodeId(nd.getCalleeChartId(), nd.getCalleeNodeId()), "call", "color=\"#0000FF\" style=\"dashed\""));
 			edges.add( edgeStr(nd, nodeId(nd.getNextNode()), "next", ""));
 			return null;
 		}
 		
 		@Override
-		public Void visitTodoNode(TodoNode nd) throws DataTagsRuntimeException {
-			nodes.add( nodeStr(nd, "shape=\"cds\"") );
-			edges.add( edgeStr(nd, nodeId(nd.getNextNode()), "next", ""));
+		public Void visitTodoNode(TodoNode node) throws DataTagsRuntimeException {
+			nodes.add( node(nodeId(node))
+							.fillColor("#AAFFAA")
+							.shape(GvNode.Shape.note)
+							.label("todo\\n"+node.getTodoText()).gv() );
+			
+			edges.add( edgeStr(node, nodeId(node.getNextNode()), "next", ""));
 			return null;
 		}
 		
@@ -137,7 +152,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 	}
 
 	String nodeId( Node nd ) {
-		return nodeId( nd.getChart().getId(), nd.getId() );
+		return nodeId( nd.getChart() != null ? nd.getChart().getId() : "chart_is_null", nd.getId() );
 	}
 	
 	String nodeId( String chartId, String nodeId ) {

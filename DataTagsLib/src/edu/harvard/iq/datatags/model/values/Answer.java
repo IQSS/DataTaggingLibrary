@@ -7,7 +7,7 @@ import java.util.Objects;
  * @author michael
  */
 public class Answer {
-	private final String answerName;
+	private final String answerText;
 	
 	public static final Answer YES = Answer("Yes");
 	public static final Answer NO  = Answer("No");
@@ -16,14 +16,18 @@ public class Answer {
 		return new Answer( aName );
 	}
 	
-	public Answer(String answerName) {
-		this.answerName = answerName;
+	public Answer(String anAnswerText) {
+		answerText = anAnswerText;
 	}
 
+	public String getAnswerText() {
+		return answerText;
+	}
+	
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 13 * hash + Objects.hashCode(this.answerName);
+		hash = 13 * hash + Objects.hashCode(this.answerText);
 		return hash;
 	}
 
@@ -36,12 +40,12 @@ public class Answer {
 			return false;
 		}
 		final Answer other = (Answer) obj;
-		return Objects.equals(this.answerName, other.answerName);
+		return Objects.equals(this.answerText, other.answerText);
 	}
 
 	@Override
 	public String toString() {
-		return "[Answer answerName:" + answerName + ']';
+		return "[Answer answerName:" + answerText + ']';
 	}
 	
 	
