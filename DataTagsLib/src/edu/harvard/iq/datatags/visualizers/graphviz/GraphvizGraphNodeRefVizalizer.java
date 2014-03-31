@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
+import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 
 /**
  * 
@@ -63,9 +64,11 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
         InstructionNodeRef last = null;
         for ( InstructionNodeRef inr : list ) {
             if ( last != null ) {
-				String baseEdgeString = "[label=\"ast_next\", color=\"#AAAABB\"";
-				if ( depth == 0 ) baseEdgeString = baseEdgeString + ", constraint=false";
-                edges.add( sanitizeId(getNodeId(last)) + "->" + sanitizeId(getNodeId(inr)) + baseEdgeString + "]");
+                edges.add( edge(getNodeId(last), getNodeId(inr) )
+                            .color("#AAAABB")
+                            .label("ast_next")
+                            .constraint( depth!=0 )
+                            .gv() );
             }
             
             handlers.get(inr.getClass()).handle(inr, depth+1);
@@ -87,7 +90,7 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
     void writeAnswerNode( AnswerNodeRef node, int depth ) {
         nodes.add( node(getNodeId(node)).label(nodeLabel(node,"answer")).gv() );
         if ( ! node.getImplementation().isEmpty() ) {
-            edges.add( sanitizeId(getNodeId(node)) + "->" + sanitizeId(getNodeId(node.getImplementation().get(0))) + " [label=\"impl\"]");
+            edges.add( edge(getNodeId(node), getNodeId(node.getImplementation().get(0))).label("impl").gv());
         }
         visualizeNodeList( node.getImplementation(), depth);
     }
@@ -102,15 +105,15 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
                         .fillColor("#BBBBFF")
                         .gv() );
                 
-                edges.add( sanitizeId(getNodeId(node)) + "->" + sanitizeId(getNodeId( node.getTextNode())) +"[label=\"text\"]");
+                edges.add( edge(getNodeId(node),getNodeId(node.getTextNode())).label("text").gv());
                 
                 nodes.add( node(getNodeId(node.getTextNode())).label(nodeLabel(node.getTextNode(),node.getTextNode().getText())).gv() );
                 for ( AnswerNodeRef a : node.getAnswers() ) {
-                    edges.add( sanitizeId(getNodeId(node)) + "->" + sanitizeId(getNodeId(a)) + "[label=\"" + a.getAnswerText() + "\"]" );
+                    edges.add( edge(getNodeId(node),getNodeId(a)).label(a.getAnswerText()).gv()) ;
                     writeAnswerNode(a, depth);
                 }
                 for ( TermNodeRef a : node.getTerms()) {
-                    edges.add( sanitizeId(getNodeId(node)) + "->" + sanitizeId(getNodeId(a)) + "[label=\""+a.getTerm()+"\"]" );
+                    edges.add( edge(getNodeId(node), getNodeId(a)).label(a.getTerm()).gv() );
                     writeTermNode(a);
                 }
                 
@@ -126,12 +129,14 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
 						.label(nodeLabel(node, "call\\n"+ node.getCalleeId())).gv() );
             }
         });
+        
         addNode( EndNodeRef.class, new NodeRefHandler<EndNodeRef>(){
             @Override
             public void handle(EndNodeRef node, int depth) {
                 nodes.add( node(getNodeId(node)).label(nodeLabel(node, "end")).shape(GvNode.Shape.point).gv() );
             }
         } );
+        
         addNode( SetNodeRef.class, new NodeRefHandler<SetNodeRef>() {
             @Override
             public void handle(SetNodeRef node, int depth) {

@@ -1,17 +1,10 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
-
 /**
  * A node in graphviz.
  * @author Michael Bar-Sinai
  */
-public class GvNode {
-    
-    private static final Pattern whitespace = Pattern.compile("\\s|-");
-    
+public class GvNode extends GvObject<GvNode> {
     
     public enum Shape {
         box, polygon, ellipse, oval,
@@ -32,12 +25,11 @@ public class GvNode {
     }
     
     public enum Style {
-        solid, dashed, dotted,bold,
+        solid, dashed, dotted, bold,
         rounded, diagonals, filled, striped, wedged
     }
     
     private final String id;
-    private final Map<String,String> atts = new HashMap<>();
     
     public static GvNode node( String id ) {
         return new GvNode( id );
@@ -48,58 +40,23 @@ public class GvNode {
     }
     
     public GvNode shape( Shape aShape ) {
-        atts.put("shape", aShape.name());
-        return this;
+        return add("shape", aShape.name());
     }
-    public GvNode label( String aLabel ) {
-        atts.put("label", sanitizeTitle(aLabel) );
-        return this;
-    }
+    
     public GvNode fillColor( String aColor ) {
-        atts.put( "fillcolor", aColor );
-        return this;
-    }
-    public GvNode fontColor( String aColor ) {
-        atts.put( "fontcolor", aColor );
-        return this;
+        return add( "fillcolor", aColor );
     }
     public GvNode style( Style aStyle ) {
-        atts.put( "style", aStyle.name() );
-        return this;
+        return add( "style", aStyle.name() );
     }
     public GvNode peripheries( int count ) {
-        atts.put( "peripheries", Integer.toString(count) );
-        return this;
+        return add( "peripheries", Integer.toString(count) );
     }
     
-    public GvNode fontSize( int points ) {
-        atts.put( "fontsize", Integer.toString(points) );
-        return this;
-    }
     
-    public String gv() {
-        StringBuilder sb = new StringBuilder();
-        sb.append( sanitizeId(id) );
-        if ( ! atts.isEmpty() ) {
-            sb.append( "[ " );
-            for ( Map.Entry<String,String> e : atts.entrySet() ) {
-                sb.append( e.getKey() )
-                  .append( "=\"").append( e.getValue() ).append("\" ");
-            }
-            sb.append( "]" );
-        }
-        return sb.toString();
+    @Override
+    protected String gvTitle() {
+        return sanitizeId(id);
     }
-	
-	String sanitizeTitle(String s) {
-		return s.replaceAll("\"", "\\\"");
-	}
-	
-	String sanitizeId(String s) {
-		String candidate = whitespace.matcher(s.trim()).replaceAll("_").replaceAll("\\.", "_").trim();
-		candidate = candidate.replaceAll(Pattern.quote("$"), "_DLR_");
-		char first = candidate.charAt(0);
-		return (first > '0' && first < '9') ? "_"+candidate : candidate;
-	}
 
 }

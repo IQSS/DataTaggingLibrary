@@ -8,7 +8,6 @@ import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
 import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.charts.nodes.Node;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
-import edu.harvard.iq.datatags.model.charts.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.values.Answer;
 import static edu.harvard.iq.datatags.model.values.Answer.Answer;
@@ -21,7 +20,6 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.NodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
-import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,7 +58,6 @@ public class FlowChartSetComplier {
 			if ( chart.getStart()== null ) { 
 				chart.setStart(startNode);
 			}
-//			startNode.accept( new OpenEndsConnector(chart.getEndNode()) );
 		}
 		
 		// TODO validation
@@ -98,6 +95,9 @@ public class FlowChartSetComplier {
 	 * Builds nodes from parsed node references
 	 * @param nodes the parsed node reference list,
 	 * @param chart The chart being built (nodes are added to it)
+	 * @param defaultNode the node to go to when the chart ends. In effect, when a 
+	 *		              strand of nodes ends in a non-terminating reference, this node
+	 *					  is returned.
 	 * @return the node at the root of the execution path.
 	 */
 	private Node buildNodes( final List<? extends InstructionNodeRef> nodes, final FlowChart chart, final Node defaultNode ) {
@@ -119,9 +119,6 @@ public class FlowChartSetComplier {
 								    buildNodes(ansRef.getImplementation(), chart, syntacticallyNext)
 								  );
 				}
-				
-				// Connect any open ends to the next node.
-//				res.accept( new OpenEndsConnector(syntacticallyNext));
 				
 				// if the question is implied binary, we add implied answers.
 				for ( Answer ans : impliedAnswers(res) ) {
@@ -256,56 +253,5 @@ public class FlowChartSetComplier {
 			inr.accept(visitor);
 		}
 	}
-	
-	/**
-	 * Descends on a Node tree, and connects all open ends to the passed
-	 * connector.
-	 */
-	private class OpenEndsConnector implements Node.Visitor<Void> {
-		
-		final Node nextNode;
 
-		public OpenEndsConnector(Node nextNode) {
-			this.nextNode = nextNode;
-		}
-		
-		@Override
-		public Void visitAskNode(AskNode nd) throws DataTagsRuntimeException {
-			for ( Answer ans : nd.getAnswers() ) {
-				nd.getNodeFor(ans).accept( this );
-			}
-			return null;
-		}
-
-		@Override
-		public Void visitSetNode(SetNode nd) throws DataTagsRuntimeException {
-			return visitThroughNode(nd);
-		}
-
-		@Override
-		public Void visitCallNode(CallNode nd) throws DataTagsRuntimeException {
-			return visitThroughNode(nd);
-		}
-
-		@Override
-		public Void visitTodoNode(TodoNode nd) throws DataTagsRuntimeException {
-			return visitThroughNode(nd);
-		}
-
-		@Override
-		public Void visitEndNode(EndNode nd) throws DataTagsRuntimeException {
-			// do nothing, we've reached a terminating node.
-			return null;
-		}
-		
-		private Void visitThroughNode( ThroughNode nd ) {
-			if ( nd.getNextNode() == null ) {
-				// Ah! got to an open end. This is what we live for.
-				nd.setNextNode( nextNode );
-			} else {
-				nd.getNextNode().accept( this );
-			}
-			return null;
-		}
-	}
 }
