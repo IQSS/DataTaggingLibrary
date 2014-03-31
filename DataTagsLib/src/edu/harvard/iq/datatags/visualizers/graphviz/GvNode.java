@@ -52,7 +52,7 @@ public class GvNode {
         return this;
     }
     public GvNode label( String aLabel ) {
-        atts.put("label", aLabel);
+        atts.put("label", sanitizeTitle(aLabel) );
         return this;
     }
     public GvNode fillColor( String aColor ) {
@@ -79,7 +79,7 @@ public class GvNode {
     
     public String gv() {
         StringBuilder sb = new StringBuilder();
-        sb.append( id );
+        sb.append( sanitizeId(id) );
         if ( ! atts.isEmpty() ) {
             sb.append( "[ " );
             for ( Map.Entry<String,String> e : atts.entrySet() ) {
@@ -90,4 +90,16 @@ public class GvNode {
         }
         return sb.toString();
     }
+	
+	String sanitizeTitle(String s) {
+		return s.replaceAll("\"", "\\\"");
+	}
+	
+	String sanitizeId(String s) {
+		String candidate = whitespace.matcher(s.trim()).replaceAll("_").replaceAll("\\.", "_").trim();
+		candidate = candidate.replaceAll(Pattern.quote("$"), "_DLR_");
+		char first = candidate.charAt(0);
+		return (first > '0' && first < '9') ? "_"+candidate : candidate;
+	}
+
 }

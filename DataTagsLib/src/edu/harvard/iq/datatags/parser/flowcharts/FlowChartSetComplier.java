@@ -8,7 +8,9 @@ import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
 import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.charts.nodes.Node;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
+import edu.harvard.iq.datatags.model.charts.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.values.Answer;
 import static edu.harvard.iq.datatags.model.values.Answer.Answer;
 import edu.harvard.iq.datatags.parser.flowcharts.references.AnswerNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.AskNodeRef;
@@ -19,11 +21,15 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.NodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
+import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Parser for the chart set graphs.
@@ -46,18 +52,19 @@ public class FlowChartSetComplier {
 		initIds( parsedNodes );
 		
 		FlowChartSet chartSet = new FlowChartSet();
-		int idx=0;
+		FlowChart chart = new FlowChart( unitName + "-c1" );
+		chartSet.addChart(chart);
+		chartSet.setDefaultChartId( chart.getId() );
 		for ( List<InstructionNodeRef> nodes : breakList(parsedNodes) ) {
-			FlowChart chart = new FlowChart( unitName + "-chart-" + (++idx) );
-			Node startNode = buildNodes( nodes, chart );
-			chart.setStart(startNode);
-			chartSet.addChart(chart);
-			if ( chartSet.getDefaultChartId() == null ) { 
-				chartSet.setDefaultChartId( chart.getId() );
+			Node startNode = buildNodes( nodes, chart, chart.getEndNode() );
+			if ( chart.getStart()== null ) { 
+				chart.setStart(startNode);
 			}
+//			startNode.accept( new OpenEndsConnector(chart.getEndNode()) );
 		}
 		
 		// TODO validation
+		//  - Ids get to appear at most once. 
 		//  - Set nodes has valid slot names and values
 		//  - no unreachable nodes (e.g. chart with no id at start node)
 		
@@ -75,9 +82,9 @@ public class FlowChartSetComplier {
 		List<List<InstructionNodeRef>> res = new LinkedList<>();
 		List<InstructionNodeRef> cur = new LinkedList<>();
 		
-		for ( InstructionNodeRef inr : parsed ) {
-			cur.add( inr );
-			if ( inr instanceof EndNodeRef ) {
+		for ( InstructionNodeRef node : parsed ) {
+			cur.add( node );
+			if ( node instanceof EndNodeRef ) {
 				res.add( cur );
 				cur = new LinkedList<>();
 			}
@@ -87,7 +94,13 @@ public class FlowChartSetComplier {
 		return res;
 	}
 	
-	private Node buildNodes( final List<? extends InstructionNodeRef> nodes, final FlowChart chart ) {
+	/**
+	 * Builds nodes from parsed node references
+	 * @param nodes the parsed node reference list,
+	 * @param chart The chart being built (nodes are added to it)
+	 * @return the node at the root of the execution path.
+	 */
+	private Node buildNodes( final List<? extends InstructionNodeRef> nodes, final FlowChart chart, final Node defaultNode ) {
 		
 		InstructionNodeRef.Visitor<Node> builder = new InstructionNodeRef.Visitor<Node>(){
 			@Override
@@ -99,12 +112,22 @@ public class FlowChartSetComplier {
 					res.addTerm(termRef.getTerm(), termRef.getExplanation() );
 				}
 				
+				Node syntacticallyNext = buildNodes(C.tail(nodes), chart, defaultNode );
+				
 				for ( AnswerNodeRef ansRef : askRef.getAnswers() ) {
 					res.setNodeFor( Answer(ansRef.getAnswerText()), 
-								    buildNodes(ansRef.getImplementation(), chart)
+								    buildNodes(ansRef.getImplementation(), chart, syntacticallyNext)
 								  );
 				}
-				// FIXME connect the open ends to the syntacticly next node (?) 
+				
+				// Connect any open ends to the next node.
+//				res.accept( new OpenEndsConnector(syntacticallyNext));
+				
+				// if the question is implied binary, we add implied answers.
+				for ( Answer ans : impliedAnswers(res) ) {
+					res.setNodeFor(ans, syntacticallyNext);
+				} 
+				
 				return chart.add( res );
 			}
 
@@ -117,7 +140,7 @@ public class FlowChartSetComplier {
 					callNodesToLink.put( res.getCalleeNodeId(), new LinkedList<CallNode>() );
 				}
 				callNodesToLink.get(res.getCalleeNodeId()).add( res );
-				res.setNextNode( buildNodes(C.tail(nodes), chart) );
+				res.setNextNode( buildNodes(C.tail(nodes), chart, defaultNode) );
 				return chart.add( res );
 			}
 
@@ -131,7 +154,7 @@ public class FlowChartSetComplier {
 			@Override
 			public Node visit(SetNodeRef setRef) {
 				SetNode res = new SetNode( buildDataTags(setRef), setRef.getId() );
-				res.setNextNode(buildNodes( C.tail(nodes), chart));
+				res.setNextNode(buildNodes( C.tail(nodes), chart, defaultNode));
 				return chart.add( res );
 			}
 
@@ -139,14 +162,12 @@ public class FlowChartSetComplier {
 			public Node visit(TodoNodeRef todoRef) {
 				TodoNode res = new TodoNode( todoRef.getId() );
 				res.setTodoText(todoRef.getTodoText() );
-				res.setNextNode( buildNodes( C.tail(nodes), chart) );
+				res.setNextNode( buildNodes( C.tail(nodes), chart, defaultNode) );
 				return chart.add(res);
 			}
 		};
 		
-		return nodes.isEmpty() 
-				? chart.getEndNode()
-				: C.head( nodes ).accept(builder);
+		return nodes.isEmpty() ? defaultNode : C.head( nodes ).accept(builder);
 	}
 	
 	DataTags buildDataTags( SetNodeRef nodeRef ) {
@@ -154,6 +175,20 @@ public class FlowChartSetComplier {
 		return new DataTags();
 	}
 	
+	List<Answer> impliedAnswers( AskNode node ) {
+		Set<Answer> answers = node.getAnswers();
+		if ( answers.size() > 1 ) return Collections.emptyList();
+		if ( answers.isEmpty() ) return Arrays.asList( Answer.NO, Answer.YES ); // special case, where both YES and NO lead to the same options. 
+		// MAYBE issue a warning/suggestion to make this a (todo: ) node.
+		
+		Answer onlyAns = answers.iterator().next();
+		String ansText = onlyAns.getAnswerText().trim().toLowerCase();
+		switch( ansText ) {
+			case "yes": return Collections.singletonList( Answer.NO );
+			case "no" : return Collections.singletonList( Answer.YES );
+			default: return Collections.emptyList();	
+		}
+	}
 	
 	/**
 	 * Inits all the ids of the nodes in the list. Also, collects the 
@@ -219,6 +254,58 @@ public class FlowChartSetComplier {
 		
 		for ( InstructionNodeRef inr: nodeRefs ) {
 			inr.accept(visitor);
+		}
+	}
+	
+	/**
+	 * Descends on a Node tree, and connects all open ends to the passed
+	 * connector.
+	 */
+	private class OpenEndsConnector implements Node.Visitor<Void> {
+		
+		final Node nextNode;
+
+		public OpenEndsConnector(Node nextNode) {
+			this.nextNode = nextNode;
+		}
+		
+		@Override
+		public Void visitAskNode(AskNode nd) throws DataTagsRuntimeException {
+			for ( Answer ans : nd.getAnswers() ) {
+				nd.getNodeFor(ans).accept( this );
+			}
+			return null;
+		}
+
+		@Override
+		public Void visitSetNode(SetNode nd) throws DataTagsRuntimeException {
+			return visitThroughNode(nd);
+		}
+
+		@Override
+		public Void visitCallNode(CallNode nd) throws DataTagsRuntimeException {
+			return visitThroughNode(nd);
+		}
+
+		@Override
+		public Void visitTodoNode(TodoNode nd) throws DataTagsRuntimeException {
+			return visitThroughNode(nd);
+		}
+
+		@Override
+		public Void visitEndNode(EndNode nd) throws DataTagsRuntimeException {
+			// do nothing, we've reached a terminating node.
+			return null;
+		}
+		
+		private Void visitThroughNode( ThroughNode nd ) {
+			if ( nd.getNextNode() == null ) {
+				// Ah! got to an open end. This is what we live for.
+				nd.setNextNode( nextNode );
+			} else {
+				nd.getNextNode().accept( this );
+			}
+			return null;
 		}
 	}
 }

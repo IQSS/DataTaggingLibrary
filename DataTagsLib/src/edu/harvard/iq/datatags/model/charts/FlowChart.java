@@ -35,7 +35,9 @@ public class FlowChart extends ChartEntity {
 		@Override
 		public Node visitAskNode(AskNode nd) throws DataTagsRuntimeException {
 			for ( Answer ans : nd.getAnswers() ) {
-				nd.getNodeFor(ans).accept(this);
+				if ( nd.getNodeFor(ans)!=null ) {
+					nd.getNodeFor(ans).accept(this);
+				}
 			}
 			return visitSimpleNode(nd);
 		}
@@ -75,6 +77,7 @@ public class FlowChart extends ChartEntity {
 		super(anId);
 		endNode = new EndNode(anId + "-end", "");
 		nodes.put( endNode.getId(), endNode);
+		endNode.setChart(this);
 	}
 
 	public URL getSource() {

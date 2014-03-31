@@ -29,7 +29,7 @@
 		))
 	(yes:
 		(set: DataType/standards=HIPAA )
-		(call: hipaaCompliance )
+		(call: hipaaCompliance)
 	))
 (todo: Arrest and Conviction Records)
 (todo: Bank and Financial Records)

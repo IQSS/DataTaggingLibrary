@@ -42,7 +42,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		public Void visitAskNode(AskNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
 					.shape(GvNode.Shape.oval)
-					.label( "ask\\n" + nd.getText() )
+					.label( ">" + nodeId(nd) + "< | ask\\n" + nd.getText() )
 					.gv());
 			for ( Answer ans : nd.getAnswers() ) {
 				edges.add( edgeStr(nd, nodeId(nd.getNodeFor(ans)), ans.getAnswerText(), "") );
@@ -59,7 +59,6 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 						.shape(GvNode.Shape.cds)
 						.fillColor("#BBBBFF")
 						.gv() );
-			edges.add( edgeStr(nd, nodeId(nd.getCalleeChartId(), nd.getCalleeNodeId()), "call", "color=\"#0000FF\" style=\"dashed\""));
 			edges.add( edgeStr(nd, nodeId(nd.getNextNode()), "next", ""));
 			return null;
 		}
@@ -77,7 +76,11 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		
 		@Override
 		public Void visitSetNode(SetNode nd) throws DataTagsRuntimeException {
-			nodes.add( nodeStr(nd, "shape=\"invtrapezium\"") );
+			nodes.add( node(nodeId(nd))
+						.fillColor("#AADDAA")
+						.shape(GvNode.Shape.rect)
+						.label( ">"+nodeId(nd) + "<\\nSet")
+						.gv());
 			edges.add( edgeStr(nd, nodeId(nd.getNextNode()), "next", ""));
 			return null;
 		}
