@@ -1,27 +1,27 @@
-DataTags: Code, Handling, DataType, DUA, IP.
+DataTags: code, basis, Handling, DataType, DUA, IP, identity.
 
 TODO: IP.
 
-Code: one of
-	BLUE    (Non-confidential information that can be stored and shared freely.),
-	GREEN   (Potentially identifiable but not harmful personal information, shared with some access control.),
-	YELLOW  (Potentially harmful personal information, shared with loosely verified and/or approved recipients.),
-	ORANGE  (May include sensitive, identifiable personal information, shared with verified and/or approved recipients under agreement.),
-	RED     (Very sensitive identifiable personal information, shared with strong verification of approved recipients under signed agreement.),
-	CRIMSON (Requires explicit permission for each transaction, using strong verification of approved recipients under signed agreement.)
+code: one of
+	blue    (Non-confidential information that can be stored and shared freely.),
+	green   (Potentially identifiable but not harmful personal information, shared with some access control.),
+	yellow  (Potentially harmful personal information, shared with loosely verified and/or approved recipients.),
+	orange  (May include sensitive, identifiable personal information, shared with verified and/or approved recipients under agreement.),
+	red     (Very sensitive identifiable personal information, shared with strong verification of approved recipients under signed agreement.),
+	crimson (Requires explicit permission for each transaction, using strong verification of approved recipients under signed agreement.)
 .
 
-Handling: Storage, Transit, Authentication.
+Handling: storage, transit, authentication, auth.
 
-Storage: one of Clear, Encrypt, DoubleEncrypt.
+storage: one of clear, encrypt, doubleEncrypt.
 
-Transit: one of
-	Clear ( No encryption involved.),
-	Encrypt ( Single encryption.),
-	DoubleEncrypt (Encryption with two keys, which may be held by different parties.)
+transit: one of
+	clear ( No encryption involved.),
+	encrypt ( Single encryption.),
+	doubleEncrypt (Encryption with two keys, which may be held by different parties.)
 .
 
-Authentication: some of
+authentication: some of
 	None     (Available to anonymous individuals.),
 	Email    (Available to individuals with verified email address.),
 	OAuth    (Available to individuals with verified online identity or a mobile phone.),
@@ -29,32 +29,42 @@ Authentication: some of
 .
 
 DataType:
-	Standards, Effort, Harm.
+	standards, effort, harm.
 
-Standards: some of HIPAA, FERPA, ElectronicWiretapping, CommonRule.
-Effort:    one of  Identified, Identifiable, DeIdentified, Anonymous.
-Harm:      one of  NoRisk, Minimal, Shame, Civil, Criminal, MaxControl.
+standards: some of HIPAA, FERPA, ElectronicWiretapping, CommonRule.
+effort:    one of  identified, identifiable, deidentified, anonymous.
+harm:      one of  noRisk, negligible, shame, civil, criminal, maxControl.
 
 DUA:
-	TimeLimit,
-	Sharing, Reidentify, Publication,
-	Use, Acceptance, Approval
+	timeLimit,
+	sharing, reidentify, publication,
+	use, acceptance, approval
 .
 
-TimeLimit: one of none, _1yr, _2yr, _5yr.
-Sharing: one of
+timeLimit: one of none, _1yr, _2yr, _5yr, _50yr.
+sharing: one of
 		Anyone,
 		NotOnline,
 		Organization,
 		Group,
 		NoOne.
 
-Reidentify: one of NoMatching, NoEntities, NoPeople, NoProhibition, Reidentify, Contact.
+basis: one of 
+		notApplicable,
+		agreement, 
+		consent,
+		HIPAASafeHarbor, HIPAAStatistician, HIPAALimitedDataset, HIPAABusinessAssociate.
 
-Publication: one of NoRestriction, Notify, PreApprove, Prohibited.
+reidentify: one of NoMatching, NoEntities, NoPeople, NoProhibition, Reidentify, Contact.
 
-Use: one of NoRestriction, Research, IRB, NoProduct.
+publication: one of NoRestriction, Notify, PreApprove, Prohibited.
 
-Acceptance: one of Click, Signed, SignWithID.
+use: one of NoRestriction, Research, IRB, NoProduct.
 
-Approval: one of None, Email, Signed.
+acceptance: one of Click, Signed, SignWithID.
+
+approval: one of None, Email, Signed.
+
+auth: one of approval, none.
+
+identity: one of notPersonSpecific, personSpecific.

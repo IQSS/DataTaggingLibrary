@@ -10,6 +10,7 @@ import edu.harvard.iq.datatags.parser.flowcharts.FlowChartSetComplier;
 import edu.harvard.iq.datatags.parser.flowcharts.SetLookupResult;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDataStructureVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeRefVizalizer;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -68,6 +69,9 @@ public class FlowChartCompiling {
         
         DataDefinitionParser tagsParser = new  DataDefinitionParser();
         TagType baseType = tagsParser.parseTagDefinitions(readAll(tagsFile), tagsFile.getFileName().toString());
+        
+        GraphvizDataStructureVisualizer tagViz = new GraphvizDataStructureVisualizer(baseType);
+		tagViz.vizualize( tagsFile.resolveSibling(tagsFile.getFileName().toString() + ".gv") );
         
         System.out.println("Reading chart: " + chartFile );
         System.out.println(" (full:  " + chartFile.toAbsolutePath() + ")" );

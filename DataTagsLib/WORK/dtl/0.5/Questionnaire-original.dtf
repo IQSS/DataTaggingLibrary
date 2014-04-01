@@ -4,7 +4,7 @@
 		(data: 0s and 1s in some structured way)
 		(personal information: as defined in HIPAA))
 	(no:
-		(set: code=green, storage=clear, transit=clear, auth=none, 
+		(set: code=green, store=clear, transfer=clear, auth=none, 
 			basis=notApplicable, identity=notPersonSpecific, 
 			harm=negligible)
 	 	(end)))
@@ -15,7 +15,7 @@
   	(set: basis=consent)
   	(ask:
   		(text: Did the consent have any restrictions on data sharing?)
-  		(no:  (set: code=green, storage=clear, transit=clear, auth=none))
+  		(no:  (set: code=green, store=clear, transfer=clear, auth=none))
   		(yes: (call: dua)))
   	(end)
   ))
@@ -24,12 +24,12 @@
 	(no: 
 		(set: basis=agreement)
 		(ask: (text:Did the data have any restrictions on sharing, such as stated in an agreement or policy statement?)
-		      (no:  (set: code=green, storage=clear, transit=clear, auth=none) )
+		      (no:  (set: code=green, store=clear, store=clear, transfer=clear, auth=none) )
 		      (yes: (call: dua))
 		))
 	(yes:
-		(set:  standards=HIPAA )
-		(call: hipaaCompliance )
+		(set: DataType/standards=HIPAA )
+		(call: hipaaCompliance)
 	))
 (todo: Arrest and Conviction Records)
 (todo: Bank and Financial Records)
@@ -60,10 +60,10 @@
 
 (>dua< ask: 
 	(text:For how long should we keep the data?)
-	(forever:  (set: timeLimit=none) )
-	(50 years: (set: timeLimit=_50yr) )
-	(5 years:  (set: timeLimit=_5yr) )
-	(1 year:   (set: timeLimit=_1yr) )
+	(forever:  (set: storage=Forever) )
+	(50 years: (set: storage=_50yr) )
+	(5 years:  (set: storage=_5yr) )
+	(1 year:   (set: storage=_1yr) )
 )
 (end)
 
@@ -75,18 +75,18 @@
 			(terms:
 				(Safe Harbor Provision: Dates in years, zip codes contain only first 2 digits))
 			(yes: (ask: (text:Do you know of a way to to put names to the paitients in the data?)
-					  	    (no:  (set: code=green, storage=clear, transit=clear, auth=none, basis=HIPAASafeHarbor, effort=deidentified, harm=negligible)
+					  	    (no:  (set: code=green, store=clear, transfer=clear, auth=none, basis=HIPAA-Safe-Harbor, effort=deidentified, harm=negligible)
 					  	    	    (end)))))
 	)
 )
 (ask:
 	(text: Statistician Provision. Has an expert certified the data as being of miniman risk?)
-	(yes: (set:code=green, transit=clear, storage=clear, auth=none, basis=HIPAAStatistician, effort=deidentified, harm=negligible)
+	(yes: (set:code=green, transfer=clear, store=clear, auth=none, basis=HIPAA-Statistician, effort=deidentified, harm=negligible)
 		    (end)))
 (>3.1.3< ask: 
 	(text: Limited Data Set. Did you acquire the data under a HIPAA limited data use agreement?)
 	(yes: 
-		(set: storage=encrypt, transit=encrypt, auth=approval, basis=HIPAALimitedDataset, effort=identifiable, harm=criminal)
+		(set: store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA-Limited-Dataset, effort=identifiable, harm=criminal)
 		(ask:
 			(text: Did the limited data use agreement have any additional restrictions on sharing?)
 			(yes:(call: dua)))
@@ -95,7 +95,7 @@
 (>3.1.4< ask:
 	(text: Business Associate. Did you acquire the data under a HIPAA Business Associate Agreement?)
 	(yes:
-		(set: code=red, storage=encrypt, transit=encrypt, auth=approval, basis=HIPAABusinessAssociate, effort=identifiable, harm=criminal)
+		(set: color=red, store=encrypt, transfer=encrypt, auth=Approval, basis=HIPAA-Business-Associate, effort=identifiable, harm=criminal)
 		(ask: (text: Did the business associate agreement have any additional restrictions?)
 				  (yes: (call: dua)))
 		(end)
@@ -103,4 +103,4 @@
 (>3.1.5< ask:
 	(text: Covered. Are you an entity that is directly or indirectly covered by HIPAA?)
 	(yes:
-		(set: code=red, storage=encrypt, transit=encrypt, auth=approval, basis=HIPAABusinessAssociate, effort=identifiable, harm=criminal)))
+		(set: color=red, store=encrypt, transfer=encrypt, auth=approval, basis=HIPAA-Business-Associate, effort=identifiable, harm=criminal)))
