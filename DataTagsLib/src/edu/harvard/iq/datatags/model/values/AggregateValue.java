@@ -76,5 +76,8 @@ public class AggregateValue extends TagValue<AggregateType>{
 				Objects.equals(this.values, other.values);
 	}
 	
-	
+	@Override
+    public String toString() {
+        return "[AggregateValue type:" + getType() + " values:" + getValues() + "]";
+    }
 }

@@ -88,11 +88,14 @@ public class DataDefinitionParser {
 
 		@Override
 		public TagTypeFunc visitAggregateTypeReference(AggregateTypeReference ref) {
+            // create type for the items (implied type).
 			SimpleType itemType = new SimpleType( ref.getTypeName() + "#item",
 					"Synthetic item type for " + ref.getTypeName());
 			for ( NamedReference nr : ref.getSubValueNames() ) {
 				itemType.make(nr.getName(), nr.getComment() );
 			}
+            
+            // now create the aggregate type
 			final AggregateType res = new AggregateType(ref.getTypeName(), null, itemType );
 			return new TagTypeFunc() {
 				@Override
@@ -116,8 +119,6 @@ public class DataDefinitionParser {
 				}
 			};
 		}
-		
-		
 	};
 	
 	private TagType buildType( String typeName, Map<String, TypeReference> refs, Set<String> usedTypes ) throws SemanticsErrorException {

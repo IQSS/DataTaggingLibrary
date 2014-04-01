@@ -3,7 +3,7 @@ package edu.harvard.iq.datatags.model.types;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 
 /**
- * A type whose values contain varying number of (sub-) values.
+ * A type whose values contain varying number of (sub-) values, of type {@link #itemType}.
  * @author michael
  */
 public class AggregateType extends TagType {
@@ -19,10 +19,15 @@ public class AggregateType extends TagType {
 		return itemType;
 	}
 	
+    // TODO remove, this is not used
 	@Override
 	public AggregateValue make( String name, String info ) {
 		return new AggregateValue(name, this, info);
 	}
+    
+    public AggregateValue make() {
+        return new AggregateValue("valName", this, null);
+    }
 
 	@Override
 	public <T> T accept(Visitor<T> v) {

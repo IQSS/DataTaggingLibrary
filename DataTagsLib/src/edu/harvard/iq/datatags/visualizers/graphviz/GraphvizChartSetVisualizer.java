@@ -42,7 +42,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		public Void visitAskNode(AskNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
 					.shape(GvNode.Shape.oval)
-					.label( ">" + nodeId(nd) + "< | ask\\n" + nd.getText() )
+					.label( ">" + nodeId(nd) + "< ask\\n" + nd.getText() )
 					.gv());
 			for ( Answer ans : nd.getAnswers() ) {
 				edges.add( edge(nodeId(nd), nodeId(nd.getNodeFor(ans))).label(ans.getAnswerText()).gv() );

@@ -19,6 +19,9 @@ import static edu.harvard.iq.datatags.util.CollectionHelper.C;
  * when the type of {@code c} does allow for values of type {@code v.getType()},
  * results in a runtime error.
  * 
+ * TODO consider removing this class. After compilation, no such errors should
+ *  ever happen, so it can be safe to avoid runtime checks and exceptions.
+ * 
  * @author michael
  */
 public class DataTags extends CompoundValue {

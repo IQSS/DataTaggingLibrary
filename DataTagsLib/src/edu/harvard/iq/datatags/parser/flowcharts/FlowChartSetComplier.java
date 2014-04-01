@@ -9,8 +9,17 @@ import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.charts.nodes.Node;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.types.AggregateType;
+import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.SimpleType;
+import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.types.ToDoType;
+import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.Answer;
 import static edu.harvard.iq.datatags.model.values.Answer.Answer;
+import edu.harvard.iq.datatags.model.values.SimpleValue;
+import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.flowcharts.references.AnswerNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.AskNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.CallNodeRef;
@@ -23,11 +32,15 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Parser for the chart set graphs.
@@ -39,11 +52,24 @@ public class FlowChartSetComplier {
 	private final Map<String, NodeRef> id2NodeRef = new HashMap<>();
 	private final Map<String, List<CallNode>> callNodesToLink = new HashMap<>();
 	
-	public FlowChartSet parse( String source, String unitName ) { 
+    /**
+     * The base type of the data tags (typically, "DataTags").
+     * While constructing {@link SetNode}s, this type is used to build node's
+     * {@link DataTags} object.
+     */
+    private final TagType baseType;
+    
+    
+    public FlowChartSetComplier(TagType baseType) {
+        this.baseType = baseType;
+    }
+    
+    
+	public FlowChartSet parse( String source, String unitName ) throws BadSetInstructionException { 
 		return parse( new FlowChartASTParser().graphParser().parse(source), unitName );
 	}
 	
-	public FlowChartSet parse( List<? extends InstructionNodeRef> parsedNodes, String unitName ) { 
+	public FlowChartSet parse( List<? extends InstructionNodeRef> parsedNodes, String unitName ) throws BadSetInstructionException { 
 		// TODO implement the namespace, use unit name. 
 		
 		// Map node refs ids to the node refs.
@@ -53,12 +79,21 @@ public class FlowChartSetComplier {
 		FlowChart chart = new FlowChart( unitName + "-c1" );
 		chartSet.addChart(chart);
 		chartSet.setDefaultChartId( chart.getId() );
-		for ( List<InstructionNodeRef> nodes : breakList(parsedNodes) ) {
-			Node startNode = buildNodes( nodes, chart, chart.getEndNode() );
-			if ( chart.getStart()== null ) { 
-				chart.setStart(startNode);
-			}
-		}
+        try {
+            for ( List<InstructionNodeRef> nodes : breakList(parsedNodes) ) {
+                Node startNode = buildNodes( nodes, chart, chart.getEndNode() );
+                if ( chart.getStart()== null ) { 
+                    chart.setStart(startNode);
+                }
+            }
+        } catch ( RuntimeException rte ) {
+            Throwable cause = rte.getCause();
+            if ( cause != null && cause instanceof BadSetInstructionException ) {
+                throw (BadSetInstructionException)cause;
+            } else { 
+                throw rte;
+            }
+        }
 		
 		// TODO validation
 		//  - Ids get to appear at most once. 
@@ -150,9 +185,13 @@ public class FlowChartSetComplier {
 
 			@Override
 			public Node visit(SetNodeRef setRef) {
-				SetNode res = new SetNode( buildDataTags(setRef), setRef.getId() );
-				res.setNextNode(buildNodes( C.tail(nodes), chart, defaultNode));
-				return chart.add( res );
+                try {
+                    SetNode res = new SetNode( buildDataTags(setRef), setRef.getId() );
+                    res.setNextNode(buildNodes( C.tail(nodes), chart, defaultNode));
+                    return chart.add( res );
+                } catch (BadSetInstructionException ex) {
+                    throw new RuntimeException("Bad Set", ex );
+                }
 			}
 
 			@Override
@@ -167,9 +206,17 @@ public class FlowChartSetComplier {
 		return nodes.isEmpty() ? defaultNode : C.head( nodes ).accept(builder);
 	}
 	
-	DataTags buildDataTags( SetNodeRef nodeRef ) {
-		// TODO implement buildDataTags
-		return new DataTags();
+	DataTags buildDataTags( SetNodeRef nodeRef ) throws BadSetInstructionException {
+        DataTags res = new DataTags();
+		for ( String slotName : nodeRef.getSlotNames() ) {
+            SetLookupResult slr = getTagValueFor( slotName, nodeRef.getValue(slotName));
+            if ( slr.status == SetLookupResult.Status.Success ) {
+                res.set(slr.get());
+            } else {
+                throw new BadSetInstructionException(slr, nodeRef);
+            }
+        }
+		return res;
 	}
 	
 	List<Answer> impliedAnswers( AskNode node ) {
@@ -187,6 +234,81 @@ public class FlowChartSetComplier {
 		}
 	}
 	
+     SetLookupResult getTagValueFor( final String slotName, final String valueName ) {
+        return baseType.accept(new TagType.Visitor<SetLookupResult>() {
+
+            @Override
+            public SetLookupResult visitSimpleType(SimpleType t) {
+                if ( slotName.equals(t.getName())) {
+                    TagValue v = t.valueOf( valueName );
+                    return (v!=null) ? SetLookupResult.Success(v)
+                                     : SetLookupResult.ValueNotFound(t, valueName);
+                } else {
+                    return SetLookupResult.SlotNotFound(slotName);
+                }
+            }
+
+            @Override
+            public SetLookupResult visitAggregateType(AggregateType t) {
+                if ( slotName.equals(t.getName())) {
+                    AggregateValue res = t.make();
+                    SimpleValue singleValue = t.getItemType().valueOf(valueName);
+                    
+                    if ( singleValue == null ) {
+                        return SetLookupResult.ValueNotFound(baseType, valueName);
+                    } else {
+                        res.add(singleValue);
+                        return SetLookupResult.Success(res);
+                    }
+                    
+                } else {
+                    return SetLookupResult.SlotNotFound(slotName);
+                }
+            }
+
+            @Override
+            public SetLookupResult visitCompoundType(CompoundType t) {
+                Map<SetLookupResult.Status, Set<SetLookupResult>> results = new EnumMap<>(SetLookupResult.Status.class);
+                for ( SetLookupResult.Status s : SetLookupResult.Status.values() ) {
+                    results.put( s, new HashSet<SetLookupResult>() );
+                }
+                
+                // group results by status.
+                for ( TagType tt : t.getFieldTypes() ) {
+                    SetLookupResult res = tt.accept(this);
+                    results.get(res.status).add(res);
+                }
+                
+                if ( ! results.get(SetLookupResult.Status.Success).isEmpty() ) {
+                    Set<SetLookupResult> founds = results.get(SetLookupResult.Status.Success);
+                    return ( founds.size() == 1 ) 
+                             ? founds.iterator().next()
+                             : SetLookupResult.Ambiguous(founds);
+                }
+                
+                if ( ! results.get(SetLookupResult.Status.Ambiguous).isEmpty() ) {
+                    return SetLookupResult.Ambiguous( results.get(SetLookupResult.Status.Ambiguous) );
+                }
+
+                if ( ! results.get(SetLookupResult.Status.ValueNotFound).isEmpty() ) {
+                    return results.get(SetLookupResult.Status.ValueNotFound).iterator().next();
+                }
+
+                return SetLookupResult.SlotNotFound(slotName);
+                
+            }
+
+            @Override
+            public SetLookupResult visitTodoType(ToDoType t) {
+                if ( slotName.equals(t.getName())) {
+                    return SetLookupResult.Success(t.getValue());
+                } else {
+                    return SetLookupResult.SlotNotFound(slotName);
+                }
+            }
+        });
+    }
+    
 	/**
 	 * Inits all the ids of the nodes in the list. Also, collects the 
 	 * user-assigned ids in {@link #id2NodeRef}.
