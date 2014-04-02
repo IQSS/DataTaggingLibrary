@@ -106,7 +106,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 						.shape(GvNode.Shape.cds)
 						.fillColor("#BBBBFF")
 						.gv() );
-			edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).label("next").gv() );
+			edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).gv() );
             targets.add( nd.getNextNode() );
 			return null;
 		}
@@ -118,7 +118,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 							.shape(GvNode.Shape.note)
 							.label(idLabel(node) + "todo\\n"+node.getTodoText()).gv() );
 			
-            edges.add( edge(nodeId(node), nodeId(node.getNextNode())).label("next").gv() );
+            edges.add( edge(nodeId(node), nodeId(node.getNextNode())).gv() );
             targets.add( node.getNextNode() );
 			return null;
 		}
@@ -139,7 +139,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 						.shape(GvNode.Shape.rect)
 						.label( label.toString() )
 						.gv());
-            edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).label("next").gv() );
+            edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).gv() );
             targets.add( nd.getNextNode() );
 			return null;
 		}
