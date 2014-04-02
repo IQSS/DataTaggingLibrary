@@ -24,7 +24,6 @@ import java.util.List;
  * @author michael
  */
 public class FlowChartCompiling {
-    
     public static void main(String[] args) {
         FlowChartCompiling fcc = new FlowChartCompiling();
         try {
@@ -71,7 +70,9 @@ public class FlowChartCompiling {
         TagType baseType = tagsParser.parseTagDefinitions(readAll(tagsFile), tagsFile.getFileName().toString());
         
         GraphvizDataStructureVisualizer tagViz = new GraphvizDataStructureVisualizer(baseType);
-		tagViz.vizualize( tagsFile.resolveSibling(tagsFile.getFileName().toString() + ".gv") );
+        Path tagsOutPath = tagsFile.resolveSibling(tagsFile.getFileName().toString() + ".gv");
+        System.out.println("Writing " + tagsOutPath );
+		tagViz.vizualize( tagsOutPath );
         
         System.out.println("Reading chart: " + chartFile );
         System.out.println(" (full:  " + chartFile.toAbsolutePath() + ")" );

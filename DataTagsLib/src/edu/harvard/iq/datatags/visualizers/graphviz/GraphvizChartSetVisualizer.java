@@ -9,6 +9,12 @@ import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.charts.nodes.Node;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.values.AggregateValue;
+import edu.harvard.iq.datatags.model.values.CompoundValue;
+import edu.harvard.iq.datatags.model.values.SimpleValue;
+import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.values.ToDoValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import java.io.BufferedWriter;
@@ -18,6 +24,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Given a {@link FlowChartSet}, instances of this class create gravphviz files
@@ -28,11 +36,51 @@ import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 	
 	private FlowChartSet chartSet;
+    
+    private TagValue.Visitor<String> valueNamer = new TagValue.Visitor<String>() {
 
+        @Override
+        public String visitToDoValue(ToDoValue v) {
+            return v.getName();
+        }
+
+        @Override
+        public String visitSimpleValue(SimpleValue v) {
+            return v.getName();
+        }
+
+        @Override
+        public String visitAggregateValue(AggregateValue v) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[ ");
+            for ( TagValue tv : v.getValues() ) {
+                sb.append( tv.accept(this) );
+                sb.append(" ");
+            }
+            sb.append("]");
+            return sb.toString();
+        }
+
+        @Override
+        public String visitCompoundValue(CompoundValue aThis) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[ ");
+            for ( TagType tt : aThis.getSetFieldTypes() ) {
+                sb.append( tt.getName() );
+                sb.append(":");
+                sb.append( aThis.get(tt).accept(this) );
+                sb.append( " " );
+            }
+            sb.append("]");
+            return sb.toString();
+        }
+    };
+            
 	private class NodePainter implements  Node.Visitor<Void> {
 		
 		List<String> nodes = new LinkedList<>(), edges = new LinkedList<>();
-
+        Set<Node> targets = new HashSet<>();
+        
 		public void reset() {
 			nodes.clear();
 			edges.clear();
@@ -42,11 +90,11 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		public Void visitAskNode(AskNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
 					.shape(GvNode.Shape.oval)
-					.label( ">" + nodeId(nd) + "< ask\\n" + nd.getText() )
+					.label( idLabel(nd) + "ask\\n" + nd.getText() )
 					.gv());
 			for ( Answer ans : nd.getAnswers() ) {
-				edges.add( edge(nodeId(nd), nodeId(nd.getNodeFor(ans))).label(ans.getAnswerText()).gv() );
-				
+				edges.add( edge(nodeId(nd), nodeId(nd.getNodeFor(ans))).tailLabel(ans.getAnswerText()).gv() );
+                targets.add( nd.getNodeFor(ans));
 			}
 
 			return null;
@@ -55,11 +103,12 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		@Override
 		public Void visitCallNode(CallNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
-						.label( nd.getCalleeChartId() +"/" + nd.getCalleeNodeId())
+						.label( idLabel(nd) + nd.getCalleeChartId() +"/" + nd.getCalleeNodeId())
 						.shape(GvNode.Shape.cds)
 						.fillColor("#BBBBFF")
 						.gv() );
 			edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).label("next").gv() );
+            targets.add( nd.getNextNode() );
 			return null;
 		}
 		
@@ -68,21 +117,31 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 			nodes.add( node(nodeId(node))
 							.fillColor("#AAFFAA")
 							.shape(GvNode.Shape.note)
-							.label("todo\\n"+node.getTodoText()).gv() );
+							.label(idLabel(node) + "todo\\n"+node.getTodoText()).gv() );
 			
             edges.add( edge(nodeId(node), nodeId(node.getNextNode())).label("next").gv() );
+            targets.add( node.getNextNode() );
 			return null;
 		}
 		
 		@Override
 		public Void visitSetNode(SetNode nd) throws DataTagsRuntimeException {
+            StringBuilder label = new StringBuilder();
+            label.append( idLabel(nd) )
+                    .append("Set\\n");
+            for ( TagType tt : nd.getTags().getSetFieldTypes() ) {
+                label.append( tt.getName() )
+                        .append( "=" )
+                        .append( nd.getTags().get(tt).accept(valueNamer) )
+                        .append("\\n");
+            }
 			nodes.add( node(nodeId(nd))
 						.fillColor("#AADDAA")
 						.shape(GvNode.Shape.rect)
-						.label( ">"+nodeId(nd) + "<\\nSet")
+						.label( label.toString() )
 						.gv());
             edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).label("next").gv() );
-            
+            targets.add( nd.getNextNode() );
 			return null;
 		}
 
@@ -93,10 +152,23 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 			return null;
 		}
 		
+        private String idLabel( Node nd ) {
+            return nd.getId().startsWith("$") ? "" : ">" + nodeId(nd) + "< ";
+        }
 	}
 	
 	private final NodePainter nodePainter = new NodePainter();
 	
+    @Override
+    void printHeader(BufferedWriter out) throws IOException {
+		out.write("digraph " + getChartName() + " {");
+		out.newLine();
+		out.write("edge [fontname=\"Helvetica\" fontsize=\"10\"]");
+		out.newLine();
+		out.write("node [fillcolor=\"lightgray\" style=\"filled\" fontname=\"Helvetica\" fontsize=\"10\"]");
+		out.newLine();
+	}
+    
 	@Override
 	protected void printBody(BufferedWriter out) throws IOException {
 		for (FlowChart fc : chartSet.charts()) {
@@ -119,7 +191,9 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		wrt.newLine();
 		
 		nodePainter.nodes.clear();
+        Set<Node> sources = new HashSet<>();
 		for ( Node n : fc.nodes() ) {
+            sources.add(n);
 			try {
 				n.accept( nodePainter );
 			} catch (DataTagsRuntimeException ex) {
@@ -132,6 +206,20 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 			wrt.newLine();
 		}
 		
+        sources.removeAll( nodePainter.targets );
+        wrt.write("{ rank=same; " );
+        boolean first = true;
+        for ( Node n : sources ) {
+            if ( first ) {
+                first = false;
+            } else {
+                wrt.write(", "); 
+            }
+            wrt.write( GvObject.sanitizeId(nodeId(n)) );
+        }
+		wrt.write("}");
+		wrt.newLine();
+        
 		wrt.write("}");
 		wrt.newLine();
 		

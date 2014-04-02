@@ -9,8 +9,8 @@ import java.util.Objects;
 public class Answer {
 	private final String answerText;
 	
-	public static final Answer YES = Answer("Yes");
-	public static final Answer NO  = Answer("No");
+	public static final Answer YES = Answer("yes");
+	public static final Answer NO  = Answer("no");
 	
 	public static Answer Answer( String aName ) {
 		return new Answer( aName );

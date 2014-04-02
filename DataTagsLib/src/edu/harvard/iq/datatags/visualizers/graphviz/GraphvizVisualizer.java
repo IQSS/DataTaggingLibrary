@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
 public abstract class GraphvizVisualizer {
 	protected final Pattern whitespace = Pattern.compile("\\s|-");
     
-    
     private String chartName = "ChartSet";
     
 	/**
@@ -76,6 +75,7 @@ public abstract class GraphvizVisualizer {
 	String sanitizeId(String s) {
 		String candidate = whitespace.matcher(s.trim()).replaceAll("_").replaceAll("\\.", "_").trim();
 		candidate = candidate.replaceAll(Pattern.quote("$"), "_DLR_");
+		candidate = candidate.replaceAll(Pattern.quote("#"), "_HSH_");
 		char first = candidate.charAt(0);
 		return (first > '0' && first < '9') ? "_"+candidate : candidate;
 	}

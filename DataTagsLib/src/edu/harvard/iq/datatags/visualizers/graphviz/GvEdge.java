@@ -57,6 +57,14 @@ public class GvEdge extends GvObject<GvEdge> {
         return add("sametail", tailId );
     }
     
+    public GvEdge headLabel(String lbl) {
+        return add("headlabel", lbl );
+    }
+    
+    public GvEdge tailLabel(String lbl) {
+        return add("taillabel", lbl );
+    }
+    
     @Override
     public String gvTitle() {
         return sanitizeId(from) + " -> " + sanitizeId(to);

@@ -54,7 +54,7 @@ public abstract class GvObject<T extends GvObject> {
         return add( "penwidth", Double.toString(w) );
     }
     
-    String sanitizeId(String s) {
+    static String sanitizeId(String s) {
         String candidate = illegalIdChars.matcher(s.trim()).replaceAll("_").replaceAll("\\.", "_").trim();
         candidate = candidate.replaceAll(Pattern.quote("$"), "_DLR_");
         candidate = candidate.replaceAll(Pattern.quote("#"), "_HSH_");
@@ -62,7 +62,7 @@ public abstract class GvObject<T extends GvObject> {
         return (first > '0' && first < '9') ? "_" + candidate : candidate;
     }
 
-    String sanitizeString(String s) {
+    static String sanitizeString(String s) {
         return s.replaceAll("\"", "\\\"").replaceAll("\n", "\\n");
     }
     
