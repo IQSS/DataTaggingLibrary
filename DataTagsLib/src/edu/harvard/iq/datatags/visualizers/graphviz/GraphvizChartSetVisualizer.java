@@ -34,10 +34,9 @@ import java.util.Set;
  * @author michael
  */
 public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
-	
 	private FlowChartSet chartSet;
     
-    private TagValue.Visitor<String> valueNamer = new TagValue.Visitor<String>() {
+    private final TagValue.Visitor<String> valueNamer = new TagValue.Visitor<String>() {
 
         @Override
         public String visitToDoValue(ToDoValue v) {
@@ -167,17 +166,30 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		out.newLine();
 		out.write("node [fillcolor=\"lightgray\" style=\"filled\" fontname=\"Helvetica\" fontsize=\"10\"]");
 		out.newLine();
+        out.write( node("start")
+                .fillColor("transparent")
+                .shape(GvNode.Shape.none)
+                .fontColor("#008800")
+                .fontSize(16)
+                .gv() );
+		out.newLine();
 	}
     
 	@Override
 	protected void printBody(BufferedWriter out) throws IOException {
 		for (FlowChart fc : chartSet.charts()) {
 			printChart(fc, out);
+            out.write( edge("start", nodeId(fc.getStart()))
+                        .color("#008800")
+                        .penwidth(4)
+                        .gv());
 		}
 		for (String s : nodePainter.edges) {
 			out.write(s);
 			out.newLine();
 		}
+        out.write("{rank=source; start}");
+		out.newLine();
 	}
 	
 	void printChart( FlowChart fc, BufferedWriter wrt ) throws IOException {
@@ -187,10 +199,6 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		wrt.write( String.format("label=\"%s\"", humanTitle(fc)) );
 		wrt.newLine();
 		
-		wrt.write( node(nodeId(fc.getStart())).peripheries(2).gv() );
-		wrt.newLine();
-		
-		nodePainter.nodes.clear();
         Set<Node> sources = new HashSet<>();
 		for ( Node n : fc.nodes() ) {
             sources.add(n);

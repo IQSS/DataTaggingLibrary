@@ -41,6 +41,9 @@ public abstract class GvObject<T extends GvObject> {
     public T comment( String aComment ) {
         return add( "comment", aComment );
     }
+    public T fontName( String aName ) {
+        return add( "fontname", aName );
+    }
     public T fontColor( String aColor ) {
         return add( "fontcolor", aColor );
     }
