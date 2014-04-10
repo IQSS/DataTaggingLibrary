@@ -68,3 +68,5 @@ approval: one of None, Email, Signed.
 auth: one of approval, none.
 
 identity: one of notPersonSpecific, personSpecific.
+
+consent: none, parental, subject.

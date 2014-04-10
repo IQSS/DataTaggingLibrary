@@ -66,7 +66,6 @@
 	(1 year:   (set: timeLimit=_1yr) )
 )
 (end)
-
 (>hipaaCompliance< ask:
 	(text: HIPAA. Was the data received from a HIPAA covered entity or a business associate of one?)
 	(yes: 
@@ -104,3 +103,18 @@
 	(text: Covered. Are you an entity that is directly or indirectly covered by HIPAA?)
 	(yes:
 		(set: code=red, storage=encrypt, transit=encrypt, auth=approval, basis=HIPAABusinessAssociate, effort=identifiable, harm=criminal)))
+(end)
+
+(>ferpa< ask:
+	(text:Does the data being deposited directly relate to a student, and is it maintained by an educational agency or institution?)
+	(terms:
+		(educational agency or institution: school, school district, state educational agency)
+	)
+	(no: (end))
+)
+(ask: (text: Is the record used as a mandatory aid?) (yes: (end) ))
+(ask: (text: Is the record maintained by the law enforcement division of the educational agency or institution?) (yes: (end) ))
+(ask: (text: Are the records employment records?) (yes: (end) ))
+(ask: (text: Were the records produced by a physician, psychiatrist, or other professional for treatment purposes?) (yes: (end) ))
+(ask: (text: Are the records grades on peer-graded papers before a teacher has recorded them?) (yes: (end) ))
+(set: standards=FERPA)
