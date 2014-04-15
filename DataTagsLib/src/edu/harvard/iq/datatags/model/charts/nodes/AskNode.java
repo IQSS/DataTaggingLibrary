@@ -30,7 +30,7 @@ public class AskNode extends Node {
 	
 	@Override
 	public <R> R accept(Visitor<R> vr) throws DataTagsRuntimeException {
-		return vr.visitAskNode(this);
+		return vr.visit(this);
 	}
 	
 	/**

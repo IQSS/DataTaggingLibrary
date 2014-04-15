@@ -21,7 +21,7 @@ public class SetNode extends ThroughNode {
 	
 	@Override
 	public <R> R accept(Visitor<R> vr) throws DataTagsRuntimeException {
-		return vr.visitSetNode( this );
+		return vr.visit( this );
 	}
 	
 	public DataTags getTags() {

@@ -23,7 +23,7 @@ public class EndNode extends Node {
 		
 	@Override
 	public <R> R accept(Visitor<R> vr) throws DataTagsRuntimeException {
-		return vr.visitEndNode(this);
+		return vr.visit(this);
 	}
 
 	

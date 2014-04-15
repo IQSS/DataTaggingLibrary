@@ -23,7 +23,7 @@ public class CallNode extends ThroughNode {
 	
 	@Override
 	public <R> R accept(Visitor<R> vr) throws DataTagsRuntimeException {
-		return vr.visitCallNode(this);
+		return vr.visit(this);
 	}
 	
 	public String getCalleeChartId() {

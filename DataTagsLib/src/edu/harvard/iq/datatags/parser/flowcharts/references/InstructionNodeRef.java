@@ -17,6 +17,7 @@ public abstract class InstructionNodeRef extends NodeRef {
 		public T visit( CallNodeRef callRef );
 		public T visit( EndNodeRef endRef );
 		public T visit( SetNodeRef setRef );
+		public T visit( RejectNodeRef setRef );
 		public T visit( TodoNodeRef todoRef );
 	}
 	

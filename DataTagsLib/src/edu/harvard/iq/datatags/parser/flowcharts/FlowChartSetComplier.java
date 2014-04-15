@@ -7,6 +7,7 @@ import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
 import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
 import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.charts.nodes.Node;
+import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.types.AggregateType;
@@ -26,6 +27,7 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.CallNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.EndNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeRef;
+import edu.harvard.iq.datatags.parser.flowcharts.references.RejectNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
@@ -39,8 +41,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Parser for the chart set graphs.
@@ -183,6 +183,11 @@ public class FlowChartSetComplier {
 						: new EndNode( endRef.getId() );
 			}	
 
+            @Override
+            public Node visit(RejectNodeRef setRef) {
+                return chart.add(new RejectNode( setRef.getId(), setRef.getReason() ));
+            }
+            
 			@Override
 			public Node visit(SetNodeRef setRef) {
                 try {
@@ -356,13 +361,18 @@ public class FlowChartSetComplier {
 			public Void visit(TodoNodeRef todoRef) {
 				return visitSimpleNode(todoRef);
 			}
+            
+            @Override
+            public Void visit( RejectNodeRef rej ) {
+                return visitSimpleNode(rej);
+            }
 			
 			private Void visitSimpleNode( NodeRef simpleNodeRef ) {
 				if ( simpleNodeRef.getId() == null ) {
 					simpleNodeRef.setId(nextId());
-				} else {
-					id2NodeRef.put(simpleNodeRef.getId(), simpleNodeRef);
-				}
+				} 
+				id2NodeRef.put(simpleNodeRef.getId(), simpleNodeRef);
+                
 				return null;
 			}
 			

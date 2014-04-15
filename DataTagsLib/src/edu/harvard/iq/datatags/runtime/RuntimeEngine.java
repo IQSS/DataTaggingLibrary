@@ -24,7 +24,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RuntimeEngine {
 	
-	public enum Status { Idle, Running, Terminated, Error }
+	public enum Status { 
+        /** The engine has not run yet */
+        Idle, 
+        /** Engine is currently processing. */
+        Running,
+        /** The engine has concluded we cannot accept this dataset (sorry!).*/
+        Reject, 
+        /** The engine is happy to accept the dataset, as long as the data tags requirements are complied with. */
+        Accept, 
+        /** An error has occurred. Please ignore the status of the engine. */
+        Error }
 	
 	public interface Listener {
 		public void runStarted( RuntimeEngine ngn );
@@ -48,19 +58,20 @@ public class RuntimeEngine {
 		private final Node.Visitor<Node> processNodeVisitor = new Node.Visitor<Node>() {
 		
 		@Override
-		public Node visitAskNode( AskNode nd ) {
+		public Node visit( AskNode nd ) {
 			// stop and consult the user.
 			return null;
 		}
 		
 		@Override
-		public Node visitTodoNode( TodoNode nd ) {
+		public Node visit( TodoNode nd ) {
 			// Skip!
+            // TODO allow engines to stop here, it's a valid use-case.
 			return nd.getNextNode();
 		}
 		
 		@Override
-		public Node visitSetNode( SetNode nd ) {
+		public Node visit( SetNode nd ) {
 			// Apply changes
 			setCurrentTags( getCurrentTags().composeWith(nd.getTags()) );
 			
@@ -68,8 +79,14 @@ public class RuntimeEngine {
 			return nd.getNextNode();
 		}
 
+        @Override
+        public Node visit(RejectNode nd) throws DataTagsRuntimeException {
+            status = Status.Reject;
+            return null;
+        }
+
 		@Override
-		public Node visitCallNode( CallNode nd ) throws DataTagsRuntimeException {
+		public Node visit( CallNode nd ) throws DataTagsRuntimeException {
 			stack.push(nd);
 			// Dynamic linking to the destination node.
 			FlowChart fs = getChartSet().getFlowChart(nd.getCalleeChartId());
@@ -90,9 +107,9 @@ public class RuntimeEngine {
 		}
 
 		@Override
-		public Node visitEndNode( EndNode nd ) throws DataTagsRuntimeException {
+		public Node visit( EndNode nd ) throws DataTagsRuntimeException {
 			if ( stack.isEmpty() ) {
-				status = Status.Terminated;
+				status = Status.Accept;
 				return null;
 			} else {
 				return stack.pop().getNextNode();
@@ -193,6 +210,10 @@ public class RuntimeEngine {
 		return stack;
 	}
 	
+    public String getRejectionReason() {
+        return ( currentNode instanceof RejectNode ) ? ((RejectNode)currentNode).getReason() : null;
+    }
+    
 	/**
 	 * @return The node the engine is currently in.
 	 */

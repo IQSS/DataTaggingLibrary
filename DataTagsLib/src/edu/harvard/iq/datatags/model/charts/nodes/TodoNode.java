@@ -16,7 +16,7 @@ public class TodoNode extends ThroughNode {
 	
 	@Override
 	public <R> R accept(Visitor<R> vr) throws DataTagsRuntimeException {
-		return vr.visitTodoNode( this );
+		return vr.visit( this );
 	}
 
 	public String getTodoText() {

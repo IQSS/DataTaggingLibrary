@@ -13,11 +13,12 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 public abstract class Node extends ChartEntity {
 	
 	public interface Visitor<R> {
-		R visitAskNode( AskNode nd ) throws DataTagsRuntimeException;
-		R visitSetNode( SetNode nd ) throws DataTagsRuntimeException;
-		R visitCallNode( CallNode nd ) throws DataTagsRuntimeException;
-		R visitTodoNode( TodoNode nd ) throws DataTagsRuntimeException;
-		R visitEndNode( EndNode nd ) throws DataTagsRuntimeException;
+		R visit( AskNode nd ) throws DataTagsRuntimeException;
+		R visit( SetNode nd ) throws DataTagsRuntimeException;
+		R visit( RejectNode nd ) throws DataTagsRuntimeException;
+		R visit( CallNode nd ) throws DataTagsRuntimeException;
+		R visit( TodoNode nd ) throws DataTagsRuntimeException;
+		R visit( EndNode nd ) throws DataTagsRuntimeException;
 	}
 	
 	private FlowChart chart;

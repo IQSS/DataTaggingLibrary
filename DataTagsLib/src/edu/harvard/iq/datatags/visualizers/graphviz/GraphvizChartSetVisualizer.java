@@ -7,6 +7,7 @@ import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.charts.nodes.Node;
+import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.types.TagType;
@@ -86,10 +87,10 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		}
 		
 		@Override
-		public Void visitAskNode(AskNode nd) throws DataTagsRuntimeException {
+		public Void visit(AskNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
 					.shape(GvNode.Shape.oval)
-					.label( idLabel(nd) + "ask\\n" + nd.getText() )
+					.label( idLabel(nd) + "ask\\n" + wrap(nd.getText()) )
 					.gv());
 			for ( Answer ans : nd.getAnswers() ) {
 				edges.add( edge(nodeId(nd), nodeId(nd.getNodeFor(ans))).tailLabel(ans.getAnswerText()).gv() );
@@ -100,7 +101,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		}
 
 		@Override
-		public Void visitCallNode(CallNode nd) throws DataTagsRuntimeException {
+		public Void visit(CallNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
 						.label( idLabel(nd) + nd.getCalleeChartId() +"/" + nd.getCalleeNodeId())
 						.shape(GvNode.Shape.cds)
@@ -111,12 +112,22 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 			return null;
 		}
 		
+        @Override
+		public Void visit(RejectNode nd) throws DataTagsRuntimeException {
+			nodes.add( node(nodeId(nd))
+						.label( idLabel(nd) + "REJECT\\n" + wrap(nd.getReason())  )
+						.shape(GvNode.Shape.hexagon)
+						.fillColor("#FFAAAA")
+						.gv() );
+			return null;
+		}
+		
 		@Override
-		public Void visitTodoNode(TodoNode node) throws DataTagsRuntimeException {
+		public Void visit(TodoNode node) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(node))
 							.fillColor("#AAFFAA")
 							.shape(GvNode.Shape.note)
-							.label(idLabel(node) + "todo\\n"+node.getTodoText()).gv() );
+							.label(idLabel(node) + "todo\\n"+ wrap(node.getTodoText())).gv() );
 			
             edges.add( edge(nodeId(node), nodeId(node.getNextNode())).gv() );
             targets.add( node.getNextNode() );
@@ -124,7 +135,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		}
 		
 		@Override
-		public Void visitSetNode(SetNode nd) throws DataTagsRuntimeException {
+		public Void visit(SetNode nd) throws DataTagsRuntimeException {
             StringBuilder label = new StringBuilder();
             label.append( idLabel(nd) )
                     .append("Set\\n");
@@ -145,14 +156,14 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		}
 
 		@Override
-		public Void visitEndNode(EndNode nd) throws DataTagsRuntimeException {
+		public Void visit(EndNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd)).shape(GvNode.Shape.point)
                             .fillColor("#333333").add("height", "0.25").add("width", "0.25").gv() );
 			return null;
 		}
 		
         private String idLabel( Node nd ) {
-            return nd.getId().startsWith("$") ? "" : ">" + nodeId(nd) + "< ";
+            return nd.getId().startsWith("$") ? "" : nd.getId()+"\\n";// ">" + nodeId(nd) + "< ";
         }
 	}
 	

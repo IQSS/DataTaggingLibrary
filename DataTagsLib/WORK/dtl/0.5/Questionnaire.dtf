@@ -1,27 +1,47 @@
-(>person specific< ask:
+(call: medical-start)
+(call: ferpaCompliance )
+(todo: Arrest and Conviction Records, Bank and Financial Records, 
+	Cable Television, Computer Crime, 
+	Credit reporting and Investigations [including ‘Credit Repair,’ ‘Credit Clinics,’ Check-Cashing and Credit Cards],
+	Criminal Justice Information Systems, Electronic Surveillance [including Wiretapping, Telephone Monitoring, and Video Cameras],
+	Employment Records, Government Information on Individuals, Identity Theft,
+	Insurance Records [including use of Genetic Information], Library Records, 
+	Mailing Lists [including Video rentals and Spam],
+	Special Medical Records [including HIV Testing],
+	Non-Electronic Visual Surveillance. Breast-Feeding, Polygraphing in Employment,
+	Privacy Statutes/State Constitutions [including the Right to Publicity],
+	Privileged Communications, Social Security Numbers, Student Records, Tax Records,
+	Telephone Services [including Telephone Solicitation and Caller ID], 
+	Testing in Employment [including Urinalysis, Genetic and Blood Tests], Tracking Technologies,  Voter Records)
+(call: dua)
+(end)
+(>dua< todo: Data use agreements)
+
+(>medical-start< ask:
 	(text: Person-specific. Does your data include personal information?)
 	(terms:
 		(data: 0s and 1s in some structured way)
 		(personal information: as defined in HIPAA))
 	(no:
-		(set: code=green, storage=clear, transit=clear, auth=none, 
-			basis=notApplicable, identity=notPersonSpecific, 
+		(set: code=green, storage=clear, transit=clear, auth=none,
+			basis=notApplicable, identity=notPersonSpecific,
 			harm=negligible)
-	 	(end)))
-(>ec< ask: 
-	(text: Explicit Consent. Did each person whose information appears in the
-		     data give explicit permission to share the data?)
-  (yes: 
+	 	(end)
+))
+(>ec< ask:
+(text: Explicit Consent. Did each person whose information appears in the
+	data give explicit permission to share the data?)
+  (yes:
   	(set: basis=consent)
   	(ask:
   		(text: Did the consent have any restrictions on data sharing?)
   		(no:  (set: code=green, storage=clear, transit=clear, auth=none))
   		(yes: (call: dua)))
   	(end)
-  ))
-(>medical-recs< ask: 
+))
+(>medicalRecords< ask:
 	(text:Medical Records. Does the data contain personal health information?)
-	(no: 
+	(no:
 		(set: basis=agreement)
 		(ask: (text:Did the data have any restrictions on sharing, such as stated in an agreement or policy statement?)
 		      (no:  (set: code=green, storage=clear, transit=clear, auth=none) )
@@ -30,35 +50,8 @@
 	(yes:
 		(set:  standards=HIPAA )
 		(call: hipaaCompliance )
-	))
-(todo: Arrest and Conviction Records)
-(todo: Bank and Financial Records)
-(todo: Cable Television)
-(todo: Computer Crime)
-(todo: Credit reporting and Investigations, including ‘Credit Repair,’ ‘Credit Clinics,’ Check-Cashing and Credit Cards)
-(todo: Criminal Justice Information Systems)
-(todo: Electronic Surveillance, including Wiretapping, Telephone Monitoring, and Video Cameras)
-(todo: Employment Records)
-(todo: Government Information on Individuals)
-(todo: Identity Theft)
-(todo: Insurance Records, including use of Genetic Information)
-(todo: Library Records)
-(todo: Mailing Lists, including Video rentals and Spam)
-(todo: Special Medical Records, including HIV Testing)
-(todo: Non-Electronic Visual Surveillance. Also Breast-Feeding)
-(todo: Polygraphing in Employment)
-(todo: Privacy Statutes/State Constitutions, including the Right to Publicity)
-(todo: Privileged Communications)
-(todo: Social Security Numbers)
-(todo: Student Records)
-(todo: Tax Records)
-(todo: Telephone Services, including Telephone Solicitation and Caller ID)
-(todo: Testing in Employment, including Urinalysis, Genetic and Blood Tests)
-(todo: Tracking Technologies)
-(todo: Voter Records)
-(end)
-
-(>dua< ask: 
+))
+(>timeLimit< ask:
 	(text:For how long should we keep the data?)
 	(forever:  (set: timeLimit=none) )
 	(50 years: (set: timeLimit=_50yr) )
@@ -66,10 +59,11 @@
 	(1 year:   (set: timeLimit=_1yr) )
 )
 (end)
+
 (>hipaaCompliance< ask:
 	(text: HIPAA. Was the data received from a HIPAA covered entity or a business associate of one?)
-	(yes: 
-		(ask: 
+	(yes:
+		(ask:
 			(text: Safe Harbor. Doens the data visually adhere to the HIPAA Safe Harbor Provision?)
 			(terms:
 				(Safe Harbor Provision: Dates in years, zip codes contain only first 2 digits))
@@ -82,9 +76,9 @@
 	(text: Statistician Provision. Has an expert certified the data as being of miniman risk?)
 	(yes: (set:code=green, transit=clear, storage=clear, auth=none, basis=HIPAAStatistician, effort=deidentified, harm=negligible)
 		    (end)))
-(>3.1.3< ask: 
+(>3.1.3< ask:
 	(text: Limited Data Set. Did you acquire the data under a HIPAA limited data use agreement?)
-	(yes: 
+	(yes:
 		(set: storage=encrypt, transit=encrypt, auth=approval, basis=HIPAALimitedDataset, effort=identifiable, harm=criminal)
 		(ask:
 			(text: Did the limited data use agreement have any additional restrictions on sharing?)
@@ -105,7 +99,7 @@
 		(set: code=red, storage=encrypt, transit=encrypt, auth=approval, basis=HIPAABusinessAssociate, effort=identifiable, harm=criminal)))
 (end)
 
-(>ferpa< ask:
+(>ferpaCompliance< ask:
 	(text:Does the data being deposited directly relate to a student, and is it maintained by an educational agency or institution?)
 	(terms:
 		(educational agency or institution: school, school district, state educational agency)
@@ -118,3 +112,84 @@
 (ask: (text: Were the records produced by a physician, psychiatrist, or other professional for treatment purposes?) (yes: (end) ))
 (ask: (text: Are the records grades on peer-graded papers before a teacher has recorded them?) (yes: (end) ))
 (set: standards=FERPA)
+(ask:
+	(text: Does the data include information that, alone or in combination, is linked or
+           linkable to a specific student that would allow a reasonable person to identify the student with reasonable certainty?)
+  (terms:
+			(reasonable certainty: Examples include: a student’s or student’s family name;
+							   student or student’s family’s address;
+							   a personal identifier like a social security number or student number;
+							   other indirect identifiers like date of birth or mother’s maiden name.))
+	(no:
+		(ask:
+			(text: Does the educational agency or institution reasonably believe the requester knows the identity of the student?)
+			(no: (set: FERPAConsent=notNeeded)
+				 (end)
+))))
+(ask: (text: Do you have the parental or student consent to disclose the data to the repository?)
+	(yes:
+		(ask: (text: Does the consent specify the records to be disclosed and the purpose?)
+			(yes: (ask: (text: Does the consent specify ti whom the records can be discloed?)
+				(yes: (set: FERPAConsent=parentalOrStudent)
+							(todo: Set additional tag fields)
+							(end)
+))))))
+(ask:
+	(text: Did the school classify the education records in question as directory information?)
+	(yes:
+		(ask: (text: Did the educational agency or institution that originally possessed the records give parents and students notice of the type of information they are designating as directory information?)
+				  (yes:
+						(ask:
+							(text: Was the parent or student, if over 18, given the opportunity to opt out of the disclosure or publication of their directory information? )
+							(yes: (set: FERPAConsent=notNeeded)
+										(todo: Set additional tag fields)
+										(end)
+))))))
+(ask:
+	(text:Are you, the depositor, an educational agency or institution?)
+	(terms:
+		(educational agency or institution: School, School district or a state education agency)
+	)
+	(no:
+		(ask:
+			(text: Did you, or the individual/organization who originally received the record from the educational agency or institution, agree not to re-disclose education records without parental consent, unless an explicit FERPA exception applies?)
+			(no: (reject: Educational agency or institution likely breached its FERPA duties by not specifying theat re-disclosure of education records without prior consent is typically not allowed. )
+))))
+(ask: 
+	(text: Are the education records being disclosed to the Repository to conduct a study for or on behalf of the educational agency or institution to: develop, validate, or administer predictive tests; administer student aid projects; or improve instruction?)
+	(yes: 
+		(>FERPA-8-a-i< ask:
+			(text: Did the educational agency or institution enter into an agreement with the Repository that specifies the scope and p=urpose od the study as well as the information to be disclosed?)
+			(no: (call: ferpaReject8)  )
+		)
+		(>FERPA-8-a-ii< ask:
+			(text: Did the educational agency or institution enter into an agreement with the Repository that requires the organization to limit the use of PII to the purposes in the agreement?)
+			(terms: 
+				(PII: Personaly Identying Information, allowing third parties to identify people in the dataset.))
+			(no: (call: ferpaReject8)  )
+		)
+		(>FERPA-8-a-iii< ask:
+			(text: Did the educational agency or institution enter into an agreement with the Repository that ensures that the study must be performed in a way that does not allow personal identification of parents and students to anyone other that represntations of the organization that have legitimate interests in the information?)
+			(no: (call: ferpaReject8) )
+		)
+		(>FERPA-8-a-iv< ask:
+			(text: Did the educational agency or institution enter into an agreement with the Repository that ensures that requiers PII to be destroyed when it is no longer needed and specifies the time period in which it must be destroyed?)
+			(no: (call: ferpaReject8)  )
+			(yes: (call: timeLimit) )
+		)
+	)
+	(no: 
+		(ask:
+			(text: Is this a rediclosure? Were the data not received directly from  the educational agency or institution?)
+			(yes:
+				(ask:
+					(text: Did the educational agency or institution maintain a record or disclosure that includes the names of the additional parties to whom the original receiving party may disclose the information and the fact that the records will be used to conduct a study on behalf of the agenc, meeting the requirements discussed?)
+					(no: (call: ferpaReject8)  )
+				)
+			)
+		)
+	)
+)
+(set: FERPAConsent=notNeeded )
+(end)
+(>ferpaReject8< reject: Educational agency or institution is likely breaching FERPA duties because it is disclosing non-directory PII without parental consent where no obvious FERPA exception applies)

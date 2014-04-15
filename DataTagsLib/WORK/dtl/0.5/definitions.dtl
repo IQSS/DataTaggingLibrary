@@ -1,4 +1,4 @@
-DataTags: code, basis, Handling, DataType, DUA, IP, identity.
+DataTags: code, basis, Handling, DataType, DUA, IP, identity, FERPA.
 
 TODO: IP.
 
@@ -49,9 +49,9 @@ sharing: one of
 		Group,
 		NoOne.
 
-basis: one of 
+basis: one of
 		notApplicable,
-		agreement, 
+		agreement,
 		consent,
 		HIPAASafeHarbor, HIPAAStatistician, HIPAALimitedDataset, HIPAABusinessAssociate.
 
@@ -69,4 +69,6 @@ auth: one of approval, none.
 
 identity: one of notPersonSpecific, personSpecific.
 
-consent: none, parental, subject.
+FERPA: FERPAConsent.
+
+FERPAConsent: one of notNeeded, parentalOrStudent.

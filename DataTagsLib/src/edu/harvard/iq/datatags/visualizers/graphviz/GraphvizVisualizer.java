@@ -11,6 +11,9 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -86,6 +89,41 @@ public abstract class GraphvizVisualizer {
 
     public void setChartName(String chartName) {
         this.chartName = chartName;
+    }
+    
+    public String wrap( String source ) {
+        return wrapAt( source, 40 );
+    }
+    
+    public String wrapAt( String source, int width ) {
+        List<String> output = new LinkedList<>();
+        StringBuilder cur = new StringBuilder();
+        for ( String str : source.split("\\s",-1) ) {
+            if ( ! str.isEmpty() ) {
+                if ( str.length() >= width ) {
+                    output.add( cur.toString() );
+                    cur.setLength(0);
+                    output.add( str );
+                } else if ( str.length() + cur.length() > width ) {
+                    output.add( cur.toString() );
+                    cur.setLength(0);
+                } 
+                cur.append(str).append(" ");
+            }
+        }
+        output.add( cur.toString() );
+        
+        cur.setLength(0);
+        for (String str : output) {
+            if ( ! str.isEmpty() ) {
+                if ( cur.length() > 0 ) {
+                    cur.append("\\n");
+                }
+                cur.append(str);
+            }
+        }
+        
+        return cur.toString();
     }
     
 }

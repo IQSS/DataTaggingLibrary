@@ -58,6 +58,7 @@ public abstract class GvObject<T extends GvObject> {
     }
     
     static String sanitizeId(String s) {
+        if ( s.isEmpty() ) return s;
         String candidate = illegalIdChars.matcher(s.trim()).replaceAll("_").replaceAll("\\.", "_").trim();
         candidate = candidate.replaceAll(Pattern.quote("$"), "_DLR_");
         candidate = candidate.replaceAll(Pattern.quote("#"), "_HSH_");

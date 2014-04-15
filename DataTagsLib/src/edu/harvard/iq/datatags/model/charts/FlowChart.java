@@ -4,14 +4,12 @@ import edu.harvard.iq.datatags.model.charts.nodes.Node;
 import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
 import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
+import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.values.Answer;
-import static edu.harvard.iq.datatags.model.values.Answer.NO;
-import static edu.harvard.iq.datatags.model.values.Answer.YES;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,7 +31,7 @@ public class FlowChart extends ChartEntity {
 	private final Node.Visitor<Node> nodeAdder = new Node.Visitor<Node>() {
 
 		@Override
-		public Node visitAskNode(AskNode nd) throws DataTagsRuntimeException {
+		public Node visit(AskNode nd) throws DataTagsRuntimeException {
 			for ( Answer ans : nd.getAnswers() ) {
 				if ( nd.getNodeFor(ans)!=null ) {
 					nd.getNodeFor(ans).accept(this);
@@ -43,24 +41,29 @@ public class FlowChart extends ChartEntity {
 		}
 
 		@Override
-		public Node visitSetNode(SetNode nd) throws DataTagsRuntimeException {
+		public Node visit(SetNode nd) throws DataTagsRuntimeException {
 			return visitSimpleNode(nd);
 		}
 
 		@Override
-		public Node visitCallNode(CallNode nd) throws DataTagsRuntimeException {
+		public Node visit(CallNode nd) throws DataTagsRuntimeException {
 			return visitSimpleNode(nd);
 		}
 
 		@Override
-		public Node visitTodoNode(TodoNode nd) throws DataTagsRuntimeException {
+		public Node visit(TodoNode nd) throws DataTagsRuntimeException {
 			return visitSimpleNode(nd);
 		}
 
 		@Override
-		public Node visitEndNode(EndNode nd) throws DataTagsRuntimeException {
+		public Node visit(EndNode nd) throws DataTagsRuntimeException {
 			return visitSimpleNode(nd);
 		}
+
+        @Override
+        public Node visit(RejectNode nd) throws DataTagsRuntimeException {
+            return visitSimpleNode(nd);
+        }
 		
 		Node visitSimpleNode( Node n ) {
 			n.setChart(FlowChart.this);
@@ -118,42 +121,5 @@ public class FlowChart extends ChartEntity {
 	public EndNode getEndNode() {
 		return endNode;
 	}
-	
-	@Deprecated // As part of the unrestricted answer design, this should be done by the parser.
-	public void connectOpenEnds( final Node defaultNode ) {
-		Node.Visitor connector = new Node.Visitor<Void>(){
 
-			@Override
-			public Void visitAskNode(AskNode nd) throws DataTagsRuntimeException {
-				for ( Answer a : Arrays.asList( YES, NO) ) {
-					if ( nd.getNodeFor(a) == null ) {
-						nd.setNodeFor(a, defaultNode);
-					}
-				}
-				return null;
-			}
-
-			@Override
-			public Void visitCallNode(CallNode nd) throws DataTagsRuntimeException {
-				if (nd.getNextNode() == null ) nd.setNextNode(defaultNode);
-				return null;
-			}
-			
-			@Override
-			public Void visitTodoNode(TodoNode nd) throws DataTagsRuntimeException {
-				if (nd.getNextNode() == null ) nd.setNextNode(defaultNode);
-				return null;
-			}
-			
-			@Override
-			public Void visitSetNode(SetNode nd) throws DataTagsRuntimeException {
-				if (nd.getNextNode() == null ) nd.setNextNode(defaultNode);
-				return null;
-			}
-
-			@Override
-			public Void visitEndNode(EndNode nd) throws DataTagsRuntimeException {return null;}
-		};
-		for ( Node n : nodes() ) n.accept(connector);
-	}
 }

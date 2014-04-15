@@ -6,6 +6,7 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.CallNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.EndNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeRef;
+import edu.harvard.iq.datatags.parser.flowcharts.references.RejectNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
@@ -159,7 +160,17 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
             public void handle(TodoNodeRef node, int depth) {
                 nodes.add( node(getNodeId(node))
 							.fillColor("#AAFFAA")
-							.shape(GvNode.Shape.note).label(nodeLabel(node, "todo\\n"+node.getTodoText())).gv() );
+							.shape(GvNode.Shape.note)
+                            .label(nodeLabel(node, "todo\\n"+node.getTodoText())).gv() );
+            }
+        });
+        
+        addNode( RejectNodeRef.class, new NodeRefHandler<RejectNodeRef>() {
+            @Override
+            public void handle(RejectNodeRef node, int depth) {
+                nodes.add( node(getNodeId(node))
+							.fillColor("#FFAAAA")
+							.shape(GvNode.Shape.hexagon).label(nodeLabel(node, "reject\\n"+node.getReason())).gv() );
             }
         });
         
@@ -172,9 +183,9 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
     
     String nodeLabel( NodeRef n, String extras ) {
 		String nodeId = getNodeId(n);
-		return sanitizeTitle( ( nodeId.startsWith("autoId") )
-				? extras
-				: ">" + nodeId +"<\\n" + extras );
+		return wrap( sanitizeTitle( ( nodeId.startsWith("$") )
+                    ? extras
+                    : ">" + nodeId +"<\\n" + extras ));
     }
     
     String getNodeId( NodeRef nr ) {
