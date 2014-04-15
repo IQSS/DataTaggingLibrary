@@ -16,7 +16,7 @@
 (call: dua)
 (end)
 (>dua< todo: Data use agreements)
-
+(end)
 (>medical-start< ask:
 	(text: Person-specific. Does your data include personal information?)
 	(terms:
@@ -160,22 +160,24 @@
 	(yes: 
 		(>FERPA-8-a-i< ask:
 			(text: Did the educational agency or institution enter into an agreement with the Repository that specifies the scope and p=urpose od the study as well as the information to be disclosed?)
-			(no: (call: ferpaReject8)  )
-		)
-		(>FERPA-8-a-ii< ask:
-			(text: Did the educational agency or institution enter into an agreement with the Repository that requires the organization to limit the use of PII to the purposes in the agreement?)
-			(terms: 
-				(PII: Personaly Identying Information, allowing third parties to identify people in the dataset.))
-			(no: (call: ferpaReject8)  )
-		)
-		(>FERPA-8-a-iii< ask:
-			(text: Did the educational agency or institution enter into an agreement with the Repository that ensures that the study must be performed in a way that does not allow personal identification of parents and students to anyone other that represntations of the organization that have legitimate interests in the information?)
-			(no: (call: ferpaReject8) )
-		)
-		(>FERPA-8-a-iv< ask:
-			(text: Did the educational agency or institution enter into an agreement with the Repository that ensures that requiers PII to be destroyed when it is no longer needed and specifies the time period in which it must be destroyed?)
-			(no: (call: ferpaReject8)  )
-			(yes: (call: timeLimit) )
+			(yes:
+				(>FERPA-8-a-ii< ask:
+					(text: Did the educational agency or institution enter into an agreement with the Repository that requires the organization to limit the use of PII to the purposes in the agreement?)
+					(terms: 
+						(PII: Personaly Identying Information, allowing third parties to identify people in the dataset.))
+					(yes: 
+						(>FERPA-8-a-iii< ask:
+							(text: Did the educational agency or institution enter into an agreement with the Repository that ensures that the study must be performed in a way that does not allow personal identification of parents and students to anyone other that represntations of the organization that have legitimate interests in the information?)
+							(yes: 
+								(>FERPA-8-a-iv< ask:
+									(text: Did the educational agency or institution enter into an agreement with the Repository that ensures that requiers PII to be destroyed when it is no longer needed and specifies the time period in which it must be destroyed?)
+									(yes: (call: timeLimit) )
+							))
+						)
+					)
+				)
+			)
+			(no: (reject: Educational agency or institution is likely breaching FERPA duties because it is disclosing non-directory PII without parental consent where no obvious FERPA exception applies) )
 		)
 	)
 	(no: 
@@ -184,7 +186,7 @@
 			(yes:
 				(ask:
 					(text: Did the educational agency or institution maintain a record or disclosure that includes the names of the additional parties to whom the original receiving party may disclose the information and the fact that the records will be used to conduct a study on behalf of the agenc, meeting the requirements discussed?)
-					(no: (call: ferpaReject8)  )
+					(no: (reject: Educational agency or institution is likely breaching FERPA duties because it is disclosing non-directory PII without parental consent where no obvious FERPA exception applies)  )
 				)
 			)
 		)
@@ -192,4 +194,3 @@
 )
 (set: FERPAConsent=notNeeded )
 (end)
-(>ferpaReject8< reject: Educational agency or institution is likely breaching FERPA duties because it is disclosing non-directory PII without parental consent where no obvious FERPA exception applies)
