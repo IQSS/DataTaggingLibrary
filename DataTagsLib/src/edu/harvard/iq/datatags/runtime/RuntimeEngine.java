@@ -55,7 +55,7 @@ public class RuntimeEngine {
 	private Status status = Status.Idle;
 	private Listener listener;
 	
-		private final Node.Visitor<Node> processNodeVisitor = new Node.Visitor<Node>() {
+	private final Node.Visitor<Node> processNodeVisitor = new Node.Visitor<Node>() {
 		
 		@Override
 		public Node visit( AskNode nd ) {
@@ -170,6 +170,23 @@ public class RuntimeEngine {
 		return processNode( next );
 	}
 	
+    public RuntimeEngineState createSnapshot() {
+        final RuntimeEngineState state = new RuntimeEngineState();
+        
+        state.setStatus(getStatus());
+        state.setCurrentNodeId( getCurrentNode().getId() );
+        state.setFlowchartSetSource( getChartSet().getSource() );
+        state.setFlowchartSetVersion( getChartSet().getVersion() );
+        
+        for ( Node nd : getStack() ) {
+            state.pushNodeIdToStack( nd.getChart() + "/" + nd.getId() );
+        }
+        
+        
+        
+        return state;
+    }
+    
 	/**
 	 * Convenience method for consuming multiple answers.
 	 * @param answers 

@@ -129,7 +129,7 @@
 (ask: (text: Do you have the parental or student consent to disclose the data to the repository?)
 	(yes:
 		(ask: (text: Does the consent specify the records to be disclosed and the purpose?)
-			(yes: (ask: (text: Does the consent specify ti whom the records can be discloed?)
+			(yes: (ask: (text: Does the consent specify ti whom the records can be disclosed?)
 				(yes: (set: FERPAConsent=parentalOrStudent)
 							(todo: Set additional tag fields)
 							(end)
@@ -159,22 +159,22 @@
 	(text: Are the education records being disclosed to the Repository to conduct a study for or on behalf of the educational agency or institution to: develop, validate, or administer predictive tests; administer student aid projects; or improve instruction?)
 	(yes: 
 		(>FERPA-8-a-i< ask:
-			(text: Did the educational agency or institution enter into an agreement with the Repository that specifies the scope and p=urpose od the study as well as the information to be disclosed?)
-			(no: (call: ferpaReject8)  )
+			(text: Did the educational agency or institution enter into an agreement with the Repository that specifies the scope and purpose of the study as well as the information to be disclosed?)
+			(no: (call: ferpaReject8)(end)  )
 		)
 		(>FERPA-8-a-ii< ask:
 			(text: Did the educational agency or institution enter into an agreement with the Repository that requires the organization to limit the use of PII to the purposes in the agreement?)
 			(terms: 
 				(PII: Personaly Identying Information, allowing third parties to identify people in the dataset.))
-			(no: (call: ferpaReject8)  )
+			(no: (call: ferpaReject8)(end)  )
 		)
 		(>FERPA-8-a-iii< ask:
 			(text: Did the educational agency or institution enter into an agreement with the Repository that ensures that the study must be performed in a way that does not allow personal identification of parents and students to anyone other that represntations of the organization that have legitimate interests in the information?)
-			(no: (call: ferpaReject8) )
+			(no: (call: ferpaReject8)(end) )
 		)
 		(>FERPA-8-a-iv< ask:
-			(text: Did the educational agency or institution enter into an agreement with the Repository that ensures that requiers PII to be destroyed when it is no longer needed and specifies the time period in which it must be destroyed?)
-			(no: (call: ferpaReject8)  )
+			(text: Did the educational agency or institution enter into an agreement with the Repository that ensures that requires PII to be destroyed when it is no longer needed and specifies the time period in which it must be destroyed?)
+			(no: (call: ferpaReject8)(end) )
 			(yes: (call: timeLimit) )
 		)
 	)
@@ -184,7 +184,7 @@
 			(yes:
 				(ask:
 					(text: Did the educational agency or institution maintain a record or disclosure that includes the names of the additional parties to whom the original receiving party may disclose the information and the fact that the records will be used to conduct a study on behalf of the agenc, meeting the requirements discussed?)
-					(no: (call: ferpaReject8)  )
+					(no: (call: ferpaReject8)(end)  )
 				)
 			)
 		)

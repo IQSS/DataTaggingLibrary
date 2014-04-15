@@ -20,6 +20,7 @@ public class FlowChartSet extends ChartEntity {
 	private static final AtomicInteger INDEX = new AtomicInteger(0);
 	
 	private URL source;
+    private String version;
 	private final Map<String, FlowChart> charts = new TreeMap<>();
 	private final Set<TagType> types  = new HashSet<>();
 	
@@ -45,6 +46,14 @@ public class FlowChartSet extends ChartEntity {
 	public void setSource(URL source) {
 		this.source = source;
 	}
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 	
 	public void addChart( FlowChart c ) {
 		charts.put( c.getId(),  c );
