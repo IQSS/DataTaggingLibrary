@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.flowcharts;
+package edu.harvard.iq.datatags.model.types;
 
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.TagValue;
@@ -9,7 +9,7 @@ import java.util.Set;
  * Used for reporting which slot a value should go to, and
  * whether the value exists and it compatible with the slot.
  */
-public abstract class SetLookupResult {
+public abstract class TagValueLookupResult {
     
     public interface Visitor<R> {
         R visit(SlotNotFound snf);
@@ -55,10 +55,10 @@ public abstract class SetLookupResult {
     
     public interface SuccessFailVisitor<R,E extends Exception> {
         R visitSuccess( Success s ) throws E;
-        R visitFailure( SetLookupResult s ) throws E;
+        R visitFailure( TagValueLookupResult s ) throws E;
     }
     
-    public static class SlotNotFound extends SetLookupResult {
+    public static class SlotNotFound extends TagValueLookupResult {
         private final String slotName;
 
         public SlotNotFound(String aSlotName) {
@@ -80,7 +80,7 @@ public abstract class SetLookupResult {
         }
     }
     
-    public static class ValueNotFound extends SetLookupResult {
+    public static class ValueNotFound extends TagValueLookupResult {
         private final TagType tagType;
         private final String valueName;
 
@@ -108,17 +108,17 @@ public abstract class SetLookupResult {
         }
     }
     
-    public static class Ambiguity extends SetLookupResult {
-        private final Set<SetLookupResult.Success> possibilities;
+    public static class Ambiguity extends TagValueLookupResult {
+        private final Set<TagValueLookupResult.Success> possibilities;
 
-        public Ambiguity( Iterable<SetLookupResult.Success> possibilities ) {
+        public Ambiguity( Iterable<TagValueLookupResult.Success> possibilities ) {
             this.possibilities = new HashSet<>();
-            for ( SetLookupResult.Success res : possibilities ) {
+            for ( TagValueLookupResult.Success res : possibilities ) {
                 this.possibilities.add( res );
             }
         }
 
-        public Set<SetLookupResult.Success> getPossibilities() {
+        public Set<TagValueLookupResult.Success> getPossibilities() {
             return possibilities;
         }
 
@@ -133,7 +133,7 @@ public abstract class SetLookupResult {
         }
     }
     
-    public static class Success extends SetLookupResult {
+    public static class Success extends TagValueLookupResult {
         
         private final TagValue value;
 
@@ -162,19 +162,19 @@ public abstract class SetLookupResult {
         
     }
     
-    static SlotNotFound SlotNotFound(String slotName) {
+    static public SlotNotFound SlotNotFound(String slotName) {
         return new SlotNotFound(slotName);
     }
 
-    static ValueNotFound ValueNotFound(TagType tt, String valueName) {
+    static public ValueNotFound ValueNotFound(TagType tt, String valueName) {
         return new ValueNotFound(tt, valueName);
     }
 
-    static Success Success(TagValue val) {
+    static public Success Success(TagValue val) {
         return new Success(val);
     }
 
-    static Ambiguity Ambiguity(Iterable<SetLookupResult.Success> r2) {
+    static public Ambiguity Ambiguity(Iterable<TagValueLookupResult.Success> r2) {
         return new Ambiguity(r2);
     }
     

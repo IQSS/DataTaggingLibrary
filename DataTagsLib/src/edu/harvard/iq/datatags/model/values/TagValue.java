@@ -1,7 +1,14 @@
 package edu.harvard.iq.datatags.model.values;
 
+import edu.harvard.iq.datatags.model.types.AggregateType;
+import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.SimpleType;
 import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.types.ToDoType;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  *
@@ -56,7 +63,7 @@ public abstract class TagValue<T extends TagType> {
 	public TagValue<T> getOwnableInstance() {
 		return this;
 	}
-	
+    
 	@Override
 	public int hashCode() {
 		int hash = 7;

@@ -7,7 +7,7 @@ import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartSetComplier;
-import edu.harvard.iq.datatags.parser.flowcharts.SetLookupResult;
+import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDataStructureVisualizer;
@@ -34,31 +34,31 @@ public class FlowChartCompiling {
             ex.printStackTrace(System.out);
             
         } catch (BadSetInstructionException ex) {
-            SetLookupResult badRes = ex.getBadResult();
+            TagValueLookupResult badRes = ex.getBadResult();
             
             System.out.println("Bad Set instruction: " + ex.getMessage());
-            badRes.accept( new SetLookupResult.VoidVisitor() {
+            badRes.accept( new TagValueLookupResult.VoidVisitor() {
 
                 @Override
-                protected void visitImpl(SetLookupResult.SlotNotFound snf) {
+                protected void visitImpl(TagValueLookupResult.SlotNotFound snf) {
                    System.out.println("Can't find slot '" + snf.getSlotName() + "'");
                 }
 
                 @Override
-                protected void visitImpl(SetLookupResult.ValueNotFound vnf) {
+                protected void visitImpl(TagValueLookupResult.ValueNotFound vnf) {
                     System.out.println("Can't find value " + vnf.getValueName() + " in type " + vnf.getTagType().getName());
                 }
 
                 @Override
-                protected void visitImpl(SetLookupResult.Ambiguity amb) {
+                protected void visitImpl(TagValueLookupResult.Ambiguity amb) {
                     System.out.println("Possible results are");
-                    for ( SetLookupResult poss : amb.getPossibilities() ) {
+                    for ( TagValueLookupResult poss : amb.getPossibilities() ) {
                         System.out.println("  " + poss);
                     }
                 }
 
                 @Override
-                protected void visitImpl(SetLookupResult.Success scss) {
+                protected void visitImpl(TagValueLookupResult.Success scss) {
                     System.out.println("Should not have gotten here");
                     throw new RuntimeException("Set success is not a failure.");
                 }

@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.parser.exceptions;
 
-import edu.harvard.iq.datatags.parser.flowcharts.SetLookupResult;
+import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
 
 /**
@@ -8,16 +8,16 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
  * @author michael
  */
 public class BadSetInstructionException extends DataTagsParseException {
-    private final SetLookupResult badResult;
+    private final TagValueLookupResult badResult;
     private final SetNodeRef offendingNode;
     
-    public BadSetInstructionException(SetLookupResult res, SetNodeRef anOffendingNode) {
+    public BadSetInstructionException(TagValueLookupResult res, SetNodeRef anOffendingNode) {
         super(null, "Bad set instruction: " + res );
         badResult = res;
         offendingNode = anOffendingNode;
     }
 
-    public SetLookupResult getBadResult() {
+    public TagValueLookupResult getBadResult() {
         return badResult;
     }
 

@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.parser.flowcharts;
 
+import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.model.DataTags;
 import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
@@ -214,22 +215,22 @@ public class FlowChartSetComplier {
         DataTags res = new DataTags();
 		
         for ( String slotName : nodeRef.getSlotNames() ) {
-            SetLookupResult slr = getTagValueFor( slotName, nodeRef.getValue(slotName));
+            TagValueLookupResult slr = baseType.getValue( slotName, nodeRef.getValue(slotName));
             slr.accept( setOrFail(res, slr, nodeRef) );
         }
         
 		return res;
 	}
 
-    private SetLookupResult.SuccessFailVisitor<DataTags, BadSetInstructionException> setOrFail(final DataTags res, final SetLookupResult slr, final SetNodeRef nodeRef) {
-        return new SetLookupResult.SuccessFailVisitor<DataTags, BadSetInstructionException>() {
+    private TagValueLookupResult.SuccessFailVisitor<DataTags, BadSetInstructionException> setOrFail(final DataTags res, final TagValueLookupResult slr, final SetNodeRef nodeRef) {
+        return new TagValueLookupResult.SuccessFailVisitor<DataTags, BadSetInstructionException>() {
             @Override
-            public DataTags visitSuccess(SetLookupResult.Success s) throws BadSetInstructionException {
+            public DataTags visitSuccess(TagValueLookupResult.Success s) throws BadSetInstructionException {
                 res.set(s.getValue());
                 return res;}
             
             @Override
-            public DataTags visitFailure(SetLookupResult s) throws BadSetInstructionException {
+            public DataTags visitFailure(TagValueLookupResult s) throws BadSetInstructionException {
                 throw new BadSetInstructionException(slr, nodeRef);
         }};
     }
@@ -248,94 +249,6 @@ public class FlowChartSetComplier {
 			default: return Collections.emptyList();	
 		}
 	}
-	
-     SetLookupResult getTagValueFor( final String slotName, final String valueName ) {
-        return baseType.accept(new TagType.Visitor<SetLookupResult>() {
-
-            @Override
-            public SetLookupResult visitSimpleType(SimpleType t) {
-                if ( slotName.equals(t.getName())) {
-                    TagValue v = t.valueOf( valueName );
-                    return (v!=null) ? SetLookupResult.Success(v)
-                                     : SetLookupResult.ValueNotFound(t, valueName);
-                } else {
-                    return SetLookupResult.SlotNotFound(slotName);
-                }
-            }
-
-            @Override
-            public SetLookupResult visitAggregateType(AggregateType t) {
-                if ( slotName.equals(t.getName())) {
-                    AggregateValue res = t.make();
-                    SimpleValue singleValue = t.getItemType().valueOf(valueName);
-                    
-                    if ( singleValue == null ) {
-                        return SetLookupResult.ValueNotFound(baseType, valueName);
-                    } else {
-                        res.add(singleValue);
-                        return SetLookupResult.Success(res);
-                    }
-                    
-                } else {
-                    return SetLookupResult.SlotNotFound(slotName);
-                }
-            }
-
-            @Override
-            public SetLookupResult visitCompoundType(CompoundType t) {
-                final List<SetLookupResult.Success> matches = new LinkedList<>();
-                final AtomicReference<SetLookupResult.ValueNotFound> vnfRef = new AtomicReference<>(null);
-                
-                SetLookupResult.VoidVisitor aggregator = new SetLookupResult.VoidVisitor() {
-
-                    @Override
-                    protected void visitImpl(SetLookupResult.SlotNotFound snf) {}
-
-                    @Override
-                    protected void visitImpl(SetLookupResult.ValueNotFound vnf) {
-                        vnfRef.set(vnf);
-                    }
-
-                    @Override
-                    protected void visitImpl(SetLookupResult.Ambiguity amb) {
-                        matches.addAll( amb.getPossibilities() );
-                    }
-
-                    @Override
-                    protected void visitImpl(SetLookupResult.Success scss) {
-                        matches.add( scss );
-                    }
-                };
-                
-                // group results by status.
-                for ( TagType tt : t.getFieldTypes() ) {
-                    tt.accept(this) // get the lookup result
-                      .accept(aggregator); // process the lookup result
-                }
-                
-                switch ( matches.size() ) {
-                    case 0:
-                        return (vnfRef.get()==null)
-                                ? SetLookupResult.SlotNotFound(slotName)
-                                : vnfRef.get();
-                    case 1: 
-                        return matches.get(0);
-                        
-                    default: 
-                        return SetLookupResult.Ambiguity(matches);
-                }
-            }
-
-            @Override
-            public SetLookupResult visitTodoType(ToDoType t) {
-                if ( slotName.equals(t.getName())) {
-                    return SetLookupResult.Success(t.getValue());
-                } else {
-                    return SetLookupResult.SlotNotFound(slotName);
-                }
-            }
-        });
-    }
     
 	/**
 	 * Inits all the ids of the nodes in the list. Also, collects the 
