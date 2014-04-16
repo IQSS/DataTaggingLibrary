@@ -35,21 +35,35 @@ public class FlowChartCompiling {
             
         } catch (BadSetInstructionException ex) {
             SetLookupResult badRes = ex.getBadResult();
-            System.out.println("Bad Set instruction: " + badRes.status);
-            switch ( badRes.status ) {
-                case Ambiguous:
-                    System.out.println(" possible values: " + badRes.values() );
-                    break;
-                case SlotNotFound:
-                    System.out.println("Can't find slot '" + badRes.textValue + "'");
-                    break;
-                case ValueNotFound:
-                    System.out.println("Can't find value " + badRes.textValue + " in type " + badRes.type);
-                    break;
-                case Success:
+            
+            System.out.println("Bad Set instruction: " + ex.getMessage());
+            badRes.accept( new SetLookupResult.VoidVisitor() {
+
+                @Override
+                protected void visitImpl(SetLookupResult.SlotNotFound snf) {
+                   System.out.println("Can't find slot '" + snf.getSlotName() + "'");
+                }
+
+                @Override
+                protected void visitImpl(SetLookupResult.ValueNotFound vnf) {
+                    System.out.println("Can't find value " + vnf.getValueName() + " in type " + vnf.getTagType().getName());
+                }
+
+                @Override
+                protected void visitImpl(SetLookupResult.Ambiguity amb) {
+                    System.out.println("Possible results are");
+                    for ( SetLookupResult poss : amb.getPossibilities() ) {
+                        System.out.println("  " + poss);
+                    }
+                }
+
+                @Override
+                protected void visitImpl(SetLookupResult.Success scss) {
                     System.out.println("Should not have gotten here");
-                    break;
-            }
+                    throw new RuntimeException("Set success is not a failure.");
+                }
+            });
+            
             System.out.println("offending Set node: " + ex.getOffendingNode() );
             
         } catch (DataTagsParseException ex) {

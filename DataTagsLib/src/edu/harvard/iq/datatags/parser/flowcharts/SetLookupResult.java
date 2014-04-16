@@ -6,68 +6,181 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Used for finding which slot a value should go to, and
- * that the value exists and it compatible with the slot.
- * In a perfect world I'd go with another hierarchy and visitors, but
- * due to time constraints we go for a less shiny solution.
- * 
- * LATER make a clean solution
+ * Used for reporting which slot a value should go to, and
+ * whether the value exists and it compatible with the slot.
  */
-public class SetLookupResult {
-
-    public enum Status {
-        SlotNotFound, ValueNotFound, Success, Ambiguous
-    }
-    public final Status status;
-    final Set<TagValue> values = new HashSet<>();
-    public final TagType type;
+public abstract class SetLookupResult {
     
-    /**
-     * Can either mean slot name or value name.
-     */
-    public final String textValue;
-    
-    static SetLookupResult SlotNotFound(String slotName) {
-        return new SetLookupResult(Status.SlotNotFound, null, slotName);
-    }
-
-    static SetLookupResult ValueNotFound(TagType tt, String valueName) {
-        return new SetLookupResult(Status.ValueNotFound, tt, valueName);
-    }
-
-    static SetLookupResult Success(TagValue val) {
-        SetLookupResult res = new SetLookupResult(Status.Success, val.getType(), null);
-        res.values.add(val);
-        return res;
-    }
-
-    static SetLookupResult Ambiguous(Iterable<SetLookupResult> r2) {
-        SetLookupResult res = new SetLookupResult(Status.Ambiguous, null, null);
-        for (SetLookupResult slr : r2) {
-            res.values.addAll(slr.values);
-        }
-        return res;
-    }
-
-    SetLookupResult(Status s, TagType tt, String aSlotName) {
-        status = s;
-        type = tt;
-        textValue = aSlotName;
+    public interface Visitor<R> {
+        R visit(SlotNotFound snf);
+        R visit(ValueNotFound vnf);
+        R visit(Ambiguity amb);
+        R visit(Success scss);
     }
     
     /**
-     * This method only makes sense when there is a single value.
-     * @return The only value we have.
+     * Convenience class for visitors that don't return anything.
      */
-    public TagValue get() {
-        if (values.size() != 1) {
-            throw new IllegalStateException("Calling get() on a SetLookupResult with size=" + values.size());
-        }
-        return values.iterator().next();
-    }
+    public static abstract class VoidVisitor implements Visitor<Void> {
 
-    public Set<TagValue> values() {
-        return values;
+        @Override
+        public Void visit(SlotNotFound snf) {
+            visitImpl(snf);
+            return null;
+        }
+
+        @Override
+        public Void visit(ValueNotFound vnf) {
+            visitImpl(vnf);
+            return null;
+        }
+
+        @Override
+        public Void visit(Ambiguity amb) {
+            visitImpl(amb);
+            return null;
+        }
+
+        @Override
+        public Void visit(Success scss) {
+            visitImpl( scss );
+            return null;
+        }
+        
+        protected abstract void visitImpl(SlotNotFound snf);
+        protected abstract void visitImpl(ValueNotFound vnf);
+        protected abstract void visitImpl(Ambiguity amb);
+        protected abstract void visitImpl(Success scss);
     }
     
+    public interface SuccessFailVisitor<R,E extends Exception> {
+        R visitSuccess( Success s ) throws E;
+        R visitFailure( SetLookupResult s ) throws E;
+    }
+    
+    public static class SlotNotFound extends SetLookupResult {
+        private final String slotName;
+
+        public SlotNotFound(String aSlotName) {
+            this.slotName = aSlotName;
+        }
+
+        public String getSlotName() {
+            return slotName;
+        }
+        
+        @Override
+        public String toString() {
+            return "[SlotNotFound slotName=" + getSlotName() + "]";
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> v) {
+            return v.visit(this);
+        }
+    }
+    
+    public static class ValueNotFound extends SetLookupResult {
+        private final TagType tagType;
+        private final String valueName;
+
+        public ValueNotFound(TagType aTagType, String aValueName) {
+            tagType = aTagType;
+            valueName = aValueName;
+        }
+
+        public TagType getTagType() {
+            return tagType;
+        }
+
+        public String getValueName() {
+            return valueName;
+        }
+        
+        @Override
+        public String toString() {
+            return "[ValueNotFound valueName=" + getValueName() + " tagType=" + getTagType() + "]";
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> v) {
+            return v.visit(this);
+        }
+    }
+    
+    public static class Ambiguity extends SetLookupResult {
+        private final Set<SetLookupResult.Success> possibilities;
+
+        public Ambiguity( Iterable<SetLookupResult.Success> possibilities ) {
+            this.possibilities = new HashSet<>();
+            for ( SetLookupResult.Success res : possibilities ) {
+                this.possibilities.add( res );
+            }
+        }
+
+        public Set<SetLookupResult.Success> getPossibilities() {
+            return possibilities;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> v) {
+            return v.visit( this );
+        }
+        
+        @Override
+        public String toString() {
+            return "[Ambiguity possibilities=" + getPossibilities() + "]";
+        }
+    }
+    
+    public static class Success extends SetLookupResult {
+        
+        private final TagValue value;
+
+        public Success( TagValue value ) {
+            this.value = value;
+        }
+
+        public TagValue getValue() {
+            return value;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> v) {
+            return v.visit(this);
+        }
+        
+        @Override
+        public <R, E extends Exception> R accept( SuccessFailVisitor<R,E> sfv ) throws E {
+            return sfv.visitSuccess(this);
+        }
+        
+        @Override
+        public String toString()  {
+            return "[Success value=" + getValue() + "]";
+        }
+        
+    }
+    
+    static SlotNotFound SlotNotFound(String slotName) {
+        return new SlotNotFound(slotName);
+    }
+
+    static ValueNotFound ValueNotFound(TagType tt, String valueName) {
+        return new ValueNotFound(tt, valueName);
+    }
+
+    static Success Success(TagValue val) {
+        return new Success(val);
+    }
+
+    static Ambiguity Ambiguity(Iterable<SetLookupResult.Success> r2) {
+        return new Ambiguity(r2);
+    }
+    
+    public abstract <R> R accept( Visitor<R> v );
+    
+    public <R, E extends Exception> R accept( SuccessFailVisitor<R,E> sfv ) throws E {
+        return sfv.visitFailure(this);
+    }
 }

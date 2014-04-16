@@ -12,7 +12,7 @@ public class BadSetInstructionException extends DataTagsParseException {
     private final SetNodeRef offendingNode;
     
     public BadSetInstructionException(SetLookupResult res, SetNodeRef anOffendingNode) {
-        super(null, "Bad set instruction: " + res.status );
+        super(null, "Bad set instruction: " + res );
         badResult = res;
         offendingNode = anOffendingNode;
     }

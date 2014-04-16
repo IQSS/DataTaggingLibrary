@@ -127,7 +127,7 @@ class Resolver implements TagValue.Visitor<TagValue.Function> {
 				AggregateValue res = op1.getOwnableInstance();
 				if ( v==null ) return res;
 				AggregateValue op2 = (AggregateValue) v;
-				for ( TagValue tv : op2.getValues() ) {
+				for ( SimpleValue tv : op2.getValues() ) {
 					res.add(tv);
 				}
 				return res;

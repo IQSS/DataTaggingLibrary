@@ -34,13 +34,12 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Parser for the chart set graphs.
@@ -213,24 +212,35 @@ public class FlowChartSetComplier {
 	
 	DataTags buildDataTags( SetNodeRef nodeRef ) throws BadSetInstructionException {
         DataTags res = new DataTags();
-		for ( String slotName : nodeRef.getSlotNames() ) {
+		
+        for ( String slotName : nodeRef.getSlotNames() ) {
             SetLookupResult slr = getTagValueFor( slotName, nodeRef.getValue(slotName));
-            if ( slr.status == SetLookupResult.Status.Success ) {
-                res.set(slr.get());
-            } else {
-                throw new BadSetInstructionException(slr, nodeRef);
-            }
+            slr.accept( setOrFail(res, slr, nodeRef) );
         }
+        
 		return res;
 	}
+
+    private SetLookupResult.SuccessFailVisitor<DataTags, BadSetInstructionException> setOrFail(final DataTags res, final SetLookupResult slr, final SetNodeRef nodeRef) {
+        return new SetLookupResult.SuccessFailVisitor<DataTags, BadSetInstructionException>() {
+            @Override
+            public DataTags visitSuccess(SetLookupResult.Success s) throws BadSetInstructionException {
+                res.set(s.getValue());
+                return res;}
+            
+            @Override
+            public DataTags visitFailure(SetLookupResult s) throws BadSetInstructionException {
+                throw new BadSetInstructionException(slr, nodeRef);
+        }};
+    }
 	
 	List<Answer> impliedAnswers( AskNode node ) {
 		Set<Answer> answers = node.getAnswers();
 		if ( answers.size() > 1 ) return Collections.emptyList();
 		if ( answers.isEmpty() ) return Arrays.asList( Answer.NO, Answer.YES ); // special case, where both YES and NO lead to the same options. 
 		// MAYBE issue a warning/suggestion to make this a (todo: ) node.
-		
 		Answer onlyAns = answers.iterator().next();
+		// TODO parser should use singleton answers YES/NO, to avoid this lowercase equality test
 		String ansText = onlyAns.getAnswerText().trim().toLowerCase();
 		switch( ansText ) {
 			case "yes": return Collections.singletonList( Answer.NO );
@@ -273,34 +283,47 @@ public class FlowChartSetComplier {
 
             @Override
             public SetLookupResult visitCompoundType(CompoundType t) {
-                Map<SetLookupResult.Status, Set<SetLookupResult>> results = new EnumMap<>(SetLookupResult.Status.class);
-                for ( SetLookupResult.Status s : SetLookupResult.Status.values() ) {
-                    results.put( s, new HashSet<SetLookupResult>() );
-                }
+                final List<SetLookupResult.Success> matches = new LinkedList<>();
+                final AtomicReference<SetLookupResult.ValueNotFound> vnfRef = new AtomicReference<>(null);
+                
+                SetLookupResult.VoidVisitor aggregator = new SetLookupResult.VoidVisitor() {
+
+                    @Override
+                    protected void visitImpl(SetLookupResult.SlotNotFound snf) {}
+
+                    @Override
+                    protected void visitImpl(SetLookupResult.ValueNotFound vnf) {
+                        vnfRef.set(vnf);
+                    }
+
+                    @Override
+                    protected void visitImpl(SetLookupResult.Ambiguity amb) {
+                        matches.addAll( amb.getPossibilities() );
+                    }
+
+                    @Override
+                    protected void visitImpl(SetLookupResult.Success scss) {
+                        matches.add( scss );
+                    }
+                };
                 
                 // group results by status.
                 for ( TagType tt : t.getFieldTypes() ) {
-                    SetLookupResult res = tt.accept(this);
-                    results.get(res.status).add(res);
+                    tt.accept(this) // get the lookup result
+                      .accept(aggregator); // process the lookup result
                 }
                 
-                if ( ! results.get(SetLookupResult.Status.Success).isEmpty() ) {
-                    Set<SetLookupResult> founds = results.get(SetLookupResult.Status.Success);
-                    return ( founds.size() == 1 ) 
-                             ? founds.iterator().next()
-                             : SetLookupResult.Ambiguous(founds);
+                switch ( matches.size() ) {
+                    case 0:
+                        return (vnfRef.get()==null)
+                                ? SetLookupResult.SlotNotFound(slotName)
+                                : vnfRef.get();
+                    case 1: 
+                        return matches.get(0);
+                        
+                    default: 
+                        return SetLookupResult.Ambiguity(matches);
                 }
-                
-                if ( ! results.get(SetLookupResult.Status.Ambiguous).isEmpty() ) {
-                    return SetLookupResult.Ambiguous( results.get(SetLookupResult.Status.Ambiguous) );
-                }
-
-                if ( ! results.get(SetLookupResult.Status.ValueNotFound).isEmpty() ) {
-                    return results.get(SetLookupResult.Status.ValueNotFound).iterator().next();
-                }
-
-                return SetLookupResult.SlotNotFound(slotName);
-                
             }
 
             @Override

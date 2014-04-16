@@ -18,7 +18,6 @@ import java.util.TreeMap;
  * @author michael
  */
 public class StringMapFormat {
-    // CONTPOINT: Test this, implement the valueOf.
     
     public Map<String,String> format( CompoundValue value ) {
         final Map<String, String> res = new TreeMap<>();
@@ -35,23 +34,25 @@ public class StringMapFormat {
 
             @Override
             public Void visitSimpleValue(SimpleValue v) {
+                res.put(getPath(), v.getName() );
+                return null;
+            }
+
+            private String getPath() {
                 StringBuilder sb = new StringBuilder();
                 for ( String s : stack ) {
                     sb.append(s).append("/");
                 }
-                res.put(sb.toString(), v.getName() );
-                return null;
+                return sb.toString();
             }
 
             @Override
             public Void visitAggregateValue(AggregateValue v) {
-                int i=0;
-                for ( TagValue tv : v.getValues() ) {
-                    stack.push( "$" + i );
-                    tv.accept(this);
-                    stack.pop();
-                    i++;
+                StringBuilder sb = new StringBuilder();
+                for ( SimpleValue sv : v.getValues() ) {
+                    sb.append(sv.getName()).append(",");
                 }
+                res.put( getPath(), sb.toString() );
                 return null;
             }
 
