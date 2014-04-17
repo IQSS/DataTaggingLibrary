@@ -52,7 +52,7 @@ public abstract class TagType {
 	
 	public abstract <T> T accept( Visitor<T> v );
 	
-    public TagValueLookupResult getValue( final String slotName, final String valueName ) {
+    public TagValueLookupResult lookupValue( final String slotName, final String valueName ) {
         return accept(new TagType.Visitor<TagValueLookupResult>() {
 
             @Override

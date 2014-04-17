@@ -31,11 +31,25 @@ public class CompoundType extends TagType {
 	public void removeFieldType( TagType tt ) {
 		fieldTypes.remove(tt);
 	}
+    
+    public TagType getTypeNamed( String typeName ) {
+        for ( TagType tt : getFieldTypes() ) {
+            if ( tt.getName().equals(typeName) ) {
+                return tt;
+            }
+        }
+        return null;
+    }
 
+    // TODO remove. Compound values have no names, ONLY THEIR SLOTS HAVE.
 	@Override
 	public CompoundValue make(String name, String info) {
 		return new CompoundValue(name, this, info);
 	}
+    
+    public CompoundValue make() {
+        return new CompoundValue(null, this, null);
+    }
 
 	@Override
 	public <T> T accept(Visitor<T> v) {

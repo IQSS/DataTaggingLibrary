@@ -76,7 +76,7 @@ public class DataTags extends CompoundValue {
 	 * </ul>
 	 * 
 	 * Note: if {@code other} is {@code null}, this method behaves as {@link #makeCopy()}.
-	 * 
+	 * TODO move up to CompoundValue
 	 * @param other
 	 * @return A new DataTags object, composed from {@code this} and {@code other}.
 	 */

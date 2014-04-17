@@ -50,7 +50,7 @@ public class CompoundValue extends TagValue<CompoundType> {
 	
 	@Override
 	public CompoundValue getOwnableInstance() {
-		return buildOwnableInstance( new CompoundValue( getName(), getType(), getInfo() ));
+		return buildOwnableInstance( new CompoundValue(getName(), getType(), getInfo()) );
 	}
 	
 	protected <T extends CompoundValue> T buildOwnableInstance( T startingPoint ) {

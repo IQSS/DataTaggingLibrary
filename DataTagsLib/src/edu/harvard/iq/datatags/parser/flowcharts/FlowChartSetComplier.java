@@ -215,7 +215,7 @@ public class FlowChartSetComplier {
         DataTags res = new DataTags();
 		
         for ( String slotName : nodeRef.getSlotNames() ) {
-            TagValueLookupResult slr = baseType.getValue( slotName, nodeRef.getValue(slotName));
+            TagValueLookupResult slr = baseType.lookupValue( slotName, nodeRef.getValue(slotName));
             slr.accept( setOrFail(res, slr, nodeRef) );
         }
         

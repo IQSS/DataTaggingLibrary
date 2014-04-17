@@ -34,7 +34,7 @@ public class StringMapFormat {
 
             @Override
             public Void visitSimpleValue(SimpleValue v) {
-                res.put(getPath(), v.getName() );
+                res.put(getPath() + v.getType().getName(), v.getName() );
                 return null;
             }
 
@@ -52,7 +52,8 @@ public class StringMapFormat {
                 for ( SimpleValue sv : v.getValues() ) {
                     sb.append(sv.getName()).append(",");
                 }
-                res.put( getPath(), sb.toString() );
+                String val = sb.toString();
+                res.put( getPath() + v.getType().getName(), val.substring(0,val.length()-1) );
                 return null;
             }
 
