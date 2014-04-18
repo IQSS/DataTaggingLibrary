@@ -68,7 +68,7 @@ public class CompoundTypeTest {
     
     @Test
     public void testSimpleSet() {
-        CompoundValue val = ctSut.make();
+        CompoundValue val = ctSut.createInstance();
         val.set( stA.make("A-0", null) );
         val.set( stB.make("B-0", null));
         
@@ -84,7 +84,7 @@ public class CompoundTypeTest {
     
     @Test( expected=IllegalArgumentException.class)
     public void testSimpleSet_fail() {
-        CompoundValue val = ctSut.make();
+        CompoundValue val = ctSut.createInstance();
         val.set( new SimpleType("NotThere","").make("banana", null) );
         
     }
@@ -92,7 +92,7 @@ public class CompoundTypeTest {
     
     @Test
     public void testAggregateSet() {
-        CompoundValue val = ctSut.make();
+        CompoundValue val = ctSut.createInstance();
         
         AggregateValue aggValOne = aggT.make();
         List<SimpleValue> itemInstances = values.get(stSetItem);

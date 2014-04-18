@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +36,14 @@ public class CollectionHelper {
 		return in.subList(0, in.size()-1);
 	}
 	
+	public <T> Iterable<T> reverse( Deque<T> in ) {
+		ArrayList<T> arr = new ArrayList<>(in);
+        for ( T t : in ) {
+            arr.add(t);
+        }
+        return reverse(arr);
+    }
+    
 	public <T> List<T> reverse( List<T> in ) {
 		ArrayList<T> arr = new ArrayList<>(in);
 		Collections.reverse(arr);

@@ -47,7 +47,7 @@ public class CompoundType extends TagType {
 		return new CompoundValue(name, this, info);
 	}
     
-    public CompoundValue make() {
+    public CompoundValue createInstance() {
         return new CompoundValue(null, this, null);
     }
 
