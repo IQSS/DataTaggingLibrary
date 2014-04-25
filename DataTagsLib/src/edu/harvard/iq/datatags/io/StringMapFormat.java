@@ -58,12 +58,10 @@ public class StringMapFormat {
             @Override
             public Void visitCompoundValue(CompoundValue cv) {
                 stack.add( cv.getType().getName() );
-                System.out.println("Pushed: " + stack);
                 for ( TagType tt : cv.getSetFieldTypes() ) {
                     cv.get(tt).accept(this);
                 }
                 stack.remove( stack.size()-1 );
-                System.out.println("Popped: " + stack);
                 return null;
             }
             
@@ -81,39 +79,50 @@ public class StringMapFormat {
     
     
     public TagValue parse( TagType type, Map<String,String> serializedValue ) {
-        final TagValue ret = null;
-        return null;
+        return evaluate( type, makeTrie(serializedValue).getSingleChild() );
     }
     
-//    TagType.Visitor<TagValue> evaluator( final TagType type, final List<String> path, final String values ) {
-//        return new TagType.Visitor<TagValue>() {
-//
-//            @Override
-//            public TagValue visitSimpleType(SimpleType t) {
-//                return t.valueOf(values);
-//            }
-//
-//            @Override
-//            public TagValue visitAggregateType(AggregateType t) {
-//                AggregateValue val = t.make();
-//                for ( String itemName : values.split(",") ) {
-//                    val.add( t.getItemType().valueOf(itemName) );
-//                }
-//                return val;
-//            }
-//
-//            @Override
-//            public TagValue visitCompoundType(CompoundType t) {
-//                CompoundValue val = t.createInstance();
-//                
-//            }
-//
-//            @Override
-//            public TagValue visitTodoType(ToDoType t) {
-//                return t.getValue();
-//            }
-//        };
-//    }
+    TagValue evaluate( final TagType type, final TrieNode node ) {
+        if ( node == null ) return null;
+        
+        return type.accept(new TagType.Visitor<TagValue>() {
+
+            @Override
+            public TagValue visitSimpleType(SimpleType t) {
+                // We expect a single value.
+                return t.valueOf(node.getSingleKey());
+            }
+
+            @Override
+            public TagValue visitAggregateType(AggregateType t) {
+                AggregateValue val = t.make();
+                String values = node.getSingleKey();
+                for ( String itemName : values.split(",") ) {
+                    val.add( t.getItemType().valueOf(itemName) );
+                }
+                return val;
+            }
+
+            @Override
+            public TagValue visitCompoundType(CompoundType t) {
+                CompoundValue val = t.createInstance();
+                
+                for ( TagType fieldType : t.getFieldTypes() ) {
+                    TagValue fieldValue = evaluate(fieldType, node.get(fieldType.getName()));
+                    if ( fieldValue != null ) {
+                        val.set( fieldValue );
+                    }
+                }
+                
+                return val;
+            }
+
+            @Override
+            public TagValue visitTodoType(ToDoType t) {
+                return t.getValue();
+            }
+        });
+    }
     
     public static class TrieNode {
         final Map<String, TrieNode> childs = new TreeMap<>();
@@ -129,6 +138,19 @@ public class StringMapFormat {
             return childs.put(key, value);
         }
         
+        public TrieNode getSingleChild() {
+            if ( childs.size() != 1 ) {
+                throw new RuntimeException("Child number is " + childs.size() + " " + childs.keySet() );
+            }
+            return childs.values().iterator().next();
+        }
+        
+        public String getSingleKey() {
+            if ( childs.size() != 1 ) {
+                throw new RuntimeException("Child number is " + childs.size() + " " + childs.keySet() );
+            }
+            return childs.keySet().iterator().next();
+        }
         
     }
     

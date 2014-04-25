@@ -15,6 +15,7 @@ import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import java.util.Map;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -70,6 +71,17 @@ public class StringMapFormatTest {
         
         TrieNode root = sut.makeTrie(result);
         printTrie( root, 0 );
+    }
+    
+    @Test
+    public void testRoundTrip() {
+        CompoundValue expected = makeCompoundValue();
+        StringMapFormat sut = new StringMapFormat();
+        
+        Map<String, String> serialized = sut.format(expected);
+        
+        CompoundValue result = (CompoundValue) sut.parse(dataTagsType, serialized);
+        assertEquals( expected, result );
     }
     
     
