@@ -184,7 +184,7 @@ public class RuntimeEngine {
         state.setFlowchartSetVersion( getChartSet().getVersion() );
         
         for ( Node nd : getStack() ) {
-            state.pushNodeIdToStack( nd.getChart() + "/" + nd.getId() );
+            state.pushNodeIdToStack( nd.getChart().getId() + "/" + nd.getId() );
         }
         
         state.setSerializedTagValue( new StringMapFormat().format(currentTags) );
@@ -201,7 +201,7 @@ public class RuntimeEngine {
         
         stack.clear();
         for ( String nodeId : snapshot.getStack() ) {
-            String[] comps = nodeId.split("/");
+            String[] comps = nodeId.split("/",-1);
             stack.push( (CallNode) chartSet.getFlowChart(comps[0]).getNode(comps[1]) );
         }
         

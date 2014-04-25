@@ -79,7 +79,9 @@ public class StringMapFormat {
     
     
     public TagValue parse( TagType type, Map<String,String> serializedValue ) {
-        return evaluate( type, makeTrie(serializedValue).getSingleChild() );
+        return serializedValue.isEmpty() 
+                ? type.make(null, null)
+                : evaluate( type, makeTrie(serializedValue).getSingleChild() );
     }
     
     TagValue evaluate( final TagType type, final TrieNode node ) {

@@ -5,7 +5,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 
 /**
  * A serializable capture of the state of a runtime engine. Used to allow
@@ -80,5 +80,49 @@ public class RuntimeEngineState implements java.io.Serializable {
     public void setCurrentChartId(String currentChartId) {
         this.currentChartId = currentChartId;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 47 * hash + Objects.hashCode(this.status);
+        hash = 47 * hash + Objects.hashCode(this.currentChartId);
+        hash = 47 * hash + Objects.hashCode(this.currentNodeId);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RuntimeEngineState other = (RuntimeEngineState) obj;
+        if (this.status != other.status) {
+            return false;
+        }
+        if (!Objects.equals(this.flowchartSetSource, other.flowchartSetSource)) {
+            return false;
+        }
+        if (!Objects.equals(this.flowchartSetVersion, other.flowchartSetVersion)) {
+            return false;
+        }
+        if (!Objects.equals(this.currentChartId, other.currentChartId)) {
+            return false;
+        }
+        if (!Objects.equals(this.currentNodeId, other.currentNodeId)) {
+            return false;
+        }
+        if (!Objects.equals(this.stack, other.stack)) {
+            return false;
+        }
+        if (!Objects.equals(this.serializedTagValue, other.serializedTagValue)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
     
 }
