@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
+import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.parser.definitions.DataDefinitionParser;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
@@ -93,7 +94,7 @@ public class FlowChartCompiling {
         
         String source = readAll(chartFile);
         
-        FlowChartSetComplier fcsParser = new FlowChartSetComplier( baseType );
+        FlowChartSetComplier fcsParser = new FlowChartSetComplier( (CompoundType) baseType);
         FlowChartASTParser astParser = new FlowChartASTParser();
         
         List<InstructionNodeRef> refs = astParser.graphParser().parse(source);

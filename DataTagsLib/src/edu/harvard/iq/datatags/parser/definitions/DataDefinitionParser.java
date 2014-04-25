@@ -28,6 +28,10 @@ import org.codehaus.jparsec.error.Location;
  * @author michael
  */
 public class DataDefinitionParser {
+
+    interface TagTypeFunc {
+		public TagType apply(  Map<String, TypeReference> refs, Set<String> usedTypes ) throws SemanticsErrorException;
+	}
 	
 	public TagType parseTagDefinitions( String dtl, String unitName ) throws DataTagsParseException {
 		try {
@@ -54,10 +58,6 @@ public class DataDefinitionParser {
 											pe.getMessage(),
 											pe);
 		}
-	}
-	
-	interface TagTypeFunc {
-		public TagType apply(  Map<String, TypeReference> refs, Set<String> usedTypes ) throws SemanticsErrorException;
 	}
 	
 	private final TypeReference.Visitor<TagTypeFunc> typeBuilder = new TypeReference.Visitor<TagTypeFunc>() {

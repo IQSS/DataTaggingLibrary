@@ -1,10 +1,11 @@
 package edu.harvard.iq.datatags.model.charts.nodes;
 
-import edu.harvard.iq.datatags.model.DataTags;
+import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 
 /**
- * A node that sets values in the data tags.
+ * A node that sets values in the data tags. Setting is done by means of composing 
+ * the node's compound value with the engine's current tag value.
  * @author michael
  */
 public class SetNode extends ThroughNode {
@@ -12,9 +13,9 @@ public class SetNode extends ThroughNode {
 	/**
 	 * The tags to be composed with the existing tags.
 	 */
-	private DataTags tags;
+	private CompoundValue tags;
 
-	public SetNode(DataTags tags, String id) {
+	public SetNode(CompoundValue tags, String id) {
 		super(id);
 		this.tags = tags;
 	}
@@ -24,11 +25,11 @@ public class SetNode extends ThroughNode {
 		return vr.visit( this );
 	}
 	
-	public DataTags getTags() {
+	public CompoundValue getTags() {
 		return tags;
 	}
 
-	public void setTags(DataTags tags) {
+	public void setTags(CompoundValue tags) {
 		this.tags = tags;
 	}	
 }

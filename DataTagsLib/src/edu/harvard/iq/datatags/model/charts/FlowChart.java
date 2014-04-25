@@ -7,6 +7,7 @@ import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
 import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URL;
@@ -26,7 +27,9 @@ public class FlowChart extends ChartEntity {
 	private URL source;
 	private Node start;
 	private final Map<String, Node> nodes = new TreeMap<>();
-	private final EndNode endNode;
+	
+    /** Unified end node, as most end nodes are the same. */
+    private final EndNode endNode;
 	
 	private final Node.Visitor<Node> nodeAdder = new Node.Visitor<Node>() {
 
@@ -82,7 +85,7 @@ public class FlowChart extends ChartEntity {
 		nodes.put( endNode.getId(), endNode);
 		endNode.setChart(this);
 	}
-
+    
 	public URL getSource() {
 		return source;
 	}

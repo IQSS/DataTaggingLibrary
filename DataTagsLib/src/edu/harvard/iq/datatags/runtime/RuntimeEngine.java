@@ -3,8 +3,9 @@ package edu.harvard.iq.datatags.runtime;
 import edu.harvard.iq.datatags.io.StringMapFormat;
 import edu.harvard.iq.datatags.model.charts.*;
 import edu.harvard.iq.datatags.model.charts.nodes.*;
+import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.values.Answer;
-import edu.harvard.iq.datatags.model.DataTags;
+import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.*;
 import java.util.Arrays;
 import java.util.Deque;
@@ -50,7 +51,9 @@ public class RuntimeEngine {
 		
 	private String id = "RuntimeEngine-" + COUNTER.incrementAndGet();
 	private FlowChartSet chartSet;
-	private DataTags currentTags;
+    
+    // LATER for completeness, this should be TagValue, not just CompoundTagValue
+	private CompoundValue currentTags;
 	private final Deque<CallNode> stack = new LinkedList<>();
 	private Node currentNode;
 	private Status status = Status.Idle;
@@ -118,7 +121,7 @@ public class RuntimeEngine {
 		}
 	};
 	
-	public DataTags getCurrentTags() {
+	public CompoundValue getCurrentTags() {
 		return currentTags;
 	}
 	
@@ -140,7 +143,7 @@ public class RuntimeEngine {
 		}
 		
 		if ( getCurrentTags() == null ) {
-			setCurrentTags( new DataTags() );
+			setCurrentTags( ((CompoundType)chartSet.getTopLevelType()).createInstance() );
 		}
 		status = Status.Running;
 		if ( listener!=null ) listener.runStarted(this);
@@ -175,6 +178,7 @@ public class RuntimeEngine {
         final RuntimeEngineState state = new RuntimeEngineState();
         
         state.setStatus(getStatus());
+        state.setCurrentChartId( getCurrentNode().getChart().getId() );
         state.setCurrentNodeId( getCurrentNode().getId() );
         state.setFlowchartSetSource( getChartSet().getSource() );
         state.setFlowchartSetVersion( getChartSet().getVersion() );
@@ -188,8 +192,19 @@ public class RuntimeEngine {
         return state;
     }
     
-    public void applySnapShot( RuntimeEngineState state ) {
-        // CONTPOINT
+    public void applySnapShot( RuntimeEngineState snapshot ) {
+        
+        status = snapshot.getStatus();
+        
+        currentTags = (CompoundValue) new StringMapFormat().parse(currentTags.getType(), snapshot.getSerializedTagValue());
+        currentNode = chartSet.getFlowChart( snapshot.getCurrentChartId() ).getNode( snapshot.getCurrentNodeId() );
+        
+        stack.clear();
+        for ( String nodeId : snapshot.getStack() ) {
+            String[] comps = nodeId.split("/");
+            stack.push( (CallNode) chartSet.getFlowChart(comps[0]).getNode(comps[1]) );
+        }
+        
     }
     
 	/**
@@ -212,7 +227,7 @@ public class RuntimeEngine {
 		return consumeAll( Arrays.asList(answers) );
 	}
 	
-	public void setCurrentTags(DataTags currentTags) {
+	public void setCurrentTags( CompoundValue currentTags) {
 		this.currentTags = currentTags;
 	}
 

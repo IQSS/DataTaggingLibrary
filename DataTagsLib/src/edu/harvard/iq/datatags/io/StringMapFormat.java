@@ -95,7 +95,7 @@ public class StringMapFormat {
 
             @Override
             public TagValue visitAggregateType(AggregateType t) {
-                AggregateValue val = t.make();
+                AggregateValue val = t.createInstance();
                 String values = node.getSingleKey();
                 for ( String itemName : values.split(",") ) {
                     val.add( t.getItemType().valueOf(itemName) );

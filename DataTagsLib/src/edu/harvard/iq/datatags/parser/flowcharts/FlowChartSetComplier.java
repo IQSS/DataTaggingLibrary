@@ -1,7 +1,6 @@
 package edu.harvard.iq.datatags.parser.flowcharts;
 
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
-import edu.harvard.iq.datatags.model.DataTags;
 import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
@@ -19,7 +18,7 @@ import edu.harvard.iq.datatags.model.types.ToDoType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.Answer;
 import static edu.harvard.iq.datatags.model.values.Answer.Answer;
-import edu.harvard.iq.datatags.model.values.SimpleValue;
+import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.flowcharts.references.AnswerNodeRef;
@@ -35,12 +34,12 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Parser for the chart set graphs.
@@ -57,11 +56,12 @@ public class FlowChartSetComplier {
      * While constructing {@link SetNode}s, this type is used to build node's
      * {@link DataTags} object.
      */
-    private final TagType baseType;
+    private final CompoundType topLevelType;
     
+    private final Map<TagType, TagType> parentType = new HashMap<>();
     
-    public FlowChartSetComplier(TagType baseType) {
-        this.baseType = baseType;
+    public FlowChartSetComplier(CompoundType baseType) {
+        this.topLevelType = baseType;
     }
     
     
@@ -70,12 +70,16 @@ public class FlowChartSetComplier {
 	}
 	
 	public FlowChartSet parse( List<? extends InstructionNodeRef> parsedNodes, String unitName ) throws BadSetInstructionException { 
-		// TODO implement the namespace, use unit name. 
+		// TODO implement the namespace, use unit name.
+        
+        buildParentTypeRelations();
 		
 		// Map node refs ids to the node refs.
 		initIds( parsedNodes );
 		
 		FlowChartSet chartSet = new FlowChartSet();
+        chartSet.setTopLevelType(topLevelType);
+        
 		FlowChart chart = new FlowChart( unitName + "-c1" );
 		chartSet.addChart(chart);
 		chartSet.setDefaultChartId( chart.getId() );
@@ -100,6 +104,7 @@ public class FlowChartSetComplier {
 		//  - Set nodes has valid slot names and values
 		//  - no unreachable nodes (e.g. chart with no id at start node)
 		
+        
 		return chartSet;
 	}
 	
@@ -211,28 +216,74 @@ public class FlowChartSetComplier {
 		return nodes.isEmpty() ? defaultNode : C.head( nodes ).accept(builder);
 	}
 	
-	DataTags buildDataTags( SetNodeRef nodeRef ) throws BadSetInstructionException {
-        DataTags res = new DataTags();
-		
+	CompoundValue buildDataTags( SetNodeRef nodeRef ) throws BadSetInstructionException {
+		CompoundValue topLeveltypeInstance = topLevelType.createInstance();
+        
         for ( String slotName : nodeRef.getSlotNames() ) {
-            TagValueLookupResult slr = baseType.lookupValue( slotName, nodeRef.getValue(slotName));
-            slr.accept( setOrFail(res, slr, nodeRef) );
+            TagValueLookupResult slr = topLevelType.lookupValue( slotName, nodeRef.getValue(slotName));
+            
+            try {
+                slr.accept( setOrFail(topLeveltypeInstance, slr) );
+            } catch ( BadSetInstructionException ble ) {
+                throw new BadSetInstructionException(ble.getBadResult(), nodeRef);
+            }
         }
         
-		return res;
+		return topLeveltypeInstance;
 	}
 
-    private TagValueLookupResult.SuccessFailVisitor<DataTags, BadSetInstructionException> setOrFail(final DataTags res, final TagValueLookupResult slr, final SetNodeRef nodeRef) {
-        return new TagValueLookupResult.SuccessFailVisitor<DataTags, BadSetInstructionException>() {
+    /**
+     * Return an object that, for successful matches, builds the compound value to 
+     * contain the matched value. For failures - throws an error.
+     * @param topLevelInstance the value that's added to
+     * @param lookupResult the result of the value lookup
+     * @return Object building {@code topLevelInstance}.
+     */
+    private TagValueLookupResult.SuccessFailVisitor<CompoundValue, BadSetInstructionException> 
+    setOrFail(final CompoundValue topLevelInstance, final TagValueLookupResult lookupResult) {
+        return new TagValueLookupResult.SuccessFailVisitor<CompoundValue, BadSetInstructionException>() {
             @Override
-            public DataTags visitSuccess(TagValueLookupResult.Success s) throws BadSetInstructionException {
-                res.set(s.getValue());
-                return res;}
+            public CompoundValue visitSuccess(TagValueLookupResult.Success s) throws BadSetInstructionException {
+                buildValue(topLevelInstance, C.tail(buildTypePath(s.getValue())), s.getValue());
+                
+                return topLevelInstance;
+            }
             
             @Override
-            public DataTags visitFailure(TagValueLookupResult s) throws BadSetInstructionException {
-                throw new BadSetInstructionException(slr, nodeRef);
+            public CompoundValue visitFailure(TagValueLookupResult s) throws BadSetInstructionException {
+                throw new BadSetInstructionException(lookupResult, null);
         }};
+    }
+    
+    void buildValue( final CompoundValue value, final List<TagType> path, final TagValue endValue ) {
+        C.head(path).accept(new TagType.VoidVisitor() {
+
+            @Override
+            public void visitSimpleTypeImpl(SimpleType t) {
+                value.set(endValue);
+            }
+
+            @Override
+            public void visitAggregateTypeImpl(AggregateType t) {
+                if ( value.get(t) == null ) {
+                    value.set( t.createInstance() );
+                }
+                ((AggregateValue)value.get(t)).add( ((AggregateValue)endValue).getValues() );
+            }
+
+            @Override
+            public void visitCompoundTypeImpl(CompoundType t) {
+                if ( value.get(t) == null ) {
+                    value.set( t.createInstance() );
+                }
+                buildValue( (CompoundValue)value.get(t), C.tail(path), endValue);
+            }
+
+            @Override
+            public void visitTodoTypeImpl(ToDoType t) {
+                value.set(endValue);
+            }
+        });
     }
 	
 	List<Answer> impliedAnswers( AskNode node ) {
@@ -321,5 +372,47 @@ public class FlowChartSetComplier {
 			inr.accept(visitor);
 		}
 	}
+    
+    /**
+     * Builds a path, made of {@link TagType} instances, from {@link #topLevelType}
+     * to the passed value.
+     * @param value
+     * @return Types, from the top to the value's type.
+     */
+    List<TagType> buildTypePath( TagValue value ) {
+        LinkedList<TagType> path = new LinkedList<>();
+        
+        TagType tp = value.getType();
+        while( tp != null ) {
+            path.addFirst(tp);
+            tp = parentType.get(tp);
+        }
+        
+        return path;
+    }
+    
+    void buildParentTypeRelations() {
+        final Deque<TagType> types = new LinkedList<>();
+        types.add( topLevelType );
+        
+        while ( ! types.isEmpty() ) {
+            types.pop().accept( new TagType.VoidVisitor() {
+
+                @Override
+                public void visitCompoundTypeImpl(CompoundType t) {
+                    for ( TagType fieldType : t.getFieldTypes() ) {
+                        parentType.put(fieldType, t);
+                        if ( fieldType instanceof CompoundType ) {
+                            types.add( fieldType );
+                        }
+                    }
+                }
+
+                @Override public void visitSimpleTypeImpl(SimpleType t) {}
+                @Override public void visitAggregateTypeImpl(AggregateType t) {}
+                @Override public void visitTodoTypeImpl(ToDoType t) {}
+            });
+        }
+    }
 
 }

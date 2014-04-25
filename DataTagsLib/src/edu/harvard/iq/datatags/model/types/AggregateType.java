@@ -25,7 +25,7 @@ public class AggregateType extends TagType {
 		return new AggregateValue(name, this, info);
 	}
     
-    public AggregateValue make() {
+    public AggregateValue createInstance() {
         return new AggregateValue("valName", this, null);
     }
 

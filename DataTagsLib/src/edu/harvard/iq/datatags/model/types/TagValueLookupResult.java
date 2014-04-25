@@ -1,6 +1,5 @@
 package edu.harvard.iq.datatags.model.types;
 
-import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import java.util.HashSet;
 import java.util.Set;

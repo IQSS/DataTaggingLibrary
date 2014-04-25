@@ -32,6 +32,7 @@ public class ChartRunningTest {
 		c1.setStart(start);
 		
 		FlowChartSet fcs = new FlowChartSet();
+        fcs.setTopLevelType( mockTopLevelType() );
 		fcs.addChart(c1);
 		
 		assertExecutionTrace( fcs, flowChartName,
@@ -43,7 +44,7 @@ public class ChartRunningTest {
 	public void chartWithBranches() {
 		String flowChartName = "flowChart";
 		FlowChart c1 = new FlowChart( flowChartName );
-		
+        
 		AskNode start = c1.add( new AskNode("1") );
 		start.setNodeFor( YES, c1.add(new AskNode("2")) )
 			 .setNodeFor( NO,  c1.add(new AskNode("3")) )
@@ -57,7 +58,7 @@ public class ChartRunningTest {
 		
 		c1.setStart(start);
 		
-		FlowChartSet fcs = new FlowChartSet("Branching");
+		FlowChartSet fcs = new FlowChartSet("Branching", mockTopLevelType());
 		fcs.addChart(c1);
 		
 		assertExecutionTrace( fcs, flowChartName,
@@ -90,7 +91,7 @@ public class ChartRunningTest {
 		
 		mainChart.setStart( start );
 		
-		FlowChartSet fcs = new FlowChartSet("single call");
+		FlowChartSet fcs = new FlowChartSet("single call", mockTopLevelType());
 		fcs.addChart(mainChart);
 		fcs.addChart(subChart);
 		
@@ -122,7 +123,7 @@ public class ChartRunningTest {
 		
 		mainChart.setStart( start );
 		
-		FlowChartSet fcs = new FlowChartSet("tail call");
+		FlowChartSet fcs = new FlowChartSet("tail call", mockTopLevelType());
 		fcs.addChart(mainChart);
 		fcs.addChart(subChart);
 		
@@ -214,6 +215,5 @@ public class ChartRunningTest {
 						"END"),
 				false);
 	}
-	
 	
 }

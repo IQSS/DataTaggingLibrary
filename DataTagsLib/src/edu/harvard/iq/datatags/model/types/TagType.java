@@ -22,6 +22,37 @@ public abstract class TagType {
 		T visitTodoType( ToDoType t );
 	}
 	
+    public abstract static class VoidVisitor implements Visitor<Void> {
+        @Override
+        public Void visitSimpleType( SimpleType t ) {
+            visitSimpleTypeImpl(t);
+            return null;
+        }
+        
+        @Override
+        public Void visitAggregateType( AggregateType t ) {
+            visitAggregateTypeImpl(t);
+            return null;
+        }
+        
+        @Override
+        public Void visitCompoundType( CompoundType t ) {
+            visitCompoundTypeImpl(t);
+            return null;
+        }
+        
+        @Override
+        public Void visitTodoType( ToDoType t ) {
+            visitTodoTypeImpl(t);
+            return null;
+        }
+
+        public abstract void visitSimpleTypeImpl( SimpleType t );
+        public abstract void visitAggregateTypeImpl( AggregateType t );
+        public abstract void visitCompoundTypeImpl( CompoundType t );
+        public abstract void visitTodoTypeImpl( ToDoType t );
+    }
+    
 	private final String name;
 	private String info;
 
@@ -54,10 +85,10 @@ public abstract class TagType {
 	
     public TagValueLookupResult lookupValue( final String slotName, final String valueName ) {
         return accept(new TagType.Visitor<TagValueLookupResult>() {
-
+            
             @Override
             public TagValueLookupResult visitSimpleType(SimpleType t) {
-                if ( slotName.equals(t.getName())) {
+                if ( slotName.equals(t.getName()) ) {
                     TagValue v = t.valueOf( valueName );
                     return (v!=null) ? TagValueLookupResult.Success(v)
                                      : TagValueLookupResult.ValueNotFound(t, valueName);
@@ -68,8 +99,8 @@ public abstract class TagType {
 
             @Override
             public TagValueLookupResult visitAggregateType(AggregateType t) {
-                if ( slotName.equals(t.getName())) {
-                    AggregateValue res = t.make();
+                if ( slotName.equals(t.getName()) ) {
+                    AggregateValue res = t.createInstance();
                     SimpleValue singleValue = t.getItemType().valueOf(valueName);
                     
                     if ( singleValue == null ) {

@@ -1,11 +1,9 @@
 package edu.harvard.iq.datatags.model.charts;
 
+import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,7 +20,7 @@ public class FlowChartSet extends ChartEntity {
 	private URL source;
     private String version;
 	private final Map<String, FlowChart> charts = new TreeMap<>();
-	private final Set<TagType> types  = new HashSet<>();
+	private CompoundType topLevelType = null;
 	
 	/**
 	 * The id of the chart from which, in the absence of any other requirement,
@@ -32,12 +30,17 @@ public class FlowChartSet extends ChartEntity {
 	private String defaultChartId;
 	
 	public FlowChartSet() {
-		this( "FlowChartSet-"+INDEX.incrementAndGet());
+		this( "FlowChartSet-"+INDEX.incrementAndGet() );
 	}
 	
 	public FlowChartSet(String anId) {
-		super(anId);
+		this( anId, null );
 	}
+    
+    public FlowChartSet( String anId, CompoundType aTopLevelType ) {
+        super( anId );
+        topLevelType = aTopLevelType;
+    }
 
 	public URL getSource() {
 		return source;
@@ -62,14 +65,6 @@ public class FlowChartSet extends ChartEntity {
 	public FlowChart getFlowChart( String id ) {
 		return charts.get( id );
 	}
-	
-	public void addType( TagType tt ) {
-		types.add( tt );
-	}
-	
-	public Set<TagType> getTypes() {
-		return Collections.unmodifiableSet(types);
-	}
 
 	public Iterable<FlowChart> charts() {
 		return charts.values();
@@ -85,5 +80,13 @@ public class FlowChartSet extends ChartEntity {
 	public void setDefaultChartId(String defaultChartId) {
 		this.defaultChartId = defaultChartId;
 	}
+
+    public TagType getTopLevelType() {
+        return topLevelType;
+    }
+
+    public void setTopLevelType(CompoundType topLevelType) {
+        this.topLevelType = topLevelType;
+    }
 	
 }

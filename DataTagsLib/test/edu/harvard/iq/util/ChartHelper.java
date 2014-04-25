@@ -6,6 +6,8 @@ import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
 import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
+import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.SimpleType;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.runtime.listeners.RuntimeEnginePrintStreamListener;
@@ -43,8 +45,20 @@ public class ChartHelper {
 		return retVal;
 	}
 	
+    public static CompoundType mockTopLevelType() {
+        CompoundType mock = new CompoundType("Mock", "A mock type to just have a type there.");
+        SimpleType st1 = new SimpleType("st1",null);
+        st1.make("v1", null);
+        st1.make("v2", null);
+        st1.make("v3", null);
+        st1.make("v4", null);
+        mock.addFieldType(st1);
+        
+        return mock;
+    }
+    
 	public static FlowChartSet chartSet( FlowChart... flowCharts ) {
-		FlowChartSet fcs = new FlowChartSet( flowCharts[0].getId()+"_set" );
+		FlowChartSet fcs = new FlowChartSet( flowCharts[0].getId()+"_set", mockTopLevelType() );
 		for ( FlowChart fc : flowCharts ) {
 			fcs.addChart(fc );
 		}
