@@ -22,7 +22,7 @@ public class RuntimeEngineState implements java.io.Serializable {
     private String currentNodeId;
     private final Deque<String> stack = new LinkedList<>();
     
-    private final Map<String, String> datatagsStatus = new HashMap<>();
+    private Map<String, String> serializedTagValue = new HashMap<>();
 
     public RuntimeEngine.Status getStatus() {
         return status;
@@ -63,17 +63,13 @@ public class RuntimeEngineState implements java.io.Serializable {
     public void setCurrentNodeId(String currentNodeId) {
         this.currentNodeId = currentNodeId;
     }
-    
-    public void putDatatagValue( String slotPath, String value ) {
-        datatagsStatus.put(slotPath, value);
+
+    public Map<String, String> getSerializedTagValue() {
+        return serializedTagValue;
     }
-    
-    public String getDatatagValue( String slotPath ) {
-        return datatagsStatus.get(slotPath);
-    }
-    
-    public Set<String> getDatatagSlotPaths() {
-        return datatagsStatus.keySet();
+
+    public void setSerializedTagValue(Map<String, String> serializedTagValue) {
+        this.serializedTagValue = serializedTagValue;
     }
     
 }

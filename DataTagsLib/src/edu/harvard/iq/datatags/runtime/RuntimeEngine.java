@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.runtime;
 
+import edu.harvard.iq.datatags.io.StringMapFormat;
 import edu.harvard.iq.datatags.model.charts.*;
 import edu.harvard.iq.datatags.model.charts.nodes.*;
 import edu.harvard.iq.datatags.model.values.Answer;
@@ -12,7 +13,7 @@ import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Intended useage pattern:
+ * Intended usage pattern:
  * <code>
  *	if ( engine.start(node) ) {
  *		while ( engine.consume( getAns() ) ) {}
@@ -182,9 +183,13 @@ public class RuntimeEngine {
             state.pushNodeIdToStack( nd.getChart() + "/" + nd.getId() );
         }
         
-        
+        state.setSerializedTagValue( new StringMapFormat().format(currentTags) );
         
         return state;
+    }
+    
+    public void applySnapShot( RuntimeEngineState state ) {
+        // CONTPOINT
     }
     
 	/**
