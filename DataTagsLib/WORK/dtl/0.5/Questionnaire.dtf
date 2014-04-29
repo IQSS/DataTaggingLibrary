@@ -140,31 +140,38 @@
 					(no:  (set: storage=clear, code=green, harm=negligible, auth=none, effort=deidentified, transit=clear, FERPABasis=FERPADirectoryInfo)))
 				(end))
 )))
+(set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt)
 ( >fqc5< ask:
 	(text: Did the parents or students [if over 18] sign a consent form authorizing this disclosure of their data?)
 	(yes:
 		( >fcq5a< ask: 
 			(text: Did the consent form specify the records to be disclosed, the purpose of the disclosure, and to whom the records may be disclosed?)
-			(yes: (set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt, FERPABasis=FERPAConsent)
+			(yes: (set: FERPABasis=FERPAConsent)
 						(call: FERPA-Consent)
 						(end))
 		))
 )
 ( >fcq6< ask: 
 	(text: Are the data being disclosed to a school official [or contractor, consultant, volunteer, or other party to whom an agency or institution has outsourced institutional services or functions] with legitimate educational interests?)
-	(yes: (set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt, FERPABasis=FERPAOfficial)
+	(yes: (set: FERPABasis=FERPAOfficial)
 			  (call: FERPA-DUA-Official)
 			  (end))
 )
 ( >fcq7< ask:
 	(text: Are the data being disclosed for the purpose of conducting a study for or on behalf of the educational agency or institution in order to develop, validate, or administer predictive tests; administer student aid projects; or improve instruction?)
-	(yes: (set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt, FERPABasis=FERPAStudies)
+	(yes: (set: FERPABasis=FERPAStudies)
 				(call: FERPA-DUA-Studies)
 				(end))
 	(no: 
 		(reject: educational agency or institution is likely breaching its FERPA duties because it is disclosing, or a third party is re-disclosing, non-directory PII without parental consent where no obvious FERPA exception applies))
 )
 (end)
+
 ( >FERPA-DUA-Studies< todo: implement )
+(end)
+
 ( >FERPA-DUA-Official< todo: implement )
+(end)
+
 ( >FERPA-Consent< todo: implement )
+(end)
