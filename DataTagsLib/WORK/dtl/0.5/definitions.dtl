@@ -1,4 +1,4 @@
-DataTags: code, basis, Handling, DataType, DUA, IP, identity, FERPA.
+DataTags: code, basis, Handling, DataType, DUA, IP, identity, FERPA, CIPSEA.
 
 TODO: IP.
 
@@ -31,7 +31,7 @@ authentication: some of
 DataType:
 	standards, effort, harm.
 
-standards: some of HIPAA, FERPA, ElectronicWiretapping, CommonRule.
+standards: some of HIPAA, FERPA, ElectronicWiretapping, CommonRule, CIPSEA, PrivacyAct.
 effort:    one of  identified, identifiable, deidentified, anonymous.
 harm:      one of  noRisk, negligible, shame, civil, criminal, maxControl.
 
@@ -70,5 +70,7 @@ auth: one of approval, none.
 identity: one of notPersonSpecific, personSpecific.
 
 FERPA: FERPABasis.
-
 FERPABasis: one of FERPADeidentified, FERPADirectoryOptOut, FERPADirectoryInfo, FERPAOfficial, FERPAStudies, FERPAConsent.
+
+CIPSEA: CIPSEABasis.
+CIPSEABasis: one of CIPSEADeidentified, CIPSEAIdentifiable, PrivacyActDeidentified, PrivacyActIdentifiable.
