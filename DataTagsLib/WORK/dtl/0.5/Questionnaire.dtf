@@ -129,7 +129,7 @@
 (ask: (text: Do you have the parental or student consent to disclose the data to the repository?)
 	(yes:
 		(ask: (text: Does the consent specify the records to be disclosed and the purpose?)
-			(yes: (ask: (text: Does the consent specify ti whom the records can be disclosed?)
+			(yes: (ask: (text: Does the consent specify to whom the records can be disclosed?)
 				(yes: (set: FERPAConsent=parentalOrStudent)
 							(todo: Set additional tag fields)
 							(end)

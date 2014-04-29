@@ -2,6 +2,17 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/WORK/dtl/0.5/Questionnaire.dtf</file>
+            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/parser/flowcharts/references/InstructionNodeRef.java</file>
+            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/parser/flowcharts/FlowChartASTParser.java</file>
+            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/test/edu/harvard/iq/datatags/parser/flowcharts/FlowChartASTParserTest.java</file>
+            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/cli/CliRunner.java</file>
+            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/parser/definitions/references/TypeReference.java</file>
+            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/runtime/RuntimeEngine.java</file>
+            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/types/AggregateType.java</file>
+            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/test/edu/harvard/iq/util/ChartHelper.java</file>
+            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/runtime/exceptions/MissingNodeException.java</file>
+        </group>
     </open-files>
 </project-private>

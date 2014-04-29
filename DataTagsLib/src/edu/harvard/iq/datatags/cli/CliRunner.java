@@ -126,7 +126,6 @@ public class CliRunner {
                 reader.close();
             }
         }
-        
     }
     
     void dumpTagValue( TagValue val ) {
@@ -149,10 +148,9 @@ public class CliRunner {
         for ( Answer ans: ask.getAnswers() ) {
             println( " - " + ans.getAnswerText() );
         }
-        
-        
+
         String ansText;
-        while ( (ansText = readLine("Write the answer:")) != null ) {
+        while ( (ansText = readLine("answer: ")) != null ) {
             Answer ans = Answer.Answer(ansText);
             if ( ask.getAnswers().contains(ans) ) {
                 return ans;
@@ -174,7 +172,7 @@ public class CliRunner {
     
     void printMsg( String format, Object... args ) {
         try {
-            println("#" + format, args );
+            println("# " + format, args );
         } catch (IOException ex) {
             Logger.getLogger(CliRunner.class.getName()).log(Level.SEVERE, null, ex);
         }

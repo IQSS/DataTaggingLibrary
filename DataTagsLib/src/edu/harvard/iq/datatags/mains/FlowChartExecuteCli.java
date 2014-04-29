@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.mains;
+    package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
@@ -24,8 +24,6 @@ public class FlowChartExecuteCli {
         Path chartFile = Paths.get(args[1]);
 
         CompoundType definitions = (CompoundType) parseDefinitions(definitionFile);
-        
-        // CONTPOINT: create a CLI client.
         
         FlowChartSetComplier fcsParser = new FlowChartSetComplier( definitions );
         
