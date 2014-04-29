@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.parser.flowcharts;
 
+import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
 import edu.harvard.iq.datatags.parser.flowcharts.references.AnswerNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.AskNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.CallNodeRef;
@@ -62,6 +63,15 @@ public class FlowChartASTParserTest {
         String code = "(>id< ask:(>theText< text:here's a question)(yes:(call:yesImpl)))";
         Parser<AskNodeRef> sut = instance.askNode( instance.graphParser() );
         assertEquals( expected, sut.parse(code) );
+    }
+    
+    @Test
+    public void testCallNode_trim()  {
+        CallNodeRef expected = new CallNodeRef("node");
+        Parser<CallNodeRef> sut = instance.callNode();
+        assertEquals( expected, sut.parse("(call: node )") );
+        assertEquals( expected, sut.parse("(call: node)") );
+        assertEquals( expected, sut.parse("(call:     node      )") );
     }
     
     @Test

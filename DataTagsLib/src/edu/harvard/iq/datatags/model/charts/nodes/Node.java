@@ -20,7 +20,54 @@ public abstract class Node extends ChartEntity {
 		R visit( TodoNode nd ) throws DataTagsRuntimeException;
 		R visit( EndNode nd ) throws DataTagsRuntimeException;
 	}
-	
+    
+    public static abstract class NullVisitor implements Visitor<Void> {
+
+        @Override
+        public Void visit(AskNode nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+
+        @Override
+        public Void visit(SetNode nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+
+        @Override
+        public Void visit(RejectNode nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+
+        @Override
+        public Void visit(CallNode nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+
+        @Override
+        public Void visit(TodoNode nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+
+        @Override
+        public Void visit(EndNode nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+
+        public abstract void visitImpl( AskNode nd    ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( SetNode nd    ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( RejectNode nd ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( CallNode nd   ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( TodoNode nd   ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( EndNode nd    ) throws DataTagsRuntimeException;
+
+    }
+    
 	private FlowChart chart;
 
 	public Node(String id) {

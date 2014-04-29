@@ -39,11 +39,11 @@ public class RuntimeEngine {
         Error }
 	
 	public interface Listener {
-		public void runStarted( RuntimeEngine ngn );
-		public void processedNode( RuntimeEngine ngn, Node node );
-		public void runTerminated( RuntimeEngine ngn );
+		void runStarted( RuntimeEngine ngn );
+		void processedNode( RuntimeEngine ngn, Node node );
+		void runTerminated( RuntimeEngine ngn );
 		// TODO find usages, consider removing, as we throw exceptions anyway.
-		public void runError( RuntimeEngine ngn, DataTagsRuntimeException e );
+		void runError( RuntimeEngine ngn, DataTagsRuntimeException e );
 	}
 	
 	/** Used to give instances meaningful names. */
@@ -52,7 +52,7 @@ public class RuntimeEngine {
 	private String id = "RuntimeEngine-" + COUNTER.incrementAndGet();
 	private FlowChartSet chartSet;
     
-    // LATER for completeness, this should be TagValue, not just CompoundTagValue
+    // LATER for completeness, this should be TagValue, not just CompoundTagValue... or should it?
 	private CompoundValue currentTags;
 	private final Deque<CallNode> stack = new LinkedList<>();
 	private Node currentNode;

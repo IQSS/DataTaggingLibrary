@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.mains;
 
+import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.TagType;
@@ -38,32 +39,7 @@ public class FlowChartCompiling {
             TagValueLookupResult badRes = ex.getBadResult();
             
             System.out.println("Bad Set instruction: " + ex.getMessage());
-            badRes.accept( new TagValueLookupResult.VoidVisitor() {
-
-                @Override
-                protected void visitImpl(TagValueLookupResult.SlotNotFound snf) {
-                   System.out.println("Can't find slot '" + snf.getSlotName() + "'");
-                }
-
-                @Override
-                protected void visitImpl(TagValueLookupResult.ValueNotFound vnf) {
-                    System.out.println("Can't find value " + vnf.getValueName() + " in type " + vnf.getTagType().getName());
-                }
-
-                @Override
-                protected void visitImpl(TagValueLookupResult.Ambiguity amb) {
-                    System.out.println("Possible results are");
-                    for ( TagValueLookupResult poss : amb.getPossibilities() ) {
-                        System.out.println("  " + poss);
-                    }
-                }
-
-                @Override
-                protected void visitImpl(TagValueLookupResult.Success scss) {
-                    System.out.println("Should not have gotten here");
-                    throw new RuntimeException("Set success is not a failure.");
-                }
-            });
+            badRes.accept( new BadSetInstructionPrinter() );
             
             System.out.println("offending Set node: " + ex.getOffendingNode() );
             
@@ -94,7 +70,7 @@ public class FlowChartCompiling {
         
         String source = readAll(chartFile);
         
-        FlowChartSetComplier fcsParser = new FlowChartSetComplier( (CompoundType) baseType);
+        FlowChartSetComplier fcsParser = new FlowChartSetComplier( (CompoundType)baseType );
         FlowChartASTParser astParser = new FlowChartASTParser();
         
         List<InstructionNodeRef> refs = astParser.graphParser().parse(source);
@@ -116,4 +92,5 @@ public class FlowChartCompiling {
     private String readAll( Path p ) throws IOException {
         return new String(Files.readAllBytes(p), StandardCharsets.UTF_8);
     }
+
 }

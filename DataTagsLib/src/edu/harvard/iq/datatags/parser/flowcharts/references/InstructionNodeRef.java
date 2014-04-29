@@ -13,12 +13,12 @@ public abstract class InstructionNodeRef extends NodeRef {
     private final TypedNodeHeadRef head;
 	
 	public interface Visitor<T> {
-		public T visit( AskNodeRef askRef );
-		public T visit( CallNodeRef callRef );
-		public T visit( EndNodeRef endRef );
-		public T visit( SetNodeRef setRef );
-		public T visit( RejectNodeRef setRef );
-		public T visit( TodoNodeRef todoRef );
+		T visit( AskNodeRef askRef );
+		T visit( CallNodeRef callRef );
+		T visit( EndNodeRef endRef );
+		T visit( SetNodeRef setRef );
+		T visit( RejectNodeRef setRef );
+		T visit( TodoNodeRef todoRef );
 	}
 	
     public InstructionNodeRef(TypedNodeHeadRef head) {

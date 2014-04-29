@@ -98,7 +98,7 @@ public class FlowChartASTParser extends AbstractASTParser {
         return stringBodyNode("call").map( new Map<Pair<StringNodeHeadRef, String>, CallNodeRef>(){
             @Override
             public CallNodeRef map(Pair<StringNodeHeadRef, String> from) {
-                return new CallNodeRef( from.a.getId(), from.b );
+                return new CallNodeRef( from.a.getId(), from.b.trim() );
         }});
     }
     
@@ -184,7 +184,7 @@ public class FlowChartASTParser extends AbstractASTParser {
     }
     
     Parser<Pair<String, String>> setAssignmentPair() {
-        return Parsers.tuple( slotReference().followedBy( whitespaces )
+        return tuple( slotReference().followedBy( whitespaces )
                                 .followedBy( Scanners.isChar('=') ).followedBy( whitespaces ),
                 valueName() );
     }
@@ -221,7 +221,7 @@ public class FlowChartASTParser extends AbstractASTParser {
     
     Parser<List<TermNodeRef>> termsNode() {
         return completeNode(
-                Parsers.tuple(nodeHeadWithType(NodeType.Terms).followedBy( nodeHeadEnd ),
+                tuple(nodeHeadWithType(NodeType.Terms).followedBy( nodeHeadEnd ),
                         termNode().sepBy(whitespaces).followedBy(whitespaces))
                 .map( new Map<Pair<TypedNodeHeadRef,List<TermNodeRef>>, List<TermNodeRef>>(){
             @Override
@@ -237,7 +237,7 @@ public class FlowChartASTParser extends AbstractASTParser {
 	
     Parser<Pair<StringNodeHeadRef, String>> stringBodyNode( Parser<StringNodeHeadRef> nodeHead ) {
         return completeNode(
-            Parsers.tuple( nodeHead.followedBy( nodeHeadEnd ),
+            tuple( nodeHead.followedBy( nodeHeadEnd ),
                  notChar(')').many1().source())
             );
     }
@@ -268,10 +268,10 @@ public class FlowChartASTParser extends AbstractASTParser {
                 });
         
         Parser<Pair<TextNodeRef, List<TermNodeRef>>> textThenTerms = 
-                Parsers.tuple(textNode().followedBy(whitespaces),termsNode());
+                tuple(textNode().followedBy(whitespaces),termsNode());
         
         Parser<Pair<TextNodeRef, List<TermNodeRef>>> termsThenText = 
-                Parsers.tuple(termsNode().followedBy(whitespaces),textNode()
+                tuple(termsNode().followedBy(whitespaces),textNode()
                 ).map( new Map<Pair<List<TermNodeRef>,TextNodeRef>, Pair<TextNodeRef, List<TermNodeRef>>>(){
                     @Override
                     public Pair<TextNodeRef, List<TermNodeRef>> map(Pair<List<TermNodeRef>,TextNodeRef> from) {

@@ -14,7 +14,7 @@ public class MissingNodeException extends LinkageException {
 	private String nodeId;
 
 	public MissingNodeException(FlowChartSet chartSet, RuntimeEngine engine, CallNode caller) {
-		super(chartSet, engine, String.format("Node id '%s' does not exist in chars '%s'", caller.getCalleeNodeId(), caller.getCalleeNodeId()) );
+		super(chartSet, engine, String.format("Node id '%s' does not exist in chart '%s'", caller.getCalleeNodeId(), caller.getCalleeNodeId()) );
 		setSourceNode(caller);
 		nodeId = caller.getCalleeNodeId();
 	}

@@ -1,7 +1,5 @@
 package edu.harvard.iq.datatags.model.types;
 
-import edu.harvard.iq.datatags.model.types.TagType;
-import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.model.values.TagValue;
 
 /**
