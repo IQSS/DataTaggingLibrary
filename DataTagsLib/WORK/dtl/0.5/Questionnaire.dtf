@@ -106,90 +106,65 @@
 	)
 	(no: (end))
 )
-(ask: (text: Is the record used as a mandatory aid?) (yes: (end) ))
-(ask: (text: Is the record maintained by the law enforcement division of the educational agency or institution?) (yes: (end) ))
-(ask: (text: Are the records employment records?) (yes: (end) ))
-(ask: (text: Were the records produced by a physician, psychiatrist, or other professional for treatment purposes?) (yes: (end) ))
-(ask: (text: Are the records grades on peer-graded papers before a teacher has recorded them?) (yes: (end) ))
+(>fcq2< ask:
+	(text: 2.	Does the data fall into any of the following categories?
+		* Personal memory aids held in the sole possession of their creator;
+		* Records maintained by the law enforcement division of an educational agency or institution;
+		* Employment records for an educational agency or institution;
+		* Records produced by a physician, psychiatrist, or other professional for treatment purposes; or
+		* Grades on peer-graded papers before a teacher has recorded them.
+	)
+	(yes: (end))
+)
 (set: standards=FERPA)
-(ask:
-	(text: Does the data include information that, alone or in combination, is linked or
-           linkable to a specific student that would allow a reasonable person to identify the student with reasonable certainty?)
+( >fcq3< ask:
+	(text: Does the data include information that, alone or in combination, is linked or linkable to a specific student that would 
+							allow a reasonable person to identify the student with reasonable certainty?)
   (terms:
 			(reasonable certainty: Examples include: a student’s or student’s family name;
 							   student or student’s family’s address;
 							   a personal identifier like a social security number or student number;
 							   other indirect identifiers like date of birth or mother’s maiden name.))
 	(no:
-		(ask:
-			(text: Does the educational agency or institution reasonably believe the requester knows the identity of the student?)
-			(no: (set: FERPAConsent=notNeeded)
-				 (end)
-))))
-(ask: (text: Do you have the parental or student consent to disclose the data to the repository?)
-	(yes:
-		(ask: (text: Does the consent specify the records to be disclosed and the purpose?)
-			(yes: (ask: (text: Does the consent specify to whom the records can be disclosed?)
-				(yes: (set: FERPAConsent=parentalOrStudent)
-							(todo: Set additional tag fields)
-							(end)
-))))))
-(ask:
-	(text: Did the school classify the education records in question as directory information?)
-	(yes:
-		(ask: (text: Did the educational agency or institution that originally possessed the records give parents and students notice of the type of information they are designating as directory information?)
-				  (yes:
-						(ask:
-							(text: Was the parent or student, if over 18, given the opportunity to opt out of the disclosure or publication of their directory information? )
-							(yes: (set: FERPAConsent=notNeeded)
-										(todo: Set additional tag fields)
-										(end)
-))))))
-(ask:
-	(text:Are you, the depositor, an educational agency or institution?)
-	(terms:
-		(educational agency or institution: School, School district or a state education agency)
-	)
-	(no:
-		(ask:
-			(text: Did you, or the individual/organization who originally received the record from the educational agency or institution, agree not to re-disclose education records without parental consent, unless an explicit FERPA exception applies?)
-			(no: (reject: Educational agency or institution likely breached its FERPA duties by not specifying theat re-disclosure of education records without prior consent is typically not allowed. )
-))))
-(ask: 
-	(text: Are the education records being disclosed to the Repository to conduct a study for or on behalf of the educational agency or institution to: develop, validate, or administer predictive tests; administer student aid projects; or improve instruction?)
-	(yes: 
-		(>FERPA-8-a-i< ask:
-			(text: Did the educational agency or institution enter into an agreement with the Repository that specifies the scope and purpose of the study as well as the information to be disclosed?)
-			(no: (call: ferpaReject8)(end)  )
-		)
-		(>FERPA-8-a-ii< ask:
-			(text: Did the educational agency or institution enter into an agreement with the Repository that requires the organization to limit the use of PII to the purposes in the agreement?)
-			(terms: 
-				(PII: Personaly Identying Information, allowing third parties to identify people in the dataset.))
-			(no: (call: ferpaReject8)(end)  )
-		)
-		(>FERPA-8-a-iii< ask:
-			(text: Did the educational agency or institution enter into an agreement with the Repository that ensures that the study must be performed in a way that does not allow personal identification of parents and students to anyone other that represntations of the organization that have legitimate interests in the information?)
-			(no: (call: ferpaReject8)(end) )
-		)
-		(>FERPA-8-a-iv< ask:
-			(text: Did the educational agency or institution enter into an agreement with the Repository that ensures that requires PII to be destroyed when it is no longer needed and specifies the time period in which it must be destroyed?)
-			(no: (call: ferpaReject8)(end) )
-			(yes: (call: timeLimit) )
-		)
-	)
-	(no: 
-		(ask:
-			(text: Is this a rediclosure? Were the data not received directly from  the educational agency or institution?)
-			(yes:
-				(ask:
-					(text: Did the educational agency or institution maintain a record or disclosure that includes the names of the additional parties to whom the original receiving party may disclose the information and the fact that the records will be used to conduct a study on behalf of the agenc, meeting the requirements discussed?)
-					(no: (call: ferpaReject8)(end)  )
-				)
-			)
-		)
-	)
+		(set: storage=clear, code=green, harm=negligible, auth=none, effort=deidentified, transit=clear, FERPABasis=FERPADeidentified)
+		(end))
 )
-(set: FERPAConsent=notNeeded )
+( >fcq4< ask:
+	(text: Did the educational agency or institution classify the education records in question as directory information?)
+	(yes:
+		( >fcq4a< ask: (text: Did the educational agency or institution give parents and students notice of the type of information they are designating as directory information and the opportunity to opt out of the disclosure of their directory information? )
+		  (yes:
+				( >fcq4ai< ask:
+					(text: Did any of the students in the data request to opt out of the disclosure of their directory information? )
+					(yes: (set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt, FERPABasis=FERPADirectoryOptOut))
+					(no:  (set: storage=clear, code=green, harm=negligible, auth=none, effort=deidentified, transit=clear, FERPABasis=FERPADirectoryInfo)))
+				(end))
+)))
+( >fqc5< ask:
+	(text: Did the parents or students [if over 18] sign a consent form authorizing this disclosure of their data?)
+	(yes:
+		( >fcq5a< ask: 
+			(text: Did the consent form specify the records to be disclosed, the purpose of the disclosure, and to whom the records may be disclosed?)
+			(yes: (set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt, FERPABasis=FERPAConsent)
+						(call: FERPA-Consent)
+						(end))
+		))
+)
+( >fcq6< ask: 
+	(text: Are the data being disclosed to a school official [or contractor, consultant, volunteer, or other party to whom an agency or institution has outsourced institutional services or functions] with legitimate educational interests?)
+	(yes: (set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt, FERPABasis=FERPAOfficial)
+			  (call: FERPA-DUA-Official)
+			  (end))
+)
+( >fcq7< ask:
+	(text: Are the data being disclosed for the purpose of conducting a study for or on behalf of the educational agency or institution in order to develop, validate, or administer predictive tests; administer student aid projects; or improve instruction?)
+	(yes: (set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt, FERPABasis=FERPAStudies)
+				(call: FERPA-DUA-Studies)
+				(end))
+	(no: 
+		(reject: educational agency or institution is likely breaching its FERPA duties because it is disclosing, or a third party is re-disclosing, non-directory PII without parental consent where no obvious FERPA exception applies))
+)
 (end)
-(>ferpaReject8< reject: Educational agency or institution is likely breaching FERPA duties because it is disclosing non-directory PII without parental consent where no obvious FERPA exception applies)
+( >FERPA-DUA-Studies< todo: implement )
+( >FERPA-DUA-Official< todo: implement )
+( >FERPA-Consent< todo: implement )

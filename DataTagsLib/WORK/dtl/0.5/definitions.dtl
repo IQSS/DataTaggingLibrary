@@ -69,6 +69,6 @@ auth: one of approval, none.
 
 identity: one of notPersonSpecific, personSpecific.
 
-FERPA: FERPAConsent.
+FERPA: FERPABasis.
 
-FERPAConsent: one of notNeeded, parentalOrStudent.
+FERPABasis: one of FERPADeidentified, FERPADirectoryOptOut, FERPADirectoryInfo, FERPAOfficial, FERPAStudies, FERPAConsent.
