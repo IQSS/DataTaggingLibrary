@@ -168,14 +168,11 @@
 )
 (end)
 
-( >FERPA-DUA-Studies< todo: implement )
-(end)
+(>FERPA-DUA-Studies< todo )(end )
 
-( >FERPA-DUA-Official< todo: implement )
-(end)
+(>FERPA-DUA-Official< todo )(end )
 
-( >FERPA-Consent< todo: implement )
-(end)
+(>FERPA-Consent< todo )(end)
 
 ( >cipseaPaCompliance< ask: 
 	(text: Were the data collected by a federal agency?)
@@ -219,5 +216,5 @@
 			 (call: DUA-PrivacyAct))
 )
 (end)
-(>DUA-PrivacyAct< todo: implement)(end)
-(>DUA-CIPSEA< todo: implement)(end)
+(>DUA-PrivacyAct< todo)(end)
+(>DUA-CIPSEA< todo)

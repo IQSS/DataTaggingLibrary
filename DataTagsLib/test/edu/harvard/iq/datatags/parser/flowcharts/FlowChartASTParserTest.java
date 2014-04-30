@@ -285,6 +285,7 @@ public class FlowChartASTParserTest {
     public void testTodoNode() {
         assertEquals( new TodoNodeRef(null, null), instance.todoNode().parse("(todo)") );
         assertEquals( new TodoNodeRef("things", null), instance.todoNode().parse("(>things< todo)") );
+        assertEquals( new TodoNodeRef("things", null), instance.todoNode().parse("(>things< todo )") );
         assertEquals( new TodoNodeRef("things", "This is stuff that needs to be done. Pronto."), instance.todoNode().parse("(>things< todo: This is stuff that needs to be done. Pronto.)") );
     }
     

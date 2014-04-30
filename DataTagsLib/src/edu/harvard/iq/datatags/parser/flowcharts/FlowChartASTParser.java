@@ -85,7 +85,7 @@ public class FlowChartASTParser extends AbstractASTParser {
             public TodoNodeRef map(Pair<StringNodeHeadRef, String> from) {
                 return new TodoNodeRef( from.a.getId(), from.b );
             }
-        }).or( completeNode( nodeHeadWithType(NodeType.Todo))
+        }).or( completeNode( nodeHeadWithType(NodeType.Todo) )
 				.map( new Map<TypedNodeHeadRef, TodoNodeRef>(){
             @Override
             public TodoNodeRef map(TypedNodeHeadRef from) {
@@ -155,7 +155,7 @@ public class FlowChartASTParser extends AbstractASTParser {
 	}
 	
     Parser<TypedNodeHeadRef> nodeHeadWithType( NodeType type ) {
-        return nodeHeadWithType( type.name().toLowerCase() );
+        return nodeHeadWithType( type.name().toLowerCase() ).followedBy(WHITESPACES.optional());
     }
     
 	Parser<String> nodeId() {

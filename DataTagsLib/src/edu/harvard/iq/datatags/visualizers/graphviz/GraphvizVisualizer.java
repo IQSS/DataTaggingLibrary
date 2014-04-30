@@ -96,6 +96,8 @@ public abstract class GraphvizVisualizer {
     }
     
     public String wrapAt( String source, int width ) {
+        if ( source==null ) return "";
+        
         List<String> output = new LinkedList<>();
         StringBuilder cur = new StringBuilder();
         for ( String str : source.split("\\s",-1) ) {
