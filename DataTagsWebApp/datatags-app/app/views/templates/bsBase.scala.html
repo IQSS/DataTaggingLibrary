@@ -1,4 +1,4 @@
-@(title:String, scripts: Html=Html(""), extraHead: Html=Html(""))(content:Html)
+@(title:String, scripts: Html=Html(""), extraHead: Html=Html(""))(top:Html=Html(""))(content:Html)
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,6 +9,7 @@
 
     <!-- Bootstrap -->
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap-theme.min.css" rel="stylesheet">
 	<link href="/assets/css/main.min.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -21,6 +22,7 @@
   </head>
   <body>
 	<a href="#content" class="sr-only">Skip to main content</a>
+	@top
 	<div class="container" id="content">
 		@content
 	</div>

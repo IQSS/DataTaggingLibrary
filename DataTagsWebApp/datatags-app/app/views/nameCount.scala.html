@@ -1,10 +1,10 @@
 @( name: String, count: Int) 
 
 @li(num:Int, nam:String) = {
-<li>@num <span style="font-size: @(num+10)">@nam</span></li>
+<li>@(num+10) <span style="font-size: @(num+10)px">@nam</span></li>
 }
 
-@templates.bsBase( "test" ) {
+@templates.bsNavBar( "test", 'exp ) {
 <h1>Hello @name</h1>
 
 <ul>
