@@ -1,7 +1,0 @@
-{
-	"name": "nameValue",
-	"size": "5 feet 7 inches",
-	"house": true,
-	"array": [1,2,3,4,5],
-	"objct": { "a":"A", "b":"B" }
-}

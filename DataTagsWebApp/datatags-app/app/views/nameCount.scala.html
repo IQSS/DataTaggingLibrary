@@ -1,0 +1,15 @@
+@( name: String, count: Int) 
+
+@li(num:Int, nam:String) = {
+<li>@num <span style="font-size: @(num+10)">@nam</span></li>
+}
+
+@templates.bsBase( "test" ) {
+<h1>Hello @name</h1>
+
+<ul>
+	@for( i<-Range(0,count) ) {
+	@li(i,name)
+	}
+</ul>
+}

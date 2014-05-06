@@ -1,4 +1,4 @@
-(call: medical-start)
+(call: medical-start )
 (call: ferpaCompliance )
 (call: cipseaPaCompliance )
 (todo: Arrest and Conviction Records, Bank and Financial Records, 
@@ -168,9 +168,9 @@
 )
 (end)
 
-(>FERPA-DUA-Studies< todo )(end )
+(>FERPA-DUA-Studies< todo )(end)
 
-(>FERPA-DUA-Official< todo )(end )
+(>FERPA-DUA-Official< todo )(end)
 
 (>FERPA-Consent< todo )(end)
 
