@@ -1,0 +1,79 @@
+DataTags: code, basis, Handling, DataType, DUA, IP, identity, FERPA, CIPSEA, Auditing.
+
+TODO: IP.
+
+code: one of
+	blue    (Non-confidential information that can be stored and shared freely.),
+	green   (Potentially identifiable but not harmful personal information, shared with some access control.),
+	yellow  (Potentially harmful personal information, shared with loosely verified and/or approved recipients.),
+	orange  (May include sensitive, identifiable personal information, shared with verified and/or approved recipients under agreement.),
+	red     (Very sensitive identifiable personal information, shared with strong verification of approved recipients under signed agreement.),
+	crimson (Requires explicit permission for each transaction, using strong verification of approved recipients under signed agreement.)
+.
+
+Handling: storage, transit, authentication, auth.
+
+storage: one of clear, encrypt, doubleEncrypt.
+
+transit: one of
+	clear ( No encryption involved.),
+	encrypt ( Single encryption.),
+	doubleEncrypt (Encryption with two keys, which may be held by different parties.)
+.
+
+authentication: some of
+	None     (Available to anonymous individuals.),
+	Email    (Available to individuals with verified email address.),
+	OAuth    (Available to individuals with verified online identity or a mobile phone.),
+	Password (Available to individuals having a password accounts on system.)
+.
+
+DataType:
+	standards, effort, harm.
+
+standards: some of HIPAA, FERPA, ElectronicWiretapping, CommonRule, CIPSEA, PrivacyAct.
+effort:    one of  identified, identifiable, deidentified, anonymous.
+harm:      one of  noRisk, negligible, shame, civil, criminal, maxControl.
+
+DUA:
+	timeLimit,
+	sharing, reidentify, publication,
+	use, acceptance, approval
+.
+
+timeLimit: one of none, _1yr, _2yr, _5yr, _50yr.
+
+sharing: one of
+		Anyone,
+		NotOnline,
+		Organization,
+		Group,
+		NoOne.
+
+basis: one of
+		notApplicable,
+		agreement,
+		consent,
+		HIPAASafeHarbor, HIPAAStatistician, HIPAALimitedDataset, HIPAABusinessAssociate.
+
+reidentify: one of NoMatching, NoEntities, NoPeople, NoProhibition, Reidentify, Contact.
+
+publication: one of NoRestriction, Notify, PreApprove, Prohibited.
+
+use: one of NoRestriction, Research, IRB, NoProduct.
+
+acceptance: one of Click, Signed, SignWithID.
+
+approval: one of None, Email, Signed.
+
+auth: one of approval, none.
+
+identity: one of notPersonSpecific, personSpecific.
+
+Auditing: one of NotNeeded, Yearly, Monthly.
+
+FERPA: FERPABasis.
+FERPABasis: one of FERPADeidentified, FERPADirectoryOptOut, FERPADirectoryInfo, FERPAOfficial, FERPAStudies, FERPAConsent.
+
+CIPSEA: CIPSEABasis.
+CIPSEABasis: one of CIPSEADeidentified, CIPSEAIdentifiable, PrivacyActDeidentified, PrivacyActIdentifiable.
