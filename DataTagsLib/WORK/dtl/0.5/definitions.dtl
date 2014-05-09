@@ -1,4 +1,4 @@
-DataTags: code, basis, Handling, DataType, DUA, IP, identity, FERPA, CIPSEA.
+DataTags: code, basis, Handling, DataType, DUA, IP, identity, FERPA, CIPSEA, Auditing.
 
 TODO: IP.
 
@@ -42,6 +42,7 @@ DUA:
 .
 
 timeLimit: one of none, _1yr, _2yr, _5yr, _50yr.
+
 sharing: one of
 		Anyone,
 		NotOnline,
@@ -68,6 +69,8 @@ approval: one of None, Email, Signed.
 auth: one of approval, none.
 
 identity: one of notPersonSpecific, personSpecific.
+
+Auditing: one of NotNeeded, Yearly, Monthly.
 
 FERPA: FERPABasis.
 FERPABasis: one of FERPADeidentified, FERPADirectoryOptOut, FERPADirectoryInfo, FERPAOfficial, FERPAStudies, FERPAConsent.

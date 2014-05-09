@@ -1,9 +1,23 @@
-@( t:String )
+@( t:String, charts:Seq[(String,String)] )
 
 @templates.bsBase("Welcome to DataTags")(Html("")){
 
-<h1>Welcome to DataTags</h1>
-
-DataTags object is: @t
+        <div class="container" id="content">
+            <h1>Welcome to DataTags</h1>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>The Tags</h3>
+                    DataTags object is: @t
+                </div>
+                <div class="col-md-6">
+                    <h3>Available Questionnaires</h3>
+                    <ul>
+                        @for( p <- charts ) {
+                            <li><a href="@helper.urlEncode(p._2)">@p._1</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
 
 }
