@@ -1,0 +1,20 @@
+ @( fcs:edu.harvard.iq.datatags.model.charts.FlowChartSet, tlt:edu.harvard.iq.datatags.model.types.CompoundType )
+
+ @templates.bsNavBar("Interview Start Page", 'tag) {
+
+     <div class="row">
+         <div class="md-col-12">
+            <h3>Tags: @fcs.getId</h3>
+            <div class="note note-todo">Chart of the tags goes here</div>
+            <p>
+                @tlt.toString
+            </p>
+            <div class="note note-todo">Questionnaire metadata and readme goes here.</div>
+         </div>
+     </div>
+     <div class="row">
+         <div class="md-col-12">
+             <a href="@routes.Interview.askNode(fcs.getId,":start")" class="btn btn-primary">Start Interview</a>
+         </div>
+     </div>
+}
