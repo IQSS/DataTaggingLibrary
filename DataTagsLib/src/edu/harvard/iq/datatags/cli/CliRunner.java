@@ -137,9 +137,9 @@ public class CliRunner {
     Answer getAnswer() throws IOException {
         AskNode ask = (AskNode) ngn.getCurrentNode();
         println( ask.getText() );
-        if ( ! ask.getTermsNames().isEmpty() ) {
+        if ( ! ask.getTermNames().isEmpty() ) {
             println(" Terms:");
-            for ( String termName : ask.getTermsNames() ) {
+            for ( String termName : ask.getTermNames() ) {
                 print( " * " + termName + ":  " );
                 println( ask.getTermText(termName) );
             }

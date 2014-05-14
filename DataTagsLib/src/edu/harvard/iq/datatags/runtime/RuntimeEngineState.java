@@ -15,7 +15,7 @@ import java.util.Objects;
  */
 public class RuntimeEngineState implements java.io.Serializable {
     
-    private RuntimeEngine.Status status;
+    private RuntimeEngineStatus status;
     private URL flowchartSetSource;
     private String flowchartSetVersion;
     
@@ -25,7 +25,7 @@ public class RuntimeEngineState implements java.io.Serializable {
     
     private Map<String, String> serializedTagValue = new HashMap<>();
 
-    public RuntimeEngine.Status getStatus() {
+    public RuntimeEngineStatus getStatus() {
         return status;
     }
 
@@ -37,7 +37,7 @@ public class RuntimeEngineState implements java.io.Serializable {
         stack.push(nodeId);
     }
     
-    public void setStatus(RuntimeEngine.Status status) {
+    public void setStatus(RuntimeEngineStatus status) {
         this.status = status;
     }
 

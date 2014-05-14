@@ -1,0 +1,55 @@
+@( questionnaireId: String,
+   questionNode: edu.harvard.iq.datatags.model.charts.nodes.AskNode,
+   history:Seq[edu.harvard.iq.datatags.model.charts.nodes.Node] )
+
+@templates.bsNavBar( "Question", 'ask) {
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Question: Please select one answer</h3>
+            </div>
+            <div class="panel-body">
+                @questionNode.getText
+                @if( ! questionNode.getTermNames.isEmpty() ) {
+                    <h4>Terms</h4>
+                    <dl>
+                        @for( termName <- questionNode.getTermNames ) {
+                            <dt>@termName</dt>
+                            <dl>@questionNode.getTermText(termName)</dl>
+                        }
+                    </dl>
+                }
+            </div>
+            <div class="panel-footer">
+
+                @helper.form( action=routes.Interview.answer(questionnaireId, questionNode.getId), 'id->"answerForm" ) {
+                    @for( ans <- questionNode.getAnswers ) {
+                        <button class="btn btn-default"
+                                onclick="$('#answerText')[0].value='@ans.getAnswerText'; $('#answerForm').submit();" >@ans.getAnswerText</button>
+                    }
+                    <input type="hidden" name="answerText" id="answerText" value="initialValue" />
+                    <input type="hidden" name="nodeId"     id="nodeId"     value="@questionNode.getId" />
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Updates</h3>
+            </div>
+            <div class="panel-body">
+                <ul>
+                    @for( nd <- history ){
+                        <li>@nd.toString</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+}

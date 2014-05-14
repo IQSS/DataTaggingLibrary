@@ -1,6 +1,7 @@
 package models
 
 import edu.harvard.iq.datatags.runtime.RuntimeEngineState
+import edu.harvard.iq.datatags.model.charts.nodes._
 import java.util.Date
 
 /**
@@ -9,7 +10,11 @@ import java.util.Date
 case class UserSession(
   key:String,
   engineState: RuntimeEngineState,
+  traversed: Seq[Node],
   questionnaireId: String,
   sessionStart: Date ) {
 
+  def this( key:String,
+            questionnaireId: String ) = 
+      this(key, null, Seq[Node](), questionnaireId, new java.util.Date() )
 }

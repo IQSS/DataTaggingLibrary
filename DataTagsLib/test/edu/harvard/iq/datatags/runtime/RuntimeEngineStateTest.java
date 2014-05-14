@@ -87,7 +87,7 @@ public class RuntimeEngineStateTest {
             
             assertFalse( snapshot1.equals(snapshot2) ); 
             
-            ngn.applySnapShot(snapshot1);
+            ngn.applySnapshot(snapshot1);
             
             assertEquals( snapshot1, ngn.createSnapshot() );
             

@@ -61,7 +61,7 @@ public class AskNode extends Node {
 		this.text = text;
 	}
 	
-	public Set<String> getTermsNames() {
+	public Set<String> getTermNames() {
 		return terms.keySet();
 	}
 	

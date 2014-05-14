@@ -26,17 +26,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RuntimeEngine {
 	
-	public enum Status { 
-        /** The engine has not run yet */
-        Idle, 
-        /** Engine is currently processing. */
-        Running,
-        /** The engine has concluded we cannot accept this dataset (sorry!).*/
-        Reject, 
-        /** The engine is happy to accept the dataset, as long as the data tags requirements are complied with. */
-        Accept, 
-        /** An error has occurred. Please ignore the status of the engine. */
-        Error }
 	
 	public interface Listener {
 		void runStarted( RuntimeEngine ngn );
@@ -56,7 +45,7 @@ public class RuntimeEngine {
 	private CompoundValue currentTags;
 	private final Deque<CallNode> stack = new LinkedList<>();
 	private Node currentNode;
-	private Status status = Status.Idle;
+	private RuntimeEngineStatus status = RuntimeEngineStatus.Idle;
 	private Listener listener;
 	
 	private final Node.Visitor<Node> processNodeVisitor = new Node.Visitor<Node>() {
@@ -85,7 +74,7 @@ public class RuntimeEngine {
 
         @Override
         public Node visit(RejectNode nd) throws DataTagsRuntimeException {
-            status = Status.Reject;
+            status = RuntimeEngineStatus.Reject;
             return null;
         }
 
@@ -97,12 +86,12 @@ public class RuntimeEngine {
 			if ( fs == null ) {
 				MissingFlowChartException mfce = new MissingFlowChartException(nd.getCalleeChartId(), chartSet, RuntimeEngine.this, "Can't find chart " + nd.getCalleeChartId() );
 				mfce.setSourceNode(nd);
-				status = Status.Error;
+				status = RuntimeEngineStatus.Error;
 				throw mfce;
 			}
 			Node calleeNode = fs.getNode(nd.getCalleeNodeId());
 			if ( calleeNode == null ) {
-				status = Status.Error;
+				status = RuntimeEngineStatus.Error;
 				throw new MissingNodeException(chartSet, RuntimeEngine.this, nd);
 			}
 			
@@ -113,7 +102,7 @@ public class RuntimeEngine {
 		@Override
 		public Node visit( EndNode nd ) throws DataTagsRuntimeException {
 			if ( stack.isEmpty() ) {
-				status = Status.Accept;
+				status = RuntimeEngineStatus.Accept;
 				return null;
 			} else {
 				return stack.pop().getNextNode();
@@ -145,7 +134,7 @@ public class RuntimeEngine {
 		if ( getCurrentTags() == null ) {
 			setCurrentTags( ((CompoundType)chartSet.getTopLevelType()).createInstance() );
 		}
-		status = Status.Running;
+		status = RuntimeEngineStatus.Running;
 		if ( listener!=null ) listener.runStarted(this);
 		return processNode( fs.getStart() );
 	}
@@ -158,7 +147,7 @@ public class RuntimeEngine {
 			if ( listener != null ) listener.processedNode(this, getCurrentNode());
 		} while ( next != null );
 
-		return getStatus() == Status.Running;
+		return getStatus() == RuntimeEngineStatus.Running;
 	}
 	
 	/**
@@ -192,11 +181,14 @@ public class RuntimeEngine {
         return state;
     }
     
-    public void applySnapShot( RuntimeEngineState snapshot ) {
-        
+    public void applySnapshot( RuntimeEngineState snapshot ) {
+        if ( snapshot == null ) {
+            throw new IllegalArgumentException("Snapshot cannot be null");
+        }
         status = snapshot.getStatus();
-        
-        currentTags = (CompoundValue) new StringMapFormat().parse(currentTags.getType(), snapshot.getSerializedTagValue());
+        currentTags = (CompoundValue) new StringMapFormat().parse(
+                                                            ((CompoundType)chartSet.getTopLevelType()),
+                                                            snapshot.getSerializedTagValue());
         currentNode = chartSet.getFlowChart( snapshot.getCurrentChartId() ).getNode( snapshot.getCurrentNodeId() );
         
         stack.clear();
@@ -237,6 +229,7 @@ public class RuntimeEngine {
 
 	public void setChartSet(FlowChartSet chartSet) {
 		this.chartSet = chartSet;
+        
 	}
 	
 	/**
@@ -286,7 +279,7 @@ public class RuntimeEngine {
 		this.id = id;
 	}
 
-	public Status getStatus() {
+	public RuntimeEngineStatus getStatus() {
 		return status;
 	}
 	
