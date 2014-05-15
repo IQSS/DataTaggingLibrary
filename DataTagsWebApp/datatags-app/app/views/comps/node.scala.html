@@ -1,0 +1,48 @@
+@(node: edu.harvard.iq.datatags.model.charts.nodes.Node)
+
+@import edu.harvard.iq.datatags.model.charts.nodes._
+
+@askNode( n:AskNode ) = {
+  <div class="node node-ask">
+    <em>Ask</em> @n.getText
+  </div>
+}
+
+@callNode( n:CallNode ) = {
+  <div class="node node-call">
+    <em>Call</em> @n.getCalleeNodeId
+  </div>
+}
+
+@setNode( n:SetNode ) = {
+  <div class="node node-set">
+    <em>Set</em> @n.getTags
+  </div>
+}
+
+@todoNode( n:TodoNode ) = {
+  <div class="node node-todo">
+    <em>Todo</em> @n.getTodoText
+  </div>
+}
+
+@endNode( n:EndNode ) = {
+  <div class="node node-end">
+    <em>End</em>
+  </div>
+}
+
+@generalNode( n:Node ) = {
+ <div class="node">
+    @n.toString
+</div> 
+}
+
+@node match {
+  case n:AskNode  => { @askNode(n)  }
+  case n:SetNode  => { @setNode(n)  }
+  case n:EndNode  => { @endNode(n)  }
+  case n:CallNode => { @callNode(n) }
+  case n:TodoNode => { @todoNode(n) }
+  case _ => { @generalNode(node)}
+}

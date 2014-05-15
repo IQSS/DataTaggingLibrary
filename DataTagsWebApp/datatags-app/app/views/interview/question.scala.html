@@ -41,9 +41,9 @@
                 <h3 class="panel-title">Updates</h3>
             </div>
             <div class="panel-body">
-                <ul>
+                <ul class="list-unstyled">
                     @for( nd <- history ){
-                        <li>@nd.toString</li>
+                        <li>@comps.node(nd)</li>
                     }
                 </ul>
             </div>

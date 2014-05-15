@@ -42,6 +42,11 @@ public class CompoundValue extends TagValue<CompoundType> {
 		}
 	}
 	
+    /**
+     * All the field types for which {@code this} has values.
+     * TODO find a better name for this.
+     * @return 
+     */
 	public Set<TagType> getSetFieldTypes() {
 		return fields.keySet();
 	}

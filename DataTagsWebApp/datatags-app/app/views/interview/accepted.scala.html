@@ -1,0 +1,28 @@
+@( questionnaireId: String,
+   dataTags: edu.harvard.iq.datatags.model.values.CompoundValue )
+
+@templates.bsNavBar("Dataset Accepted", 'ask) {
+  <div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">Dataset Can be Accepted</h3>
+            </div>
+            <div class="panel-body">
+                <h3>Tags</h3>
+                @comps.tagValue(dataTags)
+            </div>
+            <div class="panel-footer">
+                <div class="note note-todo">
+                  Here endeth the demo. Future versions will redirect you Dataverse (or another secure data repo), with the tags.
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <a href="@routes.Application.index" class="btn btn-primary">Start again</a>    
+    </div>
+  </div>
+}

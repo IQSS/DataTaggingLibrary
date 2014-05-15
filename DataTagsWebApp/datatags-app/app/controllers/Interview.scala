@@ -82,9 +82,10 @@ object Interview extends Controller {
     }})
   }
 
-  def accept( questionnaireId:String ) = Action {
-    Ok( "%s accepted".format(questionnaireId) )
+  def accept( questionnaireId:String ) = UserSessionAction { request =>
+    Ok( views.html.interview.accepted(questionnaireId, request.userSession.tags)  )  
   }
+
   def reject( questionnaireId:String ) = Action {
     Ok( "%s Rejected".format(questionnaireId) )
   }

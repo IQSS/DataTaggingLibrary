@@ -1,5 +1,15 @@
 @rotate: -1deg;
 .note {
+    &:before {
+      content:url(/assets/images/ThumbTack.png);
+      display: block;
+      width: 32px;
+      height: 15px;
+      overflow: visible;
+      margin: auto;
+      position: relative;
+      top: -40px;
+    }
     box-shadow: 0 2px 10px rgba(0,0,0,0.75);
     font-family: "Marker felt", cursive;
     padding: 0.5em;
@@ -12,4 +22,81 @@
 
 .note-todo {
     background-color: #FFFFAA;
+}
+
+.node {
+  width: 100%;
+  border-radius: 1em;
+  padding: 0.4em 1em;
+  margin-bottom: 4px;
+  em {
+    font-style: normal;
+    font-weight: normal;
+    border-radius: 3px;
+    padding: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5) inset;
+    background-color: #EEE;
+    vertical-align:  middle; 
+  }
+  
+}
+.node-ask {
+  background-color: #BF8A98;
+}
+.node-set {
+  background-color: #84D9BA;
+}
+.node-call {
+  background-color: #99BFAD;
+}
+.node-todo {
+  background-color: #F1F2C4;
+}
+.node-end {
+  background-color: #F0F0C0;
+}
+
+@bkgColor: rgba(0,0,0,.25);
+.value {
+  border-radius: 3px;
+  padding: 3px;
+  margin: 3px;
+  background-color: @bkgColor;
+
+  .typeName {
+    font-weight:normal;
+    color: #008;
+    text-shadow: 0 0 2px white;
+  }
+  
+  .valueAtom {
+    border-radius: 0.6em;
+    padding: 0 1em;
+    border: 1px solid #FFF;
+    color: black;
+    font-family: Menlo, Courier, monospace;
+    font-size: 0.9em;
+    background-color: #DDD;
+  }
+}
+.value-simple{
+  border-color: #BBB;
+}
+.value-todo{
+  border-color: #e9c5ab;
+}
+.value-aggregate{
+  border-color: #e9c5ed;
+}
+.value-compound{
+  border: 1px solid #CCC;
+}
+
+footer {
+  margin-top: 2em;
+  padding: 1em 0;
+  background-color: #CCC;
+  font-size: 0.8em;
+  border-top: 1px solid #888;
+  text-align: center;
 }

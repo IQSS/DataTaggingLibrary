@@ -1,8 +1,9 @@
 package models
 
-import edu.harvard.iq.datatags.runtime.RuntimeEngineState
-import edu.harvard.iq.datatags.model.charts.nodes._
 import java.util.Date
+import edu.harvard.iq.datatags.runtime.RuntimeEngineState
+import edu.harvard.iq.datatags.model.values.CompoundValue
+import edu.harvard.iq.datatags.model.charts.nodes._
 
 /**
  * All the data needed to maintain continuous user experience.
@@ -18,4 +19,10 @@ case class UserSession(
   def this( key:String,
             questionnaireId: String ) = 
       this(key, null, Seq[Node](), questionnaireId, new java.util.Date() )
+
+  def tags = {
+    val parser = new edu.harvard.iq.datatags.io.StringMapFormat
+    val tagType = global.Global.dataTags
+    parser.parse( tagType, engineState.getSerializedTagValue ).asInstanceOf[CompoundValue]
+  }
 }

@@ -7,7 +7,6 @@ import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
 import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
-import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URL;
