@@ -6,6 +6,7 @@ import java.util.Date
 
 /**
  * All the data needed to maintain continuous user experience.
+ * TODO: Add a Seq of (question-id, answer) pairs
  */
 case class UserSession(
   key:String,
