@@ -4,16 +4,30 @@
 
      <div class="row">
          <div class="md-col-12">
+            <br />
+            <br />
             <div class="note note-todo">Questionnaire metadata and readme goes here.</div>
-            <h3>Tags</h3>
-            <p>
-                @comps.tagType( tlt )
-            </p>
+            <br />
+            <br />
+        </div> 
+     </div>
+     <div class="row">
+         <div class="md-col-12">
+            <div style="text-align: center">
+                <a href="@routes.Interview.startInterview(fcs.getId)" class="btn btn-primary btn-lg">Start Interview</a>
+            </div>
          </div>
      </div>
      <div class="row">
          <div class="md-col-12">
-             <a href="@routes.Interview.startInterview(fcs.getId)" class="btn btn-primary">Start Interview</a>
+            <h3>Tags</h3>
+            <p>Below is the data tags structure for this questionnaire. Don't worry if it looks intimidating - you will not have to fill
+            it directly. Instead, the system will take you throgh a friendly interview, and fill the values in for you.</p>
+            
+            <div class="tagtype-container">
+                @comps.tagType( tlt )
+            </div>
+            
          </div>
      </div>
 }

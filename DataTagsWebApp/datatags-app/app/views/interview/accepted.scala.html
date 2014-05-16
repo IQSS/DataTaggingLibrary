@@ -10,7 +10,9 @@
             </div>
             <div class="panel-body">
                 <h3>Tags</h3>
-                @comps.tagValue(dataTags)
+                <div class="tagvalue-container">
+                  @comps.tagValue(dataTags)
+                </div>
             </div>
             <div class="panel-footer">
                 <div class="note note-todo">
@@ -21,7 +23,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-2 col-md-offset-5">
       <a href="@routes.Application.index" class="btn btn-primary">Start again</a>    
     </div>
   </div>

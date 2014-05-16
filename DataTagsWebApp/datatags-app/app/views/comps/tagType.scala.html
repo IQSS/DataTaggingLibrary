@@ -3,49 +3,49 @@
 @import edu.harvard.iq.datatags.model.types._
 
 @simpleType( tp: SimpleType ) = {
-  <div class="type type-simple">
+  <div class="tagtype tagtype-simple">
     <span class="typeName">@tp.getName</span>
-    One of: 
     <span class="typeValues">
       @for( sv <- tp.values ) {
         <span class="valueAtom">@sv.getName</span>
       }
     </span>
+    <small>Single value</small>
   </div>
 }
 
 @aggregateType( tp: AggregateType ) = {
-  <div class="type type-aggregate">
+  <div class="tagtype tagtype-aggregate">
     <span class="typeName">@tp.getName</span>
-    Some of: 
     <span class="typeValues">
       @for( sv <- tp.getItemType.values ) {
         <span class="valueAtom">@sv.getName</span>
       }
     </span>
+    <small>Multiple values</small>
   </div>
 }
 
 @compoundType( tp:CompoundType ) = {
- <div class="type type-aggregate">
+ <div class="tagtype tagtype-compound">
     <div>
       <span class="typeName">@tp.getName</span>
-      Consists of: 
     </div>
-    <span class="typeValues">
+    <div class="typeValues">
       @for( ft <- tp.getFieldTypes ) {
         @renderType( ft )
       }
-    </span>
+    </div>
   </div> 
 }
 
 @todoType( tp: ToDoType ) = {
-  <div class="type type-todo">
+  <div class="tagtype tagtype-todo">
     <span class="typeName">@tp.getName</span>
     <span class="typeValues">
         <span class="valueAtom">TODO</span>
     </span>
+    <small>value placeholder</small>
   </div>
 }
 

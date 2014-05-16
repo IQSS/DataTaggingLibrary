@@ -56,40 +56,109 @@
   background-color: #F0F0C0;
 }
 
-@bkgColor: rgba(0,0,0,.25);
+@bkgColor: rgba(255,255,255,.25);
+.tagvalue-container {
+  background-color: #AAA;
+}
 .value {
-  border-radius: 3px;
-  padding: 3px;
+  padding: 0.25em 0.5em;
   margin: 3px;
   background-color: @bkgColor;
 
   .typeName {
     font-weight:normal;
-    color: #008;
-    text-shadow: 0 0 2px white;
+    color: #004;
+  }
+  span.typeName {
+    width: 6em;
+    display: inline-block;
   }
   
   .valueAtom {
     border-radius: 0.6em;
     padding: 0 1em;
-    border: 1px solid #FFF;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.5);
     color: black;
-    font-family: Menlo, Courier, monospace;
     font-size: 0.9em;
     background-color: #DDD;
   }
 }
 .value-simple{
-  border-color: #BBB;
+  .valueAtom {
+    background-color: #8df;
+  }
 }
 .value-todo{
-  border-color: #e9c5ab;
+  .valueAtom {
+    background-color: #6F6;
+  }
 }
 .value-aggregate{
-  border-color: #e9c5ed;
+  .valueAtom {
+    background-color: #DBF;
+  }
 }
 .value-compound{
   border: 1px solid #CCC;
+}
+
+.tagtype-container {
+  background-color: #AAA;
+  color: #BBB;
+  padding: 0.5em;
+  box-shadow: 0 2px 2px rgba(0,0,0,0.5);
+}
+
+.tagtype {
+  background-color: @bkgColor;
+  padding: 0.25em;
+  line-height: 1.6em;
+  border-bottom: 1px dotted rgba(255,255,255,0.5);
+  .typeName {
+    color: #000;
+  }
+  span.typeName {
+    width: 5.5em;
+    display: inline-block;
+  }
+
+  span.typeValues {
+    
+  }
+  small {
+    color: white;
+  }
+  .valueAtom {
+    border-radius: 0.5em;
+    padding: 3px 0.6em;
+    margin-right: 3px;
+    font-size: 0.9em;
+    color: black;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.5);
+  }
+}
+
+.tagtype-simple {
+  .valueAtom {
+    background-color: #66ccff;
+  }
+}
+.tagtype-todo {
+  .valueAtom {
+    background-color: #40F040;
+  }
+}
+.tagtype-aggregate {
+  .valueAtom {
+    background-color: #ccaaff;
+  }
+} 
+
+.tagtype-compound {
+  .typeValues {
+    margin-left: 1em;
+  }
+  border-bottom: none;
 }
 
 footer {
@@ -100,3 +169,4 @@ footer {
   border-top: 1px solid #888;
   text-align: center;
 }
+
