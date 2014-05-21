@@ -8,7 +8,7 @@ import play.api.data._
 import play.api.data.Forms._
 
 import edu.harvard.iq.datatags.runtime._
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode
+import edu.harvard.iq.datatags.model.charts.nodes._
 import edu.harvard.iq.datatags.model.values._
 
 import models._
@@ -86,8 +86,11 @@ object Interview extends Controller {
     Ok( views.html.interview.accepted(questionnaireId, request.userSession.tags)  )  
   }
 
-  def reject( questionnaireId:String ) = Action {
-    Ok( "%s Rejected".format(questionnaireId) )
+  def reject( questionnaireId:String ) = UserSessionAction { request =>
+    val state = request.userSession.engineState
+    val node = global.Global.interview.getFlowChart( state.getCurrentChartId ).getNode( state.getCurrentNodeId )
+
+    Ok( views.html.interview.rejected(questionnaireId, node.asInstanceOf[RejectNode].getReason) )
   }
 
   // TODO: move to some akka actor, s.t. the UI can be reactive
