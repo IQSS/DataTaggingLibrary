@@ -11,4 +11,7 @@ object Application extends Controller {
     Ok(views.html.main( Seq((itv.getDefaultChartId, itv.getDefaultChartId))) )
   }
 
+  def changeLog = Action {
+    Ok( views.html.changeLog() )
+  }
 }

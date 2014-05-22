@@ -3,41 +3,37 @@
 @import edu.harvard.iq.datatags.model.charts.nodes._
 
 @askNode( n:AskNode ) = {
-  <div class="node node-ask">
-    <em>Ask</em> @n.getText
-  </div>
+  <td class="node node-ask">ask</td>
+  <td>@n.getText</td>
 }
 
 @callNode( n:CallNode ) = {
-  <div class="node node-call">
-    <em>Call</em> @n.getCalleeNodeId
-  </div>
+  <td class="node node-call">call</td>
+  <td>@n.getCalleeNodeId</td>
 }
 
 @setNode( n:SetNode ) = {
-  <div class="node node-set">
-    <em>Set</em> @n.getTags
-  </div>
+  <td class="node node-set">set</td>
+  <td>@n.getTags</td>
 }
 
 @todoNode( n:TodoNode ) = {
-  <div class="node node-todo">
-    <em>Todo</em> @n.getTodoText
-  </div>
+  <td class="node node-todo">todo</td>
+  <td>@n.getTodoText</td>
 }
 
 @endNode( n:EndNode ) = {
-  <div class="node node-end">
-    <em>End</em>
-  </div>
+  <td class="node node-end">End</td>
+  <td>&nbsp;</td>
 }
 
 @generalNode( n:Node ) = {
- <div class="node">
+ <td class="node" colspan="2">
     @n.toString
-</div> 
+</td> 
 }
 
+<td>@node.getId</td>
 @node match {
   case n:AskNode  => { @askNode(n)  }
   case n:SetNode  => { @setNode(n)  }

@@ -7,7 +7,17 @@
     <span class="typeName">@tp.getName</span>
     <span class="typeValues">
       @for( sv <- tp.values ) {
-        <span class="valueAtom">@sv.getName</span>
+        @if( sv.getInfo==null ) {
+          <span class="valueAtom">@sv.getName</span>
+        } else {
+          <a href="#" data-toggle="popover" data-trigger="hover" 
+             title="@sv.getName" data-content="@sv.getInfo"
+             data-placement="top">
+            <span class="valueAtom">@sv.getName
+              <span class="glyphicon glyphicon-info-sign"></span>
+            </span>
+          </a>
+        }
       }
     </span>
     <small>Single value</small>
@@ -19,8 +29,18 @@
     <span class="typeName">@tp.getName</span>
     <span class="typeValues">
       @for( sv <- tp.getItemType.values ) {
-        <span class="valueAtom">@sv.getName</span>
-      }
+        @if( sv.getInfo==null ) {
+            <span class="valueAtom">@sv.getName</span>
+          } else {
+            <a href="#" data-toggle="popover" data-trigger="hover" 
+               title="@sv.getName" data-content="@sv.getInfo"
+               data-placement="top">
+              <span class="valueAtom">@sv.getName
+                <span class="glyphicon glyphicon-info-sign"></span>
+              </span>
+            </a>
+          }
+        }
     </span>
     <small>Multiple values</small>
   </div>
@@ -29,7 +49,17 @@
 @compoundType( tp:CompoundType ) = {
  <div class="tagtype tagtype-compound">
     <div>
-      <span class="typeName">@tp.getName</span>
+      @if( tp.getInfo != null ) {
+        <a href="#" data-toggle="popover" data-trigger="hover" 
+             title="@tp.getName" data-content="@tp.getInfo"
+             data-placement="top">
+            <span class="typeName">@tp.getName
+              <span class="glyphicon glyphicon-info-sign"></span>
+            </span>
+          </a>
+      } else {
+        <span class="typeName">@tp.getName</span>
+      }
     </div>
     <div class="typeValues">
       @for( ft <- tp.getFieldTypes ) {

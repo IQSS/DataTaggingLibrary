@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index
+GET     /changeLog                  controllers.Application.changeLog
 GET	    /test/:name/:count          controllers.Test.nameCount(name, count: Int)
 GET     /interviews/:questionnaireId/intro           controllers.Interview.interviewIntro(questionnaireId)
 GET     /interviews/:questionnaireId/start           controllers.Interview.startInterview(questionnaireId)

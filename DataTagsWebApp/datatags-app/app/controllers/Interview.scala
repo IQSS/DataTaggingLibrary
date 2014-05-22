@@ -31,27 +31,20 @@ object Interview extends Controller {
       .withSession( session + ("uuid" -> uuid) )
   }
 
-  def startInterview( questionnaireId:String ) = Action { req =>
-    req.session.get("uuid").map { uuid =>
-      Cache.getAs[UserSession](uuid).map{ userSession =>
-        val interview = global.Global.interview
-        val  rte = new RuntimeEngine
-        rte.setChartSet( interview )
-        val l = rte.setListener( new TaggingEngineListener )
-        rte.start( interview.getDefaultChartId )
-        val userSession = Cache.getAs[UserSession](uuid).get
-        val updated = userSession.copy( engineState = rte.createSnapshot(),
-                                          traversed = l.traversedNodes )
-        Cache.set(uuid, updated)
-        
-        Ok( views.html.interview.question(questionnaireId, rte.getCurrentNode.asInstanceOf[AskNode], l.traversedNodes) )
-      }.getOrElse {
-        Logger.warn("Huh?! has uuid of %s but no session".format(uuid) )
-        Redirect( routes.Interview.interviewIntro(questionnaireId) )
-      }
-    }.getOrElse{
-      Redirect( routes.Interview.interviewIntro(questionnaireId) )
-    }
+  def startInterview( questionnaireId:String ) = UserSessionAction { implicit req =>
+      val interview = global.Global.interview
+      val rte = new RuntimeEngine
+      rte.setChartSet( interview )
+      val l = rte.setListener( new TaggingEngineListener )
+      rte.start( interview.getDefaultChartId )
+      val updated = req.userSession.copy( engineState = rte.createSnapshot(),
+                                      traversed = l.traversedNodes )
+      Cache.set(req.userSession.key, updated)
+      
+      Ok( views.html.interview.question(questionnaireId, 
+                                         rte.getCurrentNode.asInstanceOf[AskNode],
+                                         updated.tags,
+                                         l.traversedNodes) )
   }
 
   def askNode(questionnaireId: String, nodeId: String) = UserSessionAction { req =>
@@ -60,6 +53,7 @@ object Interview extends Controller {
     val askNode = global.Global.interview.getFlowChart(flowChartId).getNode(nodeId).asInstanceOf[AskNode]
     Ok( views.html.interview.question(questionnaireId,
                                       askNode,
+                                      req.userSession.tags,
                                       req.userSession.traversed) )
   }
 

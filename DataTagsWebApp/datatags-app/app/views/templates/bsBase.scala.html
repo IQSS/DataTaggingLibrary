@@ -9,7 +9,7 @@
 
     <!-- Bootstrap -->
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/assets/css/bootstrap-theme.min.css" rel="stylesheet">
+    <!--link href="/assets/css/bootstrap-theme.min.css" rel="stylesheet"-->
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -29,10 +29,19 @@
   <footer>
     <div class="container">
       DataTags project. &copy; 2013 by the President and Fellows of Harvard College. Project is pre-alpha. Don't use the tags as a legal recommendation.
+      <ul class="list-inline">
+      <li><a href="http://nsf.gov" target="_blank"><img src="/assets/images/nsf-logo-small.png" alt="NSF logo" /></a></li>
+      <li><a href="http://thedata.org" target="_blank"><img src="/assets/images/dvn-logo-small.png" alt="Dataverse logo" /></a></li>
+      <li><a href="http://dataprivacylab.org/" target="_blank"><img src="/assets/images/dpl-logo-small.png" alt="Data Privacy Lab logo" />Data Privacy Lab</a></li>
+      <li><a href="http://iq.harvard.edu" target="_blank"><img src="/assets/images/iqss-logo-small.png" alt="IQSS logo" /></a></li>
+      </ul>
     </div>
   </footer>	  
     <script src="/assets/js/jquery.min.js"></script>
     <script src="/assets/js/bootstrap.min.js"></script>
 	@scripts
+  <script>
+    $(document).ready( function(){ $("a[data-toggle='popover']").popover(); } );
+  </script>
   </body>
 </html>

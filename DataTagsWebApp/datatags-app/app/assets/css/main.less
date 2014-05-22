@@ -1,3 +1,6 @@
+body {
+  background-color: #EEE;
+}
 @rotate: -1deg;
 .note {
     &:before {
@@ -25,36 +28,39 @@
     background-color: #FFFFAA;
 }
 
-.node {
-  width: 100%;
-  border-radius: 1em;
-  padding: 0.4em 1em;
-  margin-bottom: 4px;
-  em {
-    font-style: normal;
-    font-weight: normal;
-    border-radius: 3px;
-    padding: 3px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.5) inset;
-    background-color: #EEE;
-    vertical-align:  middle; 
+table.engine-trace {
+  font-size: 0.8em;
+  font-family: Menlo, Courier, monospace;
+  background-color: #010;
+  color: green;
+  padding: 4px;
+  box-shadow: 0 2px 2px rgba(0,0,0,0.75) inset;
+  td {
+    padding: 4px;
   }
-  
+  th {
+    padding: 4px;
+    text-align: center;
+    border-bottom: 1px dotted green;
+  }
+}
+.node {
+    
 }
 .node-ask {
-  background-color: #BF8A98;
+  color: #BF8A98;
 }
 .node-set {
-  background-color: #84D9BA;
+  color: #84D9BA;
 }
 .node-call {
-  background-color: #99BFAD;
+  color: #99BFAD;
 }
 .node-todo {
-  background-color: #F1F2C4;
+  color: #F1F2C4;
 }
 .node-end {
-  background-color: #F0F0C0;
+  color: #F0F0C0;
 }
 
 @bkgColor: rgba(255,255,255,.25);
@@ -78,7 +84,6 @@
   .valueAtom {
     border-radius: 0.6em;
     padding: 0 1em;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.5);
     color: black;
     font-size: 0.9em;
     background-color: #DDD;
@@ -135,13 +140,12 @@
     margin-right: 3px;
     font-size: 0.9em;
     color: black;
-    box-shadow: 0 2px 2px rgba(0,0,0,0.5);
   }
 }
 
 .tagtype-simple {
   .valueAtom {
-    background-color: #66ccff;
+    background-color: #88AAff;
   }
 }
 .tagtype-todo {
@@ -151,7 +155,7 @@
 }
 .tagtype-aggregate {
   .valueAtom {
-    background-color: #ccaaff;
+    background-color: #ffaa88;
   }
 } 
 
@@ -165,7 +169,7 @@
 footer {
   margin-top: 2em;
   padding: 1em 0;
-  background-color: #CCC;
+  background-color: #E8E8E8;
   font-size: 0.8em;
   border-top: 1px solid #888;
   text-align: center;
