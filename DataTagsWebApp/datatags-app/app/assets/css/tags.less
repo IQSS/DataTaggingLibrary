@@ -59,7 +59,25 @@
 .coloredTag( @color ) {
   background-color: @color;
   color: contrast(@color, white, black);
+  a {
+    color: contrast(@color, white, black);
+    text-decoration: none;
+  }
   &:before {
     border-right-color: @color;
   }
+}
+
+// aliasing colors and levels 
+.tag-blue    { .tag-noRisk }
+.tag-green   {.tag-minimal }
+.tag-yellow  {.tag-shame}
+.tag-orange  {.tag-civil }
+.tag-red     {.tag-criminal }
+.tag-crimson {.tag-maxControl }
+
+.tag-info {
+  padding-left: 1em;
+  display: inline-block;
+  font-style: italic;
 }

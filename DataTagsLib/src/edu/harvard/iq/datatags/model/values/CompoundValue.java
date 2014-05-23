@@ -34,6 +34,7 @@ public class CompoundValue extends TagValue<CompoundType> {
 		fields.remove(type);
 	}
 
+    // TODO remove, this gives no usable extra info
 	public <T extends TagType> TagValue<T> get( T type ) {
 		if ( getType().getFieldTypes().contains(type) ) {
 			return fields.get(type);

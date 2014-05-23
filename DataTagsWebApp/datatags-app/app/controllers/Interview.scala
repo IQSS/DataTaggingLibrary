@@ -77,7 +77,9 @@ object Interview extends Controller {
   }
 
   def accept( questionnaireId:String ) = UserSessionAction { request =>
-    Ok( views.html.interview.accepted(questionnaireId, request.userSession.tags)  )  
+    val tags = request.userSession.tags
+    val code = Option(tags.get( tags.getType.getTypeNamed("code") ))
+    Ok( views.html.interview.accepted(questionnaireId, tags, code)  )  
   }
 
   def reject( questionnaireId:String ) = UserSessionAction { request =>
