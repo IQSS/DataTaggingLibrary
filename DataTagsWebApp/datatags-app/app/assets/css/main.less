@@ -1,5 +1,6 @@
+@import "globals.less";
 body {
-  background-color: #EEE;
+  background-color: @bodyBackground;
 }
 @rotate: -1deg;
 .note {
@@ -173,5 +174,14 @@ footer {
   font-size: 0.8em;
   border-top: 1px solid #888;
   text-align: center;
+}
+.pre-alpha-warn {
+  color: red;
+  background-color: rgba(255,255,0,0.2);
+  padding: 4px;
+  width: auto;
+  margin: auto;
+  border: 1px solid red;
+  box-shadow: 0 0 5px yellow;
 }
 

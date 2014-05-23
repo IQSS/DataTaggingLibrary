@@ -1,0 +1,46 @@
+@import "globals.less";
+
+table.tagsTable {
+  width: 100%;
+  tbody {
+    td {
+      padding: 4px;
+      border-top: none;
+      margin: 0;
+      vertical-align: middle;
+    }
+    tr {
+      border: none;
+    }
+    th {
+      vertical-align: middle;
+      border-top: none;
+      padding: 4px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    }
+
+    .popover-content {
+      color: black;
+    }
+  }
+}
+
+.row-noRisk     { .tagRow( @tagNoRisk     ); }
+.row-minimal    { .tagRow( @tagMinimal    ); }
+.row-shame      { .tagRow( @tagShame      ); }
+.row-civil      { .tagRow( @tagCivil      ); }
+.row-criminal   { .tagRow( @tagCriminal   ); }
+.row-maxControl { .tagRow( @tagMaxControl ); }
+.row-default { .tagRow( @tagDefault ); }
+
+.tagRow( @color ) {
+  background-color: @color;
+  color: contrast(@color, white, black);
+  .tag:after {
+    background-color: @color;
+  }
+  .popover-title {
+    background-color: @color;
+    color: contrast(@color, white, black);
+  }
+}

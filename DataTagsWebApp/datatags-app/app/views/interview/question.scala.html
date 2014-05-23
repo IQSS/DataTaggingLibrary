@@ -62,11 +62,13 @@
                         <th>Info</th>
                     </tr>
                 </thead>
+                <tbody>
                 @for( nd <- history ){
                     <tr>
                         @comps.node(nd)
                     </tr>
                 }
+                </tbody>
             </table>
         </div>
     </div>

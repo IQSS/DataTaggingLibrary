@@ -1,14 +1,19 @@
 package controllers
 
 import play.api.mvc._
+import models._
 
 object Application extends Controller {
 
-  def index = Action {
+  def index = Action { implicit request =>
+    Ok( views.html.index(TagsTable.rows) )
+  }
+
+  def questionnaireCatalog = Action {
 	  val tags = global.Global.dataTags.toString
     val itv = global.Global.interview
 
-    Ok(views.html.main( Seq((itv.getDefaultChartId, itv.getDefaultChartId))) )
+    Ok(views.html.questionnaireCatalog( Seq((itv.getDefaultChartId, itv.getDefaultChartId))) )
   }
 
   def changeLog = Action {
