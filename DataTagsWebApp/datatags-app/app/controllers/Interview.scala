@@ -20,15 +20,13 @@ object Interview extends Controller {
 
   def interviewIntro(questionnaireId: String) = Action { implicit request =>
 
-    val uuid = session.get("uuid").getOrElse(java.util.UUID.randomUUID().toString)
+    val userSession = UserSession.create( questionnaireId )
 
-    val userSession = new UserSession( uuid, questionnaireId )
-
-    Cache.set(uuid, userSession)
+    Cache.set(userSession.key, userSession)
     val fcs = global.Global.interview
     val dtt = global.Global.dataTags
     Ok( views.html.interview.intro(fcs,dtt) )
-      .withSession( session + ("uuid" -> uuid) )
+      .withSession( session + ("uuid" -> userSession.key) )
   }
 
   def startInterview( questionnaireId:String ) = UserSessionAction { implicit req =>
