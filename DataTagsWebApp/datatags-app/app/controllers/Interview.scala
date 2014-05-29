@@ -35,39 +35,41 @@ object Interview extends Controller {
       rte.setChartSet( interview )
       val l = rte.setListener( new TaggingEngineListener )
       rte.start( interview.getDefaultChartId )
-      val updated = req.userSession.copy( engineState = rte.createSnapshot(),
-                                      traversed = l.traversedNodes )
+      val updated = req.userSession.updatedWith( l.traversedNodes, rte.createSnapshot )
       Cache.set(req.userSession.key, updated)
       
       Ok( views.html.interview.question(questionnaireId, 
                                          rte.getCurrentNode.asInstanceOf[AskNode],
                                          updated.tags,
-                                         l.traversedNodes) )
+                                         l.traversedNodes,
+                                         Seq()) )
   }
 
-  def askNode(questionnaireId: String, nodeId: String) = UserSessionAction { req =>
+  def askNode( nodeId: String ) = UserSessionAction { req =>
     val flowChartId = req.userSession.engineState.getCurrentChartId
     val nodeId = req.userSession.engineState.getCurrentNodeId
     val askNode = global.Global.interview.getFlowChart(flowChartId).getNode(nodeId).asInstanceOf[AskNode]
-    Ok( views.html.interview.question(questionnaireId,
-                                      askNode,
-                                      req.userSession.tags,
-                                      req.userSession.traversed) )
+    Ok( views.html.interview.question( "id",
+                                       askNode,
+                                       req.userSession.tags,
+                                       req.userSession.traversed,
+                                       req.userSession.answerHistory) )
   }
 
   def answer(questionnaireId: String, nodeId: String) = UserSessionAction { implicit request =>
-     val userSession  =request.userSession
+     val userSession = request.userSession
      val answerForm = Form( tuple("answerText"->text, "nodeId"->text) )
      answerForm.bindFromRequest().fold (
       failed => Ok("Form submission error %s\n data:%s".format( failed.errors, failed.data)),
       { value  => 
         
-        val runRes = advanceEngine( userSession.engineState, value._1 )
-        Cache.set( userSession.key, userSession.copy( engineState=runRes.state, 
-                                             traversed=userSession.traversed ++ runRes.traversed))
+        val answer = new Answer( value._1 )
+        val ansRec = AnswerRecord( currentAskNode(userSession.engineState), answer)
+        val runRes = advanceEngine( userSession.engineState, answer )
+        Cache.set( userSession.key, userSession.updatedWith( ansRec, runRes.traversed,runRes.state))
         val status = runRes.state.getStatus
         status match {
-          case RuntimeEngineStatus.Running => Redirect( routes.Interview.askNode( questionnaireId, runRes.state.getCurrentNodeId ) )
+          case RuntimeEngineStatus.Running => Redirect( routes.Interview.askNode( runRes.state.getCurrentNodeId ) )
           case RuntimeEngineStatus.Reject  => Redirect( routes.Interview.reject( questionnaireId ) )
           case RuntimeEngineStatus.Accept  => Redirect( routes.Interview.accept( questionnaireId ) )
           case _ => InternalServerError("Bad interview state")
@@ -87,17 +89,50 @@ object Interview extends Controller {
     Ok( views.html.interview.rejected(questionnaireId, node.asInstanceOf[RejectNode].getReason) )
   }
 
+  def revisit( nodeId: String ) = UserSessionAction { request =>
+    val userSession = request.userSession
+    val updatedState = runUpToNode( null, nodeId, userSession.answerHistory )
+    val answers = userSession.answerHistory.slice(0, userSession.answerHistory.indexWhere(_.question.getId == nodeId) )
+    Cache.set( userSession.key,
+               userSession.replaceHistory( answers, updatedState.traversed, updatedState.state ) )
+
+    Redirect( routes.Interview.askNode(nodeId) )
+  }
+
   // TODO: move to some akka actor, s.t. the UI can be reactive
-  def advanceEngine( state: RuntimeEngineState, ans: String ) : EngineRunResult = {
+  def advanceEngine( state: RuntimeEngineState, ans: Answer ) : EngineRunResult = {
     val interview = global.Global.interview
-    val  rte = new RuntimeEngine
+    val rte = new RuntimeEngine
     rte.setChartSet( interview )
     val l = rte.setListener( new TaggingEngineListener )
     rte.applySnapshot( state )
-    rte.consume( new Answer(ans) )
+    rte.consume( ans )
 
     return EngineRunResult( rte.createSnapshot, l.traversedNodes, l.exception )
-        
+
+  }
+
+  // TODO: move to some akka actor, s.t. the UI can be reactive
+  def runUpToNode( state: RuntimeEngineState, nodeId: String, answers:Seq[AnswerRecord] ) : EngineRunResult = {
+    val interview = global.Global.interview
+    val rte = new RuntimeEngine
+    rte.setChartSet( interview )
+    val l = rte.setListener( new TaggingEngineListener )
+    val ansItr = answers.iterator
+    
+    rte.start( interview.getDefaultChartId )
+    
+    while ( rte.getCurrentNode.getId != nodeId ) {
+      val answer = ansItr.next.answer
+      rte.consume( answer )
+    }
+
+    return EngineRunResult( rte.createSnapshot, l.traversedNodes, l.exception )
+
+  }
+
+  def currentAskNode( engineState: RuntimeEngineState ) = {
+    global.Global.interview.getFlowChart(engineState.getCurrentChartId).getNode(engineState.getCurrentNodeId).asInstanceOf[AskNode]
   }
 
 }

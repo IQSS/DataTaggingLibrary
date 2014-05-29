@@ -9,10 +9,12 @@ GET     /changeLog                  controllers.Application.changeLog
 GET	    /test/:name/:count          controllers.Test.nameCount(name, count: Int)
 GET     /interviews/:questionnaireId/intro           controllers.Interview.interviewIntro(questionnaireId)
 GET     /interviews/:questionnaireId/start           controllers.Interview.startInterview(questionnaireId)
-GET     /interviews/:questionnaireId/ask/:nodeId     controllers.Interview.askNode(questionnaireId, nodeId)
+GET     /interviews/ask/:nodeId                      controllers.Interview.askNode(nodeId)
+POST    /interviews/revisit/:nodeId                  controllers.Interview.revisit(nodeId)
 GET     /interviews/:questionnaireId/accept/         controllers.Interview.accept(questionnaireId)
 GET     /interviews/:questionnaireId/reject/         controllers.Interview.reject(questionnaireId)
 POST    /interviews/:questionnaireId/answer/:nodeId  controllers.Interview.answer(questionnaireId, nodeId)
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET  /assets/*file      controllers.Assets.at(path="/public", file)
+GET  /javascriptRoutes  controllers.Application.javascriptRoutes

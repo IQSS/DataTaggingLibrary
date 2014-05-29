@@ -25,7 +25,13 @@ case class UserSession(
   }
 
   def updatedWith( ansRec: AnswerRecord, newNodes: Seq[Node], state: RuntimeEngineState ) = 
-        copy( engineState=state, answerHistory=answerHistory :+ ansRec, traversed=traversed++newNodes)  
+        copy( engineState=state, answerHistory=answerHistory :+ ansRec, traversed=traversed++newNodes)
+
+  def updatedWith( newNodes: Seq[Node], state: RuntimeEngineState ) = 
+        copy( engineState=state, traversed=traversed++newNodes)  
+
+  def replaceHistory( answers: Seq[AnswerRecord], history:Seq[Node], state: RuntimeEngineState ) = 
+        copy( engineState=state, traversed=history, answerHistory=answers )
 }
 
 object UserSession {

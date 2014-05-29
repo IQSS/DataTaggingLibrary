@@ -185,3 +185,36 @@ footer {
   box-shadow: 0 0 5px yellow;
 }
 
+
+@ar-height: 1.5em;
+@ar-controls-width: 10em;
+.answer-history {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  .answer-record {
+    border-bottom: 1px gray dotted;
+    padding: 4px;
+    position: relative;
+    margin-bottom: 0.2em;
+    .ar-question {
+      height: @ar-height;
+      width:  100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+      padding-right: @ar-controls-width;
+    }
+    .ar-controls {
+      position: absolute;
+      top:0;
+      right: 0;
+      width: @ar-controls-width;
+      height: @ar-height;
+      text-align: right;
+
+    }
+  }
+}
+

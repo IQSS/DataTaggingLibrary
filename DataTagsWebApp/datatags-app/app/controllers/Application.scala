@@ -1,6 +1,7 @@
 package controllers
 
 import play.api.mvc._
+import play.api.Routes
 import models._
 
 object Application extends Controller {
@@ -19,4 +20,14 @@ object Application extends Controller {
   def changeLog = Action {
     Ok( views.html.changeLog() )
   }
+
+  def javascriptRoutes = Action { implicit request =>
+    Ok(
+      Routes.javascriptRouter("jsRoutes")(
+        routes.javascript.Interview.revisit,
+        routes.javascript.Interview.askNode
+      )
+    ).as("text/javascript")
+  }
+
 }

@@ -18,8 +18,8 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-   <link href="/assets/css/main.min.css" rel="stylesheet">
-	 <link href="/assets/css/tags.min.css" rel="stylesheet">
+   <link href="@routes.Assets.at("css/main.min.css")" rel="stylesheet">
+	 <link href="@routes.Assets.at("css/tags.min.css")" rel="stylesheet">
    <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
 	@extraHead
   </head>
@@ -47,9 +47,9 @@
       </ul>
     </div>
   </footer>	  
-    <script src="/assets/js/jquery.min.js"></script>
-    <script src="/assets/js/bootstrap.min.js"></script>
-	@scripts
+    <script src="@routes.Assets.at("js/jquery.min.js")"></script>
+    <script src="@routes.Assets.at("js/bootstrap.min.js")"></script>
+	  @scripts
   <script>
     $(document).ready( function(){ 
       $("a[data-toggle='popover']").popover(); 

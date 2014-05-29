@@ -1,9 +1,15 @@
 @( questionnaireId: String,
    questionNode: edu.harvard.iq.datatags.model.charts.nodes.AskNode,
    dataTags: edu.harvard.iq.datatags.model.values.CompoundValue,
-   history:Seq[edu.harvard.iq.datatags.model.charts.nodes.Node] )
+   history:Seq[edu.harvard.iq.datatags.model.charts.nodes.Node],
+   answerHistory: Seq[AnswerRecord] )
 
-@templates.bsNavBar( "Question", 'tag) {
+@scripts = {
+    <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
+    <script type="text/javascript" src="@routes.Assets.at("js/Question.js")"></script>
+}
+
+@templates.bsNavBar( "Question", 'tag, scripts) {
 
 <div class="row">
     <div class="col-md-6">
@@ -35,6 +41,26 @@
                 }
             </div>
         </div>
+        @if( ! answerHistory.isEmpty ) {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Answer Feed</h3>
+            </div>
+            <div class="panel-body">
+                <ol class="answer-history">
+                @for( ar <- answerHistory.reverse ){
+                    <li class="answer-record">
+                        <div class="ar-question">@ar.question.getText</div>
+                        <div class="ar-controls">
+                            <span class="badge">@ar.answer.getAnswerText</span>
+                            <button class="btn btn-xs" onclick="Question.revisit('@ar.question.getId')">Revisit</button>
+                        </div>
+                    </li>
+                }       
+                </ol>
+            </div>
+        </div>
+        }
     </div>
     <div class="col-md-6">
         <div class="panel panel-default">
@@ -63,7 +89,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                @for( nd <- history ){
+                @for( nd <- history.reverse ){
                     <tr>
                         @comps.node(nd)
                     </tr>
