@@ -2,15 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/types/CompoundType.java</file>
-            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/values/TagValue.java</file>
-            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/charts/FlowChart.java</file>
-            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/charts/FlowChartSet.java</file>
-            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/runtime/RuntimeEngineState.java</file>
-            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/types/AggregateType.java</file>
-            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/charts/nodes/RejectNode.java</file>
-            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/types/TagType.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

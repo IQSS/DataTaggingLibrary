@@ -137,11 +137,11 @@
 		  (yes:
 				( >fcq4ai< ask:
 					(text: Did any of the students in the data request to opt out of the disclosure of their directory information? )
-					(yes: (set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt, FERPABasis=FERPADirectoryOptOut))
-					(no:  (set: storage=clear, code=green, harm=negligible, auth=none, effort=deidentified, transit=clear, FERPABasis=FERPADirectoryInfo)))
+					(yes: (set: storage=encrypt, code=yellow, harm=shame, effort=identifiable, transit=encrypt, FERPABasis=FERPADirectoryOptOut))
+					(no:  (set: storage=clear, code=green, harm=negligible, effort=deidentified, transit=clear, FERPABasis=FERPADirectoryInfo)))
 				(end))
 )))
-(set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt)
+(set: storage=encrypt, code=yellow, harm=shame, effort=identifiable, transit=encrypt)
 ( >fqc5< ask:
 	(text: Did the parents or students [if over 18] sign a consent form authorizing this disclosure of their data?)
 	(yes:
