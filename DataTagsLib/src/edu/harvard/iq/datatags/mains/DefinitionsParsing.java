@@ -27,7 +27,9 @@ public class DefinitionsParsing {
 		try {
 			TagType top = parser.parseTagDefinitions(source, in.toString());
 			GraphvizDataStructureVisualizer viz = new GraphvizDataStructureVisualizer(top);
-			viz.vizualize( base.resolve("out.gv") );
+            Path outFile = in.resolveSibling(in.getFileName() + ".gv");
+			viz.vizualize( outFile);
+            System.out.println("Wrote data to " + outFile.toFile().getAbsolutePath() );
 			
 		} catch (DataTagsParseException ex) {
 			ex.printStackTrace(System.out);
