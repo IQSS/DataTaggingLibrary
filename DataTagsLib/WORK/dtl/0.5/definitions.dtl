@@ -65,7 +65,7 @@ Approval: one of None, Email, Signed.
 
 auth: one of approval, none.
 
-Identity: one of notPersonSpecific, personSpecific.
+Identity: one of noPersonData, notPersonSpecific, personSpecific.
 
 Auditing: one of NotNeeded, Yearly, Monthly.
 
