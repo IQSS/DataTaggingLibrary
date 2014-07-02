@@ -1,5 +1,6 @@
 #!/bin/bash
 LIB_DIR='../../DataTagsLib/'
+
 pushd $LIB_DIR 
 ant jar
 popd

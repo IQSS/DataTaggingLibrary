@@ -8,5 +8,5 @@
 /DataTagsLib/dist/
 /DataTagsWebApp/dist/
 .DS_Store
-
+*.sublime-workspace
 DataTagsWebApp/datatags-app/public/last-commit

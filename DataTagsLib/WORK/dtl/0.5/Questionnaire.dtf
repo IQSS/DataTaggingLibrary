@@ -55,8 +55,8 @@
 		      (yes: (call: dua))
 		))
 	(yes:
-		(set:  Standards=HIPAA )
-		(call: hipaaCompliance )
+		(set:  Standards=HIPAA)
+		(call: hipaaCompliance)
 ))
 (end)
 
@@ -107,7 +107,7 @@
 	(no: (end))
 )
 (>fcq2< ask:
-	(text: 2.	Does the data fall into any of the following categories?
+	(text:Does the data fall into any of the following categories?
 		* Personal memory aids held in the sole possession of their creator;
 		* Records maintained by the law enforcement division of an educational agency or institution;
 		* Employment records for an educational agency or institution;
@@ -218,11 +218,18 @@
 
 (>dua< todo: Data use agreements)
 ( >timeLimit< ask:
-	(text:For how long should we keep the data?)
-	(forever:  (set: TimeLimit=none) )
-	(50 years: (set: TimeLimit=_50yr) )
-	(5 years:  (set: TimeLimit=_5yr) )
-	(1 year:   (set: TimeLimit=_1yr) )
+	(text: Is there any reason why we cannot store the data indefinitely?
+	       Limiting the time a dataset could be held interferes with good science practices such as replication, and should thus be avoided whenever possible )
+	(no: (set: TimeLimit=none) )
+	(yes:        
+		(ask:
+			(text:For how long should we keep the data?)
+			(indefinitely:  (set: TimeLimit=none) )
+			(50 years: (set: TimeLimit=_50yr) )
+			(5 years:  (set: TimeLimit=_5yr) )
+			(1 year:   (set: TimeLimit=_1yr) )
+		)
+	)
 )
 (end)
 (>DUA-PrivacyAct< todo)(end)

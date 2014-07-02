@@ -65,7 +65,10 @@ Approval: one of None, Email, Signed.
 
 auth: one of approval, none.
 
-Identity: one of noPersonData, notPersonSpecific, personSpecific.
+Identity: one of 
+	noPersonData (Data is about inanimate objects),
+	notPersonSpecific (Data is about living people, but in aggregated form - where aggregation is over a group large enough),
+	personSpecific (Personal information can be directly inferred from the data).
 
 Auditing: one of NotNeeded, Yearly, Monthly.
 
