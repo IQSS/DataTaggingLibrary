@@ -25,12 +25,12 @@ table.tagsTable {
   }
 }
 
-.row-noRisk     { .tagRow( @tagNoRisk     ); }
-.row-minimal    { .tagRow( @tagMinimal    ); }
-.row-shame      { .tagRow( @tagShame      ); }
-.row-civil      { .tagRow( @tagCivil      ); }
-.row-criminal   { .tagRow( @tagCriminal   ); }
-.row-maxControl { .tagRow( @tagMaxControl ); }
+.row-0 { .tagRow( lighten(desaturate(@tag0,20%),20%) ); }
+.row-1 { .tagRow( lighten(desaturate(@tag1,20%),20%) ); }
+.row-2 { .tagRow( lighten(desaturate(@tag2,20%),20%) ); }
+.row-3 { .tagRow( lighten(desaturate(@tag3,20%),20%) ); }
+.row-4 { .tagRow( lighten(desaturate(@tag4,20%),20%) ); }
+.row-5 { .tagRow( lighten(desaturate(@tag5,20%),20%) ); }
 .row-default { .tagRow( @tagDefault ); }
 
 .tagRow( @color ) {
@@ -43,4 +43,30 @@ table.tagsTable {
     background-color: @color;
     color: contrast(@color, white, black);
   }
+}
+
+.resultValue {
+  a {
+    color: black;
+    text-decoration: none;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    padding: 5px;
+    
+  }
+}
+@resultClear: #FFF;
+@resultFull:  #F88;
+.result-0 {
+  a { background-color: @resultClear; }
+}
+
+.result-1 {
+  a { background-color: mix(@resultClear, @resultFull, 25%); }
+}
+.result-2 {
+  a { background-color: mix(@resultClear, @resultFull, 50%); }
+}
+.result-3 {
+  a { background-color: @resultFull; }
 }

@@ -60,14 +60,18 @@
                       </tr>
                   </thead>
                   <tbody>
-                      @for( row <- rows ) {
-                        <tr class="row-@row.tagName">
-                          <th>@row.title</th>
-                          @for( cell<-row.cells.zipWithIndex ) {
+                      @for( (row, idx) <- rows.zipWithIndex ) {
+                        <tr class="row-@idx">
+                          <th>
+                            &nbsp;&nbsp;<div class="tag tag-@idx">@row.title</div>
+                          </th>
+                          @for( (cell, idx)<-row.cells.zipWithIndex ) {
                             <td>
-                              <a href="#" title="@cell._1.infoTitle" @if(cell._2==3){data-placement="left"} data-trigger="hover" data-toggle="popover" data-content="@cell._1.info">
-                              <div class="tag tag-default">@cell._1.title</div>
-                              </a>
+                              <div class="resultValue result-@cell.severity">
+                                <a href="#" title="@cell.infoTitle" @if(idx==3){data-placement="left"} data-trigger="hover" data-toggle="popover" data-content="@cell.info">
+                                  @cell.title
+                                </a>
+                              </div>
                             </td>
                           }
                         </tr>

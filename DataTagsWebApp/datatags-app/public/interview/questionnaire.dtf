@@ -1,9 +1,17 @@
-(call: medical-start )
+(ask:
+	(text: Does the data concern living perons?)
+	(yes: (call:personalData) )
+	(no: (set: Identity=noPersonData) )
+)
+(call: dua)
+(end)
+
+(>personalData< call: medical-start )
 (call: ferpaCompliance )
 (call: cipseaPaCompliance )
 (todo: Arrest and Conviction Records, Bank and Financial Records, 
 	Cable Television, Computer Crime, 
-	Credit reporting and Investigations [including ‘Credit Repair,’ ‘Credit Clinics,’ Check-Cashing and Credit Cards],
+	Credit reporting and Investigations [including 'Credit Repair', 'Credit Clinics', Check-Cashing and Credit Cards],
 	Criminal Justice Information Systems, Electronic Surveillance [including Wiretapping, Telephone Monitoring, and Video Cameras],
 	Employment Records, Government Information on Individuals, Identity Theft,
 	Insurance Records [including use of Genetic Information], Library Records, 
@@ -14,51 +22,42 @@
 	Privileged Communications, Social Security Numbers, Student Records, Tax Records,
 	Telephone Services [including Telephone Solicitation and Caller ID], 
 	Testing in Employment [including Urinalysis, Genetic and Blood Tests], Tracking Technologies,  Voter Records)
-(call: dua)
 (end)
-(>dua< todo: Data use agreements)
-(end)
+
 (>medical-start< ask:
 	(text: Person-specific. Does your data include personal information?)
 	(terms:
 		(data: 0s and 1s in some structured way)
 		(personal information: as defined in HIPAA))
 	(no:
-		(set: code=green, storage=clear, transit=clear, auth=none,
-			basis=notApplicable, identity=notPersonSpecific,
-			harm=negligible)
+		(set: Code=green, Storage=clear, Transit=clear, auth=none,
+			HIPAABasis=notApplicable, Identity=notPersonSpecific,
+			Harm=negligible)
 	 	(end)
 ))
 (>ec< ask:
 (text: Explicit Consent. Did each person whose information appears in the
 	data give explicit permission to share the data?)
   (yes:
-  	(set: basis=consent)
+  	(set: HIPAABasis=consent)
   	(ask:
   		(text: Did the consent have any restrictions on data sharing?)
-  		(no:  (set: code=green, storage=clear, transit=clear, auth=none))
+  		(no:  (set: Code=green, Storage=clear, Transit=clear, auth=none))
   		(yes: (call: dua)))
   	(end)
 ))
 (>medicalRecords< ask:
 	(text:Medical Records. Does the data contain personal health information?)
 	(no:
-		(set: basis=agreement)
+		(set: HIPAABasis=agreement)
 		(ask: (text:Did the data have any restrictions on sharing, such as stated in an agreement or policy statement?)
-		      (no:  (set: code=green, storage=clear, transit=clear, auth=none) )
+		      (no:  (set: Code=green, Storage=clear, Transit=clear, auth=none) )
 		      (yes: (call: dua))
 		))
 	(yes:
-		(set:  standards=HIPAA )
-		(call: hipaaCompliance )
+		(set:  Standards=HIPAA)
+		(call: hipaaCompliance)
 ))
-(>timeLimit< ask:
-	(text:For how long should we keep the data?)
-	(forever:  (set: timeLimit=none) )
-	(50 years: (set: timeLimit=_50yr) )
-	(5 years:  (set: timeLimit=_5yr) )
-	(1 year:   (set: timeLimit=_1yr) )
-)
 (end)
 
 (>hipaaCompliance< ask:
@@ -69,18 +68,18 @@
 			(terms:
 				(Safe Harbor Provision: Dates in years, zip codes contain only first 2 digits))
 			(yes: (ask: (text:Do you know of a way to to put names to the paitients in the data?)
-					  	    (no:  (set: code=green, storage=clear, transit=clear, auth=none, basis=HIPAASafeHarbor, effort=deidentified, harm=negligible)
+					  	    (no:  (set: Code=green, Storage=clear, Transit=clear, auth=none, HIPAABasis=HIPAASafeHarbor, Effort=deidentified, Harm=negligible)
 					  	    	    (end)))))
 	)
 )
 (ask:
 	(text: Statistician Provision. Has an expert certified the data as being of minimal risk?)
-	(yes: (set:code=green, transit=clear, storage=clear, auth=none, basis=HIPAAStatistician, effort=deidentified, harm=negligible)
+	(yes: (set:Code=green, Transit=clear, Storage=clear, auth=none, HIPAABasis=HIPAAStatistician, Effort=deidentified, Harm=negligible)
 		    (end)))
 (>3.1.3< ask:
 	(text: Limited Data Set. Did you acquire the data under a HIPAA limited data use agreement?)
 	(yes:
-		(set: storage=encrypt, transit=encrypt, auth=approval, basis=HIPAALimitedDataset, effort=identifiable, harm=criminal)
+		(set: Storage=encrypt, Transit=encrypt, auth=approval, HIPAABasis=HIPAALimitedDataset, Effort=identifiable, Harm=criminal)
 		(ask:
 			(text: Did the limited data use agreement have any additional restrictions on sharing?)
 			(yes:(call: dua)))
@@ -89,7 +88,7 @@
 (>3.1.4< ask:
 	(text: Business Associate. Did you acquire the data under a HIPAA Business Associate Agreement?)
 	(yes:
-		(set: code=red, storage=encrypt, transit=encrypt, auth=approval, basis=HIPAABusinessAssociate, effort=identifiable, harm=criminal)
+		(set: Code=red, Storage=encrypt, Transit=encrypt, auth=approval, HIPAABasis=HIPAABusinessAssociate, Effort=identifiable, Harm=criminal)
 		(ask: (text: Did the business associate agreement have any additional restrictions?)
 				  (yes: (call: dua)))
 		(end)
@@ -97,7 +96,7 @@
 (>3.1.5< ask:
 	(text: Covered. Are you an entity that is directly or indirectly covered by HIPAA?)
 	(yes:
-		(set: code=red, storage=encrypt, transit=encrypt, auth=approval, basis=HIPAABusinessAssociate, effort=identifiable, harm=criminal)))
+		(set: Code=red, Storage=encrypt, Transit=encrypt, auth=approval, HIPAABasis=HIPAABusinessAssociate, Effort=identifiable, Harm=criminal)))
 (end)
 
 (>ferpaCompliance< ask:
@@ -108,7 +107,7 @@
 	(no: (end))
 )
 (>fcq2< ask:
-	(text: 2.	Does the data fall into any of the following categories?
+	(text:Does the data fall into any of the following categories?
 		* Personal memory aids held in the sole possession of their creator;
 		* Records maintained by the law enforcement division of an educational agency or institution;
 		* Employment records for an educational agency or institution;
@@ -117,7 +116,7 @@
 	)
 	(yes: (end))
 )
-(set: standards=FERPA)
+(set: Standards=FERPA)
 ( >fcq3< ask:
 	(text: Does the data include information that, alone or in combination, is linked or linkable to a specific student that would 
 							allow a reasonable person to identify the student with reasonable certainty?)
@@ -127,7 +126,7 @@
 							   a personal identifier like a social security number or student number;
 							   other indirect identifiers like date of birth or mother’s maiden name.))
 	(no:
-		(set: storage=clear, code=green, harm=negligible, auth=none, effort=deidentified, transit=clear, FERPABasis=FERPADeidentified)
+		(set: Storage=clear, Code=green, Harm=negligible, auth=none, Effort=deidentified, Transit=clear, FERPABasis=FERPADeidentified)
 		(end))
 )
 ( >fcq4< ask:
@@ -137,11 +136,11 @@
 		  (yes:
 				( >fcq4ai< ask:
 					(text: Did any of the students in the data request to opt out of the disclosure of their directory information? )
-					(yes: (set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt, FERPABasis=FERPADirectoryOptOut))
-					(no:  (set: storage=clear, code=green, harm=negligible, auth=none, effort=deidentified, transit=clear, FERPABasis=FERPADirectoryInfo)))
+					(yes: (set: Storage=encrypt, Code=yellow, Harm=shame, Effort=identifiable, Transit=encrypt, FERPABasis=FERPADirectoryOptOut))
+					(no:  (set: Storage=clear, Code=green, Harm=negligible, Effort=deidentified, Transit=clear, FERPABasis=FERPADirectoryInfo)))
 				(end))
 )))
-(set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt)
+(set: Storage=encrypt, Code=yellow, Harm=shame, Effort=identifiable, Transit=encrypt)
 ( >fqc5< ask:
 	(text: Did the parents or students [if over 18] sign a consent form authorizing this disclosure of their data?)
 	(yes:
@@ -188,13 +187,13 @@
 		( >csc4< ask:
 			(text: Is the agency that collected the data a statistical agency or unit from this list: USDA Economic Research Service, National Agricultural Statistics Service, Bureau of Economic Analysis, Census Bureau, National Center for Education Statistics, Energy Information Administration, National Center for Health Statistics, Bureau of Justice Statistics, Bureau of Labor Statistics, Bureau of Transportation Statistics, Statistics of Income Division of the Internal Revenue Service, or NSF Division of Science Resources Statistics?)
 			(yes:
-				(set: standards=CIPSEA)
+				(set: Standards=CIPSEA)
 				(>csc5< ask:
 					(text: Are the data being shared in identifiable form?)
 					(terms:
 						(identifiable form: any representation of information that permits the identity of the respondent to whom the information applies to be reasonably inferred by either direct or indirect means))
-					(no: (set: storage=clear, code=green, harm=negligible, auth=none, effort=deidentified, transit=clear, CIPSEABasis=CIPSEADeidentified))
-					(yes: (set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt, CIPSEABasis=CIPSEAIdentifiable)
+					(no: (set: Storage=clear, Code=green, Harm=negligible, auth=none, Effort=deidentified, Transit=clear, CIPSEABasis=CIPSEADeidentified))
+					(yes: (set: Storage=encrypt, Code=yellow, Harm=shame, auth=approval, Effort=identifiable, Transit=encrypt, CIPSEABasis=CIPSEAIdentifiable)
 								(call: DUA-CIPSEA))
 				)
 			)
@@ -205,15 +204,32 @@
 	(text: Are the data maintained by the agency in a system of records?)
 	(no: (end))
 )
-(set: standards=PrivacyAct)
+(set: Standards=PrivacyAct)
 ( >csc7< ask: 
 	(text: Do the data contain personally identifiable information? Personally identifiable information includes any information about an individual that can be used to distinguish or trace an individual's identity, either by itself or in combination with any other information that is linked or linkable to an individual)
 	(terms:
 		(individual's identity: Items such as name, address, or a social security number.)
 		(information that is linked: Items such as medical, educational, financial, criminal or employment history))
-	(no: (set: storage=clear, code=green, harm=negligible, auth=none, effort=deidentified, transit=clear, CIPSEABasis=PrivacyActDeidentified) )
-	(yes: (set: storage=encrypt, code=yellow, harm=shame, auth=approval, effort=identifiable, transit=encrypt, CIPSEABasis=PrivacyActIdentifiable)
+	(no: (set: Storage=clear, Code=green, Harm=negligible, auth=none, Effort=deidentified, Transit=clear, PrivacyActBasis=PrivacyActDeidentified) )
+	(yes: (set: Storage=encrypt, Code=yellow, Harm=shame, auth=approval, Effort=identifiable, Transit=encrypt, PrivacyActBasis=PrivacyActIdentifiable)
 			 (call: DUA-PrivacyAct))
+)
+(end)
+
+(>dua< todo: Data use agreements)
+( >timeLimit< ask:
+	(text: Is there any reason why we cannot store the data indefinitely?
+	       Limiting the time a dataset could be held interferes with good science practices such as replication, and should thus be avoided whenever possible )
+	(no: (set: TimeLimit=none) )
+	(yes:        
+		(ask:
+			(text:For how long should we keep the data?)
+			(indefinitely:  (set: TimeLimit=none) )
+			(50 years: (set: TimeLimit=_50yr) )
+			(5 years:  (set: TimeLimit=_5yr) )
+			(1 year:   (set: TimeLimit=_1yr) )
+		)
+	)
 )
 (end)
 (>DUA-PrivacyAct< todo)(end)

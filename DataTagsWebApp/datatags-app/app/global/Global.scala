@@ -27,7 +27,7 @@ object Global extends GlobalSettings {
     dataTags = dp.parseTagDefinitions( readAll(p.resolve("definitions.dtDef")), "definitions").asInstanceOf[CompoundType]
     val fcsParser = new FlowChartSetComplier( dataTags )
 
-    val source = readAll( p.resolve("interview.dtf") )
+    val source = readAll( p.resolve("questionnaire.dtf") )
 
     interview = fcsParser.parse(source, "Data Deposit Screening" )
 	  Logger.info("Default chart id: %s".format(interview.getDefaultChartId) )

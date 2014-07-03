@@ -16,10 +16,14 @@
   height: @tagHeight;
   left: 0;
   line-height: @tagHeight;
-  padding: 0 @tagHeight/2 0 @tagHeight*0.75;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-right: @triangleHeight;
+  padding-left: @triangleHeight;
+  margin-left: @triangleHeight/2;
   position: relative;
   top: 0;
-  box-shadow: @tagShadow;
+  
 
   &:before { // triangle shape on left
     border-bottom: @tagHeight/2 transparent solid;
@@ -27,11 +31,11 @@
     border-top: @tagHeight/2 transparent solid;
     border-left: 0px transparent solid;
     content: '';
+    position: absolute;
+    width: 0;
     height: 0;
     left: -@triangleHeight;
-    position: absolute;
     top: 0;
-    width: 0;
   }
 
   &:after { // "hole"
@@ -44,16 +48,16 @@
     position: absolute;
     width: @holeSize;
     top: @holeTop;
-    box-shadow: @tagShadow inset;
+    
   }
 }
 
-.tag-noRisk     { .coloredTag( @tagNoRisk     ); }
-.tag-minimal    { .coloredTag( @tagMinimal    ); }
-.tag-shame      { .coloredTag( @tagShame      ); }
-.tag-civil      { .coloredTag( @tagCivil      ); }
-.tag-criminal   { .coloredTag( @tagCriminal   ); }
-.tag-maxControl { .coloredTag( @tagMaxControl ); }
+.tag-0 { .coloredTag( @tag0 ); }
+.tag-1 { .coloredTag( @tag1 ); }
+.tag-2 { .coloredTag( @tag2 ); }
+.tag-3 { .coloredTag( @tag3 ); }
+.tag-4 { .coloredTag( @tag4 ); }
+.tag-5 { .coloredTag( @tag5 ); }
 .tag-default { .coloredTag( @tagDefault ); }
 
 .coloredTag( @color ) {
@@ -69,12 +73,12 @@
 }
 
 // aliasing colors and levels 
-.tag-blue    { .tag-noRisk }
-.tag-green   {.tag-minimal }
-.tag-yellow  {.tag-shame}
-.tag-orange  {.tag-civil }
-.tag-red     {.tag-criminal }
-.tag-crimson {.tag-maxControl }
+.tag-blue    { .tag-0 }
+.tag-green   { .tag-1 }
+.tag-yellow  { .tag-2 }
+.tag-orange  { .tag-3 }
+.tag-red     { .tag-4 }
+.tag-crimson { .tag-5 }
 
 .tag-info {
   padding-left: 1em;

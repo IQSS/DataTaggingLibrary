@@ -1,8 +1,12 @@
-DataTags: code, basis, Handling, DataType, DUA, IP, identity, FERPA, CIPSEA.
+DataTags: Code, Handling, Legal, Assertions.
+
+Legal: FERPA, CIPSEA, HIPAA, PrivacyAct.
+
+Assertions: DataType, IP, Identity.
 
 TODO: IP.
 
-code: one of
+Code: one of
 	blue    (Non-confidential information that can be stored and shared freely.),
 	green   (Potentially identifiable but not harmful personal information, shared with some access control.),
 	yellow  (Potentially harmful personal information, shared with loosely verified and/or approved recipients.),
@@ -11,17 +15,17 @@ code: one of
 	crimson (Requires explicit permission for each transaction, using strong verification of approved recipients under signed agreement.)
 .
 
-Handling: storage, transit, authentication, auth.
+Handling: Storage, Transit, Authentication, auth, DUA, Acceptance, Approval.
 
-storage: one of clear, encrypt, doubleEncrypt.
+Storage: one of clear, encrypt, doubleEncrypt.
 
-transit: one of
+Transit: one of
 	clear ( No encryption involved.),
 	encrypt ( Single encryption.),
 	doubleEncrypt (Encryption with two keys, which may be held by different parties.)
 .
 
-authentication: some of
+Authentication: some of
 	None     (Available to anonymous individuals.),
 	Email    (Available to individuals with verified email address.),
 	OAuth    (Available to individuals with verified online identity or a mobile phone.),
@@ -29,51 +33,58 @@ authentication: some of
 .
 
 DataType:
-	standards, effort, harm.
+	Standards, Effort, Harm.
 
-standards: some of HIPAA, FERPA, ElectronicWiretapping, CommonRule, CIPSEA, PrivacyAct.
-effort:    one of  identified, identifiable, deidentified, anonymous.
-harm:      one of  noRisk, negligible, shame, civil, criminal, maxControl.
+Standards: some of HIPAA, FERPA, ElectronicWiretapping, CommonRule, CIPSEA, PrivacyAct.
+Effort:    one of  identified, identifiable, deidentified, anonymous.
+Harm:      one of  noRisk, negligible, shame, civil, criminal, maxControl.
 
 DUA:
-	timeLimit,
-	sharing, reidentify, publication,
-	use, acceptance, approval, auditing
-.
+	TimeLimit, Use,
+	Sharing, Reidentify, Publication, Auditing.
 
-timeLimit: one of none, _1yr, _2yr, _5yr, _50yr.
 
-sharing: one of
+TimeLimit: one of none, _1yr, _2yr, _5yr, _50yr.
+
+Sharing: one of
 		Anyone,
 		NotOnline,
 		Organization,
 		Group,
 		NoOne.
 
-basis: one of
+Reidentify: one of NoMatching, NoEntities, NoPeople, NoProhibition, Reidentify, Contact.
+
+Publication: one of NoRestriction, Notify, PreApprove, Prohibited.
+
+Use: one of NoRestriction, Research, IRB, NoProduct.
+
+Acceptance: one of Click, Signed, SignWithID.
+
+Approval: one of None, Email, Signed.
+
+auth: one of approval, none.
+
+Identity: one of 
+	noPersonData (Data is about inanimate objects),
+	notPersonSpecific (Data is about living people, but in aggregated form - where aggregation is over a group large enough),
+	personSpecific (Personal information can be directly inferred from the data).
+
+Auditing: one of NotNeeded, Yearly, Monthly.
+
+HIPAA: HIPAABasis.
+HIPAABasis: one of
 		notApplicable,
 		agreement,
 		consent,
 		HIPAASafeHarbor, HIPAAStatistician, HIPAALimitedDataset, HIPAABusinessAssociate.
 
-reidentify: one of NoMatching, NoEntities, NoPeople, NoProhibition, Reidentify, Contact.
-
-publication: one of NoRestriction, Notify, PreApprove, Prohibited.
-
-use: one of NoRestriction, Research, IRB, NoProduct.
-
-acceptance: one of Click, Signed, SignWithID.
-
-approval: one of None, Email, Signed.
-
-auth: one of approval, none.
-
-identity: one of notPersonSpecific, personSpecific.
-
-auditing: one of NotNeeded, Yearly, Monthly.
 
 FERPA: FERPABasis.
 FERPABasis: one of FERPADeidentified, FERPADirectoryOptOut, FERPADirectoryInfo, FERPAOfficial, FERPAStudies, FERPAConsent.
 
 CIPSEA: CIPSEABasis.
-CIPSEABasis: one of CIPSEADeidentified, CIPSEAIdentifiable, PrivacyActDeidentified, PrivacyActIdentifiable.
+CIPSEABasis: one of CIPSEADeidentified, CIPSEAIdentifiable.
+
+PrivacyAct: PrivacyActBasis.
+PrivacyActBasis: one of PrivacyActDeidentified, PrivacyActIdentifiable.
