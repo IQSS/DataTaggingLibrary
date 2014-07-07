@@ -1,5 +1,5 @@
 (ask:
-	(text: Does the data concern living perons?)
+	(text: Does the data concern living persons?)
 	(yes: (call:personalData) )
 	(no: (set: Identity=noPersonData) )
 )
