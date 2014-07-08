@@ -74,7 +74,6 @@ Auditing: one of NotNeeded, Yearly, Monthly.
 
 HIPAA: HIPAABasis.
 HIPAABasis: one of
-		notApplicable,
 		agreement,
 		consent,
 		HIPAASafeHarbor, HIPAAStatistician, HIPAALimitedDataset, HIPAABusinessAssociate.

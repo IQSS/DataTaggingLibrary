@@ -31,7 +31,7 @@
 		(personal information: as defined in HIPAA))
 	(no:
 		(set: Code=green, Storage=clear, Transit=clear, auth=none,
-			HIPAABasis=notApplicable, Identity=notPersonSpecific,
+			Identity=notPersonSpecific,
 			Harm=negligible)
 	 	(end)
 ))
@@ -43,7 +43,7 @@
   	(ask:
   		(text: Did the consent have any restrictions on data sharing?)
   		(no:  (set: Code=green, Storage=clear, Transit=clear, auth=none))
-  		(yes: (call: dua)))
+  		(yes: (call: hippa-dua)))
   	(end)
 ))
 (>medicalRecords< ask:
@@ -52,7 +52,7 @@
 		(set: HIPAABasis=agreement)
 		(ask: (text:Did the data have any restrictions on sharing, such as stated in an agreement or policy statement?)
 		      (no:  (set: Code=green, Storage=clear, Transit=clear, auth=none) )
-		      (yes: (call: dua))
+		      (yes: (call: hippa-dua))
 		))
 	(yes:
 		(set:  Standards=HIPAA)
@@ -82,7 +82,7 @@
 		(set: Storage=encrypt, Transit=encrypt, auth=approval, HIPAABasis=HIPAALimitedDataset, Effort=identifiable, Harm=criminal)
 		(ask:
 			(text: Did the limited data use agreement have any additional restrictions on sharing?)
-			(yes:(call: dua)))
+			(yes:(call: hippa-dua)))
 		(end)
 	))
 (>3.1.4< ask:
@@ -90,7 +90,7 @@
 	(yes:
 		(set: Code=red, Storage=encrypt, Transit=encrypt, auth=approval, HIPAABasis=HIPAABusinessAssociate, Effort=identifiable, Harm=criminal)
 		(ask: (text: Did the business associate agreement have any additional restrictions?)
-				  (yes: (call: dua)))
+				  (yes: (call: hippa-dua)))
 		(end)
 	))
 (>3.1.5< ask:
@@ -98,6 +98,8 @@
 	(yes:
 		(set: Code=red, Storage=encrypt, Transit=encrypt, auth=approval, HIPAABasis=HIPAABusinessAssociate, Effort=identifiable, Harm=criminal)))
 (end)
+
+(>hippa-dua< todo)(end)
 
 (>ferpaCompliance< ask:
 	(text:Does the data being deposited directly relate to a student, and is it maintained by an educational agency or institution?)
