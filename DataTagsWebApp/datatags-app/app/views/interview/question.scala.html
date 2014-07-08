@@ -9,6 +9,8 @@
     <script type="text/javascript" src="@routes.Assets.at("js/Question.js")"></script>
 }
 
+@import views.Helpers
+
 @templates.bsNavBar( "Question", 'tag, scripts) {
 
 <div class="row">
@@ -34,7 +36,7 @@
                 @helper.form( action=routes.Interview.answer(questionnaireId, questionNode.getId), 'id->"answerForm" ) {
                     @for( ans <- questionNode.getAnswers ) {
                         <button class="btn btn-default"
-                                onclick="$('#answerText')[0].value='@ans.getAnswerText'; $('#answerForm').submit();" >@ans.getAnswerText</button>
+                                onclick="$('#answerText')[0].value='@ans.getAnswerText'; $('#answerForm').submit();" >@Helpers.makeUpper(ans.getAnswerText)</button>
                     }
                     <input type="hidden" name="answerText" id="answerText" value="initialValue" />
                     <input type="hidden" name="nodeId"     id="nodeId"     value="@questionNode.getId" />
