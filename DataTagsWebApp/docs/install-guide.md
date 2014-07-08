@@ -23,9 +23,13 @@ And then install Less
 
     $ npm install -g less
 
+To test your installation, open a terminal application. Navigate to the `datatags-app` folder, and type
 
+    $ activator start
 
-## Trouble shooting
+After a while (might be a long while, depends on how many items sbt has to download from the internet), you should be able to view your local version at http://localhost:9000
+
+## Troubleshooting
 * In case of a currpt installation, e.g. when any of the scala commands fail over a missing dependency (such as `scala.tools.nsc.Global`) try deleting the caches of maven, ivy and sbt:
     - `~/.m2`
     - `~/.ivy2`
@@ -36,3 +40,18 @@ On the terminal, this would mean:
     rm -rf ~/.m2
     rm -rf ~/.ivy2
     rm -rf ~/.sbt
+
+
+## Deploy to test server
+
+1. Prepare you local copy. At the `datatags-app` folder, type `activator clean stage`.
+1. Ssh into `dvnweb-vm1.hmdc.harvard.edu`. Cd into `datatags-apps`
+2. Make a new directory (preferably named after the date)
+3. scp `target` and `public` folders from the local `datatag-app` to the new folder created on the server
+4. On the server, type `./stop-current.sh`
+5. relink current to the new application folder (`ln -s [new folder name goes here] current`)
+6. start the new application by typing `./start-current.sh`
+7. Test you changes at http://www.datatags.org
+8. logout using `ctrl-D`
+9. Test you changes at http://www.datatags.org again, just to make sure the logout did not close the server process.
+

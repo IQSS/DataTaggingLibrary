@@ -79,9 +79,15 @@
             </div>
             <div class="panel-body">
                 <ul class="list-unstyled">
-                    <div class="tagvalue-container">
-                      @comps.tagValue(dataTags)
-                    </div>
+                    @if( dataTags.getSetFieldTypes.isEmpty ) {
+                        <div class="well well-sm text-center">
+                            <span class="muted">This space will contain the tags for your dataset. It will be updated as we go along.</span>
+                        </div>    
+                    } else {
+                        <div class="tagvalue-container">
+                          @comps.tagValue(dataTags)
+                        </div>
+                    }
                 </ul>
             </div>
         </div>
