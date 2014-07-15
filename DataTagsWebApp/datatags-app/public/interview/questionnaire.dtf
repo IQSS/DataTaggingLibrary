@@ -1,4 +1,4 @@
-(ask:
+( >start< ask:
 	(text: Does the data concern living persons?)
 	(yes: (call:personalData) )
 	(no: (set: Identity=noPersonData) )

@@ -37,7 +37,7 @@ DataType:
 
 Standards: some of HIPAA, FERPA, ElectronicWiretapping, CommonRule, CIPSEA, PrivacyAct.
 Effort:    one of  identified, identifiable, deidentified, anonymous.
-Harm:      one of  noRisk, negligible, shame, civil, criminal, maxControl.
+Harm:      one of  noRisk, negligible, shame, civil, criminal, catastrophe.
 
 DUA:
 	TimeLimit, Use,

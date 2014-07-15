@@ -19,12 +19,12 @@ object TagsTable {
     val authTwoFactor = CellItem("Two Factor", "Two Factor", "Users are authenticated using two non-related methods, e.g. password and a text message to a device which is not the one they're using.",3)
 
     Seq(
-      Row("No Risk",            "noRisk",     Seq(duaNone,         authNone,      encClear, encClear) ),
-      Row("Minimal",            "minimal",    Seq(duaNone,         authEmail,     encClear, encClear) ),
-      Row("Shame",              "shame",      Seq(duaClickThrough, authPassword,  encEncrypted, encClear) ),
-      Row("Civil Penalties",    "civil",      Seq(duaSign,         authPassword,  encEncrypted, encEncrypted) ),
-      Row("Criminal Penalties", "criminal",   Seq(duaSign,         authTwoFactor, encEncrypted, encEncrypted) ),
-      Row("Catastrophe",        "maxControl", Seq(duaSign,         authTwoFactor, encDouble, encDouble) )
+      Row("Blue",    "noRisk",     Seq(duaNone,         authNone,      encClear, encClear) ),
+      Row("Green",   "minimal",    Seq(duaNone,         authEmail,     encClear, encClear) ),
+      Row("Yellow",  "shame",      Seq(duaClickThrough, authPassword,  encEncrypted, encClear) ),
+      Row("Orange",  "civil",      Seq(duaSign,         authPassword,  encEncrypted, encEncrypted) ),
+      Row("Red",     "criminal",   Seq(duaSign,         authTwoFactor, encEncrypted, encEncrypted) ),
+      Row("Crimson", "maxControl", Seq(duaSign,         authTwoFactor, encDouble, encDouble) )
     )    
   }
 
