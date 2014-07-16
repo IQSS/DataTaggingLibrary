@@ -1,7 +1,7 @@
 package models
 
 case class CellItem( title: String, infoTitle:String, info: String, severity:Int )
-case class Row( title: String, tagName: String, cells:Seq[CellItem] )
+case class Row( title: String, description: String, cells:Seq[CellItem] )
 
 object TagsTable {
   private def makeRows = {
@@ -19,12 +19,18 @@ object TagsTable {
     val authTwoFactor = CellItem("Two Factor", "Two Factor", "Users are authenticated using two non-related methods, e.g. password and a text message to a device which is not the one they're using.",3)
 
     Seq(
-      Row("Blue",    "noRisk",     Seq(duaNone,         authNone,      encClear, encClear) ),
-      Row("Green",   "minimal",    Seq(duaNone,         authEmail,     encClear, encClear) ),
-      Row("Yellow",  "shame",      Seq(duaClickThrough, authPassword,  encEncrypted, encClear) ),
-      Row("Orange",  "civil",      Seq(duaSign,         authPassword,  encEncrypted, encEncrypted) ),
-      Row("Red",     "criminal",   Seq(duaSign,         authTwoFactor, encEncrypted, encEncrypted) ),
-      Row("Crimson", "maxControl", Seq(duaSign,         authTwoFactor, encDouble, encDouble) )
+      Row("Blue",    "Non-confidential information that can be stored and shared freely",
+          Seq(duaNone, authNone,      encClear, encClear) ),
+      Row("Green",   "Potentially identifiable but not harmful personal information, shared with some access control",
+          Seq(duaNone, authEmail,     encClear, encClear) ),
+      Row("Yellow",  "Potentially harmful personal information, shared with loosely verified and/or approved recipients",
+         Seq(duaClickThrough, authPassword,  encEncrypted, encClear) ),
+      Row("Orange",  "May include sensitive, identifiable personal information, shared with verified and/or approved recipients under agreement",
+         Seq(duaSign,         authPassword,  encEncrypted, encEncrypted) ),
+      Row("Red",     "Very sensitive identifiable personal information, shared with strong verification of approved recipients under signed agreement",
+         Seq(duaSign, authTwoFactor, encEncrypted, encEncrypted) ),
+      Row("Crimson", "Requires explicit permission for each transaction, using strong verification of approved recipients under signed agreement",
+         Seq(duaSign, authTwoFactor, encDouble, encDouble) )
     )    
   }
 
