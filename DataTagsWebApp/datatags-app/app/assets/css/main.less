@@ -219,7 +219,6 @@ footer {
 }
 
 
-@ar-height: 1.5em;
 @ar-controls-width: 10em;
 .answer-history {
   list-style: none;
@@ -232,10 +231,7 @@ footer {
     position: relative;
     margin-bottom: 0.2em;
     .ar-question {
-      height: @ar-height;
       width:  100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
       margin: 0;
       padding-right: @ar-controls-width;
     }
@@ -244,9 +240,10 @@ footer {
       top:0;
       right: 0;
       width: @ar-controls-width;
-      height: @ar-height;
       text-align: right;
-
+      form {
+        display: inline;
+      }
     }
   }
 }

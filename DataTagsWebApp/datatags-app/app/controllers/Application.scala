@@ -24,8 +24,9 @@ object Application extends Controller {
   def javascriptRoutes = Action { implicit request =>
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-        routes.javascript.Interview.revisit,
-        routes.javascript.Interview.askNode
+        routes.javascript.Interview.askNode,
+        routes.javascript.Interview.answer,
+        routes.javascript.Interview.startInterview
       )
     ).as("text/javascript")
   }
