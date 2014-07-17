@@ -16,7 +16,8 @@ case class UserSession(
   traversed: Seq[Node],
   questionnaireId: String,
   answerHistory: Seq[AnswerRecord],
-  sessionStart: Date ) {
+  sessionStart: Date,
+  requestedInterview: Option[RequestedInterviewSession]) {
 
   def tags = {
     val parser = new edu.harvard.iq.datatags.io.StringMapFormat
@@ -32,6 +33,9 @@ case class UserSession(
 
   def replaceHistory( answers: Seq[AnswerRecord], history:Seq[Node], state: RuntimeEngineState ) = 
         copy( engineState=state, traversed=history, answerHistory=answers )
+
+  def updatedWithRequestedInterview( requestedUserInterview: RequestedInterviewSession) =
+        copy (requestedInterview = Option(requestedUserInterview))
 }
 
 object UserSession {
@@ -41,5 +45,6 @@ object UserSession {
                      Seq(),
                      questionnaireId, 
                      Seq(), 
-                     new Date )
+                     new Date,
+                     None )
 }
