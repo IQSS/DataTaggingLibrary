@@ -18,3 +18,10 @@ POST    /interviews/:questionnaireId/answer/:nodeId  controllers.Interview.answe
 # Map static resources from the /public folder to the /assets URL path
 GET  /assets/*file      controllers.Assets.at(path="/public", file)
 GET  /javascriptRoutes  controllers.Application.javascriptRoutes
+
+
+# API routes
+GET		/api/1/interviewLink					controllers.API.requestInterview(repositoryName: String ?= "Dataverse", callbackURL: String ?= null)
+
+GET		/requestedInterview/:uniqueLinkId		controllers.RequestedInterview.start(uniqueLinkId: String)
+
