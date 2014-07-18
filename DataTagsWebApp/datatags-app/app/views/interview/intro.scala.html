@@ -1,9 +1,13 @@
- @( fcs:edu.harvard.iq.datatags.model.charts.FlowChartSet, tlt:edu.harvard.iq.datatags.model.types.CompoundType )
+ @( fcs:edu.harvard.iq.datatags.model.charts.FlowChartSet, tlt:edu.harvard.iq.datatags.model.types.CompoundType, greeting: Option[String] )
 
  @templates.bsNavBar("Interview Start Page", 'tag) {
 
      <div class="row">
          <div class="md-col-12">
+            @greeting match {
+                case Some(welcome) => {<p>@welcome</p>}
+                case None => {<p> </p>}
+            }
             <br />
             <br />
             <div class="note note-todo">Questionnaire metadata and readme goes here.</div>
