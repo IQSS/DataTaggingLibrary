@@ -25,7 +25,7 @@ object Interview extends Controller {
     Cache.set(userSession.key, userSession)
     val fcs = global.Global.interview
     val dtt = global.Global.dataTags
-    Ok( views.html.interview.intro(fcs,dtt) )
+    Ok( views.html.interview.intro(fcs,dtt, Option(null) ))
       .withSession( session + ("uuid" -> userSession.key) )
   }
 

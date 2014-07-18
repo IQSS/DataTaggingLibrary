@@ -33,8 +33,9 @@ object RequestedInterview extends Controller {
 
         val fcs = global.Global.interview
         val dtt = global.Global.dataTags
+        val message = Option("Welcome, Dataverse user! Please follow the directions below to begin tagging your data.")
 
-        Ok( views.html.interview.intro(fcs,dtt) )
+        Ok( views.html.interview.intro(fcs,dtt, message) )
           .withSession( session + ("uuid" -> userSessionWithInterview.key) ) }
 
    	  case None => BadRequest

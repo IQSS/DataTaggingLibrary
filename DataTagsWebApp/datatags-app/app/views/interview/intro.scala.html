@@ -1,11 +1,14 @@
- @( fcs:edu.harvard.iq.datatags.model.charts.FlowChartSet, tlt:edu.harvard.iq.datatags.model.types.CompoundType )
+@( fcs:edu.harvard.iq.datatags.model.charts.FlowChartSet, tlt:edu.harvard.iq.datatags.model.types.CompoundType, greeting: Option[String] )
 @scripts = {
     <script type="text/javascript" src="@routes.Assets.at("js/InterviewIntro.js")"></script>
 }
- @templates.bsNavBar("Interview Start Page", 'tag, scripts) {
-
+@templates.bsNavBar("Interview Start Page", 'tag, scripts) {
      <div class="row">
          <div class="md-col-12">
+            @greeting match {
+                case Some(welcome) => {<p>@welcome</p>}
+                case None => {}
+            }
             <p>
             After clicking the <kbd><a onclick="InterviewIntro.highlightStartTaggingButton()">Start Tagging</a></kbd> button, you will be asked questions about the dataset you want to tag. Questions help detect laws, regulations, and contracts that apply to the dataset. You will be able to revisit questions if you need to change an answer. At the end, you will be provided with the DataTag built by your answers. If you are ready, go ahead and start tagging!
             </p>
