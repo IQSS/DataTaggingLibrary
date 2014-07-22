@@ -20,7 +20,7 @@ public class DefinitionsParsing {
 	public static void main(String[] args) throws IOException {
 		DataDefinitionParser parser = new DataDefinitionParser();
 		Path base = Paths.get("dtl","0.5");
-		Path in = base.resolve("definitions.dtl");
+		Path in = base.resolve("definitions.tags");
 		System.out.println("reading " + in.toAbsolutePath().toString() );
 		String source = new String(Files.readAllBytes(in), StandardCharsets.UTF_8);
 		

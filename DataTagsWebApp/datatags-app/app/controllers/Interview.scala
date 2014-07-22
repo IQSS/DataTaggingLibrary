@@ -71,8 +71,6 @@ object Interview extends Controller {
   }
 
   def answer(questionnaireId: String, reqNodeId: String) = UserSessionAction { implicit request =>
-      Logger.info( "answer( %s, %s)".format(questionnaireId, reqNodeId) )
-
       val session = if ( request.userSession.engineState.getCurrentNodeId != reqNodeId ) {
       // re-run to reqNodeId
       val answers = request.userSession.answerHistory.slice(0, request.userSession.answerHistory.indexWhere( _.question.getId == reqNodeId) )
