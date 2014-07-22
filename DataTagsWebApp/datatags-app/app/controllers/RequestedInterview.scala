@@ -6,7 +6,20 @@ import play.api.data.Forms._
 import play.api.data._
 import play.api.cache.Cache
 import play.api.Play.current
+import play.api.libs.ws._
+import scala.concurrent.Future
+import play.api.Play.current
+import play.api.libs.json._
+import play.api.libs.json.Json
+import edu.harvard.iq.datatags.model.types._
+import edu.harvard.iq.datatags.model.values._
+
 import models._
+import _root_.util.Jsonizer
+
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
+
 /** Uncomment the following lines as needed **/
 /**
 import play.api.Play.current
@@ -17,7 +30,6 @@ import java.util.concurrent._
 import scala.concurrent.stm._
 import akka.util.duration._
 import play.api.cache._
-import play.api.libs.json._
 **/
 
 object RequestedInterview extends Controller {
@@ -25,6 +37,7 @@ object RequestedInterview extends Controller {
   def start(uniqueLinkId: String) = Action { implicit request =>
 
     Cache.getAs[RequestedInterviewSession](uniqueLinkId) match {
+
    	  case Some (requestedInterview) => {
         val userSession = UserSession.create(uniqueLinkId)
         val userSessionWithInterview = userSession.updatedWithRequestedInterview(requestedInterview)
@@ -36,11 +49,24 @@ object RequestedInterview extends Controller {
         val message = Option("Welcome, Dataverse user! Please follow the directions below to begin tagging your data.")
 
         Ok( views.html.interview.intro(fcs,dtt, message) )
-          .withSession( session + ("uuid" -> userSessionWithInterview.key) ) }
+          .withSession( session + ("uuid" -> userSessionWithInterview.key) )
+        }
 
    	  case None => BadRequest
    }
 
+  }
+
+
+
+  def postBackTo(uniqueLinkId: String) = UserSessionAction.async { implicit request =>
+        val json = request.userSession.tags.accept(Jsonizer)
+        val callbackURL = request.userSession.requestedInterview.get.callbackURL
+
+        WS.url(callbackURL).post(json).map {
+          response =>
+          Redirect((response.json \ "redirectURL").as[String])
+        }
   }
 
 }

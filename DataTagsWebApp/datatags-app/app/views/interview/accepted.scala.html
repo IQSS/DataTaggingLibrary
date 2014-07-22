@@ -1,6 +1,7 @@
 @( questionnaireId: String,
    dataTags: edu.harvard.iq.datatags.model.values.CompoundValue,
-   codeTag: Option[edu.harvard.iq.datatags.model.values.TagValue[_]] )
+   codeTag: Option[edu.harvard.iq.datatags.model.values.TagValue[_]],
+   requestedInterview: Option[RequestedInterviewSession] )
 
 @import edu.harvard.iq.datatags.model.values.SimpleValue
 
@@ -25,14 +26,35 @@
                 </div>
             </div>
             <div class="panel-footer">
-                <div class="note note-todo">
-                  Here endeth the demo. Future versions will redirect you to Dataverse (or another secure data repo), with the tags.
-                </div>
+                @requestedInterview match {
+                    case Some(interview) => {
+                        <p> Click the button below to return to your data repository with these tags. </p>
+                    }
+                    case None => {
+                      <div class="note note-todo">
+                        Here endeth the demo. Future versions will redirect you to Dataverse (or another secure data repo), with the tags.
+                      </div>
+                    }
+                  }
             </div>
         </div>
     </div>
   </div>
-  <div class="center-block" style="text-align: center">
-    <a href="@routes.Application.index" class="btn btn-primary">Start again</a>    
-  </div>
+  @requestedInterview match {
+      case Some(interview) => {
+          <div class="center-block" style="text-align: center">
+            @helper.form( action = routes.RequestedInterview.postBackTo(interview.key)) {
+                    <button class="btn btn-primary" type="submit">Continue depositing your data</button>
+            }
+          </div>
+      }
+      case None => {
+          <div class="center-block" style="text-align: center">
+            <a href="@routes.Application.index" class="btn btn-primary">Start again</a>    
+          </div>
+      }
+    }
 }
+
+
+
