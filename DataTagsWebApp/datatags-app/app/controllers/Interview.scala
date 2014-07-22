@@ -100,13 +100,10 @@ object Interview extends Controller {
   }
 
   def accept( questionnaireId:String ) = UserSessionAction { request =>
-    val tags = request.userSession.tags
+    val session = request.userSession
+    val tags = session.tags
     val code = Option(tags.get( tags.getType.getTypeNamed("Code") ))
-    if (request.userSession.requestedInterview == None) {
-        Ok( views.html.interview.accepted(questionnaireId, tags, code, None)  )  
-    } else {
-        Ok ( views.html.interview.accepted(questionnaireId, tags, code, request.userSession.requestedInterview))
-    }
+    Ok( views.html.interview.accepted(questionnaireId, tags, code, session.requestedInterview, session.answerHistory )  )  
   }
 
   def reject( questionnaireId:String ) = UserSessionAction { request =>
