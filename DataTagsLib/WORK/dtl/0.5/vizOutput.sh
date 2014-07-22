@@ -1,4 +1,4 @@
 #!/bin/bash 
-dot -Tpdf definitions.dtl.gv > out-definitions.pdf
-dot -Tpdf Questionnaire.dtf-ast.gv > out-ast.pdf
-dot -Tpdf Questionnaire.dtf-fcs.gv > out-flowchart.pdf
+dot -Tpdf definitions.tags.gv > out-definitions.pdf
+#dot -Tpdf questionnaire.flow-ast.gv > out-ast.pdf
+dot -Tpdf questionnaire.flow-fcs.gv > out-flowchart.pdf
