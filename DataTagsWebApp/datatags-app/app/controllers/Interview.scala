@@ -71,8 +71,6 @@ object Interview extends Controller {
   }
 
   def answer(questionnaireId: String, reqNodeId: String) = UserSessionAction { implicit request =>
-      Logger.info( "answer( %s, %s)".format(questionnaireId, reqNodeId) )
-
       val session = if ( request.userSession.engineState.getCurrentNodeId != reqNodeId ) {
       // re-run to reqNodeId
       val answers = request.userSession.answerHistory.slice(0, request.userSession.answerHistory.indexWhere( _.question.getId == reqNodeId) )
@@ -104,7 +102,11 @@ object Interview extends Controller {
   def accept( questionnaireId:String ) = UserSessionAction { request =>
     val tags = request.userSession.tags
     val code = Option(tags.get( tags.getType.getTypeNamed("Code") ))
-    Ok( views.html.interview.accepted(questionnaireId, tags, code)  )  
+    if (request.userSession.requestedInterview == None) {
+        Ok( views.html.interview.accepted(questionnaireId, tags, code, None)  )  
+    } else {
+        Ok ( views.html.interview.accepted(questionnaireId, tags, code, request.userSession.requestedInterview))
+    }
   }
 
   def reject( questionnaireId:String ) = UserSessionAction { request =>

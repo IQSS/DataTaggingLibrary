@@ -32,5 +32,4 @@ object API extends Controller {
 		Ok(Json.obj("status" -> "OK", "data" -> interviewLink))
 	}
 
-
 }
