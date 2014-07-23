@@ -1,6 +1,6 @@
 DataTags: Code, Handling, Legal, Assertions.
 
-Legal: FERPA, CIPSEA, HIPAA, PrivacyAct.
+Legal: FERPA, CIPSEA, HIPAA, PPRA, PrivacyAct.
 
 Assertions: DataType, IP, Identity.
 
@@ -35,9 +35,9 @@ Authentication: some of
 DataType:
 	Standards, Effort, Harm.
 
-Standards: some of HIPAA, FERPA, ElectronicWiretapping, CommonRule, CIPSEA, PrivacyAct.
-Effort:    one of  identified, identifiable, deidentified, anonymous.
-Harm:      one of  noRisk, negligible, shame, civil, criminal, catastrophe.
+Standards: some of HIPAA, FERPA, PPRA, CIPSEA, PrivacyAct.
+Effort:    one of  anonymous, deidentified, identifiable, identified.
+Harm:      one of  noRisk, minimal, shame, civil, criminal, maxControl.
 
 DUA:
 	TimeLimit, Use,
@@ -87,3 +87,6 @@ CIPSEABasis: one of CIPSEADeidentified, CIPSEAIdentifiable.
 
 PrivacyAct: PrivacyActBasis.
 PrivacyActBasis: one of PrivacyActDeidentified, PrivacyActIdentifiable.
+
+PPRA: PPRATags.
+PPRATags: some of PPRAConsent, PPRAOptOutProvided.

@@ -1,12 +1,13 @@
-( >start< ask:
+(ask:
 	(text: Does the data concern living persons?)
-	(yes: (call:personalData) )
-	(no: (set: Identity=noPersonData) )
+	(yes: (set: Code=green) (call:personalData) )
+	(no:  (set: Code=blue, Identity=noPersonData) )
 )
 (call: dua)
 (end)
 
 (>personalData< call: medical-start )
+(call: ppraCompliance )
 (call: ferpaCompliance )
 (call: cipseaPaCompliance )
 (todo: Arrest and Conviction Records, Bank and Financial Records, 
@@ -32,9 +33,9 @@
 	(no:
 		(set: Code=green, Storage=clear, Transit=clear, auth=none,
 			Identity=notPersonSpecific,
-			Harm=negligible)
-	 	(end)
-))
+			Harm=minimal)
+    (end)
+)) 
 (>ec< ask:
 (text: Explicit Consent. Did each person whose information appears in the
 	data give explicit permission to share the data?)
@@ -68,13 +69,13 @@
 			(terms:
 				(Safe Harbor Provision: Dates in years, zip codes contain only first 2 digits))
 			(yes: (ask: (text:Do you know of a way to to put names to the paitients in the data?)
-					  	    (no:  (set: Code=green, Storage=clear, Transit=clear, auth=none, HIPAABasis=HIPAASafeHarbor, Effort=deidentified, Harm=negligible)
+					  	    (no:  (set: Code=green, Storage=clear, Transit=clear, auth=none, HIPAABasis=HIPAASafeHarbor, Effort=deidentified, Harm=minimal)
 					  	    	    (end)))))
 	)
 )
 (ask:
 	(text: Statistician Provision. Has an expert certified the data as being of minimal risk?)
-	(yes: (set:Code=green, Transit=clear, Storage=clear, auth=none, HIPAABasis=HIPAAStatistician, Effort=deidentified, Harm=negligible)
+	(yes: (set:Code=green, Transit=clear, Storage=clear, auth=none, HIPAABasis=HIPAAStatistician, Effort=deidentified, Harm=minimal)
 		    (end)))
 (>3.1.3< ask:
 	(text: Limited Data Set. Did you acquire the data under a HIPAA limited data use agreement?)
@@ -101,16 +102,66 @@
 
 (>hippa-dua< todo)(end)
 
-(>ferpaCompliance< ask:
-	(text:Does the data being deposited directly relate to a student, and is it maintained by an educational agency or institution?)
+
+(>ppraCompliance< ask: 
+	(text: Were the data collected by an elementary or secondary school and in connection with a program receiving funds from the US Department of Education?)
 	(terms:
-		(educational agency or institution: school, school district, state educational agency)
+		(elementary or secondary school: serving students in grades K-12))
+	(no: (end)))
+
+(>ppra2< ask:
+	(text: Do the data contain personal information from students concerning any of the following eight categories?
+		      * Political affiliations or beliefs of a student or a student’s parent;
+          * Mental and psychological problems of a student or a student’s family;
+          * Sex behavior and attitudes;
+          * Illegal, anti-social, self-incriminating, or demeaning behavior;
+          * Critical appraisals of other individuals with whom respondents have close family relationships;
+          * Legally recognized privileged or analogous relationships, such as those of lawyers, physicians, and ministers;
+          * Religious practices, affiliations, or beliefs of a student or a student’s parent; or
+          * Income, other than that required by law to determine eligibility for participation in a program or for receiving financial assistance under such program.)
+ (terms:
+	(personal information: individually identifiable information such as i. a student or parent’s first and last name; ii. a home or other physical address, including street name and the name of the city or town; iii. a telephone number; or iv. a Social Security identification number.
+  ))
+ (no: (end)))
+(>ppra2a< ask:
+	(text: Have the data been deidentified?)
+	(yes: (set:Code=green, Harm=minimal, Storage=clear, Effort=deidentified) )
+	(no:  (set:Code=orange, Harm=civil, Storage=encrypt, Effort=identifiable) ))
+(>ppra3< ask:
+	(text: Were the parents of the students whose information is contained in the data provided with annual Protection of Pupil Rights Amendment [PPRA] notices? These notices inform parents of their rights under the PPRA, of local education policies concerning collection of student information, and of the specific or approximate dates of the proposed data collection activity.)
+	(no: (reject: Possilbe PPRA violation, due to failure to provide annual PPRA notices)))
+(>ppra4< ask:
+	(text: Were the data collected through a program, such as a survey, evaluation, or analysis, that was funded by the US Department of Education?)
+	(yes:
+		(>ppra5< ask:
+			(text:Was written consent obtained from parents prior to the data collection?)
+			(yes: (set: PPRATags=PPRAConsent) )
+			(no: (reject: Possilbe PPRA violation, due to failure to obtain written consent for collection of information protected under the PPRA))
+			))
+	(no:
+		(>ppra6< ask:
+			(text: Were the data disclosed by the school for marketing or sale?)
+			(no: (end)))
+		(>ppra7< ask:
+			(text: Were parents provided with notice and an opportunity to opt out of the collection and disclosure of the information?)
+			(yes: (set:PPRATags=PPRAOptOutProvided) )
+			(no: (reject: Possible PPRA violation due to failure to provide parents with the opportunity to opt out of the data collection.))
+		)
+	))
+(set: Standards=PPRA)
+(end)
+
+(>ferpaCompliance< ask:
+	(text:Do the data directly relate to a student, and were the data maintained by an educational agency or institution receiving funds from the US Department of Education? )
+	(terms:
+		(educational agency or institution: A public or private agency or institution that provides educational services or instruction, or both, to students. This includes, but is not limited to, a primary or secondary school, college or university, school district, or state educational agency.)
+		(funds from the us department of education: This means funds provided by the US Department of Education to the agency or institution by grant, cooperative agreement, contract, subgrant, or subcontract; or provided to students attending the agency or institution. The funds may be paid to the agency or institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program.)
 	)
 	(no: (end))
 )
-(>fcq2< ask:
+(>ferpa9< ask:
 	(text:Does the data fall into any of the following categories?
-		* Personal memory aids held in the sole possession of their creator;
+		* Personal memory aids held in the sole possession of their creator, such as a teacher's notes;
 		* Records maintained by the law enforcement division of an educational agency or institution;
 		* Employment records for an educational agency or institution;
 		* Records produced by a physician, psychiatrist, or other professional for treatment purposes; or
@@ -119,59 +170,62 @@
 	(yes: (end))
 )
 (set: Standards=FERPA)
-( >fcq3< ask:
-	(text: Does the data include information that, alone or in combination, is linked or linkable to a specific student that would 
-							allow a reasonable person to identify the student with reasonable certainty?)
-  (terms:
-			(reasonable certainty: Examples include: a student’s or student’s family name;
-							   student or student’s family’s address;
-							   a personal identifier like a social security number or student number;
-							   other indirect identifiers like date of birth or mother’s maiden name.))
+( >ferpa10< ask:
+	(text: Do the data include information that, alone or in combination, is linked or linkable to a specific student that would allow a reasonable person to identify the student with reasonable certainty? This includes, but is not limited to, a student’s or student’s family name, student or student’s family’s address, a personal identifier like a Social Security number or student number, or other indirect identifier like date of birth or mother’s maiden name.)
 	(no:
-		(set: Storage=clear, Code=green, Harm=negligible, auth=none, Effort=deidentified, Transit=clear, FERPABasis=FERPADeidentified)
+		(set: Storage=clear, Code=green, Harm=minimal, Effort=deidentified, Transit=clear, FERPABasis=FERPADeidentified)
 		(end))
 )
-( >fcq4< ask:
-	(text: Did the educational agency or institution classify the education records in question as directory information?)
+( >ferpa11< ask:
+	(text: Did the educational agency or institution classify the data as directory information?)
+	(terms:
+		(directory information:  Do the data include information that, alone or in combination, is linked or linkable to a specific student that would allow a reasonable person to identify the student with reasonable certainty? This includes, but is not limited to, a student’s or student’s family name, student or student’s family’s address, a personal identifier like a Social Security number or student number, or other indirect identifier like date of birth or mother’s maiden name.)
+	)
 	(yes:
-		( >fcq4a< ask: (text: Did the educational agency or institution give parents and students notice of the type of information they are designating as directory information and the opportunity to opt out of the disclosure of their directory information? )
+		( >ferpa11a< ask: (text: Did the educational agency or institution give parents and students notice of the type of information they are designating as directory information and the opportunity to opt out of the disclosure of their directory information? )
 		  (yes:
-				( >fcq4ai< ask:
+		  	(set: Effort=identifiable )
+				( >ferpa11ai< ask:
 					(text: Did any of the students in the data request to opt out of the disclosure of their directory information? )
-					(yes: (set: Storage=encrypt, Code=yellow, Harm=shame, Effort=identifiable, Transit=encrypt, FERPABasis=FERPADirectoryOptOut))
-					(no:  (set: Storage=clear, Code=green, Harm=negligible, Effort=deidentified, Transit=clear, FERPABasis=FERPADirectoryInfo)))
+					(yes: (set: Code=yellow, Storage=encrypt, Harm=shame,      Transit=encrypt, FERPABasis=FERPADirectoryOptOut))
+					(no:  (set: Code=green,  Storage=clear,   Harm=minimal, Transit=clear,   FERPABasis=FERPADirectoryInfo)))
 				(end))
 )))
-(set: Storage=encrypt, Code=yellow, Harm=shame, Effort=identifiable, Transit=encrypt)
-( >fqc5< ask:
-	(text: Did the parents or students [if over 18] sign a consent form authorizing this disclosure of their data?)
+
+(set: Transit=encrypt, Storage=encrypt, Code=yellow, Harm=shame, Effort=identifiable, Transit=encrypt)
+
+( >ferpa12< ask:
+	(text: Did the parents, guardians, or students [if 18 or over] sign a consent form authorizing this disclosure of their data?)
 	(yes:
-		( >fcq5a< ask: 
+		( >ferpa12a< ask: 
 			(text: Did the consent form specify the records to be disclosed, the purpose of the disclosure, and to whom the records may be disclosed?)
 			(yes: (set: FERPABasis=FERPAConsent)
 						(call: FERPA-Consent)
 						(end))
 		))
 )
-( >fcq6< ask: 
-	(text: Are the data being disclosed to a school official [or contractor, consultant, volunteer, or other party to whom an agency or institution has outsourced institutional services or functions] with legitimate educational interests?)
+( >ferpa13< ask: 
+	(text: Were the data disclosed to a school official or contractor with a legitimate educational interest?)
+	(terms:
+		(School official:
+				This includes professors; instructors; administrators; health staff; counselors; attorneys; clerical staff; trustees; members of committees and disciplinary boards; and contractors, consultants, volunteers or other parties to whom the school has outsourced institutional services or functions.)
+		(Legitimate educational interest:
+				A school official generally has a legitimate educational interest if the official needs to review an education record in order to fulfill his or her professional responsibility.))
 	(yes: (set: FERPABasis=FERPAOfficial)
-			  (call: FERPA-DUA-Official)
+			  (call: FERPA-DUA)
 			  (end))
 )
-( >fcq7< ask:
+( >ferpa14< ask:
 	(text: Are the data being disclosed for the purpose of conducting a study for or on behalf of the educational agency or institution in order to develop, validate, or administer predictive tests; administer student aid projects; or improve instruction?)
 	(yes: (set: FERPABasis=FERPAStudies)
-				(call: FERPA-DUA-Studies)
+				(call: FERPA-DUA)
 				(end))
 	(no: 
 		(reject: educational agency or institution is likely breaching its FERPA duties because it is disclosing, or a third party is re-disclosing, non-directory PII without parental consent where no obvious FERPA exception applies))
 )
 (end)
 
-(>FERPA-DUA-Studies< todo )(end)
-
-(>FERPA-DUA-Official< todo )(end)
+(>FERPA-DUA< todo )(end)
 
 (>FERPA-Consent< todo )(end)
 
@@ -194,7 +248,7 @@
 					(text: Are the data being shared in identifiable form?)
 					(terms:
 						(identifiable form: any representation of information that permits the identity of the respondent to whom the information applies to be reasonably inferred by either direct or indirect means))
-					(no: (set: Storage=clear, Code=green, Harm=negligible, auth=none, Effort=deidentified, Transit=clear, CIPSEABasis=CIPSEADeidentified))
+					(no: (set: Storage=clear, Code=green, Harm=minimal, auth=none, Effort=deidentified, Transit=clear, CIPSEABasis=CIPSEADeidentified))
 					(yes: (set: Storage=encrypt, Code=yellow, Harm=shame, auth=approval, Effort=identifiable, Transit=encrypt, CIPSEABasis=CIPSEAIdentifiable)
 								(call: DUA-CIPSEA))
 				)
@@ -212,7 +266,7 @@
 	(terms:
 		(individual's identity: Items such as name, address, or a social security number.)
 		(information that is linked: Items such as medical, educational, financial, criminal or employment history))
-	(no: (set: Storage=clear, Code=green, Harm=negligible, auth=none, Effort=deidentified, Transit=clear, PrivacyActBasis=PrivacyActDeidentified) )
+	(no: (set: Storage=clear, Code=green, Harm=minimal, auth=none, Effort=deidentified, Transit=clear, PrivacyActBasis=PrivacyActDeidentified) )
 	(yes: (set: Storage=encrypt, Code=yellow, Harm=shame, auth=approval, Effort=identifiable, Transit=encrypt, PrivacyActBasis=PrivacyActIdentifiable)
 			 (call: DUA-PrivacyAct))
 )

@@ -1,7 +1,7 @@
 (ask:
 	(text: Does the data concern living persons?)
-	(yes: (call:personalData) )
-	(no: (set: Identity=noPersonData) )
+	(yes: (set: Code=green) (call:personalData) )
+	(no:  (set: Code=blue, Identity=noPersonData) )
 )
 (call: dua)
 (end)
@@ -33,7 +33,7 @@
 	(no:
 		(set: Code=green, Storage=clear, Transit=clear, auth=none,
 			Identity=notPersonSpecific,
-			Harm=negligible)
+			Harm=minimal)
     (end)
 )) 
 (>ec< ask:
@@ -69,13 +69,13 @@
 			(terms:
 				(Safe Harbor Provision: Dates in years, zip codes contain only first 2 digits))
 			(yes: (ask: (text:Do you know of a way to to put names to the paitients in the data?)
-					  	    (no:  (set: Code=green, Storage=clear, Transit=clear, auth=none, HIPAABasis=HIPAASafeHarbor, Effort=deidentified, Harm=negligible)
+					  	    (no:  (set: Code=green, Storage=clear, Transit=clear, auth=none, HIPAABasis=HIPAASafeHarbor, Effort=deidentified, Harm=minimal)
 					  	    	    (end)))))
 	)
 )
 (ask:
 	(text: Statistician Provision. Has an expert certified the data as being of minimal risk?)
-	(yes: (set:Code=green, Transit=clear, Storage=clear, auth=none, HIPAABasis=HIPAAStatistician, Effort=deidentified, Harm=negligible)
+	(yes: (set:Code=green, Transit=clear, Storage=clear, auth=none, HIPAABasis=HIPAAStatistician, Effort=deidentified, Harm=minimal)
 		    (end)))
 (>3.1.3< ask:
 	(text: Limited Data Set. Did you acquire the data under a HIPAA limited data use agreement?)
@@ -125,7 +125,7 @@
  (no: (end)))
 (>ppra2a< ask:
 	(text: Have the data been deidentified?)
-	(yes: (set:Code=green, Harm=negligible, Storage=clear, Effort=deidentified) )
+	(yes: (set:Code=green, Harm=minimal, Storage=clear, Effort=deidentified) )
 	(no:  (set:Code=orange, Harm=civil, Storage=encrypt, Effort=identifiable) ))
 (>ppra3< ask:
 	(text: Were the parents of the students whose information is contained in the data provided with annual Protection of Pupil Rights Amendment [PPRA] notices? These notices inform parents of their rights under the PPRA, of local education policies concerning collection of student information, and of the specific or approximate dates of the proposed data collection activity.)
@@ -134,7 +134,7 @@
 	(text: Were the data collected through a program, such as a survey, evaluation, or analysis, that was funded by the US Department of Education?)
 	(yes:
 		(>ppra5< ask:
-			(text:Was written consent obtainer from parents prior to the data collection?)
+			(text:Was written consent obtained from parents prior to the data collection?)
 			(yes: (set: PPRATags=PPRAConsent) )
 			(no: (reject: Possilbe PPRA violation, due to failure to obtain written consent for collection of information protected under the PPRA))
 			))
@@ -173,7 +173,7 @@
 ( >ferpa10< ask:
 	(text: Do the data include information that, alone or in combination, is linked or linkable to a specific student that would allow a reasonable person to identify the student with reasonable certainty? This includes, but is not limited to, a student’s or student’s family name, student or student’s family’s address, a personal identifier like a Social Security number or student number, or other indirect identifier like date of birth or mother’s maiden name.)
 	(no:
-		(set: Storage=clear, Code=green, Harm=negligible, Effort=deidentified, Transit=clear, FERPABasis=FERPADeidentified)
+		(set: Storage=clear, Code=green, Harm=minimal, Effort=deidentified, Transit=clear, FERPABasis=FERPADeidentified)
 		(end))
 )
 ( >ferpa11< ask:
@@ -188,7 +188,7 @@
 				( >ferpa11ai< ask:
 					(text: Did any of the students in the data request to opt out of the disclosure of their directory information? )
 					(yes: (set: Code=yellow, Storage=encrypt, Harm=shame,      Transit=encrypt, FERPABasis=FERPADirectoryOptOut))
-					(no:  (set: Code=green,  Storage=clear,   Harm=negligible, Transit=clear,   FERPABasis=FERPADirectoryInfo)))
+					(no:  (set: Code=green,  Storage=clear,   Harm=minimal, Transit=clear,   FERPABasis=FERPADirectoryInfo)))
 				(end))
 )))
 
@@ -248,7 +248,7 @@
 					(text: Are the data being shared in identifiable form?)
 					(terms:
 						(identifiable form: any representation of information that permits the identity of the respondent to whom the information applies to be reasonably inferred by either direct or indirect means))
-					(no: (set: Storage=clear, Code=green, Harm=negligible, auth=none, Effort=deidentified, Transit=clear, CIPSEABasis=CIPSEADeidentified))
+					(no: (set: Storage=clear, Code=green, Harm=minimal, auth=none, Effort=deidentified, Transit=clear, CIPSEABasis=CIPSEADeidentified))
 					(yes: (set: Storage=encrypt, Code=yellow, Harm=shame, auth=approval, Effort=identifiable, Transit=encrypt, CIPSEABasis=CIPSEAIdentifiable)
 								(call: DUA-CIPSEA))
 				)
@@ -266,7 +266,7 @@
 	(terms:
 		(individual's identity: Items such as name, address, or a social security number.)
 		(information that is linked: Items such as medical, educational, financial, criminal or employment history))
-	(no: (set: Storage=clear, Code=green, Harm=negligible, auth=none, Effort=deidentified, Transit=clear, PrivacyActBasis=PrivacyActDeidentified) )
+	(no: (set: Storage=clear, Code=green, Harm=minimal, auth=none, Effort=deidentified, Transit=clear, PrivacyActBasis=PrivacyActDeidentified) )
 	(yes: (set: Storage=encrypt, Code=yellow, Harm=shame, auth=approval, Effort=identifiable, Transit=encrypt, PrivacyActBasis=PrivacyActIdentifiable)
 			 (call: DUA-PrivacyAct))
 )

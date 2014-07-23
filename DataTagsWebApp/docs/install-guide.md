@@ -55,3 +55,12 @@ On the terminal, this would mean:
 8. logout using `ctrl-D`
 9. Test you changes at http://www.datatags.org again, just to make sure the logout did not close the server process.
 
+## Deplopy v2
+Note: We try to hold multiple app versions on the server, to allow quick rollback when needed. This is done by having multiple application folders, and a symbolic link to a "current" one.
+1. Prepare you local copy. At the `datatags-app` folder, type `activator clean dist`.
+2. Wait for a message along the lines of:
+    [info] Your package is ready in /Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsWebApp/datatags-app/target/universal/datatags-app-1.0-SNAPSHOT.zip
+3. `scp` the resulting package to `[your username]@dvnweb-vm1.hmdc.harvard.edu:datatags-apps/`
+4. Also scp `public` folder.
+4. `ssh` to dvnweb-vm1.hmdc.harvard.edu and `cp` to "datatags-apps"
+5. We need to automate both CREATION and DEPLOYMENT.
