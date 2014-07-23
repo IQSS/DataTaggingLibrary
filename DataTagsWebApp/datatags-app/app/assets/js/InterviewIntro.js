@@ -1,13 +1,25 @@
 var InterviewIntro = function(){
   var buttonId="#startTaggingButton";
-  var duration=750;
+  var shadoxMax=40;
+  var frameDelay=40;
+  var frameCount=25;
+  var curFrame=0;
   var done = function () {
-    $(buttonId).animate( {fontSize:"18px", top:"0px"}, duration );
+    curFrame=0;
+  }
+  var nextFrame = function() {
+    curFrame = curFrame+1;
+    var val=Math.sqrt(curFrame/frameCount)*shadoxMax
+    var spread = Math.round(val/1.5) + "px";
+    var blur = Math.round(val) + "px";
+    var shadow = "0 0 " + blur + " " + spread + " #FFF";
+    // console.log( curFrame + " " + shadow );
+    $(buttonId)[0].style.boxShadow=shadow;
+    setTimeout( (curFrame==frameCount)? done: nextFrame, frameDelay );
   }
   return {
     highlightStartTaggingButton: function() {
-      endSize = $(buttonId)[0].style.fontSize;
-      $(buttonId).animate( {fontSize:"28px", top:"-5px"}, duration, done );
+      setTimeout(nextFrame, frameDelay);
     }
   };
 
