@@ -103,14 +103,16 @@ object Interview extends Controller {
     val session = request.userSession
     val tags = session.tags
     val code = Option(tags.get( tags.getType.getTypeNamed("Code") ))
+    
     Ok( views.html.interview.accepted(questionnaireId, tags, code, session.requestedInterview, session.answerHistory )  )  
   }
 
   def reject( questionnaireId:String ) = UserSessionAction { request =>
+    val session = request.userSession
     val state = request.userSession.engineState
     val node = global.Global.interview.getFlowChart( state.getCurrentChartId ).getNode( state.getCurrentNodeId )
 
-    Ok( views.html.interview.rejected(questionnaireId, node.asInstanceOf[RejectNode].getReason) )
+    Ok( views.html.interview.rejected(questionnaireId, node.asInstanceOf[RejectNode].getReason, session.requestedInterview, session.answerHistory ) )
   }
 
   def revisit( nodeId: String ) = UserSessionAction { request =>

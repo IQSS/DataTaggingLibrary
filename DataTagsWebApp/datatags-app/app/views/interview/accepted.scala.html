@@ -48,7 +48,7 @@
       case Some(interview) => {
           <div class="center-block" style="text-align: center">
             <p> Click the button below to return to your data repository with these tags. </p>
-            @helper.form( action = routes.RequestedInterview.postBackTo(interview.key)) {
+            @helper.form( action = routes.RequestedInterview.postBackTo) {
                     <button class="btn btn-primary" type="submit">Continue depositing your data</button>
             }
           </div>

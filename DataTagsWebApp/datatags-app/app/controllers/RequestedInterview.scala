@@ -59,14 +59,24 @@ object RequestedInterview extends Controller {
 
 
 
-  def postBackTo(uniqueLinkId: String) = UserSessionAction.async { implicit request =>
-        val json = request.userSession.tags.accept(Jsonizer)
-        val callbackURL = request.userSession.requestedInterview.get.callbackURL
+  def postBackTo = UserSessionAction.async { implicit request =>
+      val json = request.userSession.tags.accept(Jsonizer)
+      val callbackURL = request.userSession.requestedInterview.get.callbackURL
 
-        WS.url(callbackURL).post(json).map {
-          response =>
-          Redirect((response.json \ "redirectURL").as[String])
-        }
+      WS.url(callbackURL).post(json).map { response =>
+        Redirect((response.json \ "redirectURL").as[String])
+      }
+  }
+
+
+
+
+  def unacceptableDataset(reason: String) = UserSessionAction.async { implicit request =>
+      val callbackURL = request.userSession.requestedInterview.get.callbackURL
+
+      WS.url(callbackURL).post(Json.toJson(reason)).map { response =>
+        Redirect((response.json \ "redirectURL").as[String])
+      }
   }
 
 }
