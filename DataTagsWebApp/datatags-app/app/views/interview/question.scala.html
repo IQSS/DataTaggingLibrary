@@ -20,13 +20,13 @@
                 <h3 class="panel-title">Question: Please select one answer</h3>
             </div>
             <div class="panel-body">
-                @questionNode.getText
+                @Helpers.bulletPoint(questionNode.getText)
                 @if( ! questionNode.getTermNames.isEmpty() ) {
                     <h4>Terms</h4>
                     <dl>
                         @for( termName <- questionNode.getTermNames ) {
                             <dt>@termName</dt>
-                            <dl>@questionNode.getTermText(termName)</dl>
+                            <dl>@Helpers.bulletPoint(questionNode.getTermText(termName))</dl>
                         }
                     </dl>
                 }

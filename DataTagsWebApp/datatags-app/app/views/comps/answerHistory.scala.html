@@ -5,7 +5,7 @@
     @defining( if (reverse) answerRecTuples.reverse else answerRecTuples ) { answerRecOrdered =>
         @for( ar <- answerRecOrdered.map(p => (p._1, Option(p._2))) ){
             <li class="answer-record">
-                <div class="ar-question">@ar._1.question.getText</div>
+                <div class="ar-question">@Helpers.bulletPoint(ar._1.question.getText)</div>
                 <div class="ar-controls">
                     <span class="badge">@Helpers.makeUpper(ar._1.answer.getAnswerText)</span>
                     @ar._2 match {

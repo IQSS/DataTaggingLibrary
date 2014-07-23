@@ -3,6 +3,8 @@ package views
 
 import scala.collection.mutable.ArrayBuffer
 
+import play.api.templates._
+
 
 object Helpers {
 	
@@ -56,6 +58,31 @@ def isWordLowerEnglish(input: String) = {
 	}
 	isLower
 }
+
+
+
+
+
+
+def bulletPoint (paragraph: String) = {
+	var complete = paragraph
+	if (paragraph.contains('*')) {
+		var split = paragraph.split("\n")
+
+		for (line <- 0 until split.length) {
+			split(line) = split(line).trim
+			if (split(line).startsWith("*")) {
+				split(line) = split(line).replace("*", "<li>")
+				split(line) = split(line).concat("</li>")
+			}
+		}
+
+		var list = split.mkString
+		complete = list.substring(0, list.indexOf("<li>")) + "<ul>" + list.substring(list.indexOf("<li>"), list.length) + "</ul>"
+	}
+	Html(complete)
+}
+
 
 
 }
