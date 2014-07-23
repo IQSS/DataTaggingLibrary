@@ -20,17 +20,23 @@ object Global extends GlobalSettings {
 
   override def onStart( app:Application ) {
     Logger.info("DataTags application started")
-    val p = Paths.get("public/interview")
-    Logger.info( "Loading interview data from " + p.toAbsolutePath.toString )
+    Play.current.configuration.getString("datatags.folder") match {
+      case Some(str) => {
+        val p = Paths.get(str)
+        Logger.info( "Loading interview data from " + p.toAbsolutePath.toString )
 
-    val dp = new DataDefinitionParser()
-    dataTags = dp.parseTagDefinitions( readAll(p.resolve("definitions.tags")), "definitions").asInstanceOf[CompoundType]
-    val fcsParser = new FlowChartSetComplier( dataTags )
+        val dp = new DataDefinitionParser()
+        dataTags = dp.parseTagDefinitions( readAll(p.resolve("definitions.tags")), "definitions").asInstanceOf[CompoundType]
+        val fcsParser = new FlowChartSetComplier( dataTags )
 
-    val source = readAll( p.resolve("questionnaire.flow") )
+        val source = readAll( p.resolve("questionnaire.flow") )
 
-    interview = fcsParser.parse(source, "Data Deposit Screening" )
-	  Logger.info("Default chart id: %s".format(interview.getDefaultChartId) )
+        interview = fcsParser.parse(source, "Data Deposit Screening" )
+    	  Logger.info("Default chart id: %s".format(interview.getDefaultChartId) )
+      }
+      case None => Logger.error("Bad configuration: Can't find \"datatags.folder\"")
+    }
+
   }
   
   def readAll( p:Path ) : String = scala.io.Source.fromFile( p.toFile ).getLines().mkString("\n")

@@ -1,5 +1,5 @@
 (ask:
-	(text: do the data concern living persons?)
+	(text: Do the data concern living persons?)
 	(yes: (set: Code=green) (call:personalData) )
 	(no:  (set: Code=blue, Identity=noPersonData) )
 )
@@ -160,7 +160,7 @@
 	(no: (end))
 )
 (>ferpa9< ask:
-	(text:do the data fall into any of the following categories?
+	(text:Do the data fall into any of the following categories?
 		* Personal memory aids held in the sole possession of their creator, such as a teacher's notes;
 		* Records maintained by the law enforcement division of an educational agency or institution;
 		* Employment records for an educational agency or institution;

@@ -1,5 +1,5 @@
 (ask:
-	(text: Does the data concern living persons?)
+	(text: Do the data concern living persons?)
 	(yes: (set: Code=green) (call:personalData) )
 	(no:  (set: Code=blue, Identity=noPersonData) )
 )
@@ -48,7 +48,7 @@
   	(end)
 ))
 (>medicalRecords< ask:
-	(text:Medical Records. Does the data contain personal health information?)
+	(text:Medical Records. do the data contain personal health information?)
 	(no:
 		(set: HIPAABasis=agreement)
 		(ask: (text:Did the data have any restrictions on sharing, such as stated in an agreement or policy statement?)
@@ -65,7 +65,7 @@
 	(text: HIPAA. Was the data received from a HIPAA covered entity or a business associate of one?)
 	(yes:
 		(ask:
-			(text: Safe Harbor. Does the data visually adhere to the HIPAA Safe Harbor Provision?)
+			(text: Safe Harbor. do the data visually adhere to the HIPAA Safe Harbor Provision?)
 			(terms:
 				(Safe Harbor Provision: Dates in years, zip codes contain only first 2 digits))
 			(yes: (ask: (text:Do you know of a way to to put names to the paitients in the data?)
@@ -160,7 +160,7 @@
 	(no: (end))
 )
 (>ferpa9< ask:
-	(text:Does the data fall into any of the following categories?
+	(text:Do the data fall into any of the following categories?
 		* Personal memory aids held in the sole possession of their creator, such as a teacher's notes;
 		* Records maintained by the law enforcement division of an educational agency or institution;
 		* Employment records for an educational agency or institution;
