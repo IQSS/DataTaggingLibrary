@@ -106,7 +106,7 @@
 (>ppraCompliance< ask: 
 	(text: Were the data collected by an elementary or secondary school and in connection with a program receiving funds from the US Department of Education?)
 	(terms:
-		(elementary or secondary school: serving students in grades K-12))
+		(Elementary or secondary school: An elementary or secondary school is a public or private school serving students in any of the grades from kindergarten through high school.))
 	(no: (end)))
 
 (>ppra2< ask:
@@ -129,14 +129,14 @@
 	(no:  (set:Code=orange, Harm=civil, Storage=encrypt, Effort=identifiable) ))
 (>ppra3< ask:
 	(text: Were the parents of the students whose information is contained in the data provided with annual Protection of Pupil Rights Amendment [PPRA] notices? These notices inform parents of their rights under the PPRA, of local education policies concerning collection of student information, and of the specific or approximate dates of the proposed data collection activity.)
-	(no: (reject: Possilbe PPRA violation, due to failure to provide annual PPRA notices)))
+	(no: (reject: Possible PPRA violation, due to failure to provide annual PPRA notices)))
 (>ppra4< ask:
 	(text: Were the data collected through a program, such as a survey, evaluation, or analysis, that was funded by the US Department of Education?)
 	(yes:
 		(>ppra5< ask:
 			(text:Was written consent obtained from parents prior to the data collection?)
 			(yes: (set: PPRATags=PPRAConsent) )
-			(no: (reject: Possilbe PPRA violation, due to failure to obtain written consent for collection of information protected under the PPRA))
+			(no: (reject: Possible PPRA violation, due to failure to obtain written consent for collection of information protected under the PPRA))
 			))
 	(no:
 		(>ppra6< ask:
@@ -154,8 +154,8 @@
 (>ferpaCompliance< ask:
 	(text:Do the data directly relate to a student, and were the data maintained by an educational agency or institution receiving funds from the US Department of Education? )
 	(terms:
-		(educational agency or institution: A public or private agency or institution that provides educational services or instruction, or both, to students. This includes, but is not limited to, a primary or secondary school, college or university, school district, or state educational agency.)
-		(funds from the us department of education: This means funds provided by the US Department of Education to the agency or institution by grant, cooperative agreement, contract, subgrant, or subcontract; or provided to students attending the agency or institution. The funds may be paid to the agency or institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program.)
+		(Educational agency or institution: A public or private agency or institution that provides educational services or instruction, or both, to students. This includes, but is not limited to, a primary or secondary school, college or university, school district, or state educational agency.)
+		(Funds from the us department of education: This means funds provided by the US Department of Education to the agency or institution by grant, cooperative agreement, contract, subgrant, or subcontract; or provided to students attending the agency or institution. The funds may be paid to the agency or institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program.)
 	)
 	(no: (end))
 )
@@ -179,7 +179,7 @@
 ( >ferpa11< ask:
 	(text: Did the educational agency or institution classify the data as directory information?)
 	(terms:
-		(directory information:  Do the data include information that, alone or in combination, is linked or linkable to a specific student that would allow a reasonable person to identify the student with reasonable certainty? This includes, but is not limited to, a student’s or student’s family name, student or student’s family’s address, a personal identifier like a Social Security number or student number, or other indirect identifier like date of birth or mother’s maiden name.)
+		(Directory information: Directory information is information that is generally not considered harmful or an invasion of privacy if released and can be disclosed to outside organizations without a parent's prior written consent. Categories of information typically designated as directory information include: student's name; address; telephone listing; e-mail address; photograph; date and place of birth; major field of study; dates of attendance; grade level; participation in officially recognized activities and sports; weight and height of members of athletic teams; degrees, honors, and awards received; the most recent educational agency or institution attended; and student ID number, user ID, or other unique personal identifier used in electronic records.)
 	)
 	(yes:
 		( >ferpa11a< ask: (text: Did the educational agency or institution give parents and students notice of the type of information they are designating as directory information and the opportunity to opt out of the disclosure of their directory information? )
