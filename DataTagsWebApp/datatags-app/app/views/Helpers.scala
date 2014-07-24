@@ -64,24 +64,29 @@ def isWordLowerEnglish(input: String) = {
 
 
 
+
 def bulletPoint (paragraph: String) = {
 	var complete = paragraph
-	if (paragraph.contains('*')) {
-		var split = paragraph.split("\n")
+	if (paragraph.contains("*")) {
+		val split = paragraph.split("\n")
 
-		for (line <- 0 until split.length) {
-			split(line) = split(line).trim
-			if (split(line).startsWith("*")) {
-				split(line) = split(line).replace("*", "<li>")
-				split(line) = split(line).concat("</li>")
+		val formatted = split.map( _.trim ).map( line => if (line.startsWith("*")) "<li>" + line.drop(1) + "</li>"
+			else "<p>%s</p>".format(line))
+
+		val reformatted = formatted.tail.foldLeft(List(List(formatted.head)))( (l,s) => {
+			if (l.last.head(1) == s(1)) {
+				l.dropRight(1) :+ (l.last :+ s)
+			} else {
+				l :+ List(s)
 			}
-		}
+		} )
 
-		var list = split.mkString
-		complete = list.substring(0, list.indexOf("<li>")) + "<ul>" + list.substring(list.indexOf("<li>"), list.length) + "</ul>"
+		val stringList = reformatted.map( group => if (group.head.contains("<li>")) "<ul>%s</ul>".format(group.mkString) else group.mkString)
+
+		complete = stringList.mkString
 	}
 	Html(complete)
-}
+	}
 
 
 
