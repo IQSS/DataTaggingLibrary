@@ -1,6 +1,6 @@
 DataTags: Code, Handling, Legal, Assertions.
 
-Legal: FERPA, CIPSEA, HIPAA, PPRA, PrivacyAct.
+Legal: FERPA, HIPAA, PPRA, GovernmentRecords.
 
 Assertions: DataType, IP, Identity.
 
@@ -78,15 +78,15 @@ HIPAABasis: one of
 		consent,
 		HIPAASafeHarbor, HIPAAStatistician, HIPAALimitedDataset, HIPAABusinessAssociate.
 
-
 FERPA: FERPABasis.
 FERPABasis: one of FERPADeidentified, FERPADirectoryOptOut, FERPADirectoryInfo, FERPAOfficial, FERPAStudies, FERPAConsent.
 
-CIPSEA: CIPSEABasis.
-CIPSEABasis: one of CIPSEADeidentified, CIPSEAIdentifiable.
-
-PrivacyAct: PrivacyActBasis.
-PrivacyActBasis: one of PrivacyActDeidentified, PrivacyActIdentifiable.
-
 PPRA: PPRATags.
 PPRATags: some of PPRAConsent, PPRAOptOutProvided.
+
+GovernmentRecords: DPPA, Census, ESRA, PrivacyAct, CIPSEA.
+DPPA: some of highlyRestricted, required, stateConsentLimited, stateConsentBroad, requesterConsentLimited, requesterConsentBroad, research, exception.
+Census: some of CensusPublished.
+ESRA: some of restricted, public.
+CIPSEA: some of deidentified, identifiable.
+PrivacyAct: some of deidentified, identifiable.

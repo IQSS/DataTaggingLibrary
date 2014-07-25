@@ -68,11 +68,10 @@ Note: We try to hold multiple app versions on the server, to allow quick rollbac
 6. `unzip -d app-MMDD file-you-uploaded`
 7. 
 
-
-    activator clean dist
-
-    scp target/universal/datatags-app-1.0-SNAPSHOT.zip mbarsina@dvnweb-vm1.hmdc.harvard.edu:tagging-server
-
-    scp -r public/questionnaire/* mbarsina@dvnweb-vm1.hmdc.harvard.edu:datatags-apps/q-0723
+### On server
+1. Assume `dist` is the uploaded product of `activator dist`
+2. Run `./deploy-app.sh dist` to create the application folder, properly names and all.
+3. The script will output the new app folder name, say `app-dist`
+3. Run `./link-app.sh app-dist` to delete the current application symlink, create a new one pointing to `app-dist`, and restart the tagging server.
 
 
