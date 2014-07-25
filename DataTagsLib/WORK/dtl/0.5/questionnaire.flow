@@ -120,7 +120,7 @@
           * Religious practices, affiliations, or beliefs of a student or a student’s parent; or
           * Income, other than that required by law to determine eligibility for participation in a program or for receiving financial assistance under such program.)
  (terms:
-	(personal information: individually identifiable information such as i. a student or parent’s first and last name; ii. a home or other physical address, including street name and the name of the city or town; iii. a telephone number; or iv. a Social Security identification number.
+	(Personal information: Individually identifiable information such as a student or parent’s first and last name, a home or other physical address, including street name and the name of the city or town, a telephone number, or a Social Security identification number.
   ))
  (no: (end)))
 (>ppra2a< ask:
@@ -135,7 +135,7 @@
 	(yes:
 		(>ppra5< ask:
 			(text:Was written consent obtained from parents prior to the data collection?)
-			(yes: (set: PPRATags=PPRAConsent) )
+			(yes: (set: PPRA=consent) )
 			(no: (reject: Possible PPRA violation, due to failure to obtain written consent for collection of information protected under the PPRA))
 			))
 	(no:
@@ -144,7 +144,7 @@
 			(no: (end)))
 		(>ppra7< ask:
 			(text: Were parents provided with notice and an opportunity to opt out of the collection and disclosure of the information?)
-			(yes: (set:PPRATags=PPRAOptOutProvided) )
+			(yes: (set:PPRA=optOutProvided) )
 			(no: (reject: Possible PPRA violation due to failure to provide parents with the opportunity to opt out of the data collection.))
 		)
 	))
@@ -155,7 +155,7 @@
 	(text:Do the data directly relate to a student, and were the data maintained by an educational agency or institution receiving funds from the US Department of Education? )
 	(terms:
 		(Educational agency or institution: A public or private agency or institution that provides educational services or instruction, or both, to students. This includes, but is not limited to, a primary or secondary school, college or university, school district, or state educational agency.)
-		(Funds from the us department of education: This means funds provided by the US Department of Education to the agency or institution by grant, cooperative agreement, contract, subgrant, or subcontract; or provided to students attending the agency or institution. The funds may be paid to the agency or institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program.)
+		(Funds from the US Department of Education: This means funds provided by the US Department of Education to the agency or institution by grant, cooperative agreement, contract, subgrant, or subcontract; or provided to students attending the agency or institution. The funds may be paid to the agency or institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program.)
 	)
 	(no: (end))
 )
@@ -346,10 +346,11 @@
 					(text: Are the data being shared in identifiable form?)
 					(terms:
 						(Identifiable form:
-						Identifiable form refers to any representation of information that permits the identity of the respondent to whom the information applies to be reasonably inferred by either direct or indirect means.)
+						Identifiable form refers to any representation of information that permits the identity of the respondent to whom the information applies to be reasonably inferred by either direct or indirect means.))
 					(no:  (set: CIPSEA=deidentified) )
 					(yes: (set: CIPSEA=identifiable) (todo: CIPSEA DUA) )
-)))))(end)
+)))))
+(end)
 
 (>PA1< ask:
 	(text:Are the data maintained by the agency in a system of records?)

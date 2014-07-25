@@ -81,8 +81,7 @@ HIPAABasis: one of
 FERPA: FERPABasis.
 FERPABasis: one of FERPADeidentified, FERPADirectoryOptOut, FERPADirectoryInfo, FERPAOfficial, FERPAStudies, FERPAConsent.
 
-PPRA: PPRATags.
-PPRATags: some of PPRAConsent, PPRAOptOutProvided.
+PPRA: one of consent, optOutProvided.
 
 GovernmentRecords: DPPA, Census, ESRA, PrivacyAct, CIPSEA.
 DPPA: some of highlyRestricted, required, stateConsentLimited, stateConsentBroad, requesterConsentLimited, requesterConsentBroad, research, exception.
