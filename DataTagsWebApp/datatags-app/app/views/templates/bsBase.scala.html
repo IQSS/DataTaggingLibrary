@@ -27,11 +27,11 @@
     @comps.analytics()
   </head>
   <body>
-	<a href="#content" class="sr-only">Skip to main content</a>
-	@top
-	<div class="container" id="content">
-		@content
-	</div>
+  <a href="#content" class="sr-only">Skip to main content</a>
+  @top
+  <div class="container" id="content">
+    @content
+  </div>
   <footer>
     <div class="container">
       <span class="pre-release-warn">
@@ -49,10 +49,10 @@
         <li><a data-toggle="tooltip" data-placement="top" title="The Institute for Quantitative Social Science at Harvard University" href="http://iq.harvard.edu" target="_blank"><img src="/assets/images/iqss-logo-small.png" alt="IQSS logo" /></a></li>
       </ul>
     </div>
-  </footer>	  
+  </footer>   
     <script src="@routes.Assets.at("js/jquery.min.js")"></script>
     <script src="@routes.Assets.at("js/bootstrap.min.js")"></script>
-	  @scripts
+    @scripts
   <script type="text/javascript">
     $(document).ready( function(){ 
       $("span[data-toggle='popover']").popover(); 
