@@ -12,17 +12,17 @@
                         case Some(ansRec) => {
                             @helper.form( action=routes.Interview.answer(questionnaireId, ansRec.question.getId)) {
                                 <input type="hidden" name="answerText" id="answerText" value="@ansRec.answer.getAnswerText"/>
-                                <button class="btn btn-xs" type="submit"
+                                <button class="btn btn-xs btn-primary" type="submit"
                                     data-toggle="tooltip" data-placement="top"
                                     title="Change your answer to this question">
                                     <i class="fa fa-history"></i> Revisit</button>
                             }
                         }
                         case None => {
-                            <button class="btn btn-xs" 
+                            <button class="btn btn-xs btn-primary" 
                                 data-toggle="tooltip" data-placement="top" title="Change your answer to this question"
                                 onclick="Question.startOver('@questionnaireId');">
-                                    <i class="fa fa-history"></i>Revisit</button>
+                                    <i class="fa fa-history"></i> Revisit</button>
                         }
                     }
                 </div>

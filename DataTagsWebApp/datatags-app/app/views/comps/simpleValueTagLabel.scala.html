@@ -4,7 +4,7 @@
   <div class="tag tag-@tagClass">@value.getName</div>
 } else {
   @if( expandInfo ) {
-    <div class="tag tag-@tagClass">@value.getName </div><div class="tag-info">@value.getInfo</div>
+    <div class="tag tag-@tagClass">@value.getName.capitalize </div><div class="tag-info">@value.getInfo</div>
   } else {
     <a href="#" data-placement="@infoPosition" data-trigger="hover" data-toggle="popover" data-content="@value.getInfo">  
       <div class="tag tag-@tagClass">@value.getName <i class="fa fa-info-circle"></i></div>

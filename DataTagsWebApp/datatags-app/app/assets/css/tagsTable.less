@@ -2,24 +2,38 @@
 
 table.tagsTable {
   width: 100%;
+  thead {
+    th {
+      text-align: center;
+      background: #ddd;
+    }
+    th:first-child {
+      text-align: left;
+    }
+  }
   tbody {
     td {
       padding: 4px;
       border-top: none;
       margin: 0;
+      width: 20%;
       vertical-align: middle;
+      text-align: center;
       &.description {
         font-style: italic;
+        text-align: left;
       }
-    }
-    tr {
-      border: none;
     }
     th {
       vertical-align: middle;
       border-top: none;
       padding: 4px;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+      width: 20%;
+      font-weight: normal;
+      text-align: left;
+    }
+    tr {
+      border: none;
     }
 
     .popover-content {
@@ -49,7 +63,7 @@ table.tagsTable {
 }
 
 .resultValue {
-  a {
+  span {
     color: black;
     text-decoration: none;
     background-color: #e0e0e0;
@@ -61,15 +75,15 @@ table.tagsTable {
 @resultClear: #FFF;
 @resultFull:  #F88;
 .result-0 {
-  a { background-color: @resultClear; }
+  span { background-color: @resultClear; }
 }
 
 .result-1 {
-  a { background-color: mix(@resultClear, @resultFull, 25%); }
+  span { background-color: mix(@resultClear, @resultFull, 25%); }
 }
 .result-2 {
-  a { background-color: mix(@resultClear, @resultFull, 50%); }
+  span { background-color: mix(@resultClear, @resultFull, 50%); }
 }
 .result-3 {
-  a { background-color: @resultFull; }
+  span { background-color: @resultFull; }
 }
