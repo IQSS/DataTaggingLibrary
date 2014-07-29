@@ -20,10 +20,11 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-   <link href="@routes.Assets.at("css/main.min.css")" rel="stylesheet">
+    <link href="@routes.Assets.at("css/main.min.css")" rel="stylesheet">
 	 <link href="@routes.Assets.at("css/tags.min.css")" rel="stylesheet">
-   <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
-	@extraHead
+    <link rel="icon" type="image/png" href="/assets/images/favicon.png" />
+	   @extraHead
+    @comps.analytics()
   </head>
   <body>
 	<a href="#content" class="sr-only">Skip to main content</a>
@@ -52,11 +53,12 @@
     <script src="@routes.Assets.at("js/jquery.min.js")"></script>
     <script src="@routes.Assets.at("js/bootstrap.min.js")"></script>
 	  @scripts
-  <script>
+  <script type="text/javascript">
     $(document).ready( function(){ 
       $("span[data-toggle='popover']").popover(); 
       $("span[data-toggle='tooltip']").tooltip(); 
     } );
   </script>
+  @comps.crazyEgg()  
   </body>
 </html>
