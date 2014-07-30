@@ -64,7 +64,7 @@
 													(text:Were the data shared by the substance abuse program for scientific research purposes?)
 													(yes: 
 														(set: Part2=scientificResearch, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))
-)))))))))))))
+)))))))))
 (>MR7< ask:
 	(text: Are you a covered entity or a business associate of a covered entity, or were the data collected or disclosed by a covered entity or business associate?)
 	(terms:
@@ -136,6 +136,7 @@
 															(yes: (set: HIPAA=businessAssociateAgreement, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))))
 											))))))
 )))))))
+))))
 (end)
 
 (>ppraCompliance< ask: 
