@@ -5,7 +5,7 @@ case class Row( title: String, description: String, cells:Seq[CellItem] )
 
 object TagsTable {
   private def makeRows = {
-    val duaNone = CellItem("None", "None", "Data are released under the CC-BY license. No steps are needed in order to obtain permission to access the data.", 0)
+    val duaNone = CellItem("None", "None", "Data are released under the CC-0 license. No steps are needed in order to obtain permission to access the data.", 0)
     val duaClickThrough = CellItem("Click Through", "Click Through", "In order to obtain permission to access the data, users go through an on-line process.", 1)
     val duaSign = CellItem("Sign", "Signed Agreement", "Users have to sign an agreement (offline) in order to get a permission to use the data.", 3)
 
