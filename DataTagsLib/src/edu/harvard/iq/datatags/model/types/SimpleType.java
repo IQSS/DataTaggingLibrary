@@ -36,7 +36,6 @@ public class SimpleType extends TagType {
 	 * @param info additional info (if applicable)
 	 * @return A new value of this type.
 	 */
-	@Override
 	public SimpleValue make( String name, String info ) {
         if ( values.containsKey(name) ) {
             return values.get(name);

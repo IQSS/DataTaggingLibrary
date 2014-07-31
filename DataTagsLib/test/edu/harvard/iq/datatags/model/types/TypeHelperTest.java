@@ -48,7 +48,8 @@ public class TypeHelperTest {
      */
     @Test
     public void testSafeGet_simple() {
-        TagValue red = ((CompoundType)dataTagsType).getTypeNamed("color").make("red", null);
+        SimpleType colorType = (SimpleType)((CompoundType)dataTagsType).getTypeNamed("color");
+        TagValue red = colorType.make("red", null);
         assertEquals( red, TypeHelper.safeGet(dataTagsType, "color", "red") );
     }
     

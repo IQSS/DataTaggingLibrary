@@ -49,10 +49,9 @@ public class CompoundValue extends TagValue {
 	
     /**
      * All the field types for which {@code this} has values.
-     * TODO find a better name for this. TypesWithSetValue? 
-     * @return 
+     * @return Set of all the types who have non-null values.
      */
-	public Set<TagType> getSetFieldTypes() {
+	public Set<TagType> getTypesWithNonNullValues() {
 		return fields.keySet();
 	}
 	
@@ -67,7 +66,7 @@ public class CompoundValue extends TagValue {
 	}
 	
 	protected <T extends CompoundValue> T buildOwnableInstance( T startingPoint ) {
-		for ( TagType tt : getSetFieldTypes() ) {
+		for ( TagType tt : getTypesWithNonNullValues() ) {
 			startingPoint.set(get(tt).getOwnableInstance());
 		}
 		
@@ -124,7 +123,7 @@ public class CompoundValue extends TagValue {
         
         CompoundValue result = getType().createInstance();
         // Composing. Note that for each type in types, at least one object has a non-null value
-        for (TagType tp : C.unionSet(getSetFieldTypes(), other.getSetFieldTypes())) {
+        for (TagType tp : C.unionSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
             TagValue ours = get(tp);
             TagValue its = other.get(tp);
             if (ours == null) {
@@ -186,7 +185,7 @@ class Resolver implements TagValue.Visitor<TagValue.Function> {
 				CompoundValue res = cv.getOwnableInstance();
 				if ( v==null ) return res;
 				CompoundValue cv2 = (CompoundValue) v;
-				for ( TagType tt : C.unionSet(cv2.getSetFieldTypes(), cv.getSetFieldTypes())) {
+				for ( TagType tt : C.unionSet(cv2.getTypesWithNonNullValues(), cv.getTypesWithNonNullValues())) {
 					res.set(
 							(res.get(tt)==null) ? cv2.get(tt)
 									: ((TagValue.Function)cv.get(tt).accept(Resolver.this)).apply(cv2.get(tt)));
