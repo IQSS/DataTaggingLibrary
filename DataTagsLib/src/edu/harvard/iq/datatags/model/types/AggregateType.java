@@ -20,7 +20,6 @@ public class AggregateType extends TagType {
 	}
 	
     // TODO remove, this is not used
-	@Override
 	public AggregateValue make( String name, String info ) {
 		return new AggregateValue(name, this, info);
 	}

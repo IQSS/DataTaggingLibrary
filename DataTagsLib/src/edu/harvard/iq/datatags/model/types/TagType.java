@@ -73,14 +73,6 @@ public abstract class TagType {
 		return name;
 	}
 
-	/**
-	 * Generate a new instance of the type. Preferable over using direct construction.
-	 * @param name name of the new instance
-	 * @param info info about the new instance
-	 * @return the new instance.
-	 */
-	public abstract TagValue make( String name, String info );
-	
 	public abstract <T> T accept( Visitor<T> v );
 	
     public TagValueLookupResult lookupValue( final String slotName, final String valueName ) {

@@ -10,13 +10,12 @@
         @if( sv.getInfo==null ) {
           <span class="valueAtom">@sv.getName</span>
         } else {
-          <a href="#" data-toggle="popover" data-trigger="hover" 
+          <span class="valueAtom" data-toggle="popover" data-trigger="hover" 
              title="@sv.getName" data-content="@sv.getInfo"
              data-placement="top">
-            <span class="valueAtom">@sv.getName
-              <span class="glyphicon glyphicon-info-sign"></span>
-            </span>
-          </a>
+            @sv.getName
+            <span class="glyphicon glyphicon-info-sign"></span>
+          </span>
         }
       }
     </span>
@@ -32,13 +31,12 @@
         @if( sv.getInfo==null ) {
             <span class="valueAtom">@sv.getName</span>
           } else {
-            <a href="#" data-toggle="popover" data-trigger="hover" 
+            <span class="valueAtom" data-toggle="popover" data-trigger="hover" 
                title="@sv.getName" data-content="@sv.getInfo"
                data-placement="top">
-              <span class="valueAtom">@sv.getName
-                <span class="glyphicon glyphicon-info-sign"></span>
-              </span>
-            </a>
+              @sv.getName
+              <span class="glyphicon glyphicon-info-sign"></span>
+            </span>
           }
         }
     </span>
@@ -50,13 +48,13 @@
  <div class="tagtype tagtype-compound">
     <div>
       @if( tp.getInfo != null ) {
-        <a href="#" data-toggle="popover" data-trigger="hover" 
+        <span data-toggle="popover" data-trigger="hover" 
              title="@tp.getName" data-content="@tp.getInfo"
              data-placement="top">
             <span class="typeName">@tp.getName
               <span class="glyphicon glyphicon-info-sign"></span>
             </span>
-          </a>
+        </span>
       } else {
         <span class="typeName">@tp.getName</span>
       }

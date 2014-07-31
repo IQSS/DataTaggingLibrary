@@ -73,7 +73,7 @@ public class CompoundTypeTest {
         val.set( stA.make("A-0", null) );
         val.set( stB.make("B-0", null));
         
-        assertEquals( C.set(stA, stB), val.getSetFieldTypes() );
+        assertEquals( C.set(stA, stB), val.getTypesWithNonNullValues() );
         assertEquals( values.get(stA).get(0), val.get(stA) );
         assertEquals( values.get(stB).get(0), val.get(stB) );
         

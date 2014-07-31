@@ -65,7 +65,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
         public String visitCompoundValue(CompoundValue aThis) {
             StringBuilder sb = new StringBuilder();
             sb.append("[ ");
-            for ( TagType tt : aThis.getSetFieldTypes() ) {
+            for ( TagType tt : aThis.getTypesWithNonNullValues() ) {
                 sb.append( tt.getName() );
                 sb.append(":");
                 sb.append( aThis.get(tt).accept(this) );
@@ -139,7 +139,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
             StringBuilder label = new StringBuilder();
             label.append( idLabel(nd) )
                     .append("Set\\n");
-            for ( TagType tt : nd.getTags().getSetFieldTypes() ) {
+            for ( TagType tt : nd.getTags().getTypesWithNonNullValues() ) {
                 label.append( tt.getName() )
                         .append( "=" )
                         .append( nd.getTags().get(tt).accept(valueNamer) )

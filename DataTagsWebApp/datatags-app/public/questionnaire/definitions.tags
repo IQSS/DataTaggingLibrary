@@ -1,6 +1,6 @@
 DataTags: Code, Handling, Legal, Assertions.
 
-Legal: FERPA, CIPSEA, HIPAA, PPRA, PrivacyAct.
+Legal: FERPA, PPRA, MedicalRecords, GovernmentRecords, Additional.
 
 Assertions: DataType, IP, Identity.
 
@@ -72,21 +72,22 @@ Identity: one of
 
 Auditing: one of NotNeeded, Yearly, Monthly.
 
-HIPAA: HIPAABasis.
-HIPAABasis: one of
-		agreement,
-		consent,
-		HIPAASafeHarbor, HIPAAStatistician, HIPAALimitedDataset, HIPAABusinessAssociate.
-
+MedicalRecords: HIPAA, Part2.
+HIPAA: some of
+		waiver,
+		authorization,
+		safeHarborDeidentified, safeHarborExpert, statistician, limitedDataset, businessAssociateAgreement.
+Part2: one of deidentified, veteransMedicalData, consent, scientificResearch.
 
 FERPA: FERPABasis.
 FERPABasis: one of FERPADeidentified, FERPADirectoryOptOut, FERPADirectoryInfo, FERPAOfficial, FERPAStudies, FERPAConsent.
 
-CIPSEA: CIPSEABasis.
-CIPSEABasis: one of CIPSEADeidentified, CIPSEAIdentifiable.
+PPRA: one of consent, optOutProvided.
 
-PrivacyAct: PrivacyActBasis.
-PrivacyActBasis: one of PrivacyActDeidentified, PrivacyActIdentifiable.
-
-PPRA: PPRATags.
-PPRATags: some of PPRAConsent, PPRAOptOutProvided.
+GovernmentRecords: DPPA, Census, ESRA, PrivacyAct, CIPSEA.
+DPPA: some of highlyRestricted, required, stateConsentLimited, stateConsentBroad, requesterConsentLimited, requesterConsentBroad, research, exception.
+Census: some of CensusPublished.
+ESRA: some of restricted, public.
+CIPSEA: some of deidentified, identifiable.
+PrivacyAct: some of deidentified, identifiable.
+Additional: one of no, yes.

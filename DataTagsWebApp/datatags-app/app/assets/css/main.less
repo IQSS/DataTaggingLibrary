@@ -16,9 +16,9 @@ body {
     }
     box-shadow: 0 2px 10px rgba(0,0,0,0.75);
     font-family: "Marker felt", cursive;
-    padding: 0.5em;
+    padding: 1em;
     width: 20em;
-    margin: auto;
+    margin: 36px auto;
     text-align: center;
     -ms-transform: rotate(@rotate); /* IE 9 */
     -webkit-transform: rotate(@rotate); /* Chrome, Safari, Opera */
@@ -98,75 +98,84 @@ table.engine-trace {
 }
 
 @bkgColor: rgba(255,255,255,.25);
-.tagvalue-container {
-  background-color: #AAA;
-}
-.value {
-  padding: 0.25em 0.5em;
-  margin: 3px;
-  background-color: @bkgColor;
+// .tagvalue-container {
+//   background-color: #AAA;
+// }
+// .value {
+//   padding: 0.25em 0.5em;
+//   margin: 3px;
+//   background-color: @bkgColor;
 
-  .typeName {
-    font-weight:normal;
-    color: #004;
-  }
-  span.typeName {
-    width: 6em;
-    display: inline-block;
-  }
+//   .typeName {
+//     font-weight:normal;
+//     color: #004;
+//   }
+//   span.typeName {
+//     width: 6em;
+//     display: inline-block;
+//   }
   
-  .valueAtom {
-    border-radius: 0.6em;
-    padding: 0 1em;
-    color: black;
-    font-size: 0.9em;
-    background-color: #DDD;
-  }
-}
-.value-simple{
-  .valueAtom {
-    background-color: #8df;
-  }
-}
-.value-todo{
-  .valueAtom {
-    background-color: #6F6;
-  }
-}
-.value-aggregate{
-  .valueAtom {
-    background-color: #DBF;
-  }
-}
-.value-compound{
-  border: 1px solid #CCC;
-}
+//   .valueAtom {
+//     border-radius: 0.6em;
+//     padding: 0 1em;
+//     color: black;
+//     font-size: 0.9em;
+//     background-color: #DDD;
+//   }
+// }
+// .value-simple{
+//   .valueAtom {
+//     background-color: #8df;
+//   }
+// }
+// .value-todo{
+//   .valueAtom {
+//     background-color: #6F6;
+//   }
+// }
+// .value-aggregate{
+//   .valueAtom {
+//     background-color: #DBF;
+//   }
+// }
+// .value-compound{
+//   border: 1px solid #CCC;
+// }
 
-.tagtype-container {
+.tagtype-container, .tagvalue-container {
   background-color: #AAA;
   color: #BBB;
-  padding: 0.5em;
-  box-shadow: 0 2px 2px rgba(0,0,0,0.5);
+  /* padding: 0.5em;
+  box-shadow: 0 2px 2px rgba(0,0,0,0.5); */
 }
-
-.tagtype {
+.tagtype-container > .tagtype-compound > .typeValues {
+  margin: 0 .3em;
+}
+.tagtype-container > .tagtype-compound > div > .typeName, .tagvalue-container > .value-compound > div.typeName {
+  font-size: 24px;
+  color: white;
+  margin-left: .3em;
+}
+.tagtype, .value {
   background-color: @bkgColor;
   padding: 0.25em;
-  line-height: 1.6em;
+  line-height: 2.6em;
   border-bottom: 1px dotted rgba(255,255,255,0.5);
   .typeName {
     color: #000;
   }
-  span.typeName {
+  span.typeName, div.typeName {
     width: 5.5em;
     display: inline-block;
+    margin-left: 0.6em;
   }
-
   span.typeValues {
-    
+    .popover-content {
+      line-height: 1.42857;
+    }
   }
   small {
-    color: white;
+    color: #777;
   }
   .valueAtom {
     border-radius: 0.5em;
@@ -176,26 +185,24 @@ table.engine-trace {
     color: black;
   }
 }
-
-.tagtype-simple {
+.tagtype-simple, .value-simple {
   .valueAtom {
     background-color: #8df;
   }
 }
-.tagtype-todo {
+.tagtype-todo, .value-todo {
   .valueAtom {
     background-color: #40F040;
   }
 }
-.tagtype-aggregate {
+.tagtype-aggregate, .value-aggregate {
   .valueAtom {
     background-color: #ffaa88;
   }
 } 
-
-.tagtype-compound {
-  .typeValues {
-    margin-left: 1em;
+.tagtype-compound, .value-compound {
+  .typeValues, .value-compound > .value-compound, .value-compound > .value-simple, .atomValue {
+    margin: 0 1.6em;
   }
   border-bottom: none;
 }
@@ -218,6 +225,13 @@ footer {
   box-shadow: 0 0 5px yellow;
 }
 
+.panel-success {
+  span.lead {
+    line-height: 1.42857;
+    margin-bottom: 0;
+    margin-right: .6em;
+  }
+}
 
 @ar-controls-width: 10em;
 .answer-history {

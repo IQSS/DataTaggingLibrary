@@ -8,11 +8,11 @@
                 <p>Below is a list of available questionnaires. Please select one to begin the tagging process.
                     <div class="note note-todo">Currently there's only one. We will have more, plus an upload option soon.</div>
                 </p>
-                <ul>
+                <table class="table table-striped">
                     @for( p <- charts ) {
-                        <li><a href="@routes.Interview.interviewIntro(p._2)">@p._1</a></li>
+                        <tr><td><a href="@routes.Interview.interviewIntro(p._2)">@p._1</a></td></tr>
                     }
-                </ul>
+                </table>
             </div>
         </div>
     </div>

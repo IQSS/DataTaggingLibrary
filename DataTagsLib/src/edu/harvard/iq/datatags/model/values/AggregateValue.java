@@ -15,10 +15,10 @@ import java.util.Set;
  * 
  * @author michael
  */
-public class AggregateValue extends TagValue<AggregateType>{
+public class AggregateValue extends TagValue{
 	
 	private final Set<SimpleValue> values = new HashSet<>();
-
+    // TODO name and info should go, right?
 	public AggregateValue(String name, AggregateType type, String info) {
 		super(name, type, info);
 	}
@@ -33,6 +33,11 @@ public class AggregateValue extends TagValue<AggregateType>{
 		}
 	}
 	
+    @Override
+    public AggregateType getType() {
+        return (AggregateType) super.getType();
+    }
+    
 	public void add( SimpleValue tagValue ) {
 		if ( ! tagValue.getType().equals(getType().getItemType()) ) {
 			throw new IllegalArgumentException( "Added value type ("+tagValue.getType()+") "

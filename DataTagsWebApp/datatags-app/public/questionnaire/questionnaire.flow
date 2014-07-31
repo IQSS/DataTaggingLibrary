@@ -1,15 +1,14 @@
 (ask:
 	(text: Do the data concern living persons?)
 	(yes: (set: Code=green) (call:personalData) )
-	(no:  (set: Code=blue, Identity=noPersonData) )
-)
+	(no:  (set: Code=blue, Identity=noPersonData) ))
 (call: dua)
 (end)
 
-(>personalData< call: medical-start )
+(>personalData< call: medicalRecordsCompliance )
 (call: ppraCompliance )
 (call: ferpaCompliance )
-(call: cipseaPaCompliance )
+(call: govRecsCompliance )
 (todo: Arrest and Conviction Records, Bank and Financial Records, 
 	Cable Television, Computer Crime, 
 	Credit reporting and Investigations [including 'Credit Repair', 'Credit Clinics', Check-Cashing and Credit Cards],
@@ -25,83 +24,120 @@
 	Testing in Employment [including Urinalysis, Genetic and Blood Tests], Tracking Technologies,  Voter Records)
 (end)
 
-(>medical-start< ask:
-	(text: Person-specific. Does your data include personal information?)
-	(terms:
-		(data: 0s and 1s in some structured way)
-		(personal information: as defined in HIPAA))
-	(no:
-		(set: Code=green, Storage=clear, Transit=clear, auth=none,
-			Identity=notPersonSpecific,
-			Harm=minimal)
-    (end)
-)) 
-(>ec< ask:
-(text: Explicit Consent. Did each person whose information appears in the
-	data give explicit permission to share the data?)
-  (yes:
-  	(set: HIPAABasis=consent)
-  	(ask:
-  		(text: Did the consent have any restrictions on data sharing?)
-  		(no:  (set: Code=green, Storage=clear, Transit=clear, auth=none))
-  		(yes: (call: hippa-dua)))
-  	(end)
-))
-(>medicalRecords< ask:
-	(text:Medical Records. do the data contain personal health information?)
-	(no:
-		(set: HIPAABasis=agreement)
-		(ask: (text:Did the data have any restrictions on sharing, such as stated in an agreement or policy statement?)
-		      (no:  (set: Code=green, Storage=clear, Transit=clear, auth=none) )
-		      (yes: (call: hippa-dua))
-		))
-	(yes:
-		(set:  Standards=HIPAA)
-		(call: hipaaCompliance)
-))
-(end)
-
-(>hipaaCompliance< ask:
-	(text: HIPAA. Was the data received from a HIPAA covered entity or a business associate of one?)
-	(yes:
-		(ask:
-			(text: Safe Harbor. do the data visually adhere to the HIPAA Safe Harbor Provision?)
+(>medicalRecordsCompliance< ask:
+	(text: Do the data contain health or medical information?)
+	(yes: 
+		(>MR2< ask:
+			(text: Do the data contain information related to substance abuse diagnosis, referral, or treatment?)
 			(terms:
-				(Safe Harbor Provision: Dates in years, zip codes contain only first 2 digits))
-			(yes: (ask: (text:Do you know of a way to to put names to the paitients in the data?)
-					  	    (no:  (set: Code=green, Storage=clear, Transit=clear, auth=none, HIPAABasis=HIPAASafeHarbor, Effort=deidentified, Harm=minimal)
-					  	    	    (end)))))
-	)
-)
-(ask:
-	(text: Statistician Provision. Has an expert certified the data as being of minimal risk?)
-	(yes: (set:Code=green, Transit=clear, Storage=clear, auth=none, HIPAABasis=HIPAAStatistician, Effort=deidentified, Harm=minimal)
-		    (end)))
-(>3.1.3< ask:
-	(text: Limited Data Set. Did you acquire the data under a HIPAA limited data use agreement?)
-	(yes:
-		(set: Storage=encrypt, Transit=encrypt, auth=approval, HIPAABasis=HIPAALimitedDataset, Effort=identifiable, Harm=criminal)
-		(ask:
-			(text: Did the limited data use agreement have any additional restrictions on sharing?)
-			(yes:(call: hippa-dua)))
-		(end)
-	))
-(>3.1.4< ask:
-	(text: Business Associate. Did you acquire the data under a HIPAA Business Associate Agreement?)
-	(yes:
-		(set: Code=red, Storage=encrypt, Transit=encrypt, auth=approval, HIPAABasis=HIPAABusinessAssociate, Effort=identifiable, Harm=criminal)
-		(ask: (text: Did the business associate agreement have any additional restrictions?)
-				  (yes: (call: hippa-dua)))
-		(end)
-	))
-(>3.1.5< ask:
-	(text: Covered. Are you an entity that is directly or indirectly covered by HIPAA?)
-	(yes:
-		(set: Code=red, Storage=encrypt, Transit=encrypt, auth=approval, HIPAABasis=HIPAABusinessAssociate, Effort=identifiable, Harm=criminal)))
+			 (Information related to substance abuse diagnosis, referral, or treatment:
+				Any information, including information on referral and intake, about alcohol and drug abuse patients obtained by a program, such as a treatment or rehabilitation program, employee assistance program, program within a general hospital, school-based program, or a private practitioner that holds itself out as providing alcohol or drug abuse diagnosis, treatment, or referral for treatment.  This does not include emergency room services related to an apparent overdose, unless the primary function of this emergency room service is providing diagnosis, treatment or referral for alcohol or drug abuse.))
+			(yes: 
+				(>MR2a< ask:
+					(text:Were the data obtained from a federally assisted drug abuse program after March 20, 1972, or a federally assisted alcohol abuse program after May 13, 1974 [or if obtained before the pertinent date, were they maintained by a federally assisted alcohol or drug abuse program after that date as part of an ongoing treatment episode which extended past that date]?)
+					(terms:
+						(Federally assisted drug or alcohol abuse programs:
+							An alcohol or drug abuse program is considered to be federally assisted if it is conducted by any federal agency or department, whether in whole or in part, directly or by contract. This includes programs carried out under a license, certification, registration, or authorization granted by a federal department or agency. Also included are programs that receive funding from any federal department or agency, programs conducted by a state or local government that receives any form of federal financial assistance, programs carried out under certification of provider status under the Medicare program, or programs that are allowed income tax deductions for contributions to the program or are granted tax exempt status by the Internal Revenue Service.))
+					(yes: 
+						(>MR3< ask:
+							(text:Do the records identify one or more patients as an alcohol or drug abuser directly, by reference to other publicly available information, or through verification of identification by another person?)
+							(no: (set: Part2=deidentified, Effort=deidentified, Storage=clear, Transit=clear, Code=green))
+							(yes:
+								(>MR4< ask:
+									(text: Were the data maintained in connection with the Department of Veterans Affairs or US Armed Services?)
+									(yes:
+										(>MR4a< ask:
+											(text: Were the data maintained by the Department of Veterans Affairs either shared with the patients’ consent for the purposes of scientific research, or shared without consent but in connection with a medical emergency or public health activity related to HIV?)
+											(no: (reject: reject data and flag for review; possible violation of 38 U.S.C. 4132 due to the release of VA medical records without a valid exception.))
+											(yes: (set: Part2=veteransMedicalData) )
+							))))
+							(no: 
+								(>MR5< ask:
+									(text: Do you have written consent from the individual[s] to disclose their information?)
+									(yes:
+										(>MR5a< ask:
+											(text: Does the written consent include the name or general designation of the program, organization, or person permitted to disclose; the name or general designation of the program, organization, or person permitted to receive the information; the name of the individual patient[s]; the purpose of the disclosure; specifically what may be disclosed; an expiration date or condition for such consent; the signature of the individual; and a statement regarding the individual’s right to revoke consent?)
+											(yes: 
+												(set: Part2=consent, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))
+											(no:
+												(>MR6< ask:
+													(text:Were the data shared by the substance abuse program for scientific research purposes?)
+													(yes: 
+														(set: Part2=scientificResearch, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))
+)))))))))
+(>MR7< ask:
+	(text: Are you a covered entity or a business associate of a covered entity, or were the data collected or disclosed by a covered entity or business associate?)
+	(terms:
+		(Covered entity: A covered entity is a health plan, health care clearinghouse, or health care provider, who transmits any health information in electronic form.)
+		(Business associate: A business associate is any person or organization, including a subcontractor, that acts on behalf of, or provides services to, a covered entity involving the use or disclosure of protected health information. This includes legal, actuarial, accounting, consulting, claim processing, data analysis, administration, utilization review, quality assurance, billing, benefit management, practice management, and re-pricing activities.))
+	(yes: 
+		(>MR8< ask: 
+			(text: Has demographic, contact, and other uniquely identifiable information been removed from the data so that such health information cannot be used to re-identify the individual whom it belongs to?)
+			(yes:
+				(>MR8a< ask:
+					(text: Have all direct identifiers been removed from the data in order to prevent a person from linking existing data to an individual in the data?)
+					(terms:
+						(Direct identifiers:
+							The eighteen identifiers under the HIPAA Privacy Rule safe harbor deidentification standard include: 
+							* Names, 
+							* geographic subdivisions smaller than a state, 
+							* all elements of date except for year, 
+							* telephone numbers, 
+							* fax machine numbers, 
+							* electronic mail addresses, 
+							* social security numbers, 
+							* medical record numbers, 
+							* health plan beneficiary numbers, 
+							* all other account numbers, 
+							* certificate/license numbers, 
+							* vehicle identifiers and serial numbers, including license plate numbers, 
+							* device identifiers and serial numbers, 
+							* web universal resource locators - URLs, 
+							* internet protocol numbers - IP addresses, 
+							* biometric identifiers including finger and voice prints, 
+							* full face photographic images and other comparable images, 
+							* any other unique identifying number, characteristic, or code.))
+					(yes: (set:HIPAA=safeHarborDeidentified, Code=green, Harm=minimal, Transit=clear, Storage=clear, Effort=deidentified))
+					(no:
+						(>MR8b< ask:
+							(text: Has an expert in statistics or scientific deidentification processes certified and documented that the data, when used alone or in combination with other information, presents a minimal risk of being used to re-identify any individual?)
+							(yes: (set:HIPAA=safeHarborExpert, Code=green, Harm=minimal, Transit=clear, Storage=clear, Effort=deidentified))
+							(no:
+								(>MR9< ask:
+									(text: Do the data constitute a limited data set?)
+									(terms:
+									 (Limited data set: A limited data set does NOT include in the dataset: [1] names, [2] postal addresses other than city/town, zip code, and state, [3] telephone numbers, [4] fax machine numbers, [5] electronic mail addresses, [6] social security numbers, [7] medical record numbers, [8] health plan beneficiary numbers, [9] account numbers, [10] certificate/license numbers, [11] vehicle identifiers or serial numbers, including license plate numbers, [12] device identifiers or serial numbers, [13] web universal resource locators - URLs, [14] internet protocol numbers - IP addresses, [15] biometric identifiers including finger and voice prints, and [16] full face photographic images or other comparable images.))
+									(yes: 
+										(set:HIPAA=limitedDataset, Code=green, Harm=minimal, Transit=clear, Storage=clear, Effort=deidentified)
+										(end)
+								))
+								(>MR10< ask:
+									(text: Do the data contain medical records that constitute protected health information [PHI]? In other words, do the data contain any health information that can be used to identify an individual? This includes, but is not limited to, demographic information or anything related to an individual’s past, present, or future health condition and related treatments or payments.)
+									(terms:
+										(Protected health information: Protected health information is defined as individually identifiable health information that is transmitted or maintained in any form of media. It excludes individually identifiable health information in education records covered by the Family Educational Rights and Privacy Act [FERPA] and employment records held by a covered entity in its role as an employer.)
+										(Individually identifiable health information: Individually identifiable health information is information that is a subset of health information, including demographic information collected from an individual by a covered entity, that relates to an individual’s past, present, or future physical or mental health condition, the provision of health care to the individual, or the past, present, or future payment for the provision of health care to the individual. It often includes common identifiers such as name, address, birth date, Social Security number, or anything that can reasonably be used to identify the individual. When information relates to an individual’s past or current treatment for alcohol or drug abuse, this includes any information – recorded or unrecorded – that could be used to determine the patient’s identity directly or by reference to other publicly available information.))
+									(yes:
+										(>MR11< ask:
+											(text: Have the data subjects provided written Authorization for their data to be used by or disclosed to third-parties?)
+											(terms:
+												(Authorization: An individual’s signed permission to allow a covered entity to use or disclose the individual’s protected health information for the purpose and to the recipient stated in the Authorization.))
+											(yes: (set: HIPAA=authorization, Harm=civil, Effort=identifiable, Code=orange, Transit=encrypt, Storage=encrypt))
+											(no: 
+												(>MR12< ask:
+													(text: Has an oversight body such as an Institutional Review Board [IRB] or Privacy Board reviewed how the data will be used or disclosed and approved a request to alter or waive the Authorization requirement?)
+													(terms:
+														(Institutional review board - IRB:A board, committee or group formally designated by an institution to review research involving human subjects. Most universities and academic medical centers that receive federal funding often have designated IRBs.)
+														(Privacy Board: An alternative to an IRB, comprised of members of varying backgrounds and appropriate professional competencies as necessary to review the effect of the research protocol on individual privacy rights and related interests. Privacy Boards must have at least one member who is not affiliated with the covered entity that will use or disclose the PHI involved in the research project, not affiliated with any entity conducting or sponsoring the research, and not related to any person who is affiliated with such entities, and members may not have conflicts of interest regarding the projects they review.)
+														(Alterations / Waivers to Authorization: Certain criteria must be met when an IRB or Privacy Board issues a statement approving a waiver or alteration to the Authorization requirement. First, the use or disclosure of the PHI must involve no more than a minimal risk to the privacy of individuals based on plans to protect PHI identifiers from improper use and disclosure, plans to destroy identifiers when convenient with research procedures, and written assurance that PHI will not be reused or re-disclosed to any other person or entity, except for authorized oversight of the research project, or where permitted or required by law. The waiver or alteration must also state that the research could not practicably be conducted without the waiver or alteration, or without access to or use of the PHI, and include a brief description of the PHI to be used or disclosed.))
+													(yes: (set: HIPAA=waiver, Code=orange, Harm=civil, Storage=encrypt, Transit=encrypt, Effort=identifiable))
+													(no: 
+														(>MR13< ask:
+															(text: Did you acquire the data under a HIPAA Business Associate Agreement?)
+															(yes: (set: HIPAA=businessAssociateAgreement, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))))
+											))))))
+)))))))
+))))
 (end)
-
-(>hippa-dua< todo)(end)
-
 
 (>ppraCompliance< ask: 
 	(text: Were the data collected by an elementary or secondary school and in connection with a program receiving funds from the US Department of Education?)
@@ -120,7 +156,7 @@
           * Religious practices, affiliations, or beliefs of a student or a student’s parent; or
           * Income, other than that required by law to determine eligibility for participation in a program or for receiving financial assistance under such program.)
  (terms:
-	(personal information: individually identifiable information such as i. a student or parent’s first and last name; ii. a home or other physical address, including street name and the name of the city or town; iii. a telephone number; or iv. a Social Security identification number.
+	(Personal information: Individually identifiable information such as a student or parent’s first and last name, a home or other physical address, including street name and the name of the city or town, a telephone number, or a Social Security identification number.
   ))
  (no: (end)))
 (>ppra2a< ask:
@@ -135,7 +171,7 @@
 	(yes:
 		(>ppra5< ask:
 			(text:Was written consent obtained from parents prior to the data collection?)
-			(yes: (set: PPRATags=PPRAConsent) )
+			(yes: (set: PPRA=consent) )
 			(no: (reject: Possible PPRA violation, due to failure to obtain written consent for collection of information protected under the PPRA))
 			))
 	(no:
@@ -144,7 +180,7 @@
 			(no: (end)))
 		(>ppra7< ask:
 			(text: Were parents provided with notice and an opportunity to opt out of the collection and disclosure of the information?)
-			(yes: (set:PPRATags=PPRAOptOutProvided) )
+			(yes: (set:PPRA=optOutProvided) )
 			(no: (reject: Possible PPRA violation due to failure to provide parents with the opportunity to opt out of the data collection.))
 		)
 	))
@@ -155,7 +191,7 @@
 	(text:Do the data directly relate to a student, and were the data maintained by an educational agency or institution receiving funds from the US Department of Education? )
 	(terms:
 		(Educational agency or institution: A public or private agency or institution that provides educational services or instruction, or both, to students. This includes, but is not limited to, a primary or secondary school, college or university, school district, or state educational agency.)
-		(Funds from the us department of education: This means funds provided by the US Department of Education to the agency or institution by grant, cooperative agreement, contract, subgrant, or subcontract; or provided to students attending the agency or institution. The funds may be paid to the agency or institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program.)
+		(Funds from the US Department of Education: This means funds provided by the US Department of Education to the agency or institution by grant, cooperative agreement, contract, subgrant, or subcontract; or provided to students attending the agency or institution. The funds may be paid to the agency or institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program.)
 	)
 	(no: (end))
 )
@@ -200,7 +236,7 @@
 		( >ferpa12a< ask: 
 			(text: Did the consent form specify the records to be disclosed, the purpose of the disclosure, and to whom the records may be disclosed?)
 			(yes: (set: FERPABasis=FERPAConsent)
-						(call: FERPA-Consent)
+						(>FERPA-Consent< todo )
 						(end))
 		))
 )
@@ -212,70 +248,160 @@
 		(Legitimate educational interest:
 				A school official generally has a legitimate educational interest if the official needs to review an education record in order to fulfill his or her professional responsibility.))
 	(yes: (set: FERPABasis=FERPAOfficial)
-			  (call: FERPA-DUA)
 			  (end))
 )
 ( >ferpa14< ask:
 	(text: Are the data being disclosed for the purpose of conducting a study for or on behalf of the educational agency or institution in order to develop, validate, or administer predictive tests; administer student aid projects; or improve instruction?)
-	(yes: (set: FERPABasis=FERPAStudies)
-				(call: FERPA-DUA)
-				(end))
+	(yes: (set: FERPABasis=FERPAStudies) )
 	(no: 
 		(reject: educational agency or institution is likely breaching its FERPA duties because it is disclosing, or a third party is re-disclosing, non-directory PII without parental consent where no obvious FERPA exception applies))
 )
+(>FERPA-DUA< todo )
 (end)
 
-(>FERPA-DUA< todo )(end)
 
-(>FERPA-Consent< todo )(end)
+(>govRecsCompliance< call: Gov1 )
+(call: DPPA1)
+(end)
 
-( >cipseaPaCompliance< ask: 
-	(text: Were the data collected by a federal agency?)
-	(no: (end))
-)
-( >csc2< ask:
-	(text: Are you an employee or an agent, such as a contractor, consultant, researcher, or employee of a private organization, operating under a contract, grant, or other agreement with the agency that collected the data?)
-	(no: (end))
-)
-( >csc3< ask: 
-	(text: Were the data collected directly from respondents for exclusively statistical purposes under a pledge of confidentiality?)
-	(yes:
-		( >csc4< ask:
-			(text: Is the agency that collected the data a statistical agency or unit from this list: USDA Economic Research Service, National Agricultural Statistics Service, Bureau of Economic Analysis, Census Bureau, National Center for Education Statistics, Energy Information Administration, National Center for Health Statistics, Bureau of Justice Statistics, Bureau of Labor Statistics, Bureau of Transportation Statistics, Statistics of Income Division of the Internal Revenue Service, or NSF Division of Science Resources Statistics?)
+(>Gov1< ask:
+	(text: Were the data collected by a federal agency or a researcher under contract with or with funds from a federal agency?)
+	(yes: 
+		(>Gov2< ask:
+			(text: Are you an employee or an agent, such as a contractor, consultant, researcher, or employee of a private organization, operating under a contract, grant, or other agreement with the agency that collected the data?)
 			(yes:
-				(set: Standards=CIPSEA)
-				(>csc5< ask:
-					(text: Are the data being shared in identifiable form?)
+				(>Census1< ask:
+					(text: Were the data collected by the US Census Bureau?)
+					(yes:
+						(>Census2< ask:
+							(text: Were the data published by the Census Bureau?)
+							(yes:
+								(set: Harm=minimal, Code=green, Effort=deidentified, Transit=clear, Storage=clear, Census=CensusPublished))
+							(no: 
+								(>Census3< ask:
+									(text: Has a Census Bureau Disclosure Review Board issued an approval memorandum granting formal permission for the data to be published?)
+									(yes: 
+										(set: Harm=minimal, Code=green, Effort=deidentified, Transit=clear, Storage=clear, Census=CensusPublished))
+									(no: 
+										(reject: Possible violation of Title 13 due to failure to obtain permission from the Census Bureau to publish the Census data.)
+		))))))))
+		(>ESRA1< ask:
+			(text: Do the data contain information from an education research project that receives funding from the Institute of Education Sciences? Examples of funded projects are included 	on the following web sites:
+				* National Center for Education Research [NCER] - http://ies.ed.gov/ncer/projects/
+				* National Center for Education Evaluation and Regional Assistance [NCEE] - http://ies.ed.gov/ncee/projects/
+				* What Works Clearinghouse [WWC] - http://ies.ed.gov/ncee/wwc/
+				* Regional Educational Laboratory Program - http://ies.ed.gov/ncee/edlabs/index.asp
+				* Education Resources Information Center [ERIC] - http://ies.ed.gov/ncee/projects/eric.asp
+				* National Library of Education [NLE] - http://ies.ed.gov/ncee/projects/nle/
+				* National Center for Special Education Research [NCSER] - http://ies.ed.gov/ncser/projects/
+				* National Center for Education Statistics [NCES] - http://nces.ed.gov/surveys/)
+			(yes: 
+				(>ESRA2< ask:
+					(text: Have the data been published previously, or did you submit a copy of the data to the Institute of Education Sciences [IES] Data Security Office and receive its authorization to disclose the data?)
+					(no: (reject: Possible violation of ESRA due to failure to obtain authorization to disclose the data from the Institute of Education Sciences))
+					(yes: 
+						(>ESRA3< ask:
+							(text: Has the IES Data Security Office limited access to the data to individuals authorized by an IES license agreement or individuals who have executed an affidavit of nondisclosure?)
+							(yes: (set: Code=yellow, Harm=shame, Transit=encrypt, Storage=encrypt, ESRA=restricted ) )
+							(no:  (set: Code=green, Harm=minimal, Transit=clear, Storage=clear, ESRA=public ) )
+		)))))
+		(>CIPSEA1< ask:
+			(text: Were the data collected directly from respondents for exclusively statistical purposes under a pledge of confidentiality?)
+			(yes: 
+				(>CIPSEA2< ask:
+					(text: Is the agency that collected the data a statistical agency or unit from this list: USDA Economic Research Service, National Agricultural Statistics Service, Bureau of Economic Analysis, Census Bureau, National Center for Education Statistics, Energy Information Administration, National Center for Health Statistics, Bureau of Justice Statistics, Bureau of Labor Statistics, Bureau of Transportation Statistics, Statistics of Income Division of the Internal Revenue Service, or NSF Division of Science Resources Statistics?)
+					(yes: 
+						(>CIPSEA3< ask:
+							(text: Are the data being shared in identifiable form?)
+							(terms:
+								(Identifiable form:
+								Identifiable form refers to any representation of information that permits the identity of the respondent to whom the information applies to be reasonably inferred by either direct or indirect means.))
+							(no:  (set: CIPSEA=deidentified) )
+							(yes: (set: CIPSEA=identifiable) (todo: CIPSEA DUA) )
+		)))))
+		(>PA1< ask:
+			(text:Are the data maintained by the agency in a system of records?)
+			(terms:
+				(System of records:
+				A system of records is a group of any records under the control of any agency from which information is retrieved by the name of the individual or by some identifying number, symbol, or other identifying particular assigned to the individual.)
+				(Record:
+				A record is any item, collection, or grouping of information about an individual that is maintained by an agency, including, but not limited to, his education, financial transactions, medical history, and criminal or employment history, and that contains his name, or the identifying number, symbol, or other identifying particular assigned to the individual, such as a finger or voice print or a photograph.))
+			(yes:
+				(>PA2< ask:
+					(text: Do the data contain personally identifiable information?)
 					(terms:
-						(identifiable form: any representation of information that permits the identity of the respondent to whom the information applies to be reasonably inferred by either direct or indirect means))
-					(no: (set: Storage=clear, Code=green, Harm=minimal, auth=none, Effort=deidentified, Transit=clear, CIPSEABasis=CIPSEADeidentified))
-					(yes: (set: Storage=encrypt, Code=yellow, Harm=shame, auth=approval, Effort=identifiable, Transit=encrypt, CIPSEABasis=CIPSEAIdentifiable)
-								(call: DUA-CIPSEA))
-				)
-			)
-		)
-	)
-)
-( >csc6< ask: 
-	(text: Are the data maintained by the agency in a system of records?)
-	(no: (end))
-)
-(set: Standards=PrivacyAct)
-( >csc7< ask: 
-	(text: Do the data contain personally identifiable information? Personally identifiable information includes any information about an individual that can be used to distinguish or trace an individual's identity, either by itself or in combination with any other information that is linked or linkable to an individual)
+						(Personally identifiable information:
+						Any information about an individual that can be used to distinguish or trace an individual‘s identity - such as name, address, or Social Security number - either by itself or in combination with any other information that is linked or linkable to an individual, such as medical, educational, financial, criminal or employment history.))
+					(yes: (set: PrivacyAct=identifiable) (todo: Privacy Act DUA) )
+					(no:  (set: PrivacyAct=deidentified) )
+		)))
+))(end)
+
+(>DPPA1< ask:
+	(text: Do the data contain personal information obtained from a state department of motor vehicles?)
 	(terms:
-		(individual's identity: Items such as name, address, or a social security number.)
-		(information that is linked: Items such as medical, educational, financial, criminal or employment history))
-	(no: (set: Storage=clear, Code=green, Harm=minimal, auth=none, Effort=deidentified, Transit=clear, PrivacyActBasis=PrivacyActDeidentified) )
-	(yes: (set: Storage=encrypt, Code=yellow, Harm=shame, auth=approval, Effort=identifiable, Transit=encrypt, PrivacyActBasis=PrivacyActIdentifiable)
-			 (call: DUA-PrivacyAct))
-)
-(end)
+		(Personal information: Information that identifies an individual, including, but not limited to, an individual’s photograph, Social Security number, driver identification number, name, address [not including the 5-digit ZIP code], telephone number, or medical or disability information. It does not include information on vehicular accidents, driving violations, or a driver’s status [including whether the driver’s license is valid, suspended, or revoked]))
+	(yes: 
+		(>DPPA2< ask:
+			(text: Do the department of motor vehicles records contain an individual's photograph or image, Social Security number, or medical or disability information?)
+			(yes: 
+				(>DPPA2a< ask:
+					(text: Has express consent been obtained from each person whose photograph, Social Security number, or medical or disability information appears in the data?)
+					(yes: 
+						(set: DPPA=highlyRestricted, Code=orange, Harm=civil, Effort=identifiable, Transit=encrypt, Storage=encrypt))
+					(no:
+						(reject: Possible violation of the DPPA due to disclosure of highly restricted personal information without the consent of the individuals in the data))))
+			(no: 
+				(set: Code=yellow, Harm=shame, Effort=identifiable, Transit=encrypt, Storage=encrypt)
+				(>DPPA3< ask:
+					(text: Is disclosure of the personal information required by the Driver’s Privacy Protection Act? Disclosure is required, among other reasons, in connection with matters of motor vehicle or driver safety and theft; motor vehicle emissions; motor vehicle product alterations, recalls, or advisories; and performance monitoring of motor vehicles and dealers by motor vehicle manufacturers.)
+					(yes:
+						(set: DPPA=required))
+					(no:
+						(>DPPA4< ask:
+							(text: Is the disclosure of these records made in accordance with the driver’s license record disclosure law of the state from which the records were obtained?)
+							(no: 
+								(reject: Possible violation of state law on disclosure of drivers’ records)))
+						(>DPPA5< ask:
+							(text: Was consent obtained from the person about whom the information pertains by the State DMV in response to a request for an individual record? )
+							(yes:
+								(>DPPA5a< ask:
+									(text: Was the obtained consent limited in any way, such as purpose, duration, parties that may receive the data?)
+									(yes: 
+										(set: DPPA=stateConsentLimited))
+									(no:
+										(set: DPPA=stateConsentBroad))))
+							(no: 
+								(>DPPA6< ask:
+									(text: Was consent obtained from the individuals whose information is contained in the data by the requester of the records?)
+									(yes:
+										(>DPPA6a< ask:
+											(text: Was the obtained consent limited in any way, such as purpose, duration, parties that may receive the data?)
+											(yes:
+												(set: DPPA=requesterConsentLimited))
+											(no: 
+												(set: DPPA=requesterConsentBroad))))
+									(no: 
+										(>DPPA7< ask:
+											(text: Were the data obtained for use in research activities?)
+											(yes: (set: DPPA=research))
+											(no: 
+												(>DPPA8< ask:
+													(text: Was the personal information obtained under one of the other fourteen permissible uses for the disclosure of drivers’ records, including:
+														* for use by any government agency, or any person acting on behalf of a government agency, in carrying out its functions;
+														* for use in connection with matters of motor vehicle or driver safety and theft; motor vehicle emissions; motor vehicle product alterations, recalls, or advisories; performance monitoring of motor vehicles, motor vehicle parts and dealers; motor vehicle market research activities, including survey research; and removal of non-owner records from the original owner records of motor vehicle manufacturers; or
+														* for bulk distribution for surveys, marketing or solicitations if the State has obtained the express consent of the person to whom such personal information pertains.)
+													(yes:
+														(set: DPPA=exception))
+													(no:
+														(reject: possible violation of the DPPA because the depositor has not cited one of the required or permissible uses for disclosure.)
+										)))))
+)))))))))(end)
 
 (>dua< todo: Data use agreements)
-( >timeLimit< ask:
+( >duaTimeLimit< ask:
 	(text: Is there any reason why we cannot store the data indefinitely?
-	       Limiting the time a dataset could be held interferes with good science practices such as replication, and should thus be avoided whenever possible )
+	       Limiting the time a dataset could be held interferes with good science practices such as replication, and should thus be avoided whenever possible. )
 	(no: (set: TimeLimit=none) )
 	(yes:        
 		(ask:
@@ -283,10 +409,9 @@
 			(indefinitely:  (set: TimeLimit=none) )
 			(50 years: (set: TimeLimit=_50yr) )
 			(5 years:  (set: TimeLimit=_5yr) )
-			(1 year:   (set: TimeLimit=_1yr) )
-		)
-	)
-)
+			(1 year:   (set: TimeLimit=_1yr) ))))
+( >duaAdditional< ask:
+	(text: Did the data have any restrictions on sharing, e.g. stated in an agreement or policy statement?)
+	(yes: (set: Additional=yes))
+	(no:  (set: Additional=no)))
 (end)
-(>DUA-PrivacyAct< todo)(end)
-(>DUA-CIPSEA< todo)

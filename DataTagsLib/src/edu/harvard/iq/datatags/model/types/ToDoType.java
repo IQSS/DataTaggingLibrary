@@ -13,12 +13,6 @@ public class ToDoType extends TagType {
 	public ToDoType(String name, String info) {
 		super(name, info);
 	}
-	
-    // TODO remove? Should only have one value
-	@Override
-	public ToDoValue make( String name, String info ) {
-		return getValue();
-	}
     
     public ToDoValue getValue() {
         return singleValue;

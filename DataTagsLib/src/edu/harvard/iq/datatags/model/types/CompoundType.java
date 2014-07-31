@@ -42,7 +42,7 @@ public class CompoundType extends TagType {
     }
 
     // TODO remove. Compound values have no names, ONLY THEIR SLOTS HAVE.
-	@Override
+    // TODO also remove info.
 	public CompoundValue make(String name, String info) {
 		return new CompoundValue(name, this, info);
 	}

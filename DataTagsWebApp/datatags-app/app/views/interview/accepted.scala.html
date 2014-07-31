@@ -20,14 +20,14 @@
             </div>
             <div class="panel-body">
                 <div class="text-center">
-                  Your dataset is tagged as <br>
+                  <span class="lead">Your dataset is tagged as</span>
                   @codeTag match {
                     case Some(tag) => {@comps.simpleValueTagLabel( tag.asInstanceOf[SimpleValue], tag.getName.toLowerCase, true)}
                     case None => { <div class="alert alert-danger"><strong>No Tag Assigned</strong> For some reason, your data was not tagged. This is an interview error.</div>}
                   }
                 </div>
-                <h3>Full Tags</h3>
-                <div class="tagvalue-container">
+                <!-- <h3>Full Tags</h3> -->
+                <div class="tagvalue-container" style="margin-top:1em;">
                   @comps.tagValue(dataTags)
                 </div>
             </div>
@@ -58,7 +58,7 @@
             Here endeth the demo. Future versions will redirect you to Dataverse (or another secure data repo), with the tags.
           </div>
           <div class="center-block" style="text-align: center">
-            <a href="@routes.Application.index" class="btn btn-primary">Start again</a>    
+            <a href="@routes.Application.index" class="btn btn-primary">Start Again</a>    
           </div>
       }
     }

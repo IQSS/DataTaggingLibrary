@@ -20,9 +20,9 @@
                 <h3 class="panel-title">Question: Please select one answer</h3>
             </div>
             <div class="panel-body">
-                @Helpers.bulletPoint(questionNode.getText)
+                <span class="lead">@Helpers.bulletPoint(questionNode.getText)</span>
                 @if( ! questionNode.getTermNames.isEmpty() ) {
-                    <h4>Terms</h4>
+                    <h4 class="text-muted">Terms</h4>
                     <dl>
                         @for( termName <- questionNode.getTermNames ) {
                             <dt>@termName</dt>
@@ -32,7 +32,6 @@
                 }
             </div>
             <div class="panel-footer">
-
                 @helper.form( action=routes.Interview.answer(questionnaireId, questionNode.getId), 'id->"answerForm" ) {
                     @for( ans <- questionNode.getAnswers ) {
                         <button class="btn btn-default"
@@ -55,7 +54,7 @@
                     @comps.answerHistory(answerHistory, questionnaireId, true)
                 } else {
                     <div class="well well-sm text-center">
-                        <span class="muted">This space will contain your answers, and will allow you to revisit them when needed.</span>
+                        <span class="muted small">This space will contain your answers, and will allow you to revisit them when needed.</span>
                     </div>
                 }
             </div>
@@ -70,7 +69,7 @@
                 <ul class="list-unstyled">
                     @if( dataTags.getSetFieldTypes.isEmpty ) {
                         <div class="well well-sm text-center">
-                            <span class="muted">This space will contain the tags for your dataset. It will be updated as we go along.</span>
+                            <span class="muted small">This space will contain the tags for your dataset. It will be updated as we go along.</span>
                         </div>    
                     } else {
                         <div class="tagvalue-container">

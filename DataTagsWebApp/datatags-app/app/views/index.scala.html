@@ -68,9 +68,9 @@
                           @for( (cell, idx)<-row.cells.zipWithIndex ) {
                             <td>
                               <div class="resultValue result-@cell.severity">
-                                <a href="#" title="@cell.infoTitle" @if(idx==3){data-placement="left"} data-trigger="hover" data-toggle="popover" data-content="@cell.info">
+                                <span title="@cell.infoTitle" @if(idx==3){data-placement="left"} data-trigger="hover" data-toggle="popover" data-content="@cell.info">
                                   @cell.title
-                                </a>
+                                </span>
                               </div>
                             </td>
                           }

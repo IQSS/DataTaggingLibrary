@@ -27,6 +27,7 @@ public class StringMapFormat {
     
     public Map<String,String> format( TagValue value ) {
         final Map<String, String> res = new TreeMap<>();
+        if ( value==null ) return res;
         
         value.accept( new TagValue.Visitor<Void>() {
             
@@ -58,7 +59,7 @@ public class StringMapFormat {
             @Override
             public Void visitCompoundValue(CompoundValue cv) {
                 stack.add( cv.getType().getName() );
-                for ( TagType tt : cv.getSetFieldTypes() ) {
+                for ( TagType tt : cv.getTypesWithNonNullValues() ) {
                     cv.get(tt).accept(this);
                 }
                 stack.remove( stack.size()-1 );
@@ -78,9 +79,15 @@ public class StringMapFormat {
     }
     
     
+    /**
+     * 
+     * @param type The expected type of the resulting tag value.
+     * @param serializedValue Tag of the expected type, serialized by this format.
+     * @return The value, or {@code null} if {@code serializedValue} is empty.
+     */
     public TagValue parse( TagType type, Map<String,String> serializedValue ) {
         return serializedValue.isEmpty() 
-                ? type.make(null, null)
+                ? null
                 : evaluate( type, makeTrie(serializedValue).getSingleChild() );
     }
     
