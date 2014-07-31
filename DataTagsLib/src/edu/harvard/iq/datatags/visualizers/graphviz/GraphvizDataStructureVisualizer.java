@@ -5,6 +5,7 @@ import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.SimpleType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.ToDoType;
+import edu.harvard.iq.datatags.model.values.SimpleValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -44,7 +45,7 @@ public class GraphvizDataStructureVisualizer extends GraphvizVisualizer {
 			public Void visitSimpleType(SimpleType t) {
 				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[label=\""+t.getName()+"\" shape=\"egg\"]");
-				for ( TagValue val : t.values() ) {
+				for ( SimpleValue val : t.values() ) {
 					String sValue = sTypeName+"_"+sanitizeId( val.getName() );
 					nodes.add( sValue + "[label=\""+val.getName()+"\" shape=\"box\"]");
 					edges.add( sTypeName + " -> " + sValue );
@@ -56,7 +57,7 @@ public class GraphvizDataStructureVisualizer extends GraphvizVisualizer {
 			public Void visitAggregateType(AggregateType t) {
 				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[label=\""+t.getName()+"\" shape=\"egg\" peripheries=\"2\"]");
-				for ( TagValue val : t.getItemType().values() ) {
+				for ( SimpleValue val : t.getItemType().values() ) {
 					String sValue = sTypeName+"_"+sanitizeId( val.getName() );
 					nodes.add( sValue + "[label=\""+val.getName()+"\" shape=\"box\"]");
 					edges.add( sTypeName + " -> " + sValue );

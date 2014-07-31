@@ -31,8 +31,6 @@ public class RuntimeEngine {
 		void runStarted( RuntimeEngine ngn );
 		void processedNode( RuntimeEngine ngn, Node node );
 		void runTerminated( RuntimeEngine ngn );
-		// TODO find usages, consider removing, as we throw exceptions anyway.
-		void runError( RuntimeEngine ngn, DataTagsRuntimeException e );
 	}
 	
 	/** Used to give instances meaningful names. */

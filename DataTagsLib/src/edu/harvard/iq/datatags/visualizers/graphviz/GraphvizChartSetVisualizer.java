@@ -41,7 +41,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 
         @Override
         public String visitToDoValue(ToDoValue v) {
-            return v.getName();
+            return v.getInfo();
         }
 
         @Override

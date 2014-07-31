@@ -40,15 +40,9 @@ public class CompoundType extends TagType {
         }
         return null;
     }
-
-    // TODO remove. Compound values have no names, ONLY THEIR SLOTS HAVE.
-    // TODO also remove info.
-	public CompoundValue make(String name, String info) {
-		return new CompoundValue(name, this, info);
-	}
     
     public CompoundValue createInstance() {
-        return new CompoundValue(null, this, null);
+        return new CompoundValue( this );
     }
 
 	@Override

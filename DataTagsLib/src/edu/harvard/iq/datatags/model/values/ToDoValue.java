@@ -11,9 +11,11 @@ import edu.harvard.iq.datatags.model.types.ToDoType;
  * @author michael
  */
 public class ToDoValue extends TagValue {
+    private final String info;
 
-	public ToDoValue(String name, ToDoType type, String info) {
-		super(name, type, info);
+	public ToDoValue(String name, ToDoType type, String someInfo) {
+		super(type);
+        info = someInfo;
 	}
 
     @Override
@@ -25,5 +27,9 @@ public class ToDoValue extends TagValue {
 	public <R> R accept(edu.harvard.iq.datatags.model.values.TagValue.Visitor<R> tv) {
 		return tv.visitToDoValue(this);
 	}
+
+    public String getInfo() {
+        return info;
+    }
 	
 }

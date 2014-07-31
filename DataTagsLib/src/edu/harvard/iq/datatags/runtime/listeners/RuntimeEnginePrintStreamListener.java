@@ -40,11 +40,6 @@ public class RuntimeEnginePrintStreamListener implements RuntimeEngine.Listener 
 		out.println( title(ngn) +"terminated");
 	}
 
-	@Override
-	public void runError(RuntimeEngine ngn, DataTagsRuntimeException e) {
-		out.println( title(ngn) +"error: " + e.getLocalizedMessage());
-	}
-	
 	private String title( RuntimeEngine ngn ) {
 		return "Engine " + ngn.getId() + ": " + indent(ngn.getStack().size());
 	}

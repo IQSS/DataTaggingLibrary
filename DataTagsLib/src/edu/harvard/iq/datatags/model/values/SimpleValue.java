@@ -9,18 +9,22 @@ import edu.harvard.iq.datatags.model.types.SimpleType;
 public class SimpleValue extends TagValue implements Comparable<SimpleValue>{
 	
 	private final int ordinal;
+    private final String name;
+    private final String info;
 
 	/**
 	 * Creates a new simple value - Note that the preferred way of creating a 
 	 * value is by using one of the {@ code type.make()} methods.
 	 * @param ordinal ordinal of the value
-	 * @param name name of the value
+	 * @param aName name of the value
 	 * @param type the type of the value
-	 * @param info additional info
+	 * @param someInfo additional info
 	 */
-	public SimpleValue(int ordinal, String name, SimpleType type, String info) {
-		super(name, type, info);
+	public SimpleValue(int ordinal, String aName, SimpleType type, String someInfo) {
+		super(type);
 		this.ordinal = ordinal;
+        name = aName;
+        info = someInfo;
 	}
 	
     @Override
@@ -61,6 +65,14 @@ public class SimpleValue extends TagValue implements Comparable<SimpleValue>{
 		final SimpleValue other = (SimpleValue) obj;
 		return super.equals(obj) && getOrdinal() == other.getOrdinal();
 	}
+
+    public String getName() {
+        return name;
+    }
+
+    public String getInfo() {
+        return info;
+    }
 	
 	
 }

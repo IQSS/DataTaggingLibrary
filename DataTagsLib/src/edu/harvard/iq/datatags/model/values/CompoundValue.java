@@ -18,8 +18,8 @@ public class CompoundValue extends TagValue {
 
 	private final Map<TagType, TagValue> fields = new HashMap<>();
 		
-	public CompoundValue(String name, CompoundType type, String info) {
-		super(name, type, info);
+	public CompoundValue( CompoundType type ) {
+		super(type);
 	}
 	
     @Override
@@ -62,7 +62,7 @@ public class CompoundValue extends TagValue {
 	
 	@Override
 	public CompoundValue getOwnableInstance() {
-		return buildOwnableInstance( new CompoundValue(getName(), getType(), getInfo()) );
+		return buildOwnableInstance( getType().createInstance() );
 	}
 	
 	protected <T extends CompoundValue> T buildOwnableInstance( T startingPoint ) {
@@ -140,8 +140,7 @@ public class CompoundValue extends TagValue {
         }
         return result;
     }
-	
-	
+
 }
 
 class Resolver implements TagValue.Visitor<TagValue.Function> {
