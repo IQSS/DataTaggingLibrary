@@ -12,7 +12,7 @@ import java.util.Set;
  *
  * @author michael
  */
-public class CompoundValue extends TagValue<CompoundType> {
+public class CompoundValue extends TagValue {
     
     private static final Resolver RESOLVER = new Resolver();
 
@@ -22,6 +22,11 @@ public class CompoundValue extends TagValue<CompoundType> {
 		super(name, type, info);
 	}
 	
+    @Override
+    public CompoundType getType() {
+        return (CompoundType) super.getType();
+    }
+    
 	public void set( TagValue value ) {
 		if ( getType().getFieldTypes().contains(value.getType()) ) {
 			fields.put(value.getType(), value);
@@ -34,8 +39,7 @@ public class CompoundValue extends TagValue<CompoundType> {
 		fields.remove(type);
 	}
 
-    // TODO remove, this gives no usable extra info
-	public <T extends TagType> TagValue<T> get( T type ) {
+	public TagValue get( TagType type ) {
 		if ( getType().getFieldTypes().contains(type) ) {
 			return fields.get(type);
 		} else {
@@ -121,8 +125,8 @@ public class CompoundValue extends TagValue<CompoundType> {
         CompoundValue result = getType().createInstance();
         // Composing. Note that for each type in types, at least one object has a non-null value
         for (TagType tp : C.unionSet(getSetFieldTypes(), other.getSetFieldTypes())) {
-            TagValue<?> ours = get(tp);
-            TagValue<?> its = other.get(tp);
+            TagValue ours = get(tp);
+            TagValue its = other.get(tp);
             if (ours == null) {
                 if (its == null) {
                     throw new IllegalStateException("Both [this] and [other] had null tag value for a tag type");

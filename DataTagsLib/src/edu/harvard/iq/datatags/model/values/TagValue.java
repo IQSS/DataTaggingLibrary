@@ -4,11 +4,10 @@ import edu.harvard.iq.datatags.model.types.TagType;
 import java.util.Objects;
 
 /**
- *
+ * Basic class for a value / instance of a given {@link TagType}.
  * @author michael
- * @param <T> The type class for value instances
  */
-public abstract class TagValue<T extends TagType> {
+public abstract class TagValue {
 	
 	public interface Visitor<R> {
 		R visitToDoValue(ToDoValue v);
@@ -22,10 +21,10 @@ public abstract class TagValue<T extends TagType> {
 	}
 
 	private final String name;
-	private final T type;
+	private final TagType type;
 	private final String info;
 
-	public TagValue(String name, T type, String info) {
+	public TagValue(String name, TagType type, String info) {
 		this.name = name;
 		this.type = type;
 		this.info = info;
@@ -35,7 +34,7 @@ public abstract class TagValue<T extends TagType> {
 		return name;
 	}
 
-	public T getType() {
+	public TagType getType() {
 		return type;
 	}
 
@@ -53,7 +52,7 @@ public abstract class TagValue<T extends TagType> {
 	 * 
 	 * @return An instance that can be safely stored.
 	 */
-	public TagValue<T> getOwnableInstance() {
+	public TagValue getOwnableInstance() {
 		return this;
 	}
     
@@ -78,9 +77,9 @@ public abstract class TagValue<T extends TagType> {
 		if ( !(obj instanceof TagValue) ) {
 			return false;
 		}
-		final TagValue<?> other = (TagValue<?>) obj;
+		final TagValue other = (TagValue) obj;
 	
-		return Objects.equals(this.type, other.type);
+        return Objects.equals(getType(), other.getType());
 	}
 
 	@Override

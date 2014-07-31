@@ -6,7 +6,7 @@ import edu.harvard.iq.datatags.model.types.SimpleType;
  *
  * @author michael
  */
-public class SimpleValue extends TagValue<SimpleType> implements Comparable<SimpleValue>{
+public class SimpleValue extends TagValue implements Comparable<SimpleValue>{
 	
 	private final int ordinal;
 
@@ -23,6 +23,12 @@ public class SimpleValue extends TagValue<SimpleType> implements Comparable<Simp
 		this.ordinal = ordinal;
 	}
 	
+    @Override
+    public SimpleType getType() {
+        return (SimpleType) super.getType();
+    }
+    
+    
 	@Override
 	public int compareTo(SimpleValue o) {
 		return getOrdinal() - o.getOrdinal();

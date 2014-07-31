@@ -10,12 +10,17 @@ import edu.harvard.iq.datatags.model.types.ToDoType;
  * 
  * @author michael
  */
-public class ToDoValue extends TagValue<ToDoType> {
+public class ToDoValue extends TagValue {
 
 	public ToDoValue(String name, ToDoType type, String info) {
 		super(name, type, info);
 	}
 
+    @Override
+    public ToDoType getType() {
+        return (ToDoType) super.getType();
+    }
+    
 	@Override
 	public <R> R accept(edu.harvard.iq.datatags.model.values.TagValue.Visitor<R> tv) {
 		return tv.visitToDoValue(this);
