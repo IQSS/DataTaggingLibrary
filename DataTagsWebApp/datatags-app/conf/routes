@@ -23,8 +23,8 @@ GET	    /test/:name/:count          controllers.Test.nameCount(name, count: Int)
 GET		/api/1/interviewLink					controllers.API.requestInterview(repositoryName: String ?= "Dataverse", callbackURL: String ?= null)
 GET		/requestedInterview/:uniqueLinkId		controllers.RequestedInterview.start(uniqueLinkId: String)
 
-POST	/postBackTo								controllers.RequestedInterview.postBackTo
-POST 	/unacceptableDataset/:reason			controllers.RequestedInterview.unacceptableDataset(reason: String)
+POST	/postBackTo/:uniqueLinkId				controllers.RequestedInterview.postBackTo(uniqueLinkId: String)
+POST 	/unacceptableDataset/:uniqueLinkId/:reason		controllers.RequestedInterview.unacceptableDataset(uniqueLinkId: String, reason: String)
 POST 	/tempTestServer							controllers.Test.tempTestServer
 
 # Map static resources from the /public folder to the /assets URL path
