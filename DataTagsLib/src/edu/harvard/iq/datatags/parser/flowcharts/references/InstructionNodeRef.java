@@ -9,9 +9,7 @@ import java.util.Objects;
  * @author Michael Bar-Sinai
  */
 public abstract class InstructionNodeRef extends NodeRef {
-    // TODO no need for the head, as the type is determined by the class.
-    private final TypedNodeHeadRef head;
-	
+    
 	public interface Visitor<T> {
 		T visit( AskNodeRef askRef );
 		T visit( CallNodeRef callRef );
@@ -21,23 +19,15 @@ public abstract class InstructionNodeRef extends NodeRef {
 		T visit( TodoNodeRef todoRef );
 	}
 	
-    public InstructionNodeRef(TypedNodeHeadRef head) {
-        this.head = head;
-        setId( head.getId() );
-    }
-
-    @Deprecated
-    public TypedNodeHeadRef getHead() {
-        return head;
+    public InstructionNodeRef( String id ) {
+        super( id );
     }
 
 	public abstract <T> T accept( Visitor<T> v );
 	
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 47 * hash + Objects.hashCode(this.head);
-        return hash;
+        return 47 * Objects.hashCode(getId());
     }
 
     @Override
@@ -52,7 +42,7 @@ public abstract class InstructionNodeRef extends NodeRef {
     }
     
     public boolean equalsAsInstructionNodeRef( InstructionNodeRef other ) {
-        return Objects.equals(head, other.getHead());
+        return Objects.equals(getId(), other.getId());
     }
     
     @Override

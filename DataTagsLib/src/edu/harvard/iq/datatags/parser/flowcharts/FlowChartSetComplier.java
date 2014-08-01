@@ -99,10 +99,6 @@ public class FlowChartSetComplier {
             }
         }
 		
-		// TODO validation
-		//  - Ids get to appear at most once. 
-		//  - no unreachable nodes (e.g. chart with no id at start node)
-		
 		return chartSet;
 	}
 	

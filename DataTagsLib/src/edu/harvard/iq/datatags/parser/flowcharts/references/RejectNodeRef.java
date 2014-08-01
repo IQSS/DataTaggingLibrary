@@ -11,7 +11,7 @@ public class RejectNodeRef extends InstructionNodeRef {
     private final String reason;
 
     public RejectNodeRef(String id, String reason) {
-        super( new TypedNodeHeadRef(id, NodeType.Ask) );
+        super( id );
         this.reason = reason;
     }
 

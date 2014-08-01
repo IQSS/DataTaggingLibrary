@@ -10,10 +10,11 @@ public class CallNodeRef extends InstructionNodeRef {
     private final String calleeId;
     
     public CallNodeRef( String calleeId ) {
-        this( (String)null, calleeId );
+        this( null, calleeId );
     }
+    
     public CallNodeRef( String id, String calleeId ) {
-        super( new TypedNodeHeadRef(id, NodeType.Call));
+        super( id );
         this.calleeId = calleeId;
     }
        
