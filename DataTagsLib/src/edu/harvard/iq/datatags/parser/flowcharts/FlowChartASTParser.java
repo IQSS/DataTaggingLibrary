@@ -78,20 +78,26 @@ public class FlowChartASTParser extends AbstractASTParser {
     }
     
     Parser<TodoNodeRef> todoNode() {
-        return stringBodyNode("todo").map(new Map<Pair<NodeHeadRef, String>,TodoNodeRef>(){
+        Parser<TodoNodeRef> nodeWithBody = stringBodyNode("todo").map(new Map<Pair<NodeHeadRef, String>,TodoNodeRef>(){
             @Override
             public TodoNodeRef map(Pair<NodeHeadRef, String> from) {
                 return new TodoNodeRef( from.a.getId(), from.b );
             }
-        }).or(completeNode( nodeHeadTitled("todo") )
-				.map(new Map<NodeHeadRef, TodoNodeRef>(){
-                    @Override
-                    public TodoNodeRef map(NodeHeadRef from) {
-                        return new TodoNodeRef( from.getId(), null );
-                    }
-        } ));
+        });
+        
+        return nodeWithBody.or(todoNodeWithNoBody());
     }
     
+     Parser<TodoNodeRef> todoNodeWithNoBody() {
+        return completeNode( nodeHeadTitled("todo") )
+            .map(new Map<NodeHeadRef, TodoNodeRef>(){
+                @Override
+                public TodoNodeRef map(NodeHeadRef from) {
+                    return new TodoNodeRef( from.getId(), null );
+                }
+        });
+     }
+     
     Parser<CallNodeRef> callNode() {
         return stringBodyNode("call").map(new Map<Pair<NodeHeadRef, String>, CallNodeRef>(){
             @Override
@@ -105,13 +111,14 @@ public class FlowChartASTParser extends AbstractASTParser {
     }
     
 	Parser<NodeHeadRef> nodeHeadTitled(Parser<String> nodeTitleParser) {
-		return tuple(nodeId().followedBy(WHITESPACES.optional()), nodeTitleParser.followedBy(WHITESPACES.optional())).map(new Map<Pair<String, String>, NodeHeadRef>(){
+		return tuple(nodeId().followedBy(WHITESPACES.optional()), nodeTitleParser.followedBy(WHITESPACES.optional()))
+                .map(new Map<Pair<String, String>, NodeHeadRef>(){
                     @Override
                     public NodeHeadRef map(Pair<String, String> from) {
                         return new NodeHeadRef(from.a, from.b);
                     }
 		} )
-		.or(nodeTitleParser.map(new Map<String, NodeHeadRef>() {
+		.or(nodeTitleParser.followedBy(WHITESPACES.optional()).map(new Map<String, NodeHeadRef>() {
                     @Override
                     public NodeHeadRef map(String from) {
                         return new NodeHeadRef(null, from);

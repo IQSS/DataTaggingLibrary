@@ -241,6 +241,7 @@ public class FlowChartASTParserTest {
     @Test
     public void testEndNode() {
         assertEquals( new EndNodeRef("this is the"), instance.endNode().parse("(>this is the< end)") );
+        assertEquals( new EndNodeRef("this is the"), instance.endNode().parse("(>this is the< end )") );
         assertEquals( new EndNodeRef(null), instance.endNode().parse("(end)") );
         assertEquals( new EndNodeRef(null), instance.endNode().parse("(end )") );
         assertEquals( new EndNodeRef(null), instance.endNode().parse("( end )") );
@@ -264,6 +265,18 @@ public class FlowChartASTParserTest {
         assertEquals( new TodoNodeRef("things", null), instance.todoNode().parse("(>things< todo )") );
         assertEquals( new TodoNodeRef("things", "This is stuff that needs to be done. Pronto."), 
                       instance.todoNode().parse("(>things< todo: This is stuff that needs to be done. Pronto.)") );
+        assertEquals( new TodoNodeRef(null, "This is stuff that needs to be done. Pronto."), 
+                      instance.todoNode().parse("(todo: This is stuff that needs to be done. Pronto.)") );
+    }
+    
+    @Test
+    public void testTodoNodeWithNoBody() {
+        assertEquals( new TodoNodeRef(null, null), instance.todoNodeWithNoBody().parse("(todo)") );
+        assertEquals( new TodoNodeRef(null, null), instance.todoNodeWithNoBody().parse("( todo)") );
+        assertEquals( new TodoNodeRef(null, null), instance.todoNodeWithNoBody().parse("(todo )") );
+        assertEquals( new TodoNodeRef(null, null), instance.todoNodeWithNoBody().parse("( todo )") );
+        assertEquals( new TodoNodeRef("things", null), instance.todoNodeWithNoBody().parse("(>things< todo)") );
+        assertEquals( new TodoNodeRef("things", null), instance.todoNodeWithNoBody().parse("(>things< todo )") );
     }
     
     @Test
