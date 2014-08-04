@@ -14,7 +14,7 @@ public class AskNodeRef extends InstructionNodeRef {
     private final List<AnswerNodeRef> answers;
 
     public AskNodeRef(String id, TextNodeRef aTextNode, List<TermNodeRef> someTerms, List<AnswerNodeRef> someAnswers ) {
-        super( new TypedNodeHeadRef(id, NodeType.Ask) );
+        super( id );
         text = aTextNode;
         terms = someTerms;
         answers = someAnswers;

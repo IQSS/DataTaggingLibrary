@@ -15,12 +15,12 @@ import java.util.Set;
  * 
  * @author michael
  */
-public class AggregateValue extends TagValue{
+public class AggregateValue extends TagValue {
 	
 	private final Set<SimpleValue> values = new HashSet<>();
-    // TODO name and info should go, right?
-	public AggregateValue(String name, AggregateType type, String info) {
-		super(name, type, info);
+
+    public AggregateValue(AggregateType type) {
+		super(type);
 	}
 	
 	public Set<SimpleValue> getValues() {
@@ -54,7 +54,7 @@ public class AggregateValue extends TagValue{
 	
 	@Override
 	public AggregateValue getOwnableInstance() {
-		AggregateValue copy = new AggregateValue(getName(), getType(), getInfo());
+		AggregateValue copy = new AggregateValue(getType());
 		for ( SimpleValue v : values ) {
 			copy.add( v );
 		}
@@ -85,4 +85,5 @@ public class AggregateValue extends TagValue{
     public String toString() {
         return "[AggregateValue type:" + getType() + " values:" + getValues() + "]";
     }
+
 }

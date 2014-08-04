@@ -6,14 +6,18 @@ import java.util.Objects;
  * A node head that contains a String title (rather than a {@link NodeType} type).
  * @author Michael Bar-Sinai
  */
-public class StringNodeHeadRef extends AbstractNodeHeadRef {
+public class NodeHeadRef {
     private final String title;
+    private final String id;
 
-    public StringNodeHeadRef(String id, String title) {
-        super(id);
-        this.title = title;
+    public NodeHeadRef(String anId, String aTitle) {
+        id = anId;
+        title = aTitle;
     }
-
+    
+    public String getId() {
+        return id;
+    }
 
     public String getTitle() {
         return title;
@@ -31,10 +35,10 @@ public class StringNodeHeadRef extends AbstractNodeHeadRef {
         if (obj == null) {
             return false;
         }
-        if ( !(obj instanceof StringNodeHeadRef) ) {
+        if ( !(obj instanceof NodeHeadRef) ) {
             return false;
         }
-        final StringNodeHeadRef other = (StringNodeHeadRef) obj;
+        final NodeHeadRef other = (NodeHeadRef) obj;
         return Objects.equals(getTitle(), other.getTitle()) &&
                 Objects.equals(getId(), other.getId());
     }

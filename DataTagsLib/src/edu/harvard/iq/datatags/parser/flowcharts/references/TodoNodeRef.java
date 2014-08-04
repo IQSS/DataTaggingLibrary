@@ -11,7 +11,7 @@ public class TodoNodeRef extends InstructionNodeRef {
 	private final String todoText;
 	
     public TodoNodeRef(String id, String body) {
-        super(new TypedNodeHeadRef(id, NodeType.Todo));
+        super( id );
 		todoText = body;
     }
 

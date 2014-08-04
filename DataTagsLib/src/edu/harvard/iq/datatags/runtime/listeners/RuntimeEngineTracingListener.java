@@ -54,10 +54,5 @@ public class RuntimeEngineTracingListener implements  RuntimeEngine.Listener {
 	public void runTerminated(RuntimeEngine ngn) {
 		decorated.runTerminated(ngn);
 	}
-
-	@Override
-	public void runError(RuntimeEngine ngn, DataTagsRuntimeException e) {
-		decorated.runError(ngn, e);
-	}
 	
 }

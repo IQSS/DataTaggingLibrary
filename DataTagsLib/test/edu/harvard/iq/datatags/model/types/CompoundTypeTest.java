@@ -128,15 +128,15 @@ public class CompoundTypeTest {
         CompoundType ct = new CompoundType("compoundType", null);
         ct.addFieldType( simple_t1 );
         ct.addFieldType( simple_t2 );
-		CompoundValue a = ct.make("a",null);
-		CompoundValue b = ct.make("b",null);
+		CompoundValue a = ct.createInstance();
+		CompoundValue b = ct.createInstance();
 		
 		a.set( v1_t1 );
 		
 		b.set( v2_t1 );
 		b.set( v1_t2 );
 		
-		CompoundValue expected = ct.make("expected",null);
+		CompoundValue expected = ct.createInstance();
 		expected.set( v2_t1 ); // as v2_t1.ordinal > v1_t1.ordinal
 		expected.set( v1_t2 );
 		
@@ -154,8 +154,8 @@ public class CompoundTypeTest {
 		SimpleType simple_t = new SimpleType( "t1", null );
 		AggregateType agg_t = new AggregateType( "a1", null, simple_t );
 		
-		AggregateValue agg_1 = agg_t.make("av1", null);
-		AggregateValue agg_2 = agg_t.make("av2", null);
+		AggregateValue agg_1 = agg_t.createInstance();
+		AggregateValue agg_2 = agg_t.createInstance();
 		
 		agg_1.add( simple_t.make("i",null) );
 		agg_1.add( simple_t.make("ii",null) );
@@ -170,14 +170,14 @@ public class CompoundTypeTest {
         ct.addFieldType( simple_t );
         ct.addFieldType( agg_t );
         
-		CompoundValue dt1 = ct.make("dt1", null);
+		CompoundValue dt1 = ct.createInstance();
 		dt1.set( agg_1 );
-		CompoundValue dt2 = ct.make("dt2", null);
+		CompoundValue dt2 = ct.createInstance();
 		dt2.set( agg_2 );
 		
 		CompoundValue actual = dt1.composeWith(dt2);
-		CompoundValue expected = ct.make("exp", null);
-		AggregateValue expectedAgg_t = agg_t.make("expected", null);
+		CompoundValue expected = ct.createInstance();
+		AggregateValue expectedAgg_t = agg_t.createInstance();
 		expectedAgg_t.add( simple_t.values() );
 		expected.set( expectedAgg_t );
 		
@@ -202,17 +202,17 @@ public class CompoundTypeTest {
 			st.make(st.getName() + (++idx), null);
 		}
 		
-		CompoundValue cv1 = compound_t.make("cv1", null);
+		CompoundValue cv1 = compound_t.createInstance();
 		cv1.set(C.first(simple_t1.values()) );
 		cv1.set(C.list(simple_t3.values()).get(1) );
 		cv1.set(C.first(simple_t4.values()) );
 		
-		CompoundValue cv2 = compound_t.make("cv2", null);
+		CompoundValue cv2 = compound_t.createInstance();
 		cv2.set(C.first(simple_t2.values()) );
 		cv2.set(C.first(simple_t3.values()) );
 		cv2.set(C.list(simple_t4.values()).get(1) );
 
-		CompoundValue cvExpected = compound_t.make("expected", null);
+		CompoundValue cvExpected = compound_t.createInstance();
 		cvExpected.set(C.first(simple_t1.values()) );
 		cvExpected.set(C.first(simple_t2.values()) );
 		cvExpected.set(C.list(simple_t3.values()).get(1) );
@@ -221,11 +221,11 @@ public class CompoundTypeTest {
         CompoundType sut = new CompoundType("sut", null);
         sut.addFieldType(compound_t);
         
-		CompoundValue a = sut.make("a", null);
+		CompoundValue a = sut.createInstance();
 		a.set(cv1);
-		CompoundValue b = sut.make("b", null);
+		CompoundValue b = sut.createInstance();
 		b.set(cv2);
-		CompoundValue expected = sut.make("ex", null) ;
+		CompoundValue expected = sut.createInstance();
 		expected.set(cvExpected);
 		CompoundValue actual = a.composeWith(b);
 		
@@ -240,8 +240,8 @@ public class CompoundTypeTest {
 		
 		AggregateType agg_t = new AggregateType("agg1",null, items_t);
 		
-		AggregateValue agg_v1 = agg_t.make("aggV1", null);
-		AggregateValue agg_v2 = agg_t.make("aggV2", null);
+		AggregateValue agg_v1 = agg_t.createInstance();
+		AggregateValue agg_v2 = agg_t.createInstance();
 		
 		agg_v1.add( C.list(items_t.values()).get(0) );
 		agg_v1.add( C.list(items_t.values()).get(1) );
@@ -249,7 +249,7 @@ public class CompoundTypeTest {
 		agg_v2.add( C.list(items_t.values()).get(1) );
 		agg_v2.add( C.list(items_t.values()).get(2) );
 		
-		AggregateValue agg_ex = agg_t.make("expected", null);
+		AggregateValue agg_ex = agg_t.createInstance();
 		agg_ex.add( C.list(items_t.values()).get(0) );
 		agg_ex.add( C.list(items_t.values()).get(1) );
 		agg_ex.add( C.list(items_t.values()).get(2) );
@@ -257,11 +257,11 @@ public class CompoundTypeTest {
 		CompoundType cmp_t = new CompoundType("SUT",null);
 		cmp_t.addFieldType(agg_t);
 		
-		CompoundValue cv1 = cmp_t.make("cv1", null);
+		CompoundValue cv1 = cmp_t.createInstance();
 		cv1.set(agg_v1);
-		CompoundValue cv2 = cmp_t.make("cv2", null);
+		CompoundValue cv2 = cmp_t.createInstance();
 		cv2.set(agg_v2);
-		CompoundValue cvExpected = cmp_t.make("cv-expected", null);
+		CompoundValue cvExpected = cmp_t.createInstance();
 		cvExpected.set(agg_ex);
 		
 		assertEquals( cvExpected, cv1.composeWith(cv2) );

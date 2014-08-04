@@ -99,12 +99,6 @@ public class FlowChartSetComplier {
             }
         }
 		
-		// TODO validation
-		//  - Ids get to appear at most once. 
-		//  - Set nodes has valid slot names and values
-		//  - no unreachable nodes (e.g. chart with no id at start node)
-		
-        
 		return chartSet;
 	}
 	
@@ -292,8 +286,8 @@ public class FlowChartSetComplier {
 		if ( answers.isEmpty() ) return Arrays.asList( Answer.NO, Answer.YES ); // special case, where both YES and NO lead to the same options. 
 		// MAYBE issue a warning/suggestion to make this a (todo: ) node.
 		Answer onlyAns = answers.iterator().next();
-		// TODO parser should use singleton answers YES/NO, to avoid this lowercase equality test
-		String ansText = onlyAns.getAnswerText().trim().toLowerCase();
+
+        String ansText = onlyAns.getAnswerText().trim().toLowerCase();
 		switch( ansText ) {
 			case "yes": return Collections.singletonList( Answer.NO );
 			case "no" : return Collections.singletonList( Answer.YES );

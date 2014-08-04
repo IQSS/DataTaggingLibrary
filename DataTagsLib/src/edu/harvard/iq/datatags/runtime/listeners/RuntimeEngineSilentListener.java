@@ -19,7 +19,4 @@ public class RuntimeEngineSilentListener implements RuntimeEngine.Listener {
 	@Override
 	public void runTerminated(RuntimeEngine ngn) {}
 
-	@Override
-	public void runError(RuntimeEngine ngn, DataTagsRuntimeException e) {}
-	
 }

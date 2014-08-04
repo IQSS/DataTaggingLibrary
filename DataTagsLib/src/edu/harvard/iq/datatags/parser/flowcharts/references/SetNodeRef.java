@@ -12,8 +12,8 @@ import java.util.Set;
 public class SetNodeRef extends InstructionNodeRef {
     private final Map<String, String> assignments = new HashMap<>();
 
-    public SetNodeRef(TypedNodeHeadRef head) {
-        super(head);
+    public SetNodeRef(String id) {
+        super( id );
     }
     
     public void addAssignment( String slotName, String value ) {

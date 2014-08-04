@@ -106,12 +106,7 @@ public class CliRunner {
                 public void runTerminated(RuntimeEngine ngn) {
                     printMsg("Run Done");
                 }
-
-                @Override
-                public void runError(RuntimeEngine ngn, DataTagsRuntimeException e) {
-                    printMsg("Run Error: " + e.getMessage());
-                    e.printStackTrace( System.out );
-                }
+                
             });
 
             if ( ngn.start(chartId) ) {

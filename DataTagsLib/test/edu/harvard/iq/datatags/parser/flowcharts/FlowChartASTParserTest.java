@@ -1,14 +1,11 @@
 package edu.harvard.iq.datatags.parser.flowcharts;
 
-import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
 import edu.harvard.iq.datatags.parser.flowcharts.references.AnswerNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.AskNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.CallNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.EndNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.TypedNodeHeadRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.NodeType;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.StringNodeHeadRef;
+import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TextNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
@@ -45,17 +42,9 @@ public class FlowChartASTParserTest {
 	public void tearDown() {
 	}
 
-	@Test
-	public void testNodeType() {
-		Parser<NodeType> subParser = instance.nodeType();
-		for ( NodeType nd: NodeType.values() ) {
-			assertEquals( nd, subParser.parse( nd.name().toLowerCase() ) );
-		}
-	}
-	
     @Test
     public void testAskNode_call()  {
-        AnswerNodeRef yesRef = new AnswerNodeRef(new StringNodeHeadRef(null, "yes"), 
+        AnswerNodeRef yesRef = new AnswerNodeRef(new NodeHeadRef(null, "yes"), 
                                     Collections.singletonList( new CallNodeRef((String)null, "yesImpl")));
         AskNodeRef expected = new AskNodeRef("id", new TextNodeRef("theText", "here's a question"), 
                                             new LinkedList(), 
@@ -76,7 +65,7 @@ public class FlowChartASTParserTest {
     
     @Test
     public void testAskNode_end()  {
-        AnswerNodeRef yesRef = new AnswerNodeRef(new StringNodeHeadRef(null, "yes"), 
+        AnswerNodeRef yesRef = new AnswerNodeRef(new NodeHeadRef(null, "yes"), 
                                     Collections.singletonList( new EndNodeRef()));
         AskNodeRef expected = new AskNodeRef("id", new TextNodeRef(null, "here's a question"), 
                                             new LinkedList(), 
@@ -88,7 +77,7 @@ public class FlowChartASTParserTest {
     
     @Test
     public void testAskNode_noId()  {
-        AnswerNodeRef yesRef = new AnswerNodeRef(new StringNodeHeadRef(null, "yes"), 
+        AnswerNodeRef yesRef = new AnswerNodeRef(new NodeHeadRef(null, "yes"), 
                                     Collections.singletonList( new EndNodeRef()));
         AskNodeRef expected = new AskNodeRef(null, new TextNodeRef(null, "here's a question"), 
                                             new LinkedList(), 
@@ -100,7 +89,7 @@ public class FlowChartASTParserTest {
     
     @Test
     public void testAskNode_terms()  {
-        AnswerNodeRef yesRef = new AnswerNodeRef(new StringNodeHeadRef(null, "yes"), 
+        AnswerNodeRef yesRef = new AnswerNodeRef(new NodeHeadRef(null, "yes"), 
                                     Collections.singletonList( new EndNodeRef()));
         List<TermNodeRef> terms = Collections.singletonList(new TermNodeRef("zerm","explanation") );
         AskNodeRef expected = new AskNodeRef(null, new TextNodeRef(null, "here's a question"), 
@@ -137,16 +126,6 @@ public class FlowChartASTParserTest {
         assertEquals( nodes, instance.textNode().many().parse("(text:text1)(text:text2)"));
     }
     
-	@Test
-	public void testNodeHead() {
-		Parser<TypedNodeHeadRef> subParser = instance.typedNodeHead();
-		assertEquals( new TypedNodeHeadRef("setNode", NodeType.Set), 
-                      subParser.parse(">setNode<set") );
-		assertEquals( new TypedNodeHeadRef("setNode", NodeType.Set), 
-                      subParser.parse(">setNode< set") );
-		assertEquals( new TypedNodeHeadRef(null, NodeType.Call), subParser.parse("call") );
-	}
-    
     @Test
     public void testSimpleNode() {
         Parser<CallNodeRef> sut = instance.callNode();
@@ -156,12 +135,6 @@ public class FlowChartASTParserTest {
         assertEquals( new CallNodeRef( "call-other", "Some other id"),
                       sut.parse("(>call-other< call: Some other id)"));
     }
-    
-	@Test( expected=ParserException.class)
-	public void testNodeType_fail() {
-		Parser<NodeType> subParser = instance.nodeType();
-		subParser.parse("not-a-node-type");
-	}
 	
 	@Test
 	public void testNodeId() {
@@ -268,7 +241,11 @@ public class FlowChartASTParserTest {
     @Test
     public void testEndNode() {
         assertEquals( new EndNodeRef("this is the"), instance.endNode().parse("(>this is the< end)") );
+        assertEquals( new EndNodeRef("this is the"), instance.endNode().parse("(>this is the< end )") );
         assertEquals( new EndNodeRef(null), instance.endNode().parse("(end)") );
+        assertEquals( new EndNodeRef(null), instance.endNode().parse("(end )") );
+        assertEquals( new EndNodeRef(null), instance.endNode().parse("( end )") );
+        assertEquals( new EndNodeRef(null), instance.endNode().parse("( end)") );
     }
     
     @Test( expected=ParserException.class )
@@ -286,12 +263,25 @@ public class FlowChartASTParserTest {
         assertEquals( new TodoNodeRef(null, null), instance.todoNode().parse("(todo)") );
         assertEquals( new TodoNodeRef("things", null), instance.todoNode().parse("(>things< todo)") );
         assertEquals( new TodoNodeRef("things", null), instance.todoNode().parse("(>things< todo )") );
-        assertEquals( new TodoNodeRef("things", "This is stuff that needs to be done. Pronto."), instance.todoNode().parse("(>things< todo: This is stuff that needs to be done. Pronto.)") );
+        assertEquals( new TodoNodeRef("things", "This is stuff that needs to be done. Pronto."), 
+                      instance.todoNode().parse("(>things< todo: This is stuff that needs to be done. Pronto.)") );
+        assertEquals( new TodoNodeRef(null, "This is stuff that needs to be done. Pronto."), 
+                      instance.todoNode().parse("(todo: This is stuff that needs to be done. Pronto.)") );
+    }
+    
+    @Test
+    public void testTodoNodeWithNoBody() {
+        assertEquals( new TodoNodeRef(null, null), instance.todoNodeWithNoBody().parse("(todo)") );
+        assertEquals( new TodoNodeRef(null, null), instance.todoNodeWithNoBody().parse("( todo)") );
+        assertEquals( new TodoNodeRef(null, null), instance.todoNodeWithNoBody().parse("(todo )") );
+        assertEquals( new TodoNodeRef(null, null), instance.todoNodeWithNoBody().parse("( todo )") );
+        assertEquals( new TodoNodeRef("things", null), instance.todoNodeWithNoBody().parse("(>things< todo)") );
+        assertEquals( new TodoNodeRef("things", null), instance.todoNodeWithNoBody().parse("(>things< todo )") );
     }
     
     @Test
     public void testSetNode() {
-        SetNodeRef expected = new SetNodeRef( new TypedNodeHeadRef("set-id", NodeType.Set) );
+        SetNodeRef expected = new SetNodeRef( "set-id");
         expected.addAssignment("slot1", "value1");
         
         Parser<SetNodeRef> sut = instance.setNode();
@@ -303,39 +293,10 @@ public class FlowChartASTParserTest {
         assertEquals( expected, sut.parse("(>set-id< set: slot1 = value1, slot/number/two = value2)"));
         assertEquals( expected, sut.parse("(>set-id< set: slot1 = value1,\n\t\tslot/number/two = value2)"));
         
-        expected = new SetNodeRef( new TypedNodeHeadRef(null, NodeType.Set) );
+        expected = new SetNodeRef( null );
         expected.addAssignment("slot1", "value1");
         expected.addAssignment("slot/number/two", "value2");
         assertEquals( expected, sut.parse("(set: slot1=value1,slot/number/two=value2)"));
     }
-    
-//	@Test
-//	public void testSample() {
-//        Parser<Pair<TextNodeRef, List<TermNodeRef>>> textTerm = 
-//                Parsers.tuple(instance.textNode().followedBy(whitespaces),instance.termsNode());
-//        TextNodeRef tnr = new TextNodeRef(null, "xxxxx");
-//        TermNodeRef anr = new TermNodeRef("a","AAAA");
-//        TermNodeRef bnr = new TermNodeRef("b","BBBB");
-//        assertEquals( new Pair<>(tnr, Arrays.asList(anr,bnr)),
-//                      textTerm.parse("(text:xxxxx)(terms:(a:AAAA)(b:BBBB))") );
-//        assertEquals( new Pair<>(tnr, Arrays.asList(anr,bnr)),
-//                      textTerm.parse("(text:xxxxx)   (terms:(a:AAAA)(b:BBBB))") );
-//        
-//        Map<TextNodeRef, Pair<TextNodeRef, List<TermNodeRef>>> t2p = new Map<TextNodeRef, Pair<TextNodeRef, List<TermNodeRef>>>(){
-//
-//            @Override
-//            public Pair<TextNodeRef, List<TermNodeRef>> map(TextNodeRef from) {
-//                return new Pair<>(from, Collections.<TermNodeRef>emptyList());
-//            }
-//        };
-//        Parser<Pair<TextNodeRef, List<TermNodeRef>>> textOnly = instance.textNode().map(t2p);
-//        
-//        Parser<Pair<TextNodeRef, List<TermNodeRef>>> sutOrText = textTerm.or( textOnly );
-//        assertEquals( new Pair<>(tnr, Arrays.asList(anr,bnr)),
-//                      sutOrText.parse("(text:xxxxx)(terms:(a:AAAA)(b:BBBB))") );
-//        assertEquals( new Pair<>(tnr, Arrays.asList(anr,bnr)),
-//                      sutOrText.parse("(text:xxxxx)   (terms:(a:AAAA)(b:BBBB))") );
-//        
-//	}
 	
 }

@@ -11,7 +11,7 @@ public class AnswerNodeRef extends NodeRef {
     private final List<? extends InstructionNodeRef> implementation;
 	private final String answerText;
 
-    public AnswerNodeRef(StringNodeHeadRef head, List<? extends InstructionNodeRef> implementation) {
+    public AnswerNodeRef(NodeHeadRef head, List<? extends InstructionNodeRef> implementation) {
 		super( head.getId() );
         answerText = head.getTitle();
         this.implementation = implementation;

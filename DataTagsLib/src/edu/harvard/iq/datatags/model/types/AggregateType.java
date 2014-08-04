@@ -19,13 +19,8 @@ public class AggregateType extends TagType {
 		return itemType;
 	}
 	
-    // TODO remove, this is not used
-	public AggregateValue make( String name, String info ) {
-		return new AggregateValue(name, this, info);
-	}
-    
     public AggregateValue createInstance() {
-        return new AggregateValue("valName", this, null);
+        return new AggregateValue(this);
     }
 
 	@Override

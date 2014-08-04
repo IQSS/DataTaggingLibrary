@@ -20,27 +20,17 @@ public abstract class TagValue {
 		public TagValue apply(TagValue v);
 	}
 
-	private final String name;
 	private final TagType type;
-	private final String info;
 
-	public TagValue(String name, TagType type, String info) {
-		this.name = name;
+    public TagValue(TagType type) {
 		this.type = type;
-		this.info = info;
 	}
 
-	public String getName() {
-		return name;
-	}
 
 	public TagType getType() {
 		return type;
 	}
 
-	public String getInfo() {
-		return info;
-	}
 	
 	public abstract <R> R accept( TagValue.Visitor<R> visitor );
 	
@@ -59,8 +49,7 @@ public abstract class TagValue {
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 37 * hash + Objects.hashCode(this.name);
-		hash = 37 * hash + Objects.hashCode(this.type);
+		hash = 37 * getType().hashCode();
 		return hash;
 	}
 	
@@ -84,7 +73,7 @@ public abstract class TagValue {
 
 	@Override
 	public String toString() {
-		return "[TagValue name:" + name + " type:" + type + ']';
+		return "[TagValue type:" + type + ']';
 	}
 	
 }
