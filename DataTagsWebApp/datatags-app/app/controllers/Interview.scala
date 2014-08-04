@@ -26,7 +26,7 @@ object Interview extends Controller {
     val fcs = global.Global.interview
     val dtt = global.Global.dataTags
     Ok( views.html.interview.intro(fcs,dtt, Option(null) ))
-      .withSession( session + ("uuid" -> userSession.key) )
+      .withSession( request2session + ("uuid" -> userSession.key) )
   }
 
   def startInterview( questionnaireId:String ) = UserSessionAction { implicit req =>

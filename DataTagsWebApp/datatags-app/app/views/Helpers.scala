@@ -83,7 +83,7 @@ def bulletPoint (paragraph: String) = {
 
 		complete = stringList.mkString
 	}
-	Html(complete)
+	play.twirl.api.Html(complete)
 	}
 
 }

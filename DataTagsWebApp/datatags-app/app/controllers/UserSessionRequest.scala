@@ -16,7 +16,7 @@ class UserSessionRequest[A](val userSession: UserSession, request: Request[A]) e
 
 object UserSessionAction extends ActionBuilder[UserSessionRequest] {
 
-  def invokeBlock[A](request: Request[A], block: (UserSessionRequest[A]) => Future[SimpleResult]) = {
+  def invokeBlock[A](request: Request[A], block: (UserSessionRequest[A]) => Future[Result]) = {
     request.session.get("uuid").map { uuid =>
       Cache.getAs[UserSession](uuid).map{ userSession =>
         block(new UserSessionRequest(userSession, request))
