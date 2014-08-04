@@ -26,11 +26,11 @@ object TagsTable {
       Row("Yellow",  "Potentially harmful personal information, shared with loosely verified and/or approved recipients",
          Seq(duaClickThrough, authPassword,  encEncrypted, encClear) ),
       Row("Orange",  "May include sensitive, identifiable personal information, shared with verified and/or approved recipients under agreement",
-         Seq(duaSign,         authPassword,  encEncrypted, encEncrypted) ),
+         Seq(duaSign,  authPassword,  encEncrypted, encEncrypted) ),
       Row("Red",     "Very sensitive identifiable personal information, shared with strong verification of approved recipients under signed agreement",
-         Seq(duaSign, authTwoFactor, encEncrypted, encEncrypted) ),
+         Seq(duaSign,  authTwoFactor, encEncrypted, encEncrypted) ),
       Row("Crimson", "Requires explicit permission for each transaction, using strong verification of approved recipients under signed agreement",
-         Seq(duaSign, authTwoFactor, encDouble, encDouble) )
+         Seq(duaSign,  authTwoFactor, encDouble, encDouble) )
     )    
   }
 

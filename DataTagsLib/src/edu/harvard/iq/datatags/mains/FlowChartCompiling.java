@@ -70,15 +70,14 @@ public class FlowChartCompiling {
         
         String source = readAll(chartFile);
         
-        FlowChartSetComplier fcsParser = new FlowChartSetComplier( (CompoundType)baseType );
         FlowChartASTParser astParser = new FlowChartASTParser();
-        
         List<InstructionNodeRef> refs = astParser.graphParser().parse(source);
         GraphvizGraphNodeRefVizalizer viz = new GraphvizGraphNodeRefVizalizer(refs);
         Path outfile = chartFile.resolveSibling( chartFile.getFileName().toString() + "-ast.gv" );
         System.out.println("Writing: " + outfile );
         viz.vizualize( outfile );
 
+        FlowChartSetComplier fcsParser = new FlowChartSetComplier( (CompoundType)baseType );
         FlowChartSet fcs = fcsParser.parse(refs, chartFile.getFileName().toString());
 		
         GraphvizChartSetVisualizer fcsViz = new GraphvizChartSetVisualizer();
