@@ -44,7 +44,7 @@ public class ValidCallNodeValidator extends NullVisitor {
     
     
     // Check that each id referenced in a CallNode exists
-    public void validateIdReferences(FlowChartSet fcs) {
+    public LinkedList<ValidationMessage> validateIdReferences(FlowChartSet fcs) {
         Iterable<FlowChart> chartGroup = fcs.charts();
         for (FlowChart c : chartGroup) {
             chart = c;
@@ -53,6 +53,7 @@ public class ValidCallNodeValidator extends NullVisitor {
                 allnodes.accept(this);
             }
         }
+        return validationMessages;
     }
     
     
@@ -60,7 +61,7 @@ public class ValidCallNodeValidator extends NullVisitor {
     public void visitImpl (CallNode cn) throws DataTagsRuntimeException {
         Node exists = chart.getNode(cn.getCalleeNodeId());
         if (exists == null) {
-            validationMessages.addLast(new ValidationMessage(Level.ERROR, cn, "Call node calls nonexistent node."));
+            validationMessages.addLast(new ValidationMessage(Level.ERROR, "Call node \"" + cn + "\" calls nonexistent node."));
         }
     }
     
@@ -90,9 +91,4 @@ public class ValidCallNodeValidator extends NullVisitor {
     }
 
     
-    public LinkedList<ValidationMessage> getValidationMessages() {
-        return validationMessages;
-    }
-   
-
 }

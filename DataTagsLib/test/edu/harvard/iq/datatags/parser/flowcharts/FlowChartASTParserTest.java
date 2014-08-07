@@ -298,5 +298,5 @@ public class FlowChartASTParserTest {
         expected.addAssignment("slot/number/two", "value2");
         assertEquals( expected, sut.parse("(set: slot1=value1,slot/number/two=value2)"));
     }
-	
+    
 }

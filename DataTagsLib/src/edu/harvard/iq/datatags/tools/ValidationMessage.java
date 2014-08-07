@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.charts.nodes.Node;
+import java.util.Objects;
 
 /**
  *
@@ -13,18 +13,12 @@ public class ValidationMessage {
     }
     
     private final Level level;
-    private final Node invalidNode;
     private final String message;
     
     
-    public ValidationMessage(Level m, Node invalid, String message) {
+    public ValidationMessage(Level m, String message) {
         level = m;
-        invalidNode = invalid;
         this.message = message;
-    }
-    
-    public Node getInvalidNode() {
-        return invalidNode;
     }
     
     public Level getLevel() {
@@ -36,6 +30,34 @@ public class ValidationMessage {
     }
     
     public String toString() {
-        return "Validation message: " + level + ": " + invalidNode + ": " + message;
+        return "Validation message: " + level + ": " + message;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 37 * hash + Objects.hashCode(this.level);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ValidationMessage other = (ValidationMessage) obj;
+        if (this.level != other.level) {
+            return false;
+        }
+        if (!Objects.equals(this.message, other.message)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
+    
 }

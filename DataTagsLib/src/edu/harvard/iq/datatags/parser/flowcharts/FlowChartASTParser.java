@@ -7,9 +7,9 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.CallNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.EndNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeBodyPart;
+import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.RejectNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TextNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
@@ -115,7 +115,7 @@ public class FlowChartASTParser extends AbstractASTParser {
                 .map(new Map<Pair<String, String>, NodeHeadRef>(){
                     @Override
                     public NodeHeadRef map(Pair<String, String> from) {
-                        return new NodeHeadRef(from.a, from.b);
+                                return new NodeHeadRef(from.a, from.b);
                     }
 		} )
 		.or(nodeTitleParser.followedBy(WHITESPACES.optional()).map(new Map<String, NodeHeadRef>() {

@@ -11,6 +11,7 @@ import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartSetComplier;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
+import edu.harvard.iq.datatags.tools.RepeatIdValidator;
 import edu.harvard.iq.datatags.tools.ValidCallNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeRefVizalizer;
@@ -55,13 +56,16 @@ public class ValidCallNodeValidation {
             FlowChartSet fcs = fcsParser.parse(refs, chartFile.getFileName().toString());
 
             
-            
+            RepeatIdValidator riv = new RepeatIdValidator();
+            LinkedList<ValidationMessage> repeatIdMessages = riv.validateRepeatIds(refs);
+            if (repeatIdMessages.size() > 0) {
+                System.out.println(repeatIdMessages);
+            }
             
             ValidCallNodeValidator fcv = new ValidCallNodeValidator();
-            fcv.validateIdReferences(fcs);
-            LinkedList<ValidationMessage> messages = fcv.getValidationMessages();
-            if (messages.size() > 0) {
-                System.out.println(messages);
+            LinkedList<ValidationMessage> callNodeMessages = fcv.validateIdReferences(fcs);
+            if (callNodeMessages.size() > 0) {
+                System.out.println(callNodeMessages);
                 System.exit(-1);
             }
 
