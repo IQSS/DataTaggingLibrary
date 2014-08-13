@@ -12,6 +12,7 @@ import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartSetComplier;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.tools.RepeatIdValidator;
+import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidCallNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeRefVizalizer;
@@ -55,6 +56,11 @@ public class ValidCallNodeValidation {
             FlowChartSetComplier fcsParser = new FlowChartSetComplier((CompoundType) baseType);
             FlowChartSet fcs = fcsParser.parse(refs, chartFile.getFileName().toString());
 
+            UnreachableNodeValidator unv = new UnreachableNodeValidator();
+            LinkedList<ValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
+            if (unreachableNodeMessages.size() > 0) {
+                System.out.println(unreachableNodeMessages);
+            }
             
             RepeatIdValidator riv = new RepeatIdValidator();
             LinkedList<ValidationMessage> repeatIdMessages = riv.validateRepeatIds(refs);

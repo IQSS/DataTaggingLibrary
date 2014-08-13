@@ -1,6 +1,5 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
 import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
@@ -11,27 +10,9 @@ import edu.harvard.iq.datatags.model.charts.nodes.Node.NullVisitor;
 import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.TagType;
-import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
-import edu.harvard.iq.datatags.parser.definitions.DataDefinitionParser;
-import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
-import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
-import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
-import edu.harvard.iq.datatags.parser.flowcharts.FlowChartSetComplier;
-import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetVisualizer;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDataStructureVisualizer;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeRefVizalizer;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  *

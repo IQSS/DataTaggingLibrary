@@ -1,18 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
-import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
-import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
-import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
-import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
-import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
@@ -34,9 +22,9 @@ import org.junit.Test;
  */
 public class ValidCallNodeValidatorTest {
     
+    ValidCallNodeValidator instance;
     FlowChartSetComplier fcsc;
     FlowChartSet fcs;
-    ValidCallNodeValidator instance;
     FlowChartASTParser astParser;
     
     public ValidCallNodeValidatorTest() {
@@ -63,7 +51,7 @@ public class ValidCallNodeValidatorTest {
 
     
     @Test
-    public void ValidateIdReferencesTest_noId() throws BadSetInstructionException {
+    public void validateIdReferencesTest_noId() throws BadSetInstructionException {
         String code = "(todo: There's no id here to do anything with)(end)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
         fcs = fcsc.parse(refs, "unitName");
@@ -72,7 +60,7 @@ public class ValidCallNodeValidatorTest {
     }
 
     @Test
-    public void ValidateIdReferencesTest_validId() throws BadSetInstructionException {
+    public void validateIdReferencesTest_validId() throws BadSetInstructionException {
         String code = "(call: ppraCompliance )" +
                       "(>ppraCompliance< ask:(text: This should work!))(end)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
@@ -82,7 +70,7 @@ public class ValidCallNodeValidatorTest {
     }
     
     @Test
-    public void ValidateIdReferencesTest_invalidId() throws BadSetInstructionException {
+    public void validateIdReferencesTest_invalidId() throws BadSetInstructionException {
         String code = "(call: ferpaCompliance )" +
                       "(>ppraCompliance< ask:(text: This shouldn't work.))(end)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);

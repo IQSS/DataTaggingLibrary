@@ -1,6 +1,6 @@
 # API documentation
 
-The DataTags API connects DataTags (the tagging server) with Dataverse (java project, created in NetBeans)
+The DataTags API connects DataTags (the tagging server) with Dataverse (repository for data).
 
 Methods for each component are listed below.
 
@@ -26,3 +26,8 @@ Methods for each component are listed below.
 
 
 
+To see the connection in action, both Dataverse and DataTags must be running locally on your machine. Go to the temporary form at
+
+		localhost:8080/datatags-api-test.xhtml
+
+and follow the instructions on screen. This will take you through Dataverse, into DataTags, and back out into Dataverse.

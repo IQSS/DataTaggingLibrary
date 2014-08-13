@@ -1,9 +1,9 @@
 package edu.harvard.iq.datatags.model.charts;
 
-import edu.harvard.iq.datatags.model.charts.nodes.Node;
+import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
 import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
 import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
+import edu.harvard.iq.datatags.model.charts.nodes.Node;
 import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
@@ -11,6 +11,7 @@ import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URL;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -119,6 +120,10 @@ public class FlowChart extends ChartEntity {
 	public Iterable<Node> nodes() {
 		return nodes.values();
 	}
+    
+    public Set<String> nodeIds() {
+        return nodes.keySet();
+    }
 
 	public EndNode getEndNode() {
 		return endNode;
