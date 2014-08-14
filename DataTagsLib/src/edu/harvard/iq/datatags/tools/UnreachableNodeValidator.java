@@ -1,3 +1,4 @@
+
 package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.charts.FlowChart;
@@ -25,7 +26,7 @@ import java.util.Set;
 public class UnreachableNodeValidator extends NullVisitor {
     
     private final LinkedList<ValidationMessage> validationMessages = new LinkedList<>();
-    private Set<String> reachedNodeIds = new HashSet<>();
+    private final Set<String> reachedNodeIds = new HashSet<>();
     private FlowChart flowChart = new FlowChart();
     
     
@@ -37,16 +38,17 @@ public class UnreachableNodeValidator extends NullVisitor {
     public LinkedList<ValidationMessage> validateUnreachableNodes(FlowChartSet fcs) {
         Set<String> flowChartNodeIds = new HashSet<>();
         for (FlowChart chart : fcs.charts()) {
-            for (String id : chart.nodeIds()) {
-                flowChartNodeIds.add(id);
-            }
+            flowChartNodeIds.addAll( chart.nodeIds() );
+            
             flowChart = chart;
             chart.getStart().accept(this);
             flowChartNodeIds.removeAll(reachedNodeIds);
+            flowChartNodeIds.remove(flowChart.getEndNode().getId());
+            
             if (!flowChartNodeIds.isEmpty()) {
                 for (String nodeId : flowChartNodeIds) {
                     validationMessages.addLast(new ValidationMessage(Level.WARNING,
-                                              "Node \"" + chart.getNode(nodeId) + "\" is unreachable."));
+                                              "Node \"" + nodeId + "\" is unreachable.", chart.getNode(nodeId)));
                 }
             }
         }
@@ -61,7 +63,6 @@ public class UnreachableNodeValidator extends NullVisitor {
      */
     @Override
     public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
-        System.out.println("AskNode: " + nd.getText());
         if (!reachedNodeIds.contains(nd.getId())) {
             reachedNodeIds.add(nd.getId());
         }
@@ -78,7 +79,6 @@ public class UnreachableNodeValidator extends NullVisitor {
      */
     @Override
     public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
-        System.out.println("SetNode: " + nd);
         if (!reachedNodeIds.contains(nd.getId())) {
             reachedNodeIds.add(nd.getId());
         }
@@ -93,7 +93,6 @@ public class UnreachableNodeValidator extends NullVisitor {
      */
     @Override
     public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-        System.out.println("RejectNode: " + nd.getReason());
         if (!reachedNodeIds.contains(nd.getId())) {
             reachedNodeIds.add(nd.getId());
         }
@@ -105,7 +104,6 @@ public class UnreachableNodeValidator extends NullVisitor {
      */
     @Override
     public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
-        System.out.println("CallNode: " + nd);
         if (!reachedNodeIds.contains(nd.getId())) {
             reachedNodeIds.add(nd.getId());
         }
@@ -123,7 +121,6 @@ public class UnreachableNodeValidator extends NullVisitor {
      */
     @Override
     public void visitImpl(TodoNode nd) throws DataTagsRuntimeException {
-        System.out.println("ToDoNode: " + nd.getTodoText());
         if (!reachedNodeIds.contains(nd.getId())) {
             reachedNodeIds.add(nd.getId());
         }
@@ -138,7 +135,6 @@ public class UnreachableNodeValidator extends NullVisitor {
      */
     @Override
     public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
-        System.out.println("EndNode: " + nd);
         if (!reachedNodeIds.contains(nd.getId())) {
             reachedNodeIds.add(nd.getId());
         }

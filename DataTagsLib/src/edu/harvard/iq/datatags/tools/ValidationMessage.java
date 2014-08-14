@@ -1,6 +1,10 @@
 package edu.harvard.iq.datatags.tools;
 
+import edu.harvard.iq.datatags.model.charts.ChartEntity;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  *
@@ -14,11 +18,13 @@ public class ValidationMessage {
     
     private final Level level;
     private final String message;
+    private final Set<ChartEntity> entities = new HashSet<>();
     
     
-    public ValidationMessage(Level m, String message) {
+    public ValidationMessage(Level m, String message, ChartEntity... involvedEntities) {
         level = m;
         this.message = message;
+        entities.addAll(Arrays.asList(involvedEntities));
     }
     
     public Level getLevel() {
@@ -29,6 +35,7 @@ public class ValidationMessage {
         return message;
     }
     
+    @Override
     public String toString() {
         return "Validation message: " + level + ": " + message;
     }
@@ -45,19 +52,29 @@ public class ValidationMessage {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if ( ! (obj instanceof ValidationMessage) ) {
             return false;
         }
         final ValidationMessage other = (ValidationMessage) obj;
-        if (this.level != other.level) {
-            return false;
-        }
         if (!Objects.equals(this.message, other.message)) {
             return false;
         }
-        return true;
+        return modelsEqual(other);
+    }
+
+    public Set<ChartEntity> getEntities() {
+        return entities;
     }
     
+    /**
+     * Tests equality on the models involved ({@link ChartEntitiy}s and {@link #Level}. Ignores the
+     * text in the message.
+     * @param other the other validation message
+     * @return {@code true} iff the entities and the level are the same.
+     */
+    public boolean modelsEqual( ValidationMessage other ) {
+        return getLevel() == other.getLevel() && getEntities().equals(other.getEntities());
+    }
     
     
 }

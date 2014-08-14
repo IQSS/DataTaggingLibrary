@@ -1,7 +1,8 @@
+
 package edu.harvard.iq.datatags.model.charts.nodes;
 
-import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import org.codehaus.jparsec.util.Objects;
 
 /**
  * A node that terminates the run, if and when the execution gets to it.
@@ -13,18 +14,29 @@ public class EndNode extends Node {
 		super(id);
 	}
 
-	public EndNode(String id, String title) {
-		super(id, title);
-	}
-	
-	public EndNode(String id, String title, String text, FlowChart chart) {
-		super(id, title, text, chart);
-	}
-		
 	@Override
 	public <R> R accept(Visitor<R> vr) throws DataTagsRuntimeException {
 		return vr.visit(this);
 	}
+    
+    @Override
+    public String toString() {
+        return "[EndNode id:" + getId() + "]";
+    }
+    
+    @Override
+    public boolean equals( Object o ) {
+        if ( o == null ) return false;
+        if ( o instanceof EndNode ) {
+            return Objects.equals(getId(), ((EndNode)o).getId() );
+        } else {
+            return false;
+        }
+    }
 
+    @Override
+    public int hashCode() {
+        return getId()!=null ? getId().hashCode() : 0;
+    }
 	
 }

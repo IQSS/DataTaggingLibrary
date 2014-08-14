@@ -1,13 +1,19 @@
 package edu.harvard.iq.datatags.tools;
 
+import edu.harvard.iq.datatags.model.charts.ChartEntity;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
+import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartSetComplier;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -55,13 +61,13 @@ public class UnreachableNodeValidatorTest {
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
         fcs = fcsc.parse(refs, "unitName");
         LinkedList<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
-        assertEquals(new LinkedList<String>(), messages);
+        assertEquals(new LinkedList<>(), messages);
     }
     
     @Test
     public void validateUnreachableNodesTest_reachableNodes() throws BadSetInstructionException {
         String code = "(ask: (text: Will this work?)" +
-                      "(yes: (call:shouldWork) ))(end)" +
+                        "(yes: (call:shouldWork) ))(end)" +
                       "(>shouldWork< ask: (text: This should work.)" +
                       "(yes: (reject: Good, it works.))" +
                       "(no: (reject: This should have worked.)))(end)";
@@ -70,12 +76,40 @@ public class UnreachableNodeValidatorTest {
         LinkedList<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
         assertEquals(new LinkedList<String>(), messages);
     }
+   
+    @Test
+    public void validateUnreachableNodesTest_minimal() throws BadSetInstructionException {
+        System.out.println("\n\nMinimal");
+        String code = "(>r< end)(>nr< end)";
+        List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
+        
+        System.out.println("refs = " + refs);
+        
+        fcs = fcsc.parse(refs, "unitName");
+        LinkedList<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
+        
+        Set<ChartEntity> expected = Collections.<ChartEntity>singleton( new EndNode("nr") );
+        Set<ChartEntity> actualEntities = new HashSet<>();
+        Set<ValidationMessage.Level> actualLevels = EnumSet.noneOf(ValidationMessage.Level.class);
+        
+        for ( ValidationMessage vm : messages ) {
+            actualEntities.addAll(vm.getEntities());
+            actualLevels.add(vm.getLevel());
+        }
+        System.out.println("actual = " + actualEntities);
+        System.out.println("expected = " + expected);
+        
+        assertEquals( EnumSet.of(ValidationMessage.Level.WARNING), actualLevels);
+        assertEquals(expected, actualEntities);
+        
+        System.out.println("/Minimal\n\n");
+    }
     
     @Test
     public void validateUnreachableNodesTest_unreachableNodes() throws BadSetInstructionException {
         String code = "(ask: (text: Will this work?)" +
-                      "(yes: (reject: No, it won't.))" +
-                      "(no: (reject: This shouldn't actually work.)))(>unique1< end)" +
+                         "(yes: (reject: No, it won't.))" +
+                          "(no: (reject: This shouldn't actually work.)))(>unique1< end)" +
                       "(>shouldNotWork< ask:" +
                       "(text: This should not work, right?)" +
                       "(yes: (reject: it shouldn't work.))" +

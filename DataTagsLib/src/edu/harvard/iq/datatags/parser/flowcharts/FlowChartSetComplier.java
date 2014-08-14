@@ -177,9 +177,7 @@ public class FlowChartSetComplier {
 
 			@Override
 			public Node visit(EndNodeRef endRef) {
-				return endRef.getId().startsWith("$") // LATER should be "isAuto", when id is a full object
-						? chart.getEndNode()
-						: new EndNode( endRef.getId() );
+				return chart.add(new EndNode( endRef.getId() ));
 			}	
 
             @Override

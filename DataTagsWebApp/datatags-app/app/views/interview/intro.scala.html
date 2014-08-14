@@ -1,4 +1,6 @@
-@( fcs:edu.harvard.iq.datatags.model.charts.FlowChartSet, tlt:edu.harvard.iq.datatags.model.types.CompoundType, greeting: Option[String] )
+@( fcs:edu.harvard.iq.datatags.model.charts.FlowChartSet,
+   tlt:edu.harvard.iq.datatags.model.types.CompoundType,
+   greeting: Option[String] )
 @scripts = {
     <script type="text/javascript" src="@routes.Assets.at("js/InterviewIntro.js")"></script>
 }
@@ -38,7 +40,7 @@
             </ul>
             <h4>Tags</h4>
             <p>Below is the data tags structure for this questionnaire. Don't worry if it looks intimidating - you will not have to fill
-            it directly. Instead, the system will take you throgh a friendly interview, and fill the values in for you.</p>
+            it directly. Instead, the system will take you through a friendly interview, and fill the values in for you.</p>
 
             <div class="tagtype-container">
                 @comps.tagType( tlt )

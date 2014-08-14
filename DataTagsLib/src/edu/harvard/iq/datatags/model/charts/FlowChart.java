@@ -81,7 +81,7 @@ public class FlowChart extends ChartEntity {
 	
 	public FlowChart(String anId) {
 		super(anId);
-		endNode = new EndNode(anId + "-end", "");
+		endNode = new EndNode("$" + anId + "-end");
 		nodes.put( endNode.getId(), endNode);
 		endNode.setChart(this);
 	}
