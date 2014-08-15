@@ -11,8 +11,9 @@ object Application extends Controller {
   }
 
   def questionnaireCatalog = Action {
-	  val tags = global.Global.dataTags.toString
-    val itv = global.Global.interview
+    initialization.InterviewInitialization.onStart
+	  val tags = initialization.InterviewInitialization.getDataTags.toString
+    val itv = initialization.InterviewInitialization.getInterview
 
     Ok(views.html.questionnaireCatalog( Seq((itv.getDefaultChartId, itv.getDefaultChartId))) )
   }

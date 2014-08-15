@@ -20,17 +20,6 @@ import _root_.util.Jsonizer
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 
-/** Uncomment the following lines as needed **/
-/**
-import play.api.Play.current
-import play.api.libs._
-import play.api.libs.iteratee._
-import play.api.libs.concurrent._
-import java.util.concurrent._
-import scala.concurrent.stm._
-import akka.util.duration._
-import play.api.cache._
-**/
 
 object RequestedInterview extends Controller {
 
@@ -44,8 +33,8 @@ object RequestedInterview extends Controller {
 
         Cache.set(userSessionWithInterview.key, userSessionWithInterview)
 
-        val fcs = global.Global.interview
-        val dtt = global.Global.dataTags
+        val fcs = initialization.InterviewInitialization.interview
+        val dtt = initialization.InterviewInitialization.getDataTags
         val message = Option("Welcome, Dataverse user! Please follow the directions below to begin tagging your data.")
 
         Ok( views.html.interview.intro(fcs,dtt, message) )

@@ -19,18 +19,19 @@ import models._
 object Interview extends Controller {
 
   def interviewIntro(questionnaireId: String) = Action { implicit request =>
+    initialization.InterviewInitialization.onStart
 
     val userSession = UserSession.create( questionnaireId )
 
     Cache.set(userSession.key, userSession)
-    val fcs = global.Global.interview
-    val dtt = global.Global.dataTags
+    val fcs = initialization.InterviewInitialization.getInterview
+    val dtt = initialization.InterviewInitialization.getDataTags
     Ok( views.html.interview.intro(fcs,dtt, Option(null) ))
       .withSession( request2session + ("uuid" -> userSession.key) )
   }
 
   def startInterview( questionnaireId:String ) = UserSessionAction { implicit req =>
-      val interview = global.Global.interview
+      val interview = initialization.InterviewInitialization.getInterview
       val rte = new RuntimeEngine
       rte.setChartSet( interview )
       val l = rte.setListener( new TaggingEngineListener )
@@ -62,7 +63,7 @@ object Interview extends Controller {
       req.userSession
     }
 
-    val askNode = global.Global.interview.getFlowChart(flowChartId).getNode(reqNodeId).asInstanceOf[AskNode]
+    val askNode = initialization.InterviewInitialization.getInterview.getFlowChart(flowChartId).getNode(reqNodeId).asInstanceOf[AskNode]
     Ok( views.html.interview.question( "questionnaireId",
                                        askNode,
                                        session.tags,
@@ -110,7 +111,7 @@ object Interview extends Controller {
   def reject( questionnaireId:String ) = UserSessionAction { request =>
     val session = request.userSession
     val state = request.userSession.engineState
-    val node = global.Global.interview.getFlowChart( state.getCurrentChartId ).getNode( state.getCurrentNodeId )
+    val node = initialization.InterviewInitialization.getInterview.getFlowChart( state.getCurrentChartId ).getNode( state.getCurrentNodeId )
 
     Ok( views.html.interview.rejected(questionnaireId, node.asInstanceOf[RejectNode].getReason, session.requestedInterview, session.answerHistory ) )
   }
@@ -127,7 +128,7 @@ object Interview extends Controller {
 
   // TODO: move to some akka actor, s.t. the UI can be reactive
   def advanceEngine( state: RuntimeEngineState, ans: Answer ) : EngineRunResult = {
-    val interview = global.Global.interview
+    val interview = initialization.InterviewInitialization.getInterview
     val rte = new RuntimeEngine
     rte.setChartSet( interview )
     val l = rte.setListener( new TaggingEngineListener )
@@ -140,7 +141,7 @@ object Interview extends Controller {
 
   // TODO: move to some akka actor, s.t. the UI can be reactive
   def runUpToNode( nodeId: String, answers:Seq[AnswerRecord] ) : EngineRunResult = {
-    val interview = global.Global.interview
+    val interview = initialization.InterviewInitialization.getInterview
     val rte = new RuntimeEngine
     rte.setChartSet( interview )
     val l = rte.setListener( new TaggingEngineListener )
@@ -158,7 +159,7 @@ object Interview extends Controller {
   }
 
   def currentAskNode( engineState: RuntimeEngineState ) = {
-    global.Global.interview.getFlowChart(engineState.getCurrentChartId).getNode(engineState.getCurrentNodeId).asInstanceOf[AskNode]
+    initialization.InterviewInitialization.getInterview.getFlowChart(engineState.getCurrentChartId).getNode(engineState.getCurrentNodeId).asInstanceOf[AskNode]
   }
 
 }

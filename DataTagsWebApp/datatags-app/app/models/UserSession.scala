@@ -21,7 +21,7 @@ case class UserSession(
 
   def tags = {
     val parser = new edu.harvard.iq.datatags.io.StringMapFormat
-    val tagType = global.Global.dataTags
+    val tagType = initialization.InterviewInitialization.getDataTags
     parser.parse( tagType, engineState.getSerializedTagValue ).asInstanceOf[CompoundValue]
   }
 
