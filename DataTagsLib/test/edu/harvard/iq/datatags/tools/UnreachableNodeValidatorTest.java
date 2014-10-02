@@ -2,12 +2,15 @@ package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.charts.ChartEntity;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
+import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
 import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
+import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartSetComplier;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -16,10 +19,10 @@ import java.util.List;
 import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -54,27 +57,37 @@ public class UnreachableNodeValidatorTest {
     public void tearDown() {
     }
 
-  
-    @Test
-    public void validateUnreachableNodesTest_noNodes() throws BadSetInstructionException {
-        String code = "";
-        List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
-        fcs = fcsc.parse(refs, "unitName");
-        LinkedList<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
-        assertEquals(new LinkedList<>(), messages);
-    }
     
     @Test
     public void validateUnreachableNodesTest_reachableNodes() throws BadSetInstructionException {
-        String code = "(ask: (text: Will this work?)" +
-                        "(yes: (call:shouldWork) ))(end)" +
-                      "(>shouldWork< ask: (text: This should work.)" +
-                      "(yes: (reject: Good, it works.))" +
-                      "(no: (reject: This should have worked.)))(end)";
+        System.out.println("\n\nReachable");
+        String code = "(>ask1< ask: (text: Will this work?)"
+                + "(yes: (call:shouldWork) ))(>end1< end)"
+                + "(>shouldWork< ask: (text: This should work.)"
+                + "(yes: (>reject1< reject: Good, it works.))"
+                + "(no: (>reject2< reject: This should have worked.)))";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
+        
+        System.out.println("refs = " + refs);
+        
         fcs = fcsc.parse(refs, "unitName");
         LinkedList<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
-        assertEquals(new LinkedList<String>(), messages);
+        
+        Set<ChartEntity> expected = Collections.<ChartEntity>emptySet();
+        Set<ChartEntity> actualEntities = new HashSet<>();
+        Set<ValidationMessage.Level> actualLevels = EnumSet.noneOf(ValidationMessage.Level.class);
+        
+        for ( ValidationMessage vm : messages ) {
+            actualEntities.addAll(vm.getEntities());
+            actualLevels.add(vm.getLevel());
+        }
+        System.out.println("actual = " + actualEntities);
+        System.out.println("expected = " + expected);
+        
+        assertEquals( new HashSet<ValidationMessage>(), actualLevels);
+        assertEquals(expected, actualEntities);
+        
+        System.out.println("/Reachable\n\n");
     }
    
     @Test
@@ -107,25 +120,38 @@ public class UnreachableNodeValidatorTest {
     
     @Test
     public void validateUnreachableNodesTest_unreachableNodes() throws BadSetInstructionException {
-        String code = "(ask: (text: Will this work?)" +
-                         "(yes: (reject: No, it won't.))" +
-                          "(no: (reject: This shouldn't actually work.)))(>unique1< end)" +
-                      "(>shouldNotWork< ask:" +
-                      "(text: This should not work, right?)" +
-                      "(yes: (reject: it shouldn't work.))" +
-                      "(no: (reject: it still shouldn't work.)))" +
-                      "(>unique2< end)";
+        System.out.println("\n\nUnreachable");
+        String code = "(>ask1< ask: (text: Will this work?)"
+                + "(yes: (>reject1< reject: No.))"
+                + "(no: (>reject2< reject: Still no.)))"
+                + "(>ask2< ask: (text: This shouldn't work.)"
+                + "(yes: (>reject3< reject: No.))"
+                + "(no: (>reject4< reject: Still no.)))"
+                + "(>end1< end)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
+        
+        System.out.println("refs = " + refs);
+        
         fcs = fcsc.parse(refs, "unitName");
         LinkedList<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
-        LinkedList<ValidationMessage> expected = new LinkedList<>();
-        expected.addLast(new ValidationMessage(ValidationMessage.Level.WARNING, "Node \"[AskNode id:shouldNotWork title:null]\" is unreachable."));
-        expected.addLast(new ValidationMessage(ValidationMessage.Level.WARNING, "Node \"[RejectNode id:$10 title:nullreason=it still shouldn't work.]\" is unreachable."));
-        expected.addLast(new ValidationMessage(ValidationMessage.Level.WARNING, "Node \"[RejectNode id:$8 title:nullreason=it shouldn't work.]\" is unreachable."));
-        expected.addLast(new ValidationMessage(ValidationMessage.Level.WARNING, "Node \"[EndNode id:unitName-c1-end title:]\" is unreachable."));
-        System.out.println("RESULTS: " + messages);
-        System.out.println("EXPECTED: " + expected);
-        assertEquals(expected, messages);
+        
+        Set<ChartEntity> expected = new HashSet<ChartEntity>(Arrays.asList(new RejectNode("reject4", "Still no."),
+                                    new RejectNode("reject3", "No."), new EndNode("end1"), new AskNode("ask2")));
+        
+        Set<ChartEntity> actualEntities = new HashSet<>();
+        Set<ValidationMessage.Level> actualLevels = EnumSet.noneOf(ValidationMessage.Level.class);
+        
+        for ( ValidationMessage vm : messages ) {
+            actualEntities.addAll(vm.getEntities());
+            actualLevels.add(vm.getLevel());
+        }
+        System.out.println("actual = " + actualEntities);
+        System.out.println("expected = " + expected);
+        
+        assertEquals( EnumSet.of(ValidationMessage.Level.WARNING), actualLevels);
+        assertEquals(expected, actualEntities);
+        
+        System.out.println("/Unreachable\n\n");
     }
 
     
