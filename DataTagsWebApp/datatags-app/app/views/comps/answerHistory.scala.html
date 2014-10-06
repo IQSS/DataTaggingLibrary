@@ -1,7 +1,7 @@
 @(answerHistory: Seq[AnswerRecord], questionnaireId:String, reverse:Boolean)
 @import views.Helpers
 <ol class="answer-history">
-@defining( answerHistory.zipAll( null +:answerHistory.dropRight(1), null, null) ) { answerRecTuples =>
+@defining( answerHistory.zipAll( null +: answerHistory.dropRight(1), null, null) ) { answerRecTuples =>
     @defining( if (reverse) answerRecTuples.reverse else answerRecTuples ) { answerRecOrdered =>
         @for( ar <- answerRecOrdered.map(p => (p._1, Option(p._2))) ){
             <li class="answer-record">

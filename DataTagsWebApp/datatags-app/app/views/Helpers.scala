@@ -79,7 +79,7 @@ def bulletPoint (paragraph: String) = {
 			}
 		} )
 
-		val stringList = reformatted.map( group => if (group.head.contains("<li>")) "<ul>%s</ul>".format(group.mkString) else group.mkString)
+		val stringList = reformatted.map( group => if (group.head.contains("<li>")) "<ul>"+group.mkString+"</ul>" else group.mkString)
 
 		complete = stringList.mkString
 	}

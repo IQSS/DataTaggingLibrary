@@ -34,6 +34,7 @@ object Global extends GlobalSettings {
         interview = fcsParser.parse(source, "Data Deposit Screening" )
     	  Logger.info("Default chart id: %s".format(interview.getDefaultChartId) )
       }
+
       case None => Logger.error("Bad configuration: Can't find \"datatags.folder\"")
     }
 
