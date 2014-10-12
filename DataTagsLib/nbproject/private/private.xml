@@ -3,14 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/Naomi/Desktop/REU2014/DataTags/DataTagsLib/test/edu/harvard/iq/datatags/tools/RepeatIdValidatorTest.java</file>
-            <file>file:/Users/Naomi/Desktop/REU2014/DataTags/DataTagsLib/src/edu/harvard/iq/datatags/parser/flowcharts/FlowChartASTParser.java</file>
-            <file>file:/Users/Naomi/Desktop/REU2014/DataTags/DataTagsLib/src/edu/harvard/iq/datatags/model/charts/FlowChartSet.java</file>
-            <file>file:/Users/Naomi/Desktop/REU2014/DataTags/DataTagsLib/src/edu/harvard/iq/datatags/tools/RepeatIdValidator.java</file>
-            <file>file:/Users/Naomi/Desktop/REU2014/DataTags/DataTagsLib/test/edu/harvard/iq/datatags/tools/ValidCallNodeValidatorTest.java</file>
-            <file>file:/Users/Naomi/Desktop/REU2014/DataTags/DataTagsLib/src/edu/harvard/iq/datatags/tools/ValidCallNodeValidator.java</file>
-            <file>file:/Users/Naomi/Desktop/REU2014/DataTags/DataTagsLib/src/edu/harvard/iq/datatags/mains/ValidCallNodeValidation.java</file>
-            <file>file:/Users/Naomi/Desktop/REU2014/DataTags/DataTagsLib/src/edu/harvard/iq/datatags/parser/flowcharts/FlowChartSetComplier.java</file>
+            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/values/AggregateValue.java</file>
+            <file>file:/Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/types/TagValueLookupResult.java</file>
         </group>
     </open-files>
 </project-private>

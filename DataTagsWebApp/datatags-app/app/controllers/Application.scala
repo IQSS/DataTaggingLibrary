@@ -11,11 +11,7 @@ object Application extends Controller {
   }
 
   def questionnaireCatalog = Action {
-    initialization.InterviewInitialization.onStart
-	  val tags = initialization.InterviewInitialization.getDataTags.toString
-    val itv = initialization.InterviewInitialization.getInterview
-
-    Ok(views.html.questionnaireCatalog( Seq((itv.getDefaultChartId, itv.getDefaultChartId))) )
+    Ok( views.html.questionnaireCatalog(QuestionnaireKits.allKits.toSeq.map( p=>(p._2.title, p._1))) )
   }
 
   def changeLog = Action {

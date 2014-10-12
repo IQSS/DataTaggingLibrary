@@ -33,8 +33,8 @@ object RequestedInterview extends Controller {
 
         Cache.set(userSessionWithInterview.key, userSessionWithInterview)
 
-        val fcs = initialization.InterviewInitialization.interview
-        val dtt = initialization.InterviewInitialization.getDataTags
+        val fcs = QuestionnaireKits.kit.questionnaire
+        val dtt = QuestionnaireKits.kit.tags
         val message = Option("Welcome, Dataverse user! Please follow the directions below to begin tagging your data.")
 
         Ok( views.html.interview.intro(fcs,dtt, message) )

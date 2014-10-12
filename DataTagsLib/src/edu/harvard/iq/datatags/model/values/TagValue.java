@@ -4,7 +4,7 @@ import edu.harvard.iq.datatags.model.types.TagType;
 import java.util.Objects;
 
 /**
- * Basic class for a value / instance of a given {@link TagType}.
+ * Base class for a value / instance of a given {@link TagType}.
  * @author michael
  */
 public abstract class TagValue {
@@ -48,8 +48,7 @@ public abstract class TagValue {
     
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 37 * getType().hashCode();
+		int hash = 37 * getType().hashCode();
 		return hash;
 	}
 	
