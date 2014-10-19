@@ -2,7 +2,7 @@
    questionNode: edu.harvard.iq.datatags.model.charts.nodes.AskNode,
    dataTags: edu.harvard.iq.datatags.model.values.CompoundValue,
    history:Seq[edu.harvard.iq.datatags.model.charts.nodes.Node],
-   answerHistory: Seq[AnswerRecord] )
+   answerHistory: Seq[AnswerRecord])
 
 @scripts = {
     <script type="text/javascript" src="@routes.Application.javascriptRoutes"></script>
@@ -38,6 +38,7 @@
                                 onclick="$('#answerText')[0].value='@ans.getAnswerText'; $('#answerForm').submit();" >@Helpers.makeUpper(ans.getAnswerText)</button>
                     }
                     <input type="hidden" name="answerText" id="answerText" value="" />
+                    <input type="hidden" name="serializedHistory" id="serializedHistory" value="@QuestionnaireKits.kit.serializer.encodeClientAnswers(answerHistory)"/>
                 }
             </div>
         </div>

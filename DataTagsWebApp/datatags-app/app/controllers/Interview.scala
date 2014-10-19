@@ -12,6 +12,10 @@ import edu.harvard.iq.datatags.model.charts.nodes._
 import edu.harvard.iq.datatags.model.values._
 
 import models._
+import views.Serialization
+
+import play.api.Logger
+
 
 /**
  * Controller for the interview part of the application.
@@ -44,7 +48,7 @@ object Interview extends Controller {
                                          Seq()) )
   }
 
-  def askNode( questionnaireId:String, reqNodeId: String ) = UserSessionAction { req =>
+  def askNode( questionnaireId:String, reqNodeId: String) = UserSessionAction { req =>
     // TODO validate questionnaireId fits the one in the engine state
     val flowChartId = req.userSession.engineState.getCurrentChartId
     val stateNodeId = req.userSession.engineState.getCurrentNodeId
@@ -62,6 +66,7 @@ object Interview extends Controller {
     }
 
     val askNode = QuestionnaireKits.kit.questionnaire.getFlowChart(flowChartId).getNode(reqNodeId).asInstanceOf[AskNode]
+
     Ok( views.html.interview.question( "questionnaireId",
                                        askNode,
                                        session.tags,
@@ -69,16 +74,31 @@ object Interview extends Controller {
                                        session.answerHistory) )
   }
 
-  def answer(questionnaireId: String, reqNodeId: String) = UserSessionAction { implicit request =>
-      val session = if ( request.userSession.engineState.getCurrentNodeId != reqNodeId ) {
-      // re-run to reqNodeId
-      val answers = request.userSession.answerHistory.slice(0, request.userSession.answerHistory.indexWhere( _.question.getId == reqNodeId) )
-      val rerunResult = runUpToNode( reqNodeId, answers )
-      request.userSession.replaceHistory( answers, rerunResult.traversed, rerunResult.state )
 
+  def answer(questionnaireId: String, reqNodeId: String) = UserSessionAction { implicit request =>
+    val session = if ( request.userSession.engineState.getCurrentNodeId != reqNodeId ) {
+      try {
+
+        val answers = request.userSession.answerHistory.slice(0, request.userSession.answerHistory.indexWhere( _.question.getId == reqNodeId) )
+        val rerunResult = runUpToNode( reqNodeId, answers )
+        request.userSession.replaceHistory( answers, rerunResult.traversed, rerunResult.state )
+
+      } catch { // if an exception is thrown, the server-side history is incorrect: replace it with correct one
+
+        case nsee: NoSuchElementException => {
+          var pageHistory = ""
+          Form( "serializedHistory"->text).bindFromRequest().fold ( // get the serialized history from HTML page
+            { failed => BadRequest("Form submission error: %s\n data:%s".format(failed.errors, failed.data)) },
+            { value =>
+              pageHistory = value } )
+          val temporary = QuestionnaireKits.kit.serializer.decodeClientAnswers(pageHistory, request.userSession)
+          temporary
+        }
+      }
     } else {
       request.userSession
     }
+
 
     val answerForm = Form( "answerText"->text )
     answerForm.bindFromRequest().fold (
@@ -91,6 +111,7 @@ object Interview extends Controller {
         Cache.set( session.key, session.updatedWith( ansRec, runRes.traversed,runRes.state))
         val status = runRes.state.getStatus
         status match {
+
           case RuntimeEngineStatus.Running => Redirect( routes.Interview.askNode( questionnaireId, runRes.state.getCurrentNodeId ) )
           case RuntimeEngineStatus.Reject  => Redirect( routes.Interview.reject( questionnaireId ) )
           case RuntimeEngineStatus.Accept  => Redirect( routes.Interview.accept( questionnaireId ) )
@@ -118,6 +139,7 @@ object Interview extends Controller {
     val userSession = request.userSession
     val updatedState = runUpToNode( nodeId, userSession.answerHistory )
     val answers = userSession.answerHistory.slice(0, userSession.answerHistory.indexWhere(_.question.getId == nodeId) )
+    
     Cache.set( userSession.key,
                userSession.replaceHistory( answers, updatedState.traversed, updatedState.state ) )
 
