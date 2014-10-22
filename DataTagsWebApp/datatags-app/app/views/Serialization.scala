@@ -14,18 +14,7 @@ case class Serialization( val answerMap: Map[Answer, String],
                           val serializedMap: Map[String, Answer]) {
 
   /* Take the current AnswerRecords and return the serialized version */
-  def encodeClientAnswers(answerRecord: Seq[AnswerRecord]) = {
-      var serializedAns = "";
-      for (record <- answerRecord) {
-        val newestAnswer = record.answer
-        for (key <- answerMap.keys) {
-          if (key.equals(newestAnswer)) {
-            serializedAns = serializedAns + answerMap(key)
-          }
-        }
-      }
-      serializedAns
-    }
+  def encodeClientAnswers(answerRecords: Seq[AnswerRecord]) = answerRecords.map( _.answer ).map( answerMap ).mkString
 
 
   /* Take the serialized answers and the current UserSession, and return
