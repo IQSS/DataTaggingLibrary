@@ -29,16 +29,12 @@ case class Serialization( val answerMap: Map[Answer, String],
     rte.start( interview.getDefaultChartId )
     var updated = userSession.replaceHistory(Seq[AnswerRecord](), l.traversedNodes, rte.createSnapshot)
 
-    for (index <- 0 to serializedAns.length-1) { // go through all serialized answers
-      for (key <- serializedMap.keys) {
-        if (key.equals(serializedAns.charAt(index).toString)) { // match serialized ans to its Answer
-          val currentAns = serializedMap(key)
-          val ansRec = AnswerRecord( Interview.currentAskNode(updated.engineState), currentAns )
-          val runRes = Interview.advanceEngine( updated.engineState, currentAns ) // advance the engine by one answer
-          updated = updated.updatedWith(ansRec, runRes.traversed, runRes.state)
-        }
-      }
-    }
+    serializedAns.map(_.toString).map( serializedMap ).map(ans => { 
+        val ansRec = AnswerRecord(Interview.currentAskNode(updated.engineState), ans)
+        val runRes = Interview.advanceEngine(updated.engineState, ans)
+        updated = updated.updatedWith(ansRec, runRes.traversed, runRes.state)
+        scala.Console.println("Updating: " + updated.answerHistory)
+    })
     updated
    }
 
