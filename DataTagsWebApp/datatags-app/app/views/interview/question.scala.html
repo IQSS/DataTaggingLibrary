@@ -38,7 +38,7 @@
                                 onclick="$('#answerText')[0].value='@ans.getAnswerText'; $('#answerForm').submit();" >@Helpers.makeUpper(ans.getAnswerText)</button>
                     }
                     <input type="hidden" name="answerText" id="answerText" value="" />
-                    <input type="hidden" name="serializedHistory" id="serializedHistory" value="@QuestionnaireKits.kit.serializer.encodeClientAnswers(answerHistory)"/>
+                    <input type="hidden" name="serializedHistory" id="serializedHistory" value="@QuestionnaireKits.kit.serializer.encode(answerHistory)"/>
                 }
             </div>
         </div>

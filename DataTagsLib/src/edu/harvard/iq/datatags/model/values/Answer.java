@@ -13,6 +13,7 @@ public class Answer {
 	public static final Answer NO  = Answer("no");
 	
 	public static Answer Answer( String aName ) {
+        // TODO consider internalizing instances! and then make "new" private. 
 		return new Answer( aName );
 	}
 	
