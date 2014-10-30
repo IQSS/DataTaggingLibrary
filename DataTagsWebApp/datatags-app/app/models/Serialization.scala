@@ -47,16 +47,16 @@ class Serialization private( val answerMap: Map[Answer, String],
 }
 
 object Serialization {
-  val start = '#'
-  val end = '~'
+  val chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[\\ֿֿֿ]^_`{|}~:;=?@!#$%'()*+,-./&<>"
   def apply( questionnaire:FlowChartSet, tagsType:CompoundType ):Serialization = {
     // first - get the answer frequencies
     val answers = getAnswersSortedByFrequencies(questionnaire)
-    if ( answers.size > end-start+1 ) {
-      throw new IllegalArgumentException(s"Serialization currently does not support ${answers.size} answers")
+    if ( answers.size > chars.size ) {
+      throw new IllegalArgumentException(s"Serialization currently supports up to ${chars.size} answers. " +
+       "This questionnaire has ${answers.size} answers")
     }
     // now make the map and create the serialization.
-    val ans2char = answers.zipWithIndex.map( p=>(p._1, (start+p._2).toChar.toString) ).toMap
+    val ans2char = answers.zipWithIndex.map( p=>(p._1, chars(p._2).toString) ).toMap
 
     new Serialization( ans2char, ans2char.map( e => (e._2, e._1)), questionnaire, tagsType )
   }

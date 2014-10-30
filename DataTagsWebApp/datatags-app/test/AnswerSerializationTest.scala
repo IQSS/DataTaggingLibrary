@@ -62,8 +62,8 @@ val sut = Serialization( mockFcs, tagsType )
 
 // one yes answer must be 0
 "A yes answer" must {
-	"be serialized to the Serialization.start char" in {
-		sut.encode( Seq(AnswerRecord(null, Answer.YES))) mustEqual Serialization.start.toString
+	"be serialized to the Serialization.chars(0) char" in {
+		sut.encode( Seq(AnswerRecord(null, Answer.YES))) mustEqual Serialization.chars(0).toString
 	}
 }
 
