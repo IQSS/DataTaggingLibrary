@@ -5,7 +5,6 @@ import edu.harvard.iq.datatags.model.charts._
 import edu.harvard.iq.datatags.model.charts.nodes._
 import edu.harvard.iq.datatags.model.values._
 import models._
-import views._
 
 class AnswerSerializationTest extends PlaySpec {
 
@@ -63,8 +62,8 @@ val sut = Serialization( mockFcs, tagsType )
 
 // one yes answer must be 0
 "A yes answer" must {
-	"be serialized to a \"!\"" in {
-		sut.encode( Seq(AnswerRecord(null, Answer.YES))) mustEqual "!"
+	"be serialized to the Serialization.start char" in {
+		sut.encode( Seq(AnswerRecord(null, Answer.YES))) mustEqual Serialization.start.toString
 	}
 }
 
@@ -79,8 +78,8 @@ val sut = Serialization( mockFcs, tagsType )
 		val d = chart.getNode("D").asInstanceOf[AskNode]
 
 		val originalAnswers = Seq( AnswerRecord(a, yes),
-												AnswerRecord(b, yes),
-												AnswerRecord(c, yes) )
+															 AnswerRecord(b, yes),
+															 AnswerRecord(c, yes) )
 
 		val serialized = sut.encode( originalAnswers )
 		val session = UserSession(
@@ -93,8 +92,12 @@ val sut = Serialization( mockFcs, tagsType )
 									  Option(null) )
 		val actual = sut.decode( serialized, session )
 
-		actual.answerHistory mustEqual originalAnswers
-		actual.traversed mustEqual Seq(a,b,c,d)
+		// Nodes don't have a proper equals method at this point.
+		// So we'll map them to their ids, and then make the comparisons
+		val ar2str = (a:AnswerRecord) => a.question.getId + "-" + a.answer.getAnswerText + "->"
+
+		actual.answerHistory.map( ar2str ) mustEqual originalAnswers.map( ar2str ) 
+		actual.traversed.map( _.getId ) mustEqual Seq(a,b,c,d).map( _.getId )
 		actual.engineState.getCurrentNodeId mustEqual "D"
 	}
 }

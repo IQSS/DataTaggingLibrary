@@ -15,8 +15,9 @@ import views._
 case class QuestionnaireKit( val id:String,
                              val title: String,
                              val tags: CompoundType,
-                             val questionnaire: FlowChartSet,
-                             val serializer: Serialization )
+                             val questionnaire: FlowChartSet ) {
+  val serializer = Serialization( questionnaire, tags )
+}
 
 object QuestionnaireKits {
   val allKits = loadQuestionnaires()
@@ -43,7 +44,7 @@ object QuestionnaireKits {
           // serialization object
           val serializer = Serialization( interview, dataTags )
 
-          Map( "dds-c1" -> QuestionnaireKit("dds-c1", "Data Deposit Screening", dataTags, interview, serializer) )
+          Map( "dds-c1" -> QuestionnaireKit("dds-c1", "Data Deposit Screening", dataTags, interview) )
         }
 
         case None => {

@@ -1,4 +1,4 @@
-package views
+package models
 
 import edu.harvard.iq.datatags.model.charts.nodes._
 import edu.harvard.iq.datatags.model.values._
@@ -47,14 +47,16 @@ class Serialization private( val answerMap: Map[Answer, String],
 }
 
 object Serialization {
+  val start = '#'
+  val end = '~'
   def apply( questionnaire:FlowChartSet, tagsType:CompoundType ):Serialization = {
     // first - get the answer frequencies
     val answers = getAnswersSortedByFrequencies(questionnaire)
-    if ( answers.size > '~'-'!'+1 ) {
+    if ( answers.size > end-start+1 ) {
       throw new IllegalArgumentException(s"Serialization currently does not support ${answers.size} answers")
     }
     // now make the map and create the serialization.
-    val ans2char = answers.zipWithIndex.map( p=>(p._1, ('!'+p._2).toChar.toString) ).toMap
+    val ans2char = answers.zipWithIndex.map( p=>(p._1, (start+p._2).toChar.toString) ).toMap
 
     new Serialization( ans2char, ans2char.map( e => (e._2, e._1)), questionnaire, tagsType )
   }
