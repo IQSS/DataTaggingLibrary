@@ -12,6 +12,7 @@ GET     /interviews/:questionnaireId/q/:nodeId       controllers.Interview.askNo
 POST    /interviews/:questionnaireId/q/:nodeId       controllers.Interview.answer(questionnaireId, nodeId)
 GET     /interviews/:questionnaireId/accept/         controllers.Interview.accept(questionnaireId)
 GET     /interviews/:questionnaireId/reject/         controllers.Interview.reject(questionnaireId)
+GET		/interviews/tagDownload						 controllers.Interview.downloadTags
 
 # TODO delete
 POST    /interviews/revisit/:nodeId                  controllers.Interview.revisit(nodeId)

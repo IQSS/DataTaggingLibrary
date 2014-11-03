@@ -13,6 +13,9 @@ import edu.harvard.iq.datatags.model.values._
 
 import models._
 import views.Serialization
+import _root_.util.Jsonizer
+
+import java.text.SimpleDateFormat
 
 import play.api.Logger
 
@@ -124,7 +127,7 @@ object Interview extends Controller {
     val tags = session.tags
     val code = Option(tags.get( tags.getType.getTypeNamed("Code") ))
     
-    Ok( views.html.interview.accepted(questionnaireId, tags, code, session.requestedInterview, session.answerHistory )  )  
+    Ok( views.html.interview.accepted(questionnaireId, tags, code, session.requestedInterview, session.answerHistory )  )
   }
 
   def reject( questionnaireId:String ) = UserSessionAction { request =>
@@ -180,6 +183,11 @@ object Interview extends Controller {
 
   def currentAskNode( engineState: RuntimeEngineState ) = {
     QuestionnaireKits.kit.questionnaire.getFlowChart(engineState.getCurrentChartId).getNode(engineState.getCurrentNodeId).asInstanceOf[AskNode]
+  }
+
+  def downloadTags = UserSessionAction { request =>
+    val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+    Ok(request.userSession.tags.accept(Jsonizer)).withHeaders("Content-disposition" -> ("attachment; filename=" + QuestionnaireKits.kit.title + "_" + dateFormat.format(request.userSession.sessionStart)))
   }
 
 }
