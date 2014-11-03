@@ -7,7 +7,9 @@ import models._
 object Application extends Controller {
 
   def index = Action { implicit request =>
-    Ok( views.html.index(TagsTable.rows) )
+    Ok(
+      views.html.index(TagsTable.rows,
+                        routes.Interview.interviewIntro(QuestionnaireKits.kit.id) ))
   }
 
   def questionnaireCatalog = Action {
@@ -23,7 +25,7 @@ object Application extends Controller {
       Routes.javascriptRouter("jsRoutes")(
         routes.javascript.Interview.askNode,
         routes.javascript.Interview.answer,
-        routes.javascript.Interview.startInterview
+        routes.javascript.Interview.interviewIntro
       )
     ).as("text/javascript")
   }

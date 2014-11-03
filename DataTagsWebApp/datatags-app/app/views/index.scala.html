@@ -1,4 +1,4 @@
-@( rows:Seq[Row] )
+@( rows:Seq[Row], startTaggingUrl:Call )
 
 @extraHead = {
   <link href="/assets/css/tagsTable.min.css" rel="stylesheet">
@@ -29,7 +29,7 @@
   </div>
       
   <div style="text-align: center">
-    <a href="@routes.Application.questionnaireCatalog" class="btn btn-primary btn-lg">
+    <a href="@startTaggingUrl" class="btn btn-primary btn-lg">
       <i class="fa fa-tags"></i>
       Start Tagging
     </a>
