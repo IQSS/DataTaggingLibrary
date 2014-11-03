@@ -58,7 +58,7 @@ public class FlowChartSet extends ChartEntity {
         this.version = version;
     }
 	
-	public void addChart( FlowChart c ) {
+	public void addFlowChart( FlowChart c ) {
 		charts.put( c.getId(),  c );
 	}
 	

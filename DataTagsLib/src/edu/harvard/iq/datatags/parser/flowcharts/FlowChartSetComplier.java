@@ -81,7 +81,7 @@ public class FlowChartSetComplier {
         chartSet.setTopLevelType(topLevelType);
         
 		FlowChart chart = new FlowChart( unitName + "-c1" );
-		chartSet.addChart(chart);
+		chartSet.addFlowChart(chart);
 		chartSet.setDefaultChartId( chart.getId() );
         try {
             for ( List<InstructionNodeRef> nodes : breakList(parsedNodes) ) {

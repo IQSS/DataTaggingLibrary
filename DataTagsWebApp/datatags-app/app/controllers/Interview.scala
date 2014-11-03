@@ -94,7 +94,7 @@ object Interview extends Controller {
             { failed => BadRequest("Form submission error: %s\n data:%s".format(failed.errors, failed.data)) },
             { value =>
               pageHistory = value } )
-          val temporary = QuestionnaireKits.kit.serializer.decodeClientAnswers(pageHistory, request.userSession)
+          val temporary = QuestionnaireKits.kit.serializer.decode(pageHistory, request.userSession)
           temporary
         }
       }
@@ -114,7 +114,6 @@ object Interview extends Controller {
         Cache.set( session.key, session.updatedWith( ansRec, runRes.traversed,runRes.state))
         val status = runRes.state.getStatus
         status match {
-
           case RuntimeEngineStatus.Running => Redirect( routes.Interview.askNode( questionnaireId, runRes.state.getCurrentNodeId ) )
           case RuntimeEngineStatus.Reject  => Redirect( routes.Interview.reject( questionnaireId ) )
           case RuntimeEngineStatus.Accept  => Redirect( routes.Interview.accept( questionnaireId ) )

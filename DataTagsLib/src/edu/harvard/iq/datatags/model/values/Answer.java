@@ -12,8 +12,9 @@ public class Answer {
 	public static final Answer YES = Answer("yes");
 	public static final Answer NO  = Answer("no");
 	
-	public static Answer Answer( String aName ) {
-		return new Answer( aName );
+	public static Answer Answer( String anAnswerText ) {
+        // TODO consider internalizing instances! and then make "new" private. 
+		return new Answer( anAnswerText );
 	}
 	
 	public Answer(String anAnswerText) {
@@ -45,7 +46,7 @@ public class Answer {
 
 	@Override
 	public String toString() {
-		return "[Answer answerName:" + answerText + ']';
+		return "[Answer answerText:" + answerText + ']';
 	}
 	
 	

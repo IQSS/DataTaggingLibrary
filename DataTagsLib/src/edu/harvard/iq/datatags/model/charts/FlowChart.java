@@ -98,7 +98,15 @@ public class FlowChart extends ChartEntity {
 		return start;
 	}
 
-	public void setStart(Node start) {
+    /**
+     * Sets the start node of the chart. The passed node gets added to the chart
+     * if it is not already there.
+     * @param start the node from which a default chart traversal will start.
+     */
+    public void setStart(Node start) {
+        if ( ! nodes.containsKey(start.getId()) ) {
+            add( start );
+        }
 		this.start = start;
 	}
 	

@@ -33,7 +33,7 @@ public class ChartRunningTest {
 		
 		FlowChartSet fcs = new FlowChartSet();
         fcs.setTopLevelType( mockTopLevelType() );
-		fcs.addChart(c1);
+		fcs.addFlowChart(c1);
 		
 		assertExecutionTrace( fcs, flowChartName,
 				Arrays.asList("1", "2", "3", "4", "END"), false);
@@ -59,7 +59,7 @@ public class ChartRunningTest {
 		c1.setStart(start);
 		
 		FlowChartSet fcs = new FlowChartSet("Branching", mockTopLevelType());
-		fcs.addChart(c1);
+		fcs.addFlowChart(c1);
 		
 		assertExecutionTrace( fcs, flowChartName,
 				C.list( YES, NO, YES, NO ),
@@ -92,8 +92,8 @@ public class ChartRunningTest {
 		mainChart.setStart( start );
 		
 		FlowChartSet fcs = new FlowChartSet("single call", mockTopLevelType());
-		fcs.addChart(mainChart);
-		fcs.addChart(subChart);
+		fcs.addFlowChart(mainChart);
+		fcs.addFlowChart(subChart);
 		
 		assertExecutionTrace(fcs, mainChartName, Arrays.asList("1","2","c-m",
 																	"A","B", "SUB_END",
@@ -124,8 +124,8 @@ public class ChartRunningTest {
 		mainChart.setStart( start );
 		
 		FlowChartSet fcs = new FlowChartSet("tail call", mockTopLevelType());
-		fcs.addChart(mainChart);
-		fcs.addChart(subChart);
+		fcs.addFlowChart(mainChart);
+		fcs.addFlowChart(subChart);
 		
 		assertExecutionTrace( fcs, mainChartName, C.list("1","2", "c-m","A","B","SUB_END","END"), false );
 	}

@@ -60,7 +60,7 @@ public class ChartHelper {
 	public static FlowChartSet chartSet( FlowChart... flowCharts ) {
 		FlowChartSet fcs = new FlowChartSet( flowCharts[0].getId()+"_set", mockTopLevelType() );
 		for ( FlowChart fc : flowCharts ) {
-			fcs.addChart(fc );
+			fcs.addFlowChart(fc );
 		}
 		return fcs;
 	}
