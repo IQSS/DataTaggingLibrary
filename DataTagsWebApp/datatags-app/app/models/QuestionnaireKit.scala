@@ -23,7 +23,7 @@ object QuestionnaireKits {
   val allKits = loadQuestionnaires()
   
   /** This will go away once we have multi questionnaire support */
-  val kit = allKits.toList(0)._2
+  val kit = allKits.toSeq(0)._2
 
   private def loadQuestionnaires() = {
     Logger.info("DataTags application started")

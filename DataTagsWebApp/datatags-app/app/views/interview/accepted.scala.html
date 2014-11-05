@@ -22,13 +22,22 @@
                 <div class="text-center">
                   <span class="lead">Your dataset is tagged as</span>
                   @codeTag match {
-                    case Some(tag) => {@comps.simpleValueTagLabel( tag.asInstanceOf[SimpleValue], tag.getName.toLowerCase, true)}
+                    case Some(tag) => {
+                      @comps.simpleValueTagLabel( tag.asInstanceOf[SimpleValue], tag.getName.toLowerCase, true)
+                    }
                     case None => { <div class="alert alert-danger"><strong>No Tag Assigned</strong> For some reason, your data was not tagged. This is an interview error.</div>}
                   }
                 </div>
                 <!-- <h3>Full Tags</h3> -->
                 <div class="tagvalue-container" style="margin-top:1em;">
                   @comps.tagValue(dataTags)
+                </div>
+
+                <div class="text-right">
+                  <br />
+                  <a href="@routes.Interview.downloadTags" class="btn btn-primary">
+                    <i class="fa fa-download"></i>&nbsp;Download Tags
+                  </a>
                 </div>
             </div>
         </div>
@@ -62,11 +71,6 @@
           </div>
       }
     }
-    <div class="center-block" style="text-align: center">
-      @helper.form( action = routes.Interview.downloadTags ) {
-            <button class="btn btn-primary" type="submit">Download Tags</button>
-      }
-    </div>
 }
 
 

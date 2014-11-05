@@ -25,7 +25,8 @@ object Application extends Controller {
       Routes.javascriptRouter("jsRoutes")(
         routes.javascript.Interview.askNode,
         routes.javascript.Interview.answer,
-        routes.javascript.Interview.interviewIntro
+        routes.javascript.Interview.interviewIntro,
+        routes.javascript.Interview.startInterview
       )
     ).as("text/javascript")
   }

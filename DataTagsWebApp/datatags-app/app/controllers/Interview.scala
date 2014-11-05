@@ -12,7 +12,6 @@ import edu.harvard.iq.datatags.model.charts.nodes._
 import edu.harvard.iq.datatags.model.values._
 
 import models._
-import views.Serialization
 import _root_.util.Jsonizer
 
 import java.text.SimpleDateFormat
@@ -186,7 +185,9 @@ object Interview extends Controller {
 
   def downloadTags = UserSessionAction { request =>
     val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
-    Ok(request.userSession.tags.accept(Jsonizer)).withHeaders("Content-disposition" -> ("attachment; filename=" + QuestionnaireKits.kit.title + "_" + dateFormat.format(request.userSession.sessionStart)))
+    val filename =  QuestionnaireKits.kit.title + "-" + dateFormat.format(request.userSession.sessionStart)
+    Ok(request.userSession.tags.accept(Jsonizer))
+      .withHeaders( "Content-disposition" -> ("attachment; filename=\"%s\"".format(filename) ))
   }
 
 }
