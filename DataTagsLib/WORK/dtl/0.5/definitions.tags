@@ -33,9 +33,8 @@ Authentication: some of
 .
 
 DataType:
-	Standards, Effort, Harm.
+	Effort, Harm.
 
-Standards: some of HIPAA, FERPA, PPRA, CIPSEA, PrivacyAct.
 Effort:    one of  anonymous, deidentified, identifiable, identified.
 Harm:      one of  noRisk, minimal, shame, civil, criminal, maxControl.
 

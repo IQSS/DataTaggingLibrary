@@ -2,6 +2,13 @@ package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
+import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
+import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
+import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
+import edu.harvard.iq.datatags.model.charts.nodes.Node;
+import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
+import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
@@ -11,6 +18,7 @@ import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartSetComplier;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
+import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.RepeatIdValidator;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidCallNodeValidator;
@@ -29,7 +37,43 @@ import java.util.List;
  * @author Naomi
  */
 public class ValidCallNodeValidation {
+    
+//    private final static Node.Visitor<String> NODE_PRINTER = new Node.Visitor<String>(){
+//
+//        @Override
+//        public String visit(AskNode nd) throws DataTagsRuntimeException {
+//           return "[AskNode text:" + nd.getText() + "]";
+//        }
+//
+//        @Override
+//        public String visit(SetNode nd) throws DataTagsRuntimeException {
+//            return "[SetNode sets:" + nd.getTags()
+//        }
+//
+//        @Override
+//        public String visit(RejectNode nd) throws DataTagsRuntimeException {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public String visit(CallNode nd) throws DataTagsRuntimeException {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public String visit(TodoNode nd) throws DataTagsRuntimeException {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//
+//        @Override
+//        public String visit(EndNode nd) throws DataTagsRuntimeException {
+//            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        }
+//    };
 
+    public ValidCallNodeValidation() {
+    }
+    
     public static void main(String[] args) {
         try {
             Path tagsFile = Paths.get(args[0]);
@@ -58,8 +102,9 @@ public class ValidCallNodeValidation {
 
             UnreachableNodeValidator unv = new UnreachableNodeValidator();
             LinkedList<ValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
-            if (unreachableNodeMessages.size() > 0) {
-                System.out.println(unreachableNodeMessages);
+            for ( ValidationMessage m : unreachableNodeMessages ) {
+                System.out.println(m);
+                System.out.println("\t" + m.getEntities());
             }
             
             RepeatIdValidator riv = new RepeatIdValidator();

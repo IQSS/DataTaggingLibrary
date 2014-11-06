@@ -29,8 +29,7 @@ public class UnreachableNodeValidator extends NullVisitor {
     private final Set<String> reachedNodeIds = new HashSet<>();
     private FlowChart flowChart = new FlowChart();
     
-    
-    /*
+    /**
      * Check each FlowChart in the FlowChartSet for unreachable nodes.
      * Begin from the start node identified by the FlowChart.
      * Return WARNING messages showing the unreachable nodes.
@@ -57,7 +56,7 @@ public class UnreachableNodeValidator extends NullVisitor {
     }
     
     
-    /*
+    /**
      * Check that the ask node and its answer nodes have not already been
      * traversed before iterating and recursing.
      */
@@ -73,7 +72,7 @@ public class UnreachableNodeValidator extends NullVisitor {
         }
     }
 
-    /*
+    /**
      * Check that the set node and the next node have not already been
      * traversed before recursing.
      */
@@ -87,7 +86,7 @@ public class UnreachableNodeValidator extends NullVisitor {
         }
     }
 
-    /*
+    /**
      * Check that the reject node has not already been
      * traversed.
      */
@@ -98,7 +97,7 @@ public class UnreachableNodeValidator extends NullVisitor {
         }
     }
 
-    /*
+    /**
      * Check that the call node, its callee node, and the next node have not
      * already been traversed before recursing.
      */
@@ -115,7 +114,7 @@ public class UnreachableNodeValidator extends NullVisitor {
         }
     }
 
-    /*
+    /**
      * Check that the todo node and the next node have not already been
      * traversed before recursing.
      */
@@ -129,7 +128,7 @@ public class UnreachableNodeValidator extends NullVisitor {
         }
     }
 
-    /*
+    /**
      * Check that the end node has not already been
      * traversed.
      */

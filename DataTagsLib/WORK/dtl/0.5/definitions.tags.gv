@@ -76,12 +76,6 @@ Effort_anonymous[label="anonymous" shape="box"]
 Effort_deidentified[label="deidentified" shape="box"]
 Effort_identifiable[label="identifiable" shape="box"]
 Effort_identified[label="identified" shape="box"]
-Standards[label="Standards" shape="egg" peripheries="2"]
-Standards_HIPAA[label="HIPAA" shape="box"]
-Standards_FERPA[label="FERPA" shape="box"]
-Standards_PPRA[label="PPRA" shape="box"]
-Standards_CIPSEA[label="CIPSEA" shape="box"]
-Standards_PrivacyAct[label="PrivacyAct" shape="box"]
 Identity[label="Identity" shape="egg"]
 Identity_noPersonData[label="noPersonData" shape="box"]
 Identity_notPersonSpecific[label="notPersonSpecific" shape="box"]
@@ -217,12 +211,6 @@ Effort -> Effort_anonymous
 Effort -> Effort_deidentified
 Effort -> Effort_identifiable
 Effort -> Effort_identified
-DataType -> Standards
-Standards -> Standards_HIPAA
-Standards -> Standards_FERPA
-Standards -> Standards_PPRA
-Standards -> Standards_CIPSEA
-Standards -> Standards_PrivacyAct
 Assertions -> Identity
 Identity -> Identity_noPersonData
 Identity -> Identity_notPersonSpecific

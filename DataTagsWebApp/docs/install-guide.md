@@ -63,7 +63,7 @@ Note: We try to hold multiple app versions on the server, to allow quick rollbac
     [info] Your package is ready in /Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsWebApp/datatags-app/target/universal/datatags-app-1.0-SNAPSHOT.zip
 3. `scp` the resulting package to `[your username]@dvnweb-vm1.hmdc.harvard.edu:tagging-server/`
 4. Also scp `public` folder.
-4. `ssh` to dvnweb-vm1.hmdc.harvard.edu and `cp` to "tagging-server"
+4. `ssh` to dvnweb-vm1.hmdc.harvard.edu and `cd` to "tagging-server"
 5. `mkdir app-MMDD` (MM-month, DD-day)
 6. `unzip -d app-MMDD file-you-uploaded`
 7. 

@@ -32,4 +32,9 @@ public class SetNode extends ThroughNode {
 	public void setTags(CompoundValue tags) {
 		this.tags = tags;
 	}	
+    
+    @Override
+    public String toStringExtras() {
+        return "tags:" + tags.toString();
+    }
 }

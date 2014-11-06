@@ -41,7 +41,6 @@
 					(yes: 
 						(>MR3< ask:
 							(text:Do the records identify one or more patients as an alcohol or drug abuser directly, by reference to other publicly available information, or through verification of identification by another person?)
-							(no: (set: Part2=deidentified, Effort=deidentified, Storage=clear, Transit=clear, Code=green))
 							(yes:
 								(>MR4< ask:
 									(text: Were the data maintained in connection with the Department of Veterans Affairs or US Armed Services?)
@@ -52,6 +51,7 @@
 											(yes: (set: Part2=veteransMedicalData) )
 							))))
 							(no: 
+								(set: Part2=deidentified, Effort=deidentified, Storage=clear, Transit=clear, Code=green)
 								(>MR5< ask:
 									(text: Do you have written consent from the individual[s] to disclose their information?)
 									(yes:
@@ -187,7 +187,6 @@
 			(no: (reject: Possible PPRA violation due to failure to provide parents with the opportunity to opt out of the data collection.))
 		)
 	))
-(set: Standards=PPRA)
 (end)
 
 (>ferpaCompliance< ask:
@@ -208,7 +207,6 @@
 	)
 	(yes: (end))
 )
-(set: Standards=FERPA)
 ( >ferpa10< ask:
 	(text: Do the data include information that, alone or in combination, is linked or linkable to a specific student that would allow a reasonable person to identify the student with reasonable certainty? This includes, but is not limited to, a student’s or student’s family name, student or student’s family’s address, a personal identifier like a Social Security number or student number, or other indirect identifier like date of birth or mother’s maiden name.)
 	(no:
