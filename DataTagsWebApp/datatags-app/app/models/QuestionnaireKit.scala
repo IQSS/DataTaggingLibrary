@@ -41,9 +41,6 @@ object QuestionnaireKits {
           val interview = fcsParser.parse(source, "Data Deposit Screening" )
           Logger.info("Default chart id: %s".format(interview.getDefaultChartId) )
 
-          // serialization object
-          val serializer = Serialization( interview, dataTags )
-
           Map( "dds-c1" -> QuestionnaireKit("dds-c1", "Data Deposit Screening", dataTags, interview) )
         }
 
@@ -54,7 +51,7 @@ object QuestionnaireKits {
     }
   }
 
-  private def readAll( p:Path ) : String = scala.io.Source.fromFile( p.toFile ).getLines().mkString("\n")
+  private def readAll( p:Path ) : String = scala.io.Source.fromFile( p.toFile, "utf-8" ).getLines().mkString("\n")
 
 
   private def matchNode(aNode: nodes.Node, answerFrequencies: scala.collection.mutable.Map[Answer, Integer]): scala.collection.mutable.Map[Answer, Integer] = aNode match {
