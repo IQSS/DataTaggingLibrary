@@ -35,7 +35,8 @@
                 @helper.form( action=routes.Interview.answer(questionnaireId, questionNode.getId), 'id->"answerForm" ) {
                     @for( ans <- questionNode.getAnswers ) {
                         <button class="btn btn-default"
-                                onclick="$('#answerText')[0].value='@ans.getAnswerText'; $('#answerForm').submit();" >@Helpers.makeUpper(ans.getAnswerText)</button>
+                                onclick="$('#answerText')[0].value='@ans.getAnswerText'; $('#answerForm').submit();" >
+                                @Helpers.makeUpper(ans.getAnswerText)</button>
                     }
                     <input type="hidden" name="answerText" id="answerText" value="" />
                     <input type="hidden" name="serializedHistory" id="serializedHistory" value="@QuestionnaireKits.kit.serializer.encode(answerHistory)"/>
@@ -89,22 +90,24 @@
                 <h3 class="panel-title">Engine Trace</h3>
                 <small>Useful for debugging the interview</small>
             </div>
-            <table class="engine-trace">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Type</th>
-                        <th>Info</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @for( nd <- history.reverse ){
-                    <tr>
-                        @comps.node(nd)
-                    </tr>
-                }
-                </tbody>
-            </table>
+            <div class="panel-body">
+                <table class="engine-trace">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Type</th>
+                            <th>Info</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @for( nd <- history.reverse ){
+                        <tr>
+                            @comps.node(nd)
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

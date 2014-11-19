@@ -6,18 +6,16 @@
 GET     /                           controllers.Application.index
 GET     /changeLog                  controllers.Application.changeLog
 GET     /interviews                 controllers.Application.questionnaireCatalog
-GET     /interviews/:questionnaireId/intro           controllers.Interview.interviewIntro(questionnaireId)
-GET     /interviews/:questionnaireId/start           controllers.Interview.startInterview(questionnaireId)
-GET     /interviews/:questionnaireId/q/:nodeId       controllers.Interview.askNode(questionnaireId, nodeId)
-POST    /interviews/:questionnaireId/q/:nodeId       controllers.Interview.answer(questionnaireId, nodeId)
-GET     /interviews/:questionnaireId/accept/         controllers.Interview.accept(questionnaireId)
-GET     /interviews/:questionnaireId/reject/         controllers.Interview.reject(questionnaireId)
-GET		/interviews/tagDownload						 controllers.Interview.downloadTags
+GET     /interviews/tagDownload                  controllers.Interview.downloadTags
+GET     /interviews/:questionnaireId/intro       controllers.Interview.interviewIntro(questionnaireId)
+GET     /interviews/:questionnaireId/start       controllers.Interview.startInterview(questionnaireId)
+GET     /interviews/:questionnaireId/q/:nodeId   controllers.Interview.askNode(questionnaireId, nodeId)
+POST    /interviews/:questionnaireId/q/:nodeId   controllers.Interview.answer(questionnaireId, nodeId)
+GET     /interviews/:questionnaireId/accept      controllers.Interview.accept(questionnaireId)
+GET     /interviews/:questionnaireId/reject      controllers.Interview.reject(questionnaireId)
+POST    /interviews/:questionnaireId/revisit/    controllers.Interview.revisit(questionnaireId)
 
-# TODO delete
-POST    /interviews/revisit/:nodeId                  controllers.Interview.revisit(nodeId)
-
-# Games and fun
+# Game and funs
 GET	    /test/:name/:count          controllers.Test.nameCount(name, count: Int)
 
 # API

@@ -57,7 +57,7 @@ On the terminal, this would mean:
 
 ## Deploy v2
 Note: We try to hold multiple app versions on the server, to allow quick rollback when needed. This is done by having multiple application and questionnaire folders, and a symbolic link to a "current" one. Application folders have names like `app-MMDD`, and questionnaires have names like `q-MMDD`.
-1. Update any meta files, e.g. ChangeLog.html
+1. Update any meta files, make sure everything is in place. Run the app for the last time.
 1. Prepare you local copy. At the `datatags-app` folder, type `activator clean dist`.
 2. Wait for a message along the lines of:
     [info] Your package is ready in /Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsWebApp/datatags-app/target/universal/datatags-app-1.0-SNAPSHOT.zip

@@ -76,48 +76,65 @@ object Interview extends Controller {
                                        session.answerHistory) )
   }
 
-
+  case class AnswerRequest( text:String, history:String )
   def answer(questionnaireId: String, reqNodeId: String) = UserSessionAction { implicit request =>
-    val session = if ( request.userSession.engineState.getCurrentNodeId != reqNodeId ) {
-      try {
+    val arForm = Form( mapping(
+        "answerText" -> text,
+        "serializedHistory"->text
+        )(AnswerRequest.apply)(AnswerRequest.unapply) )
 
-        val answers = request.userSession.answerHistory.slice(0, request.userSession.answerHistory.indexWhere( _.question.getId == reqNodeId) )
-        val rerunResult = runUpToNode( reqNodeId, answers )
-        request.userSession.replaceHistory( answers, rerunResult.traversed, rerunResult.state )
-
-      } catch { // if an exception is thrown, the server-side history is incorrect: replace it with correct one
-
-        case nsee: NoSuchElementException => {
-          var pageHistory = ""
-          Form( "serializedHistory"->text).bindFromRequest().fold ( // get the serialized history from HTML page
-            { failed => BadRequest("Form submission error: %s\n data:%s".format(failed.errors, failed.data)) },
-            { value =>
-              pageHistory = value } )
-          val temporary = QuestionnaireKits.kit.serializer.decode(pageHistory, request.userSession)
-          temporary
-        }
-      }
-    } else {
-      request.userSession
-    }
-
-
-    val answerForm = Form( "answerText"->text )
-    answerForm.bindFromRequest().fold (
+    arForm.bindFromRequest.fold(
       { failed => BadRequest("Form submission error: %s\n data:%s".format(failed.errors, failed.data)) },
+      { answerReq => 
+        // See if we can re-use the session data we have.
+        // LATER - test index rather than node id, to allow loops.
+        val session = if ( request.userSession.engineState.getCurrentNodeId == reqNodeId ) {
+          // yes
+          request.userSession
+        } else {
+          // no, rebuild from serialized history
+          QuestionnaireKits.kit.serializer.decode(answerReq.history, request.userSession)
+        }
 
-      { value  => 
-        val answer = new Answer( value )
-        val ansRec = AnswerRecord( currentAskNode(session.engineState), answer)
+        // now, submit the new answer and feed it to the engine.
+        val answer = new Answer( answerReq.text )
+        val ansRec = AnswerRecord( currentAskNode(session.engineState), answer )
         val runRes = advanceEngine( session.engineState, answer )
-        Cache.set( session.key, session.updatedWith( ansRec, runRes.traversed,runRes.state))
-        val status = runRes.state.getStatus
-        status match {
+
+        // save state and decide where to go from here
+        Cache.set( session.key, session.updatedWith( ansRec, runRes.traversed, runRes.state))
+        runRes.state.getStatus match {
           case RuntimeEngineStatus.Running => Redirect( routes.Interview.askNode( questionnaireId, runRes.state.getCurrentNodeId ) )
           case RuntimeEngineStatus.Reject  => Redirect( routes.Interview.reject( questionnaireId ) )
           case RuntimeEngineStatus.Accept  => Redirect( routes.Interview.accept( questionnaireId ) )
           case _ => InternalServerError("Bad interview state")
-    }})
+        }
+      }
+    )
+  }
+
+  /**
+   * Re-run up to the index of the question, so the user gets to answer it again.
+   */
+  case class RevisitRequest( history:String, idx:Int )
+
+  def revisit( questionnaireId: String ) = UserSessionAction { implicit request =>
+
+    val revReqForm = Form( mapping(
+                              "serializedHistory"->text, 
+                              "revisitIdx"->number
+                            )(RevisitRequest.apply)(RevisitRequest.unapply)
+                          )
+    revReqForm.bindFromRequest.fold(
+      failure => BadRequest("Form submission error: %s\n data:%s".format(failure.errors, failure.data)),
+      revisitRequest => {
+        val updatedSession = QuestionnaireKits.kit.serializer.decode(revisitRequest.history.take(revisitRequest.idx),
+                                                                     request.userSession)
+
+        Cache.set( updatedSession.key, updatedSession )
+        Redirect( routes.Interview.askNode( questionnaireId, updatedSession.engineState.getCurrentNodeId ) ) 
+      }
+    )
   }
 
   def accept( questionnaireId:String ) = UserSessionAction { request =>
@@ -134,17 +151,6 @@ object Interview extends Controller {
     val node = QuestionnaireKits.kit.questionnaire.getFlowChart( state.getCurrentChartId ).getNode( state.getCurrentNodeId )
 
     Ok( views.html.interview.rejected(questionnaireId, node.asInstanceOf[RejectNode].getReason, session.requestedInterview, session.answerHistory ) )
-  }
-
-  def revisit( nodeId: String ) = UserSessionAction { request =>
-    val userSession = request.userSession
-    val updatedState = runUpToNode( nodeId, userSession.answerHistory )
-    val answers = userSession.answerHistory.slice(0, userSession.answerHistory.indexWhere(_.question.getId == nodeId) )
-    
-    Cache.set( userSession.key,
-               userSession.replaceHistory( answers, updatedState.traversed, updatedState.state ) )
-
-    Redirect( routes.Interview.askNode(userSession.questionnaireId, nodeId) )
   }
 
   // TODO: move to some akka actor, s.t. the UI can be reactive
@@ -174,6 +180,24 @@ object Interview extends Controller {
       val answer = ansItr.next.answer
       rte.consume( answer )
     }
+
+    return EngineRunResult( rte.createSnapshot, l.traversedNodes, l.exception )
+
+  }
+
+  /**
+   * Run the engine, from the start, through all the answer sequence passed.
+   */
+  // TODO: move to some akka actor, s.t. the UI can be reactive
+  def replayAnswers( answers:Seq[AnswerRecord] ) : EngineRunResult = {
+    val interview = QuestionnaireKits.kit.questionnaire
+    val rte = new RuntimeEngine
+    rte.setChartSet( interview )
+    val l = rte.setListener( new TaggingEngineListener )
+    
+    rte.start( interview.getDefaultChartId )
+    answers.map( _.answer )
+           .foreach( rte.consume(_) )
 
     return EngineRunResult( rte.createSnapshot, l.traversedNodes, l.exception )
 
