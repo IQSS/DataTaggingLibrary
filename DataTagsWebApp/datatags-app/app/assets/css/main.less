@@ -67,7 +67,20 @@ table.engine-trace {
     padding-left: 1em;
   }
 }
-
+.engine-trace-container {
+  border: 1px solid #DDF;
+  position: relative;
+  &:before {
+    border: 1px solid #B8D8E9;
+    position: absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    width: 36px;
+    background-image: url("../images/printer-paper-l.png");
+    background-repeat: repeat;
+  }
+}
 
 
 .node {}

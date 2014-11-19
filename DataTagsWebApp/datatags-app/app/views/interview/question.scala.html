@@ -91,22 +91,24 @@
                 <small>Useful for debugging the interview</small>
             </div>
             <div class="panel-body">
-                <table class="engine-trace">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Type</th>
-                            <th>Info</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @for( nd <- history.reverse ){
-                        <tr>
-                            @comps.node(nd)
-                        </tr>
-                    }
-                    </tbody>
-                </table>
+                <div class="engine-trace-container">
+                    <table class="engine-trace">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Type</th>
+                                <th>Info</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @for( nd <- history.reverse ){
+                            <tr>
+                                @comps.node(nd)
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
