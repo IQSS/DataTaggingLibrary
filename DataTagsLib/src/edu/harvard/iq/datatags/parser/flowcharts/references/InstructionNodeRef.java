@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.parser.flowcharts.references;
 
+import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
 
 /**
@@ -18,6 +19,53 @@ public abstract class InstructionNodeRef extends NodeRef {
 		T visit( RejectNodeRef setRef );
 		T visit( TodoNodeRef todoRef );
 	}
+    
+    public static abstract class NullVisitor implements Visitor<Void> {
+
+        @Override
+        public Void visit(AskNodeRef nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+
+        @Override
+        public Void visit(SetNodeRef nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+
+        @Override
+        public Void visit(RejectNodeRef nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+
+        @Override
+        public Void visit(CallNodeRef nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+
+        @Override
+        public Void visit(TodoNodeRef nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+
+        @Override
+        public Void visit(EndNodeRef nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+
+        public abstract void visitImpl( AskNodeRef nd    ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( SetNodeRef nd    ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( RejectNodeRef nd ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( CallNodeRef nd   ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( TodoNodeRef nd   ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( EndNodeRef nd    ) throws DataTagsRuntimeException;
+
+    }
 	
     public InstructionNodeRef( String id ) {
         super( id );

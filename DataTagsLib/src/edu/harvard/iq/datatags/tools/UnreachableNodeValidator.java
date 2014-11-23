@@ -106,7 +106,7 @@ public class UnreachableNodeValidator extends NullVisitor {
         if (!reachedNodeIds.contains(nd.getId())) {
             reachedNodeIds.add(nd.getId());
         }
-        if (!reachedNodeIds.contains(nd.getCalleeNodeId())) {
+        if (!reachedNodeIds.contains(nd.getCalleeNodeId()) && flowChart.getNode(nd.getCalleeNodeId()) != null) {
             flowChart.getNode(nd.getCalleeNodeId()).accept(this);
         }
         if (!reachedNodeIds.contains(nd.getNextNode().getId())) {

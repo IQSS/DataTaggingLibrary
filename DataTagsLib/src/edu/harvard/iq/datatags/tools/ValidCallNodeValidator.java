@@ -15,7 +15,9 @@ import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.LinkedList;
 
 /**
- *
+ * Checks that every id referenced in a CallNode exists.
+ * Returns an ERROR with each nonexistent node.
+ * 
  * @author Naomi
  */
 public class ValidCallNodeValidator extends NullVisitor {
@@ -24,7 +26,6 @@ public class ValidCallNodeValidator extends NullVisitor {
     private FlowChart chart;
     
     
-    // Check that each id referenced in a CallNode exists
     public LinkedList<ValidationMessage> validateIdReferences(FlowChartSet fcs) {
         Iterable<FlowChart> chartGroup = fcs.charts();
         for (FlowChart c : chartGroup) {

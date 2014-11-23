@@ -75,6 +75,19 @@ public class RepeatIdValidatorTest {
        // expected.add("Validation message: ERROR: Duplicate node id: \"personalData\".");
         assertEquals(expected, messages);
     }
+    
+    // THIS NEEDS TO FAIL: FIX THE REPEATIDVALIDATOR WITH VISITORS ASAP
+    @Test
+    public void validateRepeatIdsTest_layeredIds() {
+        String code = "(>personalData< ask: (text: first )"
+                + "(yes: (>repeat< ask: (text: second)"
+                + "(no: (>todo1< todo: nothing!)))))"
+                + "(>repeat< ask: (text: is this a repeat?)"
+                + "(yes: (>todo1< todo: yes.)))";
+        List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
+        LinkedList<ValidationMessage> messages = instance.validateRepeatIds(refs);
+        assertEquals(new LinkedList<String>(), messages);
+    }
 
     
 }
