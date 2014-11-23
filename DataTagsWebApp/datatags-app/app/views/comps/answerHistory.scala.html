@@ -1,33 +1,25 @@
 @(answerHistory: Seq[AnswerRecord], questionnaireId:String, reverse:Boolean)
 @import views.Helpers
-<ol class="answer-history">
-@defining( answerHistory.zipAll( null +: answerHistory.dropRight(1), null, null) ) { answerRecTuples =>
-    @defining( if (reverse) answerRecTuples.reverse else answerRecTuples ) { answerRecOrdered =>
-        @for( ar <- answerRecOrdered.map(p => (p._1, Option(p._2))) ){
-            <li class="answer-record">
-                <div class="ar-question">@Helpers.bulletPoint(ar._1.question.getText)</div>
-                <div class="ar-controls">
-                    <span class="badge">@Helpers.makeUpper(ar._1.answer.getAnswerText)</span>
-                    @ar._2 match {
-                        case Some(ansRec) => {
-                            @helper.form( action=routes.Interview.answer(questionnaireId, ansRec.question.getId)) {
-                                <input type="hidden" name="answerText" id="answerText" value="@ansRec.answer.getAnswerText"/>
-                                <button class="btn btn-xs btn-primary" type="submit"
-                                    data-toggle="tooltip" data-placement="top"
-                                    title="Change your answer to this question">
-                                    <i class="fa fa-history"></i> Revisit</button>
-                            }
-                        }
-                        case None => {
-                            <button class="btn btn-xs btn-primary" 
-                                data-toggle="tooltip" data-placement="top" title="Change your answer to this question"
-                                onclick="Question.startOver('@questionnaireId');">
-                                    <i class="fa fa-history"></i> Revisit</button>
-                        }
-                    }
-                </div>
-            </li>
-        }       
-    }
+@helper.form( action=routes.Interview.revisit(questionnaireId), 'id->"answerHistory") {
+    <ol class="answer-history">
+        @defining( answerHistory.zipWithIndex ) { answerRecTuples =>
+            @defining( if (reverse) answerRecTuples.reverse else answerRecTuples ) { answerRecOrdered =>
+                @for( ar <- answerRecOrdered ){
+                    <li class="answer-record">
+                        <div class="ar-question">@Helpers.bulletPoint(ar._1.question.getText)</div>
+                        <div class="ar-controls">
+                            <span class="badge">@Helpers.makeUpper(ar._1.answer.getAnswerText)</span>
+                            <button class="btn btn-xs btn-primary"
+                                data-toggle="tooltip" data-placement="top"
+                                title="Change your answer to this question"
+                                onClick="$('#revisitIdx')[0].value='@ar._2'; $('#answerHistory').submit();">
+                                <i class="fa fa-history"></i> Revisit</button>
+                        </div>
+                    </li>
+                }       
+            }
+        }
+    </ol>
+    <input type="hidden" name="serializedHistory" id="serializedHistory" value="@QuestionnaireKits.kit.serializer.encode(answerHistory)"/>
+    <input type="hidden" name="revisitIdx" id="revisitIdx" value="" />
 }
-</ol>

@@ -26,19 +26,27 @@ object QuestionnaireKits {
   val kit = allKits.toSeq(0)._2
 
   private def loadQuestionnaires() = {
-    Logger.info("DataTags application started")
+    Logger.info("Loading questionnaires")
     Play.current.configuration.getString("datatags.folder") match {
     case Some(str) => {
           val p = Paths.get(str)
           Logger.info( "Loading questionnaire data from " + p.toAbsolutePath.toString )
-
+          
+          val definitions = p.resolve("definitions.tags")
+          Logger.info( "Reading definitions from %s".format(definitions.toAbsolutePath.toString))
           val dp = new DataDefinitionParser()
-          val dataTags = dp.parseTagDefinitions( readAll(p.resolve("definitions.tags")), "definitions").asInstanceOf[CompoundType]
+          val dataTags = dp.parseTagDefinitions( readAll(definitions), "definitions").asInstanceOf[CompoundType]
+          Logger.info( " - DONE")
+
           val fcsParser = new FlowChartSetComplier( dataTags )
 
-          val source = readAll( p.resolve("questionnaire.flow") )
-
+          val questionnaire = p.resolve("questionnaire.flow")
+          Logger.info( "Reading questionnaire from %s".format(questionnaire.toAbsolutePath.toString))
+          val source = readAll( questionnaire )
+          Logger.info( " - READ DONE")
           val interview = fcsParser.parse(source, "Data Deposit Screening" )
+          Logger.info( " - PARSING DONE")
+
           Logger.info("Default chart id: %s".format(interview.getDefaultChartId) )
 
           Map( "dds-c1" -> QuestionnaireKit("dds-c1", "Data Deposit Screening", dataTags, interview) )

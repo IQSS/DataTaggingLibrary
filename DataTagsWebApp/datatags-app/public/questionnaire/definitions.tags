@@ -78,10 +78,11 @@ HIPAA: some of
 		safeHarborDeidentified, safeHarborExpert, statistician, limitedDataset, businessAssociateAgreement.
 Part2: one of deidentified, veteransMedicalData, consent, scientificResearch.
 
-FERPA: FERPABasis.
-FERPABasis: one of FERPADeidentified, FERPADirectoryOptOut, FERPADirectoryInfo, FERPAOfficial, FERPAStudies, FERPAConsent.
+FERPA: some of deidentified, directoryOptOut, directoryInfo, schoolOfficial, study, consent, audit.
 
-PPRA: one of consent, optOutProvided.
+PPRA: PPRAProtection, PPRATraits.
+PPRAProtection: one of protected, protectedDeidentified.
+PPRATraits: some of consent, optOutProvided, marketing.
 
 GovernmentRecords: DPPA, Census, ESRA, PrivacyAct, CIPSEA.
 DPPA: some of highlyRestricted, required, stateConsentLimited, stateConsentBroad, requesterConsentLimited, requesterConsentBroad, research, exception.

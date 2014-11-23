@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * @author michael
  */
+// TODO add a start() method, defaulting to start( getChartSet().getDefaultChart() ).
 public class RuntimeEngine {
 	
 	

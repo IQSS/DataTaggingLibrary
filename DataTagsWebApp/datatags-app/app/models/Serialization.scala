@@ -41,7 +41,7 @@ class Serialization private( val answerMap: Map[Answer, String],
         buffer append AnswerRecord(rte.getCurrentNode.asInstanceOf[AskNode], ans)
         rte.consume( ans )
     })
-    userSession.replaceHistory(buffer.toList, l.traversedNodes, rte.createSnapshot)
+    userSession.replaceHistory(buffer.toSeq, l.traversedNodes, rte.createSnapshot)
    }
 
 }
