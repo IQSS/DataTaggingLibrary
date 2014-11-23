@@ -96,23 +96,32 @@ public class ValidCallNodeValidation {
             Path outfile = chartFile.resolveSibling(chartFile.getFileName().toString() + "-ast.gv");
             System.out.println("Writing: " + outfile);
             viz.vizualize(outfile);
-
-            FlowChartSetComplier fcsParser = new FlowChartSetComplier((CompoundType) baseType);
-            FlowChartSet fcs = fcsParser.parse(refs, chartFile.getFileName().toString());
-
-            UnreachableNodeValidator unv = new UnreachableNodeValidator();
-            LinkedList<ValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
-            for ( ValidationMessage m : unreachableNodeMessages ) {
-                System.out.println(m);
-                System.out.println("\t" + m.getEntities());
-            }
             
+            System.out.println("AST validations");
+            System.out.println("===============");
+            
+            System.out.println("Validating repeating ids");
             RepeatIdValidator riv = new RepeatIdValidator();
             LinkedList<ValidationMessage> repeatIdMessages = riv.validateRepeatIds(refs);
             if (repeatIdMessages.size() > 0) {
                 System.out.println(repeatIdMessages);
             }
             
+            FlowChartSetComplier fcsParser = new FlowChartSetComplier((CompoundType) baseType);
+            FlowChartSet fcs = fcsParser.parse(refs, chartFile.getFileName().toString());
+
+            System.out.println();
+            System.out.println("Semantic validations");
+            System.out.println("====================");
+            UnreachableNodeValidator unv = new UnreachableNodeValidator();
+            System.out.println("Validating unreachable nodes");
+            LinkedList<ValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
+            for ( ValidationMessage m : unreachableNodeMessages ) {
+                System.out.println(m);
+                System.out.println("\t" + m.getEntities());
+            }
+            
+            System.out.println("Validating Call nodes");
             ValidCallNodeValidator fcv = new ValidCallNodeValidator();
             LinkedList<ValidationMessage> callNodeMessages = fcv.validateIdReferences(fcs);
             if (callNodeMessages.size() > 0) {

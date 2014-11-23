@@ -143,123 +143,231 @@
 (end)
 
 (>ppraCompliance< ask: 
-	(text: Were the data collected by an elementary or secondary school and in connection with a program receiving funds from the US Department of Education?)
-	(terms:
-		(Elementary or secondary school: An elementary or secondary school is a public or private school serving students in any of the grades from kindergarten through high school.))
-	(no: (end)))
-
+  (text: Do the data contain any information collected from students in an elementary or secondary school?)
+  (terms:
+    (Elementary or secondary school: Refers to a public or private institution in the United States providing educational services or instruction to students in any of the grades from kindergarten through high school.))
+  (no: (end))
+)
 (>ppra2< ask:
-	(text: Do the data contain personal information from students concerning any of the following eight categories?
-		      * Political affiliations or beliefs of a student or a student's parent;
-          * Mental and psychological problems of a student or a student's family;
-          * Sex behavior and attitudes;
+  (text: Do the data contain information collected from students in a survey or assessment concerning any of the following eight categories?
+          * Political affiliations or beliefs of a student or a student’s parents;
+          * Mental or psychological problems of a student or a student’s family;
+          * Sex behavior or attitudes;
           * Illegal, anti-social, self-incriminating, or demeaning behavior;
           * Critical appraisals of other individuals with whom respondents have close family relationships;
-          * Legally recognized privileged or analogous relationships, such as those of lawyers, physicians, and ministers;
-          * Religious practices, affiliations, or beliefs of a student or a student's parent; or
+          * Legally recognized privileged or analogous relationships, such as those of lawyers, physicians, or members of the clergy;
+          * Religious practices, affiliations, or beliefs of a student or a student’s parent; or 
           * Income, other than that required by law to determine eligibility for participation in a program or for receiving financial assistance under such program.)
  (terms:
-	(Personal information: Individually identifiable information such as a student or parent's first and last name, a home or other physical address, including street name and the name of the city or town, a telephone number, or a Social Security identification number.
-  ))
- (no: (end)))
-(>ppra2a< ask:
-	(text: Have the data been deidentified?)
-	(yes: (set:Code=green, Harm=minimal, Storage=clear, Effort=deidentified) )
-	(no:  (set:Code=orange, Harm=civil, Storage=encrypt, Effort=identifiable) ))
-(>ppra3< ask:
-	(text: Were the parents of the students whose information is contained in the data provided with annual Protection of Pupil Rights Amendment [PPRA] notices? These notices inform parents of their rights under the PPRA, of local education policies concerning collection of student information, and of the specific or approximate dates of the proposed data collection activity.)
-	(no: (reject: Possible PPRA violation, due to failure to provide annual PPRA notices)))
-(>ppra4< ask:
-	(text: Were the data collected through a program, such as a survey, evaluation, or analysis, that was funded by the US Department of Education?)
-	(yes:
-		(>ppra5< ask:
-			(text:Was written consent obtained from parents prior to the data collection?)
-			(yes: (set: PPRA=consent) )
-			(no: (reject: Possible PPRA violation, due to failure to obtain written consent for collection of information protected under the PPRA))
-			))
-	(no:
-		(>ppra6< ask:
-			(text: Were the data disclosed by the school for marketing or sale?)
-			(no: (end)))
-		(>ppra7< ask:
-			(text: Were parents provided with notice and an opportunity to opt out of the collection and disclosure of the information?)
-			(yes: (set:PPRA=optOutProvided) )
-			(no: (reject: Possible PPRA violation due to failure to provide parents with the opportunity to opt out of the data collection.))
-		)
-	))
+  (Survey or assessment: Refers to any academic or non-academic survey, assessment, analysis, or evaluation. 
+                         It also includes any psychiatric or psychological examination, test, or treatment that is designed to 
+                         elicit information about attitudes, habits, traits, opinions, beliefs or feelings and is not directly 
+                         related to academic instruction.))
+ (yes:
+  (>ppra2a< ask:
+    (text: Do the data from the survey or assessment contain any personally identifiable information about a student? Personally identifiable information about a student includes, but is not limited to, the following categories of information:
+      * A student’s name
+      * The name of a student’s parent or other family members
+      * The address of a student or a student’s family
+      * Other direct identifiers, defined as information that relates specifically to an individual, such as a student’s Social Security number, student number, other identifying number or code, telephone number, e-mail address, or biometric record
+      * Other indirect identifiers defined as information that can be combined with other information to identify specific individuals, such as the student’s gender, race, religion, date of birth, place of birth, other geographic indicator, weight, mother’s maiden name, activities, employment information, education information, financial information, and other descriptors
+      * Other information that, alone or in combination, is linked or linkable to a specific student that would allow a reasonable person in the school community, who does not have personal knowledge of the relevant circumstances, to identify the student with reasonable certainty
+      * Information disclosed in response to a targeted request)
+    (terms: 
+      (Deidentified information: Information that has been deidentified is considered not to contain personally identifiable information. The term deidentified is used to describe records that have enough personally identifiable information removed or obscured such that the remaining information does not identify an individual and there is no reasonable basis to believe that the information can be used to identify an individual. In making a determination that a student’s identity is not personally identifiable, both single and multiple data releases from the education records should be taken into account along with other information available from other sources.)
+      (Biometric record: Refers to a record of one or more measurable biological or behavioral characteristics that can be used for automated recognition of an individual. Examples include fingerprints; retina and iris patterns; voiceprints; DNA sequence; facial characteristics; and handwriting.)
+      (Targeted request: Refers to a request by a person who the educational agency or institution reasonably believes knows the identity of the student to whom the education record relates. For example, if there was a rumor published in the local paper that a public official was disciplined for cheating during his senior year in high school, a request to the high school for the disciplinary records of students who were caught cheating during the year the public official was a senior would be considered a targeted request.)
+    )
+    (no:
+      (set: PPRAProtection=protected, Code=orange, Harm=civil,
+            Transit=encrypt, Effort=identifiable))
+    (yes:
+      (set: PPRAProtection=protectedDeidentified, Code=green, Harm=minimal,
+            Transit=clear, Effort=deidentified))
+  )
+  (>ppra3< ask: 
+    (text:Was the survey or assessment funded, in whole or in part, by the US Department of Education?)
+    (terms:
+      (Funded by the US Department of Education: This means the survey or assessment received funds for any purpose from the US Department of Education. It includes any funds provided by grant, cooperative agreement, contract, subgrant, or subcontract to the program or institution that conducted the data collection.))
+    (yes:
+      (>ppra4< ask:
+        (text: Was written consent obtained from the parents of the students who participated in the survey or assessment, or from the students themselves if they are adults or emancipated minors, prior to the data collection?)
+        (yes: 
+          (set: PPRATraits=consent)
+          (>ppra5< ask:
+            (text: Was any of the personal information in the data collected from students for the purpose of marketing or sale?)
+            (terms:
+              (Personal Information: Refers to individually identifiable information including, but not limited to:
+                * a student or parent’s first and last name,
+                * a home or other physical address, including street name and the name of the city or town,
+                * a telephone number, or
+                * a Social Security identification number.)
+              (Marketing Purpose:
+                This does not include the gathering and release of information for the following activities:
+                * College, post-secondary education, or military recruitment
+                * Book clubs, magazines, and low-cost literacy products
+                * Curriculum and instructional materials used by elementary and secondary schools
+                * Certain tests and assessments used by elementary and secondary schools
+                * Sale by students of services and products for education or school-related, fundraising activities
+                * Student recognition programs)
+              )
+              (yes:
+                (set:PPRATraits=marketing))
+          )
+          (end)
+        )
+        (no:
+          (reject: Possible PPRA violation due to failure to obtain written consent for collection of information protected under the PPRA))
+        (Not Sure:
+          (reject: Please ask the party that collected the data whether written consent from the parents was obtained. Dataset cannot be accepted without clarifying this issue.))
+      )
+    )
+  )
+))
+(>ppra6< ask:
+  (text: Does the school in which the information was collected receive any funds from the US Department of Education?)
+  (terms:
+    (Funds from the US Department of Education: This means funds provided for any purpose by the US Department of Education to the elementary or secondary school in which the data were collected. It includes any funds provided by grant, cooperative agreement, contract, subgrant, or subcontract to the institution. The funds, alternatively, may have been provided to students attending the institution. For instance, the funds may have been paid to the institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program. Note that all public schools receive such funds, though most private and parochial schools at the elementary and secondary levels do not receive such funding.))
+  (yes:
+    (>ppra7< ask:
+      (text: Were parents provided with notice and an opportunity to opt out of the collection and disclosure of the information?)
+      (no: (reject: Possible PPRA violation due to school’s failure to provide parents with the opportunity to opt out of the data collection))
+      (yes: (set: PPRATraits=optOutProvided))
+    )
+  )
+)
 (end)
 
 (>ferpaCompliance< ask:
-	(text:Do the data directly relate to a student, and were the data maintained by an educational agency or institution receiving funds from the US Department of Education? )
-	(terms:
-		(Educational agency or institution: A public or private agency or institution that provides educational services or instruction, or both, to students. This includes, but is not limited to, a primary or secondary school, college or university, school district, or state educational agency.)
-		(Funds from the US Department of Education: This means funds provided by the US Department of Education to the agency or institution by grant, cooperative agreement, contract, subgrant, or subcontract; or provided to students attending the agency or institution. The funds may be paid to the agency or institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program.)
-	)
-	(no: (end))
+  (text: Do the data contain any information derived from records maintained by an educational agency or institution, or by a person or entity acting for the agency or institution, that receives funds from the US Department of Education?)
+  (terms:
+    (Educational agency or institution:
+      An educational agency or institution is a public or private agency or institution that provides educational services or instruction, or both, to students. This includes, but is not limited to, a primary or secondary school, college or university, school district, or state department of education.)
+    (Funds from the US Department of Education:
+       This means funds provided for any purpose, research or otherwise, by the US Department of Education to the educational agency or institution. It includes funds provided by grant, cooperative agreement, contract, subgrant, or subcontract; or funds provided to students attending the agency or institution. The funds may be paid to the institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program. This includes all public schools and a majority of private institutions, though most private and parochial schools at the elementary and secondary levels do not receive such funding.))
+  (no: (end))
 )
-(>ferpa9< ask:
-	(text:Do the data fall into any of the following categories?
-		* Personal memory aids held in the sole possession of their creator, such as a teacher's notes;
-		* Records maintained by the law enforcement division of an educational agency or institution;
-		* Employment records for an educational agency or institution;
-		* Records produced by a physician, psychiatrist, or other professional for treatment purposes; or
-		* Grades on peer-graded papers before a teacher has recorded them.
-	)
-	(yes: (end))
-)
-( >ferpa10< ask:
-	(text: Do the data include information that, alone or in combination, is linked or linkable to a specific student that would allow a reasonable person to identify the student with reasonable certainty? This includes, but is not limited to, a student's or student's family name, student or student's family's address, a personal identifier like a Social Security number or student number, or other indirect identifier like date of birth or mother's maiden name.)
-	(no:
-		(set: Storage=clear, Code=green, Harm=minimal, Effort=deidentified, Transit=clear, FERPABasis=FERPADeidentified)
-		(end))
-)
-( >ferpa11< ask:
-	(text: Did the educational agency or institution classify the data as directory information?)
-	(terms:
-		(Directory information: Directory information is information that is generally not considered harmful or an invasion of privacy if released and can be disclosed to outside organizations without a parent's prior written consent. Categories of information typically designated as directory information include: student's name; address; telephone listing; e-mail address; photograph; date and place of birth; major field of study; dates of attendance; grade level; participation in officially recognized activities and sports; weight and height of members of athletic teams; degrees, honors, and awards received; the most recent educational agency or institution attended; and student ID number, user ID, or other unique personal identifier used in electronic records.)
-	)
-	(yes:
-		( >ferpa11a< ask: (text: Did the educational agency or institution give parents and students notice of the type of information they are designating as directory information and the opportunity to opt out of the disclosure of their directory information? )
-		  (yes:
-		  	(set: Effort=identifiable )
-				( >ferpa11ai< ask:
-					(text: Did any of the students in the data request to opt out of the disclosure of their directory information? )
-					(yes: (set: Code=yellow, Storage=encrypt, Harm=shame,      Transit=encrypt, FERPABasis=FERPADirectoryOptOut))
-					(no:  (set: Code=green,  Storage=clear,   Harm=minimal, Transit=clear,   FERPABasis=FERPADirectoryInfo)))
-				(end))
-)))
+(>ferpa9< ask: 
+  (text: Do the data contain any information derived from institutional records directly related to a student? 
+         This refers to records maintained by an educational agency or institution, or by a person on behalf of the agency or institution, for each student in the normal course of business. For the purposes of this questionnaire, information may satisfy this definition even if it has been deidentified.
 
-(set: Transit=encrypt, Storage=encrypt, Code=yellow, Harm=shame, Effort=identifiable, Transit=encrypt)
+         Examples of records directly related to a student include:
 
-( >ferpa12< ask:
-	(text: Did the parents, guardians, or students [if 18 or over] sign a consent form authorizing this disclosure of their data?)
-	(yes:
-		( >ferpa12a< ask: 
-			(text: Did the consent form specify the records to be disclosed, the purpose of the disclosure, and to whom the records may be disclosed?)
-			(yes: (set: FERPABasis=FERPAConsent)
-						(>FERPA-Consent< todo )
-						(end))
-		))
+          * Directory information such as name, address, telephone listing, e-mail address, date and place of birth, dates of attendance, number of course units in which enrolled, class level, major field of student, last school attended, degrees and honors received, participation in official student activities, and student athletes’ weight and height
+          * Parent’s or guardian’s name or address
+          * Student identification number, Social Security number
+          * Demographic information such as gender, race, ethnicity, nationality, citizenship
+          * Identification photographs
+          * Current academic status, class schedule, courses taken, academic specialization and activities, units attempted and completed, instructors, past academic status, official communications regarding academic status
+          * Academic evaluations, including student examination papers, transcripts, grade point average, grades in courses, test scores, recorded communications that are part of the academic process, and other academic records
+          * Counseling and advising records
+          * Disciplinary records
+          * Financial aid records, including student loan collection records
+
+          Examples of records not directly related to a student include:
+
+          * Personal memory aids held in the sole possession of their creator, such as a teacher’s notes
+          * Records maintained by the law enforcement division of an educational agency or institution
+          * Employment records for an educational agency or institution
+          * Records produced by a physician, psychiatrist, or other professional for treatment purposes
+          * Grades on peer-graded papers before a teacher has recorded them
+          * Records directly related to other individuals, such as records of teacher misconduct or complaints against school employees, that only tangentially refer to students
+          * Information obtained from observation and not from an education record )
+  (no: (end))
 )
-( >ferpa13< ask: 
-	(text: Were the data disclosed to a school official or contractor with a legitimate educational interest?)
-	(terms:
-		(School official:
-				This includes professors; instructors; administrators; health staff; counselors; attorneys; clerical staff; trustees; members of committees and disciplinary boards; and contractors, consultants, volunteers or other parties to whom the school has outsourced institutional services or functions.)
-		(Legitimate educational interest:
-				A school official generally has a legitimate educational interest if the official needs to review an education record in order to fulfill his or her professional responsibility.))
-	(yes: (set: FERPABasis=FERPAOfficial)
-			  (end))
+(>ferpa10< ask: 
+  (text: Do the data include personally identifiable information about a student? Personally identifiable information about a student includes, but is not limited to, the following categories of information:
+        * A student’s name
+        * The name of a student’s parent or other family members
+        * The address of a student or a student’s family
+        * Other direct identifiers, defined as information that relates specifically to an individual, such as a student’s Social Security number, student number, other identifying number or code, telephone number, e-mail address, or biometric record
+        * Other indirect identifiers, defined as information that can be combined with other information to identify specific individuals, such as the student’s gender, race, religion, date of birth, place of birth, other geographic indicators, height, weight, mother’s maiden name, activities, employment information, education information, financial information, and other descriptors
+        * Other information that, alone or in combination, is linked or linkable to a specific student that would allow a reasonable person in the school community, who does not have personal knowledge of the relevant circumstances, to identify the student with reasonable certainty
+        * Information disclosed in response to a targeted request)
+  (terms:
+    (Deidentified information:
+      Information that has been deidentified is considered not to contain personally identifiable information. The term deidentified is used to describe records that have enough personally identifiable information removed or obscured such that the remaining information does not identify an individual and there is no reasonable basis to believe that the information can be used to identify an individual. In making a determination that a student’s identity is not personally identifiable, both single and multiple data releases from the education records should be taken into account along with other information available from other sources.)
+    (Biometric record: 
+      Refers to a record of one or more measurable biological or behavioral characteristics that can be used for automated recognition of an individual. Examples include fingerprints; retina and iris patterns; voiceprints; DNA sequence; facial characteristics; and handwriting.)
+    (Targeted request:
+      Refers to a request by a person who the educational agency or institution reasonably believes knows the identity of the student to whom the education record relates. For example, if there was a rumor published in the local paper that a public official was disciplined for cheating during his senior year in high school, a request to the high school for the disciplinary records of students who were caught cheating during the year the public official was a senior would be considered a targeted request.)
+  )
+  (no: 
+    (set: FERPA=deidentified, Code=green, Harm=minimal, Storage=clear, Transit=clear, Effort=deidentified))
 )
-( >ferpa14< ask:
-	(text: Are the data being disclosed for the purpose of conducting a study for or on behalf of the educational agency or institution in order to develop, validate, or administer predictive tests; administer student aid projects; or improve instruction?)
-	(yes: (set: FERPABasis=FERPAStudies) )
-	(no: 
-		(reject: educational agency or institution is likely breaching its FERPA duties because it is disclosing, or a third party is re-disclosing, non-directory PII without parental consent where no obvious FERPA exception applies))
+(>ferpa11< ask:
+  (text:  Did the educational agency or institution designate all of the personally identifiable information in the data as directory information? The educational agency or institution provides notice to students and parents of the types of information it has designated as directory information.)
+  (terms:
+    (Directory information:
+      Refers to information that is generally not considered harmful or an invasion of privacy if released and can be disclosed to outside organizations without a parent's prior written consent.
+
+      * Types of information frequently designated as directory information include:
+      * Name, address, telephone listing, or e-mail address
+      * Photograph
+      * Date or place of birth
+      * Major field of study
+      * Dates of attendance
+      * Enrollment status, e.g., undergraduate or graduate, full-time or part-time
+      * Grade level or class year
+      * Participation in officially recognized activities and sports
+      * Height and weight of members of athletic teams
+      * Degrees, honors, and awards received
+      * Publication titles
+      * The most recent educational agency or institution attended
+
+      Directory information never includes a student’s Social Security number or identification number that is used to access a student’s education record.)
+  )
+  (yes:
+    (>ferpa11a< ask:
+      (text: Did any of the students in the data, or their parents, if the students are under 18, request to opt out of the release of their information as directory information?)
+      (yes: (set: FERPA=directoryOptOut, Code=yellow, Harm=shame, Transit=encrypt, Storage=encrypt, Effort=identifiable))
+      (no: (set: FERPA=directoryInfo, Code=green, Harm=minimal, Effort=identifiable))
+    )
+    (end)
+  )
 )
-(>FERPA-DUA< todo )
+(>ferpa12< ask:
+  (text: Did the parents or guardians of the students, or the students themselves if they were adults or emancipated minors at the time of the data collection, provide written consent authorizing disclosure of their information?)
+  (terms:
+    (Written consent:
+      Refers to signed and dated written permission from the parents or students that specifies the records to be disclosed, the purpose of the disclosure, and to whom the records may be disclosed. The form of the consent and the other elements it may contain vary between institutions.)
+  )
+  (yes:
+     (set: FERPA=consent, Code=yellow, Harm=shame, Transit=encrypt, Effort=identifiable)
+     (todo: Consent sub-routine) )
+)
+(>ferpa13< ask:
+  (text: Are the data being disclosed to a school official or contractor with a legitimate educational interest?)
+  (terms:
+    (School official or contractor:
+      This includes professors; instructors; administrators; health staff; counselors; attorneys; clerical staff; trustees; members of committees and disciplinary boards; and contractors, consultants, volunteers or other parties to whom the school has outsourced institutional services or functions.)
+    (Legitimate educational interest:
+      A school official generally has a legitimate educational interest if the official needs to review an education record in order to fulfill his or her professional responsibility. Legitimate educational interests include, but are not limited to, performing a task related to the regular duties of the employee or agent, the student’s education, or a service or benefit for the student.)
+  )
+  (yes:
+    (set: FERPA=schoolOfficial, Code=yellow, Harm=shame, Transit=encrypt, Effort=identifiable) )
+)
+(>ferpa14< ask: 
+  (text:
+     Are the data being disclosed for the purpose of conducting a study for, or on behalf of, the educational agency or institution in order to develop, validate, or administer predictive tests, or improve instruction?)
+  (yes:
+    (set: FERPA=study, Code=yellow, Harm=shame, Transit=encrypt, Effort=identifiable)
+    (todo: DUA subroutine) )
+)
+(>ferpa15< ask:
+  (text: Are the data being disclosed for the purpose of conducting an audit or evaluation of a federal- or state-supported education program?)
+  (terms:
+    (Education program:
+      Refers to a program principally engaged in the provision of education, including, but not limited to, early childhood education, elementary and secondary education, postsecondary education, special education, job training, career and technical education, and adult education, and any program that is administered by an educational agency or institution.))
+  (yes:
+    (set: FERPA=audit, Code=yellow, Harm=shame, Transit=encrypt, Effort=identifiable)
+    (todo: DUA subroutine))
+  (no: 
+    (reject: 
+       An educational agency or institution is likely breaching its FERPA duties because it is disclosing, or a third party is re-disclosing, non-directory PII without parental consent where no obvious FERPA exception applies.)
+  )
+)
 (end)
-
 
 (>govRecsCompliance< call: Gov1 )
 (call: DPPA1)

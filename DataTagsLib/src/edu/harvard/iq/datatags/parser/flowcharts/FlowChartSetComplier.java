@@ -137,6 +137,7 @@ public class FlowChartSetComplier {
 	private Node buildNodes( final List<? extends InstructionNodeRef> nodes, final FlowChart chart, final Node defaultNode ) {
 		
 		InstructionNodeRef.Visitor<Node> builder = new InstructionNodeRef.Visitor<Node>(){
+            int nextEndId = 0;
 			@Override
 			public Node visit(AskNodeRef askRef) {
 				AskNode res = new AskNode( askRef.getId() );
@@ -177,7 +178,8 @@ public class FlowChartSetComplier {
 
 			@Override
 			public Node visit(EndNodeRef endRef) {
-				return chart.add(new EndNode( endRef.getId() ));
+                String id = (endRef.getId() != null)  ? endRef.getId() : "end_$" + (nextEndId++);
+				return chart.add(new EndNode( id ));
 			}	
 
             @Override

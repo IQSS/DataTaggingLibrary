@@ -5,14 +5,14 @@ rankdir=LR
 graph [overlap=true ranksep=3]
 DataTags[label="DataTags" shape="octagon" peripheries="2"]
 Legal[label="Legal" shape="octagon" peripheries="2"]
-FERPA[label="FERPA" shape="octagon" peripheries="2"]
-FERPABasis[label="FERPABasis" shape="egg"]
-FERPABasis_FERPADeidentified[label="FERPADeidentified" shape="box"]
-FERPABasis_FERPADirectoryOptOut[label="FERPADirectoryOptOut" shape="box"]
-FERPABasis_FERPADirectoryInfo[label="FERPADirectoryInfo" shape="box"]
-FERPABasis_FERPAOfficial[label="FERPAOfficial" shape="box"]
-FERPABasis_FERPAStudies[label="FERPAStudies" shape="box"]
-FERPABasis_FERPAConsent[label="FERPAConsent" shape="box"]
+FERPA[label="FERPA" shape="egg" peripheries="2"]
+FERPA_deidentified[label="deidentified" shape="box"]
+FERPA_directoryOptOut[label="directoryOptOut" shape="box"]
+FERPA_directoryInfo[label="directoryInfo" shape="box"]
+FERPA_schoolOfficial[label="schoolOfficial" shape="box"]
+FERPA_study[label="study" shape="box"]
+FERPA_consent[label="consent" shape="box"]
+FERPA_audit[label="audit" shape="box"]
 MedicalRecords[label="MedicalRecords" shape="octagon" peripheries="2"]
 Part2[label="Part2" shape="egg"]
 Part2_deidentified[label="deidentified" shape="box"]
@@ -27,9 +27,14 @@ HIPAA_safeHarborExpert[label="safeHarborExpert" shape="box"]
 HIPAA_statistician[label="statistician" shape="box"]
 HIPAA_limitedDataset[label="limitedDataset" shape="box"]
 HIPAA_businessAssociateAgreement[label="businessAssociateAgreement" shape="box"]
-PPRA[label="PPRA" shape="egg"]
-PPRA_consent[label="consent" shape="box"]
-PPRA_optOutProvided[label="optOutProvided" shape="box"]
+PPRA[label="PPRA" shape="octagon" peripheries="2"]
+PPRATraits[label="PPRATraits" shape="egg" peripheries="2"]
+PPRATraits_consent[label="consent" shape="box"]
+PPRATraits_optOutProvided[label="optOutProvided" shape="box"]
+PPRATraits_marketing[label="marketing" shape="box"]
+PPRAProtection[label="PPRAProtection" shape="egg"]
+PPRAProtection_protected[label="protected" shape="box"]
+PPRAProtection_protectedDeidentified[label="protectedDeidentified" shape="box"]
 GovernmentRecords[label="GovernmentRecords" shape="octagon" peripheries="2"]
 DPPA[label="DPPA" shape="egg" peripheries="2"]
 DPPA_highlyRestricted[label="highlyRestricted" shape="box"]
@@ -141,13 +146,13 @@ Auditing_Yearly[label="Yearly" shape="box"]
 Auditing_Monthly[label="Monthly" shape="box"]
 DataTags -> Legal
 Legal -> FERPA
-FERPA -> FERPABasis
-FERPABasis -> FERPABasis_FERPADeidentified
-FERPABasis -> FERPABasis_FERPADirectoryOptOut
-FERPABasis -> FERPABasis_FERPADirectoryInfo
-FERPABasis -> FERPABasis_FERPAOfficial
-FERPABasis -> FERPABasis_FERPAStudies
-FERPABasis -> FERPABasis_FERPAConsent
+FERPA -> FERPA_deidentified
+FERPA -> FERPA_directoryOptOut
+FERPA -> FERPA_directoryInfo
+FERPA -> FERPA_schoolOfficial
+FERPA -> FERPA_study
+FERPA -> FERPA_consent
+FERPA -> FERPA_audit
 Legal -> MedicalRecords
 MedicalRecords -> Part2
 Part2 -> Part2_deidentified
@@ -163,8 +168,13 @@ HIPAA -> HIPAA_statistician
 HIPAA -> HIPAA_limitedDataset
 HIPAA -> HIPAA_businessAssociateAgreement
 Legal -> PPRA
-PPRA -> PPRA_consent
-PPRA -> PPRA_optOutProvided
+PPRA -> PPRATraits
+PPRATraits -> PPRATraits_consent
+PPRATraits -> PPRATraits_optOutProvided
+PPRATraits -> PPRATraits_marketing
+PPRA -> PPRAProtection
+PPRAProtection -> PPRAProtection_protected
+PPRAProtection -> PPRAProtection_protectedDeidentified
 Legal -> GovernmentRecords
 GovernmentRecords -> DPPA
 DPPA -> DPPA_highlyRestricted
