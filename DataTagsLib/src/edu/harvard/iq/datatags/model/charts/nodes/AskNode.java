@@ -72,4 +72,9 @@ public class AskNode extends Node {
 	public void addTerm( String termName, String termText ) {
 		terms.put( termName, termText );
 	}
+    
+    @Override
+    public String toString() {
+        return String.format("[AskNode id:%s text:'%s']", getId(), text.length()>20? text.substring(0,20) : text);
+    }
 }

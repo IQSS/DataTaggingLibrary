@@ -64,7 +64,7 @@ public class CliRunner {
                 @Override
                 public void processedNode(RuntimeEngine ngn, Node node) {
                     printMsg("Visited node " + node );
-                    node.accept( new Node.NullVisitor() {
+                    node.accept( new Node.VoidVisitor() {
 
                         @Override
                         public void visitImpl(AskNode nd) throws DataTagsRuntimeException {}

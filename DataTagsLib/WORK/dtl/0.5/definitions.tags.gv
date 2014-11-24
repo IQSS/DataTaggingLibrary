@@ -5,14 +5,6 @@ rankdir=LR
 graph [overlap=true ranksep=3]
 DataTags[label="DataTags" shape="octagon" peripheries="2"]
 Legal[label="Legal" shape="octagon" peripheries="2"]
-FERPA[label="FERPA" shape="egg" peripheries="2"]
-FERPA_deidentified[label="deidentified" shape="box"]
-FERPA_directoryOptOut[label="directoryOptOut" shape="box"]
-FERPA_directoryInfo[label="directoryInfo" shape="box"]
-FERPA_schoolOfficial[label="schoolOfficial" shape="box"]
-FERPA_study[label="study" shape="box"]
-FERPA_consent[label="consent" shape="box"]
-FERPA_audit[label="audit" shape="box"]
 MedicalRecords[label="MedicalRecords" shape="octagon" peripheries="2"]
 Part2[label="Part2" shape="egg"]
 Part2_deidentified[label="deidentified" shape="box"]
@@ -27,14 +19,24 @@ HIPAA_safeHarborExpert[label="safeHarborExpert" shape="box"]
 HIPAA_statistician[label="statistician" shape="box"]
 HIPAA_limitedDataset[label="limitedDataset" shape="box"]
 HIPAA_businessAssociateAgreement[label="businessAssociateAgreement" shape="box"]
-PPRA[label="PPRA" shape="octagon" peripheries="2"]
-PPRATraits[label="PPRATraits" shape="egg" peripheries="2"]
-PPRATraits_consent[label="consent" shape="box"]
-PPRATraits_optOutProvided[label="optOutProvided" shape="box"]
-PPRATraits_marketing[label="marketing" shape="box"]
-PPRAProtection[label="PPRAProtection" shape="egg"]
-PPRAProtection_protected[label="protected" shape="box"]
-PPRAProtection_protectedDeidentified[label="protectedDeidentified" shape="box"]
+EducationRecords[label="EducationRecords" shape="octagon" peripheries="2"]
+FERPA[label="FERPA" shape="egg" peripheries="2"]
+FERPA_deidentified[label="deidentified" shape="box"]
+FERPA_directoryOptOut[label="directoryOptOut" shape="box"]
+FERPA_directoryInfo[label="directoryInfo" shape="box"]
+FERPA_schoolOfficial[label="schoolOfficial" shape="box"]
+FERPA_study[label="study" shape="box"]
+FERPA_consent[label="consent" shape="box"]
+FERPA_audit[label="audit" shape="box"]
+PPRA[label="PPRA" shape="egg" peripheries="2"]
+PPRA_protected[label="protected" shape="box"]
+PPRA_protectedDeidentified[label="protectedDeidentified" shape="box"]
+PPRA_consent[label="consent" shape="box"]
+PPRA_optOutProvided[label="optOutProvided" shape="box"]
+PPRA_marketing[label="marketing" shape="box"]
+ContractOrPolicy[label="ContractOrPolicy" shape="egg"]
+ContractOrPolicy_no[label="no" shape="box"]
+ContractOrPolicy_yes[label="yes" shape="box"]
 GovernmentRecords[label="GovernmentRecords" shape="octagon" peripheries="2"]
 DPPA[label="DPPA" shape="egg" peripheries="2"]
 DPPA_highlyRestricted[label="highlyRestricted" shape="box"]
@@ -56,9 +58,6 @@ Census_CensusPublished[label="CensusPublished" shape="box"]
 ESRA[label="ESRA" shape="egg" peripheries="2"]
 ESRA_restricted[label="restricted" shape="box"]
 ESRA_public[label="public" shape="box"]
-Additional[label="Additional" shape="egg"]
-Additional_no[label="no" shape="box"]
-Additional_yes[label="yes" shape="box"]
 Code[label="Code" shape="egg"]
 Code_blue[label="blue" shape="box"]
 Code_green[label="green" shape="box"]
@@ -145,14 +144,6 @@ Auditing_NotNeeded[label="NotNeeded" shape="box"]
 Auditing_Yearly[label="Yearly" shape="box"]
 Auditing_Monthly[label="Monthly" shape="box"]
 DataTags -> Legal
-Legal -> FERPA
-FERPA -> FERPA_deidentified
-FERPA -> FERPA_directoryOptOut
-FERPA -> FERPA_directoryInfo
-FERPA -> FERPA_schoolOfficial
-FERPA -> FERPA_study
-FERPA -> FERPA_consent
-FERPA -> FERPA_audit
 Legal -> MedicalRecords
 MedicalRecords -> Part2
 Part2 -> Part2_deidentified
@@ -167,14 +158,24 @@ HIPAA -> HIPAA_safeHarborExpert
 HIPAA -> HIPAA_statistician
 HIPAA -> HIPAA_limitedDataset
 HIPAA -> HIPAA_businessAssociateAgreement
-Legal -> PPRA
-PPRA -> PPRATraits
-PPRATraits -> PPRATraits_consent
-PPRATraits -> PPRATraits_optOutProvided
-PPRATraits -> PPRATraits_marketing
-PPRA -> PPRAProtection
-PPRAProtection -> PPRAProtection_protected
-PPRAProtection -> PPRAProtection_protectedDeidentified
+Legal -> EducationRecords
+EducationRecords -> FERPA
+FERPA -> FERPA_deidentified
+FERPA -> FERPA_directoryOptOut
+FERPA -> FERPA_directoryInfo
+FERPA -> FERPA_schoolOfficial
+FERPA -> FERPA_study
+FERPA -> FERPA_consent
+FERPA -> FERPA_audit
+EducationRecords -> PPRA
+PPRA -> PPRA_protected
+PPRA -> PPRA_protectedDeidentified
+PPRA -> PPRA_consent
+PPRA -> PPRA_optOutProvided
+PPRA -> PPRA_marketing
+Legal -> ContractOrPolicy
+ContractOrPolicy -> ContractOrPolicy_no
+ContractOrPolicy -> ContractOrPolicy_yes
 Legal -> GovernmentRecords
 GovernmentRecords -> DPPA
 DPPA -> DPPA_highlyRestricted
@@ -196,9 +197,6 @@ Census -> Census_CensusPublished
 GovernmentRecords -> ESRA
 ESRA -> ESRA_restricted
 ESRA -> ESRA_public
-Legal -> Additional
-Additional -> Additional_no
-Additional -> Additional_yes
 DataTags -> Code
 Code -> Code_blue
 Code -> Code_green

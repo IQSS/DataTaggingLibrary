@@ -91,7 +91,16 @@ public class CompoundValue extends TagValue {
 		final CompoundValue other = (CompoundValue) obj;
 		return super.equals(obj) && Objects.equals(this.fields, other.fields);
 	}
-
+    
+    @Override
+    protected String tagValueToString() {
+        StringBuilder sb = new StringBuilder();
+        for ( TagValue tv : fields.values() ) {
+            sb.append( tv.toString() );
+        }
+        return "<" + sb + ">";
+    }
+    
     /**
      * Returns a copy with values of both {@code this} and {@code other}.
      * For each value type T, the composition is as follows:

@@ -179,10 +179,10 @@
       (Targeted request: Refers to a request by a person who the educational agency or institution reasonably believes knows the identity of the student to whom the education record relates. For example, if there was a rumor published in the local paper that a public official was disciplined for cheating during his senior year in high school, a request to the high school for the disciplinary records of students who were caught cheating during the year the public official was a senior would be considered a targeted request.)
     )
     (no:
-      (set: PPRAProtection=protected, Code=orange, Harm=civil,
+      (set: PPRA=protected, Code=orange, Harm=civil,
             Transit=encrypt, Effort=identifiable))
     (yes:
-      (set: PPRAProtection=protectedDeidentified, Code=green, Harm=minimal,
+      (set: PPRA=protectedDeidentified, Code=green, Harm=minimal,
             Transit=clear, Effort=deidentified))
   )
   (>ppra3< ask: 
@@ -193,37 +193,34 @@
       (>ppra4< ask:
         (text: Was written consent obtained from the parents of the students who participated in the survey or assessment, or from the students themselves if they are adults or emancipated minors, prior to the data collection?)
         (yes: 
-          (set: PPRATraits=consent)
-          (>ppra5< ask:
-            (text: Was any of the personal information in the data collected from students for the purpose of marketing or sale?)
-            (terms:
-              (Personal Information: Refers to individually identifiable information including, but not limited to:
-                * a student or parent’s first and last name,
-                * a home or other physical address, including street name and the name of the city or town,
-                * a telephone number, or
-                * a Social Security identification number.)
-              (Marketing Purpose:
-                This does not include the gathering and release of information for the following activities:
-                * College, post-secondary education, or military recruitment
-                * Book clubs, magazines, and low-cost literacy products
-                * Curriculum and instructional materials used by elementary and secondary schools
-                * Certain tests and assessments used by elementary and secondary schools
-                * Sale by students of services and products for education or school-related, fundraising activities
-                * Student recognition programs)
-              )
-              (yes:
-                (set:PPRATraits=marketing))
-          )
-          (end)
+          (set: PPRA=consent)
         )
         (no:
           (reject: Possible PPRA violation due to failure to obtain written consent for collection of information protected under the PPRA))
         (Not Sure:
           (reject: Please ask the party that collected the data whether written consent from the parents was obtained. Dataset cannot be accepted without clarifying this issue.))
-      )
-    )
-  )
+  )))
 ))
+(>ppra5< ask:
+  (text: Was any of the personal information in the data collected from students for the purpose of marketing or sale?)
+  (terms:
+    (Personal Information: Refers to individually identifiable information including, but not limited to:
+      * a student or parent’s first and last name,
+      * a home or other physical address, including street name and the name of the city or town,
+      * a telephone number, or
+      * a Social Security identification number.)
+    (Marketing Purpose:
+      This does not include the gathering and release of information for the following activities:
+      * College, post-secondary education, or military recruitment
+      * Book clubs, magazines, and low-cost literacy products
+      * Curriculum and instructional materials used by elementary and secondary schools
+      * Certain tests and assessments used by elementary and secondary schools
+      * Sale by students of services and products for education or school-related, fundraising activities
+      * Student recognition programs)
+    )
+    (yes:
+      (set:PPRA=marketing))
+)
 (>ppra6< ask:
   (text: Does the school in which the information was collected receive any funds from the US Department of Education?)
   (terms:
@@ -232,7 +229,7 @@
     (>ppra7< ask:
       (text: Were parents provided with notice and an opportunity to opt out of the collection and disclosure of the information?)
       (no: (reject: Possible PPRA violation due to school’s failure to provide parents with the opportunity to opt out of the data collection))
-      (yes: (set: PPRATraits=optOutProvided))
+      (yes: (set: PPRA=optOutProvided))
     )
   )
 )
@@ -293,7 +290,8 @@
       Refers to a request by a person who the educational agency or institution reasonably believes knows the identity of the student to whom the education record relates. For example, if there was a rumor published in the local paper that a public official was disciplined for cheating during his senior year in high school, a request to the high school for the disciplinary records of students who were caught cheating during the year the public official was a senior would be considered a targeted request.)
   )
   (no: 
-    (set: FERPA=deidentified, Code=green, Harm=minimal, Storage=clear, Transit=clear, Effort=deidentified))
+    (set: FERPA=deidentified, Code=green, Harm=minimal, Storage=clear, Transit=clear, Effort=deidentified)
+    (end))
 )
 (>ferpa11< ask:
   (text:  Did the educational agency or institution designate all of the personally identifiable information in the data as directory information? The educational agency or institution provides notice to students and parents of the types of information it has designated as directory information.)
@@ -335,36 +333,38 @@
   (yes:
      (set: FERPA=consent, Code=yellow, Harm=shame, Transit=encrypt, Effort=identifiable)
      (todo: Consent sub-routine) )
-)
-(>ferpa13< ask:
-  (text: Are the data being disclosed to a school official or contractor with a legitimate educational interest?)
-  (terms:
-    (School official or contractor:
-      This includes professors; instructors; administrators; health staff; counselors; attorneys; clerical staff; trustees; members of committees and disciplinary boards; and contractors, consultants, volunteers or other parties to whom the school has outsourced institutional services or functions.)
-    (Legitimate educational interest:
-      A school official generally has a legitimate educational interest if the official needs to review an education record in order to fulfill his or her professional responsibility. Legitimate educational interests include, but are not limited to, performing a task related to the regular duties of the employee or agent, the student’s education, or a service or benefit for the student.)
-  )
-  (yes:
-    (set: FERPA=schoolOfficial, Code=yellow, Harm=shame, Transit=encrypt, Effort=identifiable) )
-)
-(>ferpa14< ask: 
-  (text:
-     Are the data being disclosed for the purpose of conducting a study for, or on behalf of, the educational agency or institution in order to develop, validate, or administer predictive tests, or improve instruction?)
-  (yes:
-    (set: FERPA=study, Code=yellow, Harm=shame, Transit=encrypt, Effort=identifiable)
-    (todo: DUA subroutine) )
-)
-(>ferpa15< ask:
-  (text: Are the data being disclosed for the purpose of conducting an audit or evaluation of a federal- or state-supported education program?)
-  (terms:
-    (Education program:
-      Refers to a program principally engaged in the provision of education, including, but not limited to, early childhood education, elementary and secondary education, postsecondary education, special education, job training, career and technical education, and adult education, and any program that is administered by an educational agency or institution.))
-  (yes:
-    (set: FERPA=audit, Code=yellow, Harm=shame, Transit=encrypt, Effort=identifiable)
-    (todo: DUA subroutine))
-  (no: 
-    (reject: 
-       An educational agency or institution is likely breaching its FERPA duties because it is disclosing, or a third party is re-disclosing, non-directory PII without parental consent where no obvious FERPA exception applies.)
+  (no:
+    (>ferpa13< ask:
+      (text: Are the data being disclosed to a school official or contractor with a legitimate educational interest?)
+      (terms:
+        (School official or contractor:
+          This includes professors; instructors; administrators; health staff; counselors; attorneys; clerical staff; trustees; members of committees and disciplinary boards; and contractors, consultants, volunteers or other parties to whom the school has outsourced institutional services or functions.)
+        (Legitimate educational interest:
+          A school official generally has a legitimate educational interest if the official needs to review an education record in order to fulfill his or her professional responsibility. Legitimate educational interests include, but are not limited to, performing a task related to the regular duties of the employee or agent, the student’s education, or a service or benefit for the student.)
+      )
+      (yes:
+        (set: FERPA=schoolOfficial, Code=yellow, Harm=shame, Transit=encrypt, Effort=identifiable) )
+    )
+    (>ferpa14< ask: 
+      (text:
+         Are the data being disclosed for the purpose of conducting a study for, or on behalf of, the educational agency or institution in order to develop, validate, or administer predictive tests, or improve instruction?)
+      (yes:
+        (set: FERPA=study, Code=yellow, Harm=shame, Transit=encrypt, Effort=identifiable)
+        (todo: DUA subroutine) )
+    )
+    (>ferpa15< ask:
+      (text: Are the data being disclosed for the purpose of conducting an audit or evaluation of a federal- or state-supported education program?)
+      (terms:
+        (Education program:
+          Refers to a program principally engaged in the provision of education, including, but not limited to, early childhood education, elementary and secondary education, postsecondary education, special education, job training, career and technical education, and adult education, and any program that is administered by an educational agency or institution.))
+      (yes:
+        (set: FERPA=audit, Code=yellow, Harm=shame, Transit=encrypt, Effort=identifiable)
+        (todo: DUA subroutine))
+      (no: 
+        (reject: 
+           An educational agency or institution is likely breaching its FERPA duties because it is disclosing, or a third party is re-disclosing, non-directory PII without parental consent where no obvious FERPA exception applies.)
+      )
+    )
   )
 )
 (end)
@@ -521,6 +521,6 @@
 			(1 year:   (set: TimeLimit=_1yr) ))))
 ( >duaAdditional< ask:
 	(text: Did the data have any restrictions on sharing, e.g. stated in an agreement or policy statement?)
-	(yes: (set: Additional=yes))
-	(no:  (set: Additional=no)))
+	(yes: (set: ContractOrPolicy=yes))
+	(no:  (set: ContractOrPolicy=no)))
 (end)

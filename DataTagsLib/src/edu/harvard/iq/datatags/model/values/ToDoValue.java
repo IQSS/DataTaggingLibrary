@@ -32,4 +32,8 @@ public class ToDoValue extends TagValue {
         return info;
     }
 	
+    @Override
+    protected String tagValueToString() {
+        return "<TODO>";
+    }
 }

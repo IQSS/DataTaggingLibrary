@@ -38,8 +38,12 @@ public abstract class ChartEntity {
 	@Override
 	public String toString() {
 		String comps[] = getClass().getName().split("\\.");
+        String toStringExtras = toStringExtras();
+        if ( ! toStringExtras.isEmpty() ) {
+            toStringExtras = " " + toStringExtras;
+        }
 		return String.format("[%s id:%s title:%s%s]",
-				comps[comps.length-1], getId(), getTitle(), toStringExtras() );
+				comps[comps.length-1], getId(), getTitle(), toStringExtras);
 	}
 	
 	/**

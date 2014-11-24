@@ -50,7 +50,7 @@ public class RepeatIdValidatorTest {
                       "(call: ferpaCompliance )\n" +
                       "(call: govRecsCompliance )";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
-        LinkedList<ValidationMessage> messages = instance.validateRepeatIds(refs);
+        List<ValidationMessage> messages = instance.validateRepeatIds(refs);
         assertEquals(new LinkedList<String>(), messages);
     }
     
@@ -60,7 +60,7 @@ public class RepeatIdValidatorTest {
                       "(>medicalRecordsCompliance< call: ppraCompliance)" +
                       "(>MR2< call: ppraCompliance)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
-        LinkedList<ValidationMessage> messages = instance.validateRepeatIds(refs);
+        List<ValidationMessage> messages = instance.validateRepeatIds(refs);
         assertEquals(new LinkedList<String>(), messages);
     }
     
@@ -70,8 +70,8 @@ public class RepeatIdValidatorTest {
                       "(>medicalRecordsCompliance< call: ppraCompliance)" +
                       "(>personalData< call: ppraCompliance)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
-        LinkedList<ValidationMessage> messages = instance.validateRepeatIds(refs);
-        LinkedList<ValidationMessage> expected = new LinkedList<ValidationMessage>(Arrays.asList(new ValidationMessage(Level.ERROR, "Duplicate node id: \"personalData\".")));
+        List<ValidationMessage> messages = instance.validateRepeatIds(refs);
+        List<ValidationMessage> expected = new LinkedList<>(Arrays.asList(new ValidationMessage(Level.ERROR, "Duplicate node id: \"personalData\".")));
        // expected.add("Validation message: ERROR: Duplicate node id: \"personalData\".");
         assertEquals(expected, messages);
     }
@@ -85,7 +85,7 @@ public class RepeatIdValidatorTest {
                 + "(>repeat< ask: (text: is this a repeat?)"
                 + "(yes: (>todo1< todo: yes.)))";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
-        LinkedList<ValidationMessage> messages = instance.validateRepeatIds(refs);
+        List<ValidationMessage> messages = instance.validateRepeatIds(refs);
         assertEquals(new LinkedList<String>(), messages);
     }
 

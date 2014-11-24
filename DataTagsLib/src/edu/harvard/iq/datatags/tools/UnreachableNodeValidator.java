@@ -6,7 +6,7 @@ import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
 import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
 import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
-import edu.harvard.iq.datatags.model.charts.nodes.Node.NullVisitor;
+import edu.harvard.iq.datatags.model.charts.nodes.Node.VoidVisitor;
 import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
@@ -15,6 +15,7 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,7 +24,7 @@ import java.util.Set;
  * node.
  * @author Naomi
  */
-public class UnreachableNodeValidator extends NullVisitor {
+public class UnreachableNodeValidator extends VoidVisitor {
     
     private final LinkedList<ValidationMessage> validationMessages = new LinkedList<>();
     private final Set<String> reachedNodeIds = new HashSet<>();
@@ -32,9 +33,10 @@ public class UnreachableNodeValidator extends NullVisitor {
     /**
      * Check each FlowChart in the FlowChartSet for unreachable nodes.
      * Begin from the start node identified by the FlowChart.
-     * Return WARNING messages showing the unreachable nodes.
+     * @param fcs The chart set we validate.
+     * @return WARNING messages showing the unreachable nodes.
      */
-    public LinkedList<ValidationMessage> validateUnreachableNodes(FlowChartSet fcs) {
+    public List<ValidationMessage> validateUnreachableNodes(FlowChartSet fcs) {
         Set<String> flowChartNodeIds = new HashSet<>();
         for (FlowChart chart : fcs.charts()) {
             flowChartNodeIds.addAll( chart.nodeIds() );

@@ -72,7 +72,8 @@ public abstract class TagValue {
 
 	@Override
 	public String toString() {
-		return "[TagValue type:" + type + ']';
+		return "[TagValue type:" + type + " value:" + tagValueToString() + "]";
 	}
 	
+    protected abstract String tagValueToString();
 }

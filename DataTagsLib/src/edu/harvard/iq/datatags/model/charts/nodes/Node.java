@@ -21,7 +21,7 @@ public abstract class Node extends ChartEntity {
 		R visit( EndNode nd ) throws DataTagsRuntimeException;
 	}
     
-    public static abstract class NullVisitor implements Visitor<Void> {
+    public static abstract class VoidVisitor implements Visitor<Void> {
 
         @Override
         public Void visit(AskNode nd) throws DataTagsRuntimeException {

@@ -82,8 +82,8 @@ public class AggregateValue extends TagValue {
 	}
 	
 	@Override
-    public String toString() {
-        return "[AggregateValue type:" + getType() + " values:" + getValues() + "]";
+    protected String tagValueToString() {
+        return "<" + getValues() + ">";
     }
 
 }

@@ -73,6 +73,11 @@ public class SimpleValue extends TagValue implements Comparable<SimpleValue>{
     public String getInfo() {
         return info;
     }
+
+    @Override
+    protected String tagValueToString() {
+        return "<" + getOrdinal() + " " + getName() + ">";
+    }
 	
 	
 }

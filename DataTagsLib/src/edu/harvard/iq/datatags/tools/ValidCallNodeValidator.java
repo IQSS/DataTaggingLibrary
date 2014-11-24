@@ -6,7 +6,7 @@ import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
 import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
 import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.charts.nodes.Node;
-import edu.harvard.iq.datatags.model.charts.nodes.Node.NullVisitor;
+import edu.harvard.iq.datatags.model.charts.nodes.Node.VoidVisitor;
 import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
@@ -20,7 +20,7 @@ import java.util.LinkedList;
  * 
  * @author Naomi
  */
-public class ValidCallNodeValidator extends NullVisitor {
+public class ValidCallNodeValidator extends VoidVisitor {
     
     private final LinkedList<ValidationMessage> validationMessages = new LinkedList<>();
     private FlowChart chart;

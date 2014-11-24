@@ -61,7 +61,7 @@ public class QuestionnaireValidation {
             
             
             UnreachableNodeValidator unv = new UnreachableNodeValidator();
-            LinkedList<ValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
+            List<ValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
             if (!unreachableNodeMessages.isEmpty()) {
                 System.out.println("*****************\nUNREACHABLE NODES:");
                 for ( ValidationMessage m : unreachableNodeMessages ) {
@@ -71,7 +71,7 @@ public class QuestionnaireValidation {
             }
             
             ValidCallNodeValidator fcv = new ValidCallNodeValidator();
-            LinkedList<ValidationMessage> callNodeMessages = fcv.validateIdReferences(fcs);
+            List<ValidationMessage> callNodeMessages = fcv.validateIdReferences(fcs);
             if (!callNodeMessages.isEmpty()) {
                 System.out.println("*****************\nNONEXISTENT NODES:");
                 for ( ValidationMessage m : callNodeMessages ) {
@@ -80,7 +80,7 @@ public class QuestionnaireValidation {
             }
             
             RepeatIdValidator riv = new RepeatIdValidator();
-            LinkedList<ValidationMessage> repeatIdMessages = riv.validateRepeatIds(refs);
+            List<ValidationMessage> repeatIdMessages = riv.validateRepeatIds(refs);
             if (!repeatIdMessages.isEmpty()) {
                 System.out.println("*****************\nREPEATED IDS:");
                 for ( ValidationMessage m : repeatIdMessages) {
@@ -89,7 +89,7 @@ public class QuestionnaireValidation {
             }
             
             DuplicateNodeAnswerValidator dupNode = new DuplicateNodeAnswerValidator();
-            LinkedList<InstructionNodeRef> duplicateNodeMessages = dupNode.validateDuplicateAnswers(refs);
+            List<InstructionNodeRef> duplicateNodeMessages = dupNode.validateDuplicateAnswers(refs);
             if (!duplicateNodeMessages.isEmpty()) {
                 System.out.println("*****************\nDUPLICATE ANSWERS:");
                 for ( InstructionNodeRef r : duplicateNodeMessages) {

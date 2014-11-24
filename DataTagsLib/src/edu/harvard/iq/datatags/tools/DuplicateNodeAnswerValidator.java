@@ -22,7 +22,7 @@ public class DuplicateNodeAnswerValidator extends NullVisitor{
     
     private LinkedList<InstructionNodeRef> duplicateAnswers;
     
-    public LinkedList<InstructionNodeRef> validateDuplicateAnswers(List<InstructionNodeRef> allRefs) {
+    public List<InstructionNodeRef> validateDuplicateAnswers(List<InstructionNodeRef> allRefs) {
         duplicateAnswers = new LinkedList<>();
         for (InstructionNodeRef ref: allRefs) {
             ref.accept(this);

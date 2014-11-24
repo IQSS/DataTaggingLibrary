@@ -26,7 +26,7 @@ public class RepeatIdValidator extends NullVisitor {
     private HashSet<String> seenIds = new HashSet<>();
     private LinkedList<ValidationMessage> validationMessages = new LinkedList<>();
     
-    public LinkedList<ValidationMessage> validateRepeatIds(List<InstructionNodeRef> refs) {
+    public List<ValidationMessage> validateRepeatIds(List<InstructionNodeRef> refs) {
         for (InstructionNodeRef ref : refs) {
             ref.accept(this);
         }

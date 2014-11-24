@@ -102,7 +102,7 @@ public class ValidCallNodeValidation {
             
             System.out.println("Validating repeating ids");
             RepeatIdValidator riv = new RepeatIdValidator();
-            LinkedList<ValidationMessage> repeatIdMessages = riv.validateRepeatIds(refs);
+            List<ValidationMessage> repeatIdMessages = riv.validateRepeatIds(refs);
             if (repeatIdMessages.size() > 0) {
                 System.out.println(repeatIdMessages);
             }
@@ -115,7 +115,7 @@ public class ValidCallNodeValidation {
             System.out.println("====================");
             UnreachableNodeValidator unv = new UnreachableNodeValidator();
             System.out.println("Validating unreachable nodes");
-            LinkedList<ValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
+            List<ValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
             for ( ValidationMessage m : unreachableNodeMessages ) {
                 System.out.println(m);
                 System.out.println("\t" + m.getEntities());

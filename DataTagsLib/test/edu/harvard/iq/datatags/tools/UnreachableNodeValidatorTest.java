@@ -71,7 +71,7 @@ public class UnreachableNodeValidatorTest {
         System.out.println("refs = " + refs);
         
         fcs = fcsc.parse(refs, "unitName");
-        LinkedList<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
+        List<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
         
         Set<ChartEntity> expected = Collections.<ChartEntity>emptySet();
         Set<ChartEntity> actualEntities = new HashSet<>();
@@ -99,7 +99,7 @@ public class UnreachableNodeValidatorTest {
         System.out.println("refs = " + refs);
         
         fcs = fcsc.parse(refs, "unitName");
-        LinkedList<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
+        List<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
         
         Set<ChartEntity> expected = Collections.<ChartEntity>singleton( new EndNode("nr") );
         Set<ChartEntity> actualEntities = new HashSet<>();
@@ -133,7 +133,7 @@ public class UnreachableNodeValidatorTest {
         System.out.println("refs = " + refs);
         
         fcs = fcsc.parse(refs, "unitName");
-        LinkedList<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
+        List<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
         
         Set<ChartEntity> expected = new HashSet<ChartEntity>(Arrays.asList(new RejectNode("reject4", "Still no."),
                                     new RejectNode("reject3", "No."), new EndNode("end1"), new AskNode("ask2")));

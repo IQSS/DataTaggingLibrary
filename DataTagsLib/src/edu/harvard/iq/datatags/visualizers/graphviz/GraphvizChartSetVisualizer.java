@@ -75,6 +75,58 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
             return sb.toString();
         }
     };
+
+    /**
+     * Finds all the nodes that are the head of a subroutine/section, to the extent we 
+     * have those (we currently don't).
+     * @param fc the FlowChart we search in
+     * @return Set of all nodes to draw subcharts from.
+     */
+    private Set<Node> findSubchartHeades(FlowChart fc) {
+        final Set<Node> candidates = new HashSet<>();
+        for ( Node n : fc.nodes() ) {candidates.add(n);}
+        for ( Node n : fc.nodes() ) {
+            if ( candidates.contains(n) ) {
+                n.accept( new Node.VoidVisitor(){
+
+                    @Override
+                    public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
+                        System.out.println("nd " + nd.getId());
+                        for ( Answer n : nd.getAnswers() ) {
+                            System.out.println("n = " + n);
+                            Node answerNode = nd.getNodeFor(n);
+                            candidates.remove(answerNode);
+                            answerNode.accept(this);
+                        }
+                    }
+
+                    @Override
+                    public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
+                        candidates.remove(nd.getNextNode());
+                        nd.getNextNode().accept(this);
+                    }
+
+                    @Override
+                    public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {}
+
+                    @Override
+                    public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
+                        candidates.remove(nd.getNextNode());
+                    }
+
+                    @Override
+                    public void visitImpl(TodoNode nd) throws DataTagsRuntimeException {
+                        candidates.remove(nd.getNextNode());
+                    }
+
+                    @Override
+                    public void visitImpl(EndNode nd) throws DataTagsRuntimeException {}
+                });
+            }
+        }
+        
+        return candidates;
+    }
             
 	private class NodePainter implements  Node.Visitor<Void> {
 		
@@ -88,9 +140,13 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		
 		@Override
 		public Void visit(AskNode nd) throws DataTagsRuntimeException {
+            String nodeText = nd.getText();
+            if ( nodeText.length() > 140 ) {
+                nodeText = nodeText.substring(0,140) + "...";
+            }
 			nodes.add( node(nodeId(nd))
 					.shape(GvNode.Shape.oval)
-					.label( idLabel(nd) + "ask\\n" + wrap(nd.getText()) )
+					.label( idLabel(nd) + "ask\\n" + wrap(nodeText) )
 					.gv());
 			for ( Answer ans : nd.getAnswers() ) {
 				edges.add( edge(nodeId(nd), nodeId(nd.getNodeFor(ans))).tailLabel(ans.getAnswerText()).gv() );
@@ -158,7 +214,7 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		@Override
 		public Void visit(EndNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd)).shape(GvNode.Shape.point)
-                            .fillColor("#333333").add("height", "0.25").add("width", "0.25").gv() );
+                            .fillColor("#333333").add("height", "0.2").add("width", "0.2").gv() );
 			return null;
 		}
 		
@@ -210,6 +266,14 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
 		wrt.write( String.format("label=\"%s\"", humanTitle(fc)) );
 		wrt.newLine();
 		
+        Set<Node> subchartHeads = findSubchartHeades( fc );
+        
+        System.out.println("Subchart Heads");
+        for ( Node n:subchartHeads ) {
+            System.out.println(n);
+        }
+        System.out.println();
+        
         Set<Node> sources = new HashSet<>();
 		for ( Node n : fc.nodes() ) {
             sources.add(n);

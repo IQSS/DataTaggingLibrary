@@ -53,7 +53,7 @@ public class DuplicateNodeAnswerValidatorTest {
     public void validateDuplicateAnswerTest_noAnswers() throws BadSetInstructionException {
         String code = "(todo: there are no answers here to check)(end)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
-        LinkedList<InstructionNodeRef> duplicates = instance.validateDuplicateAnswers(refs);
+        List<InstructionNodeRef> duplicates = instance.validateDuplicateAnswers(refs);
         assertEquals(new LinkedList<String>(), duplicates);
     } 
     
@@ -64,7 +64,7 @@ public class DuplicateNodeAnswerValidatorTest {
                 + "(no: (>todo2< todo: still no duplicates)))"
                 + "(>end1<end)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
-        LinkedList<InstructionNodeRef> duplicates = instance.validateDuplicateAnswers(refs);
+        List<InstructionNodeRef> duplicates = instance.validateDuplicateAnswers(refs);
         assertEquals(new LinkedList<String>(), duplicates);
     } 
     
@@ -75,7 +75,7 @@ public class DuplicateNodeAnswerValidatorTest {
                 + "(yes: (>todo2< todo: yes there is!))"
                 + "(no: (>todo3< todo: this is just another answer)))";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
-        LinkedList<InstructionNodeRef> duplicates = instance.validateDuplicateAnswers(refs);
+        List<InstructionNodeRef> duplicates = instance.validateDuplicateAnswers(refs);
         // the first instruction node should be a repeat
         LinkedList<InstructionNodeRef> expected = new LinkedList<>(Arrays.asList(refs.get(0)));
         assertEquals(expected, duplicates);

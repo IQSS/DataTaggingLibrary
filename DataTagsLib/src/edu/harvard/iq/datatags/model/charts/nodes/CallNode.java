@@ -43,5 +43,11 @@ public class CallNode extends ThroughNode {
 		this.calleeNodeId = calleeId;
 		return calleeId;
 	}
+
+    @Override
+    protected String toStringExtras() {
+        return "callee:" + getCalleeChartId()+"/"+getCalleeNodeId();
+    }
 	
+    
 }
