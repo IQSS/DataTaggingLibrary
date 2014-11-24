@@ -3,6 +3,38 @@ body {
   background-color: @bodyBackground;
   // background-color: yellow;
 }
+
+h3 {
+  color: @dataTagsBlue;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.25);
+}
+
+.page-header {
+  text-align: center;
+}
+
+@iconContainerEdge: 100px;
+.insetBox {
+  text-align: center;
+  font-style: italic;
+  .iconContainer {
+    margin: auto;
+    width: @iconContainerEdge;
+    height: @iconContainerEdge;
+    border-radius: @iconContainerEdge/2;
+    border: 4px solid #000;
+    padding-top: 13px;
+
+  }
+}
+
+.initiallyHidden {
+  display: none;
+  border-top: 1px solid #000;
+  background-color: rgba(0,0,0,0.05);
+  padding: 4px;
+}
+
 @rotate: -1deg;
 .note {
     &:before {
