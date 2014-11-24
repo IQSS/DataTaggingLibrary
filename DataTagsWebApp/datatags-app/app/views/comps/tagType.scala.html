@@ -4,8 +4,10 @@
 
 @simpleType( tp: SimpleType ) = {
   <div class="tagtype tagtype-simple">
-    <span class="typeName">@tp.getName</span>
-    <span class="typeValues">
+    <div class="typeName">@tp.getName
+      <small>One of:</small>
+    </div>
+    <div class="typeValues">
       @for( sv <- tp.values ) {
         @if( sv.getInfo==null ) {
           <span class="valueAtom">@sv.getName</span>
@@ -18,15 +20,16 @@
           </span>
         }
       }
-    </span>
-    <small>Single value</small>
+    </div>
   </div>
 }
 
 @aggregateType( tp: AggregateType ) = {
   <div class="tagtype tagtype-aggregate">
-    <span class="typeName">@tp.getName</span>
-    <span class="typeValues">
+    <div class="typeName">@tp.getName
+      <small>Some of:</small>
+    </div>
+    <div class="typeValues">
       @for( sv <- tp.getItemType.values ) {
         @if( sv.getInfo==null ) {
             <span class="valueAtom">@sv.getName</span>
@@ -39,8 +42,7 @@
             </span>
           }
         }
-    </span>
-    <small>Multiple values</small>
+    </div>
   </div>
 }
 
@@ -69,11 +71,12 @@
 
 @todoType( tp: ToDoType ) = {
   <div class="tagtype tagtype-todo">
-    <span class="typeName">@tp.getName</span>
-    <span class="typeValues">
+    <div class="typeName">@tp.getName
+      <small>value placeholder</small>
+    </div>
+    <div class="typeValues">
         <span class="valueAtom">TODO</span>
-    </span>
-    <small>value placeholder</small>
+    </div>
   </div>
 }
 

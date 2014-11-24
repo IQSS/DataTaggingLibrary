@@ -2,6 +2,28 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/tools/RepeatIdValidator.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/test/edu/harvard/iq/datatags/parser/flowcharts/FlowChartASTParserTest.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/test/edu/harvard/iq/datatags/tools/UnreachableNodeValidatorTest.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/tools/DuplicateNodeAnswerValidator.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/charts/nodes/Node.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/charts/nodes/TodoNode.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/values/ToDoValue.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/tools/ValidationMessage.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/charts/nodes/CallNode.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/tools/ValidCallNodeValidator.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/mains/ValidCallNodeValidation.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/tools/UnreachableNodeValidator.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/charts/nodes/SetNode.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/test/edu/harvard/iq/datatags/tools/DuplicateNodeAnswerValidatorTest.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/parser/flowcharts/FlowChartASTParser.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/values/TagValue.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/visualizers/graphviz/GraphvizChartSetVisualizer.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/model/values/CompoundValue.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/test/edu/harvard/iq/datatags/tools/RepeatIdValidatorTest.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/mains/FlowChartCompiling.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/Data-Tags_repo/DataTagsLib/src/edu/harvard/iq/datatags/mains/FlowChartParsing.java</file>
+        </group>
     </open-files>
 </project-private>

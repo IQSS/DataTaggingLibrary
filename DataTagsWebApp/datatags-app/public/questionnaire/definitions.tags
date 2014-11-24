@@ -1,6 +1,6 @@
 DataTags: Code, Handling, Legal, Assertions.
 
-Legal: FERPA, PPRA, MedicalRecords, GovernmentRecords, Additional.
+Legal: EducationRecords, MedicalRecords, GovernmentRecords, ContractOrPolicy.
 
 Assertions: DataType, IP, Identity.
 
@@ -43,7 +43,12 @@ DUA:
 	Sharing, Reidentify, Publication, Auditing.
 
 
-TimeLimit: one of none, _1yr, _2yr, _5yr, _50yr.
+TimeLimit: one of
+ none (Data stored indefinitely), 
+ _1yr (Data will be deleted after 1 years),
+ _2yr (Data will be deleted after 2 years),
+ _5yr (Data will be deleted after 5 years),
+ _50yr (Data will be deleted after 50 years).
 
 Sharing: one of
 		Anyone,
@@ -78,11 +83,22 @@ HIPAA: some of
 		safeHarborDeidentified, safeHarborExpert, statistician, limitedDataset, businessAssociateAgreement.
 Part2: one of deidentified, veteransMedicalData, consent, scientificResearch.
 
-FERPA: some of deidentified, directoryOptOut, directoryInfo, schoolOfficial, study, consent, audit.
+EducationRecords: FERPA, PPRA.
+FERPA: some of 
+	deidentified (The data contain deidentified education records as defined in FERPA),
+	directoryOptOut (The data contain directory information from students who have requested to opt out of the disclosure of this information),
+	directoryInfo (The data contain identifiable information from education records designated by an educational agency or institution as directory information),
+	schoolOfficial (The data contain identifiable information from education records disclosed under the school official exception to FERPA),
+	study (The data contain identifiable information from education records disclosed under the studies exception to FERPA),
+	consent (The data contain identifiable information from education records disclosed with the consent of the parents or students),
+	audit (The data contain identifiable information from education records disclosed under the audit or evaluation exception to FERPA).
 
-PPRA: PPRAProtection, PPRATraits.
-PPRAProtection: one of protected, protectedDeidentified.
-PPRATraits: some of consent, optOutProvided, marketing.
+PPRA: some of
+	protected (The data contain identifiable information that falls within one of the 8 categories of sensitive information protected under the PPRA),
+	protectedDeidentified (The data contain deidentified information that falls within one of the 8 categories of sensitive information protected under the PPRA),
+	consent (The data were collected with the prior written consent of the parents, or adult or emancipated minor students),
+	optOutProvided (The data were collected after providing parents with notice and an opportunity to opt out of the collection and disclosure of the information),
+	marketing (The data contain personal information collected from students for the purpose of marketing or sale).
 
 GovernmentRecords: DPPA, Census, ESRA, PrivacyAct, CIPSEA.
 DPPA: some of highlyRestricted, required, stateConsentLimited, stateConsentBroad, requesterConsentLimited, requesterConsentBroad, research, exception.
@@ -90,4 +106,4 @@ Census: some of CensusPublished.
 ESRA: some of restricted, public.
 CIPSEA: some of deidentified, identifiable.
 PrivacyAct: some of deidentified, identifiable.
-Additional: one of no, yes.
+ContractOrPolicy: one of no, yes.
