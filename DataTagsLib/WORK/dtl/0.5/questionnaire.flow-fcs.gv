@@ -7,70 +7,71 @@ label="questionnaire.flow-c1"
 questionnaire_flow_c1_HSH__DLR_1[ shape="oval" label="ask\nDo the data concern living persons? " ]
 questionnaire_flow_c1_HSH__DLR_10[ fillcolor="#BBBBFF" shape="cds" label="questionnaire.flow-c1/ppraCompliance" ]
 questionnaire_flow_c1_HSH__DLR_101[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ PPRA:[ consent ] ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_103[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible PPRA violation due to failure \nto obtain written consent for collection \nof information protected under the PPRA " ]
-questionnaire_flow_c1_HSH__DLR_105[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPlease ask the party that collected the \ndata whether written consent from the \nparents was obtained. Dataset cannot be \naccepted without clarifying this issue. " ]
+questionnaire_flow_c1_HSH__DLR_102[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
+questionnaire_flow_c1_HSH__DLR_104[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible PPRA violation due to failure \nto obtain written consent for collection \nof information protected under the PPRA " ]
+questionnaire_flow_c1_HSH__DLR_106[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPlease ask the party that collected the \ndata whether written consent from the \nparents was obtained. Dataset cannot be \naccepted without clarifying this issue. " ]
 questionnaire_flow_c1_HSH__DLR_11[ fillcolor="#BBBBFF" shape="cds" label="questionnaire.flow-c1/ferpaCompliance" ]
-questionnaire_flow_c1_HSH__DLR_110[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ PPRA:[ marketing ] ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_117[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible PPRA violation due to school’s \nfailure to provide parents with the \nopportunity to opt out of the data \ncollection " ]
-questionnaire_flow_c1_HSH__DLR_119[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ PPRA:[ optOutProvided ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_111[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ PPRA:[ marketing ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_118[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible PPRA violation due to school’s \nfailure to provide parents with the \nopportunity to opt out of the data \ncollection " ]
 questionnaire_flow_c1_HSH__DLR_12[ fillcolor="#BBBBFF" shape="cds" label="questionnaire.flow-c1/govRecsCompliance" ]
-questionnaire_flow_c1_HSH__DLR_121[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
-questionnaire_flow_c1_HSH__DLR_124[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
-questionnaire_flow_c1_HSH__DLR_129[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
+questionnaire_flow_c1_HSH__DLR_120[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ PPRA:[ optOutProvided ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_122[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
+questionnaire_flow_c1_HSH__DLR_125[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
 questionnaire_flow_c1_HSH__DLR_13[ fillcolor="#AAFFAA" shape="note" label="todo\nArrest and Conviction Records, Bank and \nFinancial Records, Cable Television, \nComputer Crime, Credit reporting and \nInvestigations [including 'Credit \nRepair', 'Credit Clinics', Check-Cashing \nand Credit Cards], Criminal Justice \nInformation Systems, Electronic \nSurveillance [including Wiretapping, \nTelephone Monitoring, and Video \nCameras], Employment Records, Government \nInformation on Individuals, Identity \nTheft, Insurance Records [including use \nof Genetic Information], Library \nRecords, Mailing Lists [including Video \nrentals and Spam], Special Medical \nRecords [including HIV Testing], \nNon-Electronic Visual Surveillance. \nBreast-Feeding, Polygraphing in \nEmployment, Privacy Statutes/State \nConstitutions [including the Right to \nPublicity], Privileged Communications, \nSocial Security Numbers, Student \nRecords, Tax Records, Telephone Services \n[including Telephone Solicitation and \nCaller ID], Testing in Employment \n[including Urinalysis, Genetic and Blood \nTests], Tracking Technologies, Voter \nRecords " ]
-questionnaire_flow_c1_HSH__DLR_132[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ deidentified ] ] ]\nCode=green\nAssertions=[ DataType:[ Harm:minimal Effort:deidentified ] ]\nHandling=[ Transit:clear Storage:clear ]\n" ]
-questionnaire_flow_c1_HSH__DLR_133[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
+questionnaire_flow_c1_HSH__DLR_130[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
+questionnaire_flow_c1_HSH__DLR_133[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ deidentified ] ] ]\nCode=green\nAssertions=[ DataType:[ Harm:minimal Effort:deidentified ] ]\nHandling=[ Transit:clear Storage:clear ]\n" ]
+questionnaire_flow_c1_HSH__DLR_134[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
 questionnaire_flow_c1_HSH__DLR_14[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
-questionnaire_flow_c1_HSH__DLR_141[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ directoryOptOut ] ] ]\nCode=yellow\nAssertions=[ DataType:[ Harm:shame Effort:identifiable ] ]\nHandling=[ Transit:encrypt Storage:encrypt ]\n" ]
-questionnaire_flow_c1_HSH__DLR_143[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ directoryInfo ] ] ]\nCode=green\nAssertions=[ DataType:[ Harm:minimal Effort:identifiable ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_144[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
-questionnaire_flow_c1_HSH__DLR_148[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ consent ] ] ]\nCode=yellow\nAssertions=[ DataType:[ Harm:shame Effort:identifiable ] ]\nHandling=[ Transit:encrypt ]\n" ]
-questionnaire_flow_c1_HSH__DLR_149[ fillcolor="#AAFFAA" shape="note" label="todo\nConsent sub-routine " ]
-questionnaire_flow_c1_HSH__DLR_153[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ schoolOfficial ] ] ]\nCode=yellow\nAssertions=[ DataType:[ Harm:shame Effort:identifiable ] ]\nHandling=[ Transit:encrypt ]\n" ]
-questionnaire_flow_c1_HSH__DLR_158[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ study ] ] ]\nCode=yellow\nAssertions=[ DataType:[ Harm:shame Effort:identifiable ] ]\nHandling=[ Transit:encrypt ]\n" ]
-questionnaire_flow_c1_HSH__DLR_159[ fillcolor="#AAFFAA" shape="note" label="todo\nDUA subroutine " ]
-questionnaire_flow_c1_HSH__DLR_162[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ audit ] ] ]\nCode=yellow\nAssertions=[ DataType:[ Harm:shame Effort:identifiable ] ]\nHandling=[ Transit:encrypt ]\n" ]
-questionnaire_flow_c1_HSH__DLR_163[ fillcolor="#AAFFAA" shape="note" label="todo\nDUA subroutine " ]
-questionnaire_flow_c1_HSH__DLR_165[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nAn educational agency or institution is \nlikely breaching its FERPA duties \nbecause it is disclosing, or a third \nparty is re-disclosing, non-directory \nPII without parental consent where no \nobvious FERPA exception applies. " ]
-questionnaire_flow_c1_HSH__DLR_168[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
-questionnaire_flow_c1_HSH__DLR_169[ fillcolor="#BBBBFF" shape="cds" label="questionnaire.flow-c1/DPPA1" ]
-questionnaire_flow_c1_HSH__DLR_170[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
-questionnaire_flow_c1_HSH__DLR_179[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ Census:[ CensusPublished ] ] ]\nCode=green\nAssertions=[ DataType:[ Harm:minimal Effort:deidentified ] ]\nHandling=[ Transit:clear Storage:clear ]\n" ]
-questionnaire_flow_c1_HSH__DLR_183[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ Census:[ CensusPublished ] ] ]\nCode=green\nAssertions=[ DataType:[ Harm:minimal Effort:deidentified ] ]\nHandling=[ Transit:clear Storage:clear ]\n" ]
-questionnaire_flow_c1_HSH__DLR_185[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible violation of Title 13 due to \nfailure to obtain permission from the \nCensus Bureau to publish the Census \ndata. " ]
-questionnaire_flow_c1_HSH__DLR_190[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible violation of ESRA due to \nfailure to obtain authorization to \ndisclose the data from the Institute of \nEducation Sciences " ]
-questionnaire_flow_c1_HSH__DLR_194[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ ESRA:[ restricted ] ] ]\nCode=yellow\nAssertions=[ DataType:[ Harm:shame ] ]\nHandling=[ Transit:encrypt Storage:encrypt ]\n" ]
-questionnaire_flow_c1_HSH__DLR_196[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ ESRA:[ public ] ] ]\nCode=green\nAssertions=[ DataType:[ Harm:minimal ] ]\nHandling=[ Transit:clear Storage:clear ]\n" ]
-questionnaire_flow_c1_HSH__DLR_203[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ CIPSEA:[ deidentified ] ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_205[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ CIPSEA:[ identifiable ] ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_206[ fillcolor="#AAFFAA" shape="note" label="todo\nCIPSEA DUA " ]
-questionnaire_flow_c1_HSH__DLR_212[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ PrivacyAct:[ identifiable ] ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_213[ fillcolor="#AAFFAA" shape="note" label="todo\nPrivacy Act DUA " ]
-questionnaire_flow_c1_HSH__DLR_215[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ PrivacyAct:[ deidentified ] ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_219[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
-questionnaire_flow_c1_HSH__DLR_226[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ highlyRestricted ] ] ]\nCode=orange\nAssertions=[ DataType:[ Harm:civil Effort:identifiable ] ]\nHandling=[ Transit:encrypt Storage:encrypt ]\n" ]
-questionnaire_flow_c1_HSH__DLR_228[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible violation of the DPPA due to \ndisclosure of highly restricted personal \ninformation without the consent of the \nindividuals in the data " ]
-questionnaire_flow_c1_HSH__DLR_230[ fillcolor="#AADDAA" shape="rect" label="Set\nCode=yellow\nAssertions=[ DataType:[ Harm:shame Effort:identifiable ] ]\nHandling=[ Transit:encrypt Storage:encrypt ]\n" ]
-questionnaire_flow_c1_HSH__DLR_233[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ required ] ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_237[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible violation of state law on \ndisclosure of drivers' records " ]
-questionnaire_flow_c1_HSH__DLR_242[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ stateConsentLimited ] ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_244[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ stateConsentBroad ] ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_250[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ requesterConsentLimited ] ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_252[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ requesterConsentBroad ] ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_256[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ research ] ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_260[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ exception ] ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_262[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\npossible violation of the DPPA because \nthe depositor has not cited one of the \nrequired or permissible uses for \ndisclosure. " ]
-questionnaire_flow_c1_HSH__DLR_264[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
-questionnaire_flow_c1_HSH__DLR_267[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[ DUA:[ TimeLimit:none ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_269[ shape="oval" label="ask\nFor how long should we keep the data? " ]
+questionnaire_flow_c1_HSH__DLR_142[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ directoryOptOut ] ] ]\nCode=yellow\nAssertions=[ DataType:[ Harm:shame Effort:identifiable ] ]\nHandling=[ Transit:encrypt Storage:encrypt ]\n" ]
+questionnaire_flow_c1_HSH__DLR_144[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ directoryInfo ] ] ]\nCode=green\nAssertions=[ DataType:[ Harm:minimal Effort:identifiable ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_145[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
+questionnaire_flow_c1_HSH__DLR_149[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ consent ] ] ]\nCode=yellow\nAssertions=[ DataType:[ Harm:shame Effort:identifiable ] ]\nHandling=[ Transit:encrypt ]\n" ]
+questionnaire_flow_c1_HSH__DLR_150[ fillcolor="#AAFFAA" shape="note" label="todo\nConsent sub-routine " ]
+questionnaire_flow_c1_HSH__DLR_154[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ schoolOfficial ] ] ]\nCode=yellow\nAssertions=[ DataType:[ Harm:shame Effort:identifiable ] ]\nHandling=[ Transit:encrypt ]\n" ]
+questionnaire_flow_c1_HSH__DLR_159[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ study ] ] ]\nCode=yellow\nAssertions=[ DataType:[ Harm:shame Effort:identifiable ] ]\nHandling=[ Transit:encrypt ]\n" ]
+questionnaire_flow_c1_HSH__DLR_160[ fillcolor="#AAFFAA" shape="note" label="todo\nDUA subroutine " ]
+questionnaire_flow_c1_HSH__DLR_163[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ EducationRecords:[ FERPA:[ audit ] ] ]\nCode=yellow\nAssertions=[ DataType:[ Harm:shame Effort:identifiable ] ]\nHandling=[ Transit:encrypt ]\n" ]
+questionnaire_flow_c1_HSH__DLR_164[ fillcolor="#AAFFAA" shape="note" label="todo\nDUA subroutine " ]
+questionnaire_flow_c1_HSH__DLR_166[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nAn educational agency or institution is \nlikely breaching its FERPA duties \nbecause it is disclosing, or a third \nparty is re-disclosing, non-directory \nPII without parental consent where no \nobvious FERPA exception applies. " ]
+questionnaire_flow_c1_HSH__DLR_169[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
+questionnaire_flow_c1_HSH__DLR_170[ fillcolor="#BBBBFF" shape="cds" label="questionnaire.flow-c1/DPPA1" ]
+questionnaire_flow_c1_HSH__DLR_171[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
+questionnaire_flow_c1_HSH__DLR_180[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ Census:[ CensusPublished ] ] ]\nCode=green\nAssertions=[ DataType:[ Harm:minimal Effort:deidentified ] ]\nHandling=[ Transit:clear Storage:clear ]\n" ]
+questionnaire_flow_c1_HSH__DLR_184[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ Census:[ CensusPublished ] ] ]\nCode=green\nAssertions=[ DataType:[ Harm:minimal Effort:deidentified ] ]\nHandling=[ Transit:clear Storage:clear ]\n" ]
+questionnaire_flow_c1_HSH__DLR_186[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible violation of Title 13 due to \nfailure to obtain permission from the \nCensus Bureau to publish the Census \ndata. " ]
+questionnaire_flow_c1_HSH__DLR_191[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible violation of ESRA due to \nfailure to obtain authorization to \ndisclose the data from the Institute of \nEducation Sciences " ]
+questionnaire_flow_c1_HSH__DLR_195[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ ESRA:[ restricted ] ] ]\nCode=yellow\nAssertions=[ DataType:[ Harm:shame ] ]\nHandling=[ Transit:encrypt Storage:encrypt ]\n" ]
+questionnaire_flow_c1_HSH__DLR_197[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ ESRA:[ public ] ] ]\nCode=green\nAssertions=[ DataType:[ Harm:minimal ] ]\nHandling=[ Transit:clear Storage:clear ]\n" ]
+questionnaire_flow_c1_HSH__DLR_204[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ CIPSEA:[ deidentified ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_206[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ CIPSEA:[ identifiable ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_207[ fillcolor="#AAFFAA" shape="note" label="todo\nCIPSEA DUA " ]
+questionnaire_flow_c1_HSH__DLR_213[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ PrivacyAct:[ identifiable ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_214[ fillcolor="#AAFFAA" shape="note" label="todo\nPrivacy Act DUA " ]
+questionnaire_flow_c1_HSH__DLR_216[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ PrivacyAct:[ deidentified ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_220[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
+questionnaire_flow_c1_HSH__DLR_227[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ highlyRestricted ] ] ]\nCode=orange\nAssertions=[ DataType:[ Harm:civil Effort:identifiable ] ]\nHandling=[ Transit:encrypt Storage:encrypt ]\n" ]
+questionnaire_flow_c1_HSH__DLR_229[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible violation of the DPPA due to \ndisclosure of highly restricted personal \ninformation without the consent of the \nindividuals in the data " ]
+questionnaire_flow_c1_HSH__DLR_231[ fillcolor="#AADDAA" shape="rect" label="Set\nCode=yellow\nAssertions=[ DataType:[ Harm:shame Effort:identifiable ] ]\nHandling=[ Transit:encrypt Storage:encrypt ]\n" ]
+questionnaire_flow_c1_HSH__DLR_234[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ required ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_238[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible violation of state law on \ndisclosure of drivers' records " ]
+questionnaire_flow_c1_HSH__DLR_243[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ stateConsentLimited ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_245[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ stateConsentBroad ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_251[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ requesterConsentLimited ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_253[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ requesterConsentBroad ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_257[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ research ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_261[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ GovernmentRecords:[ DPPA:[ exception ] ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_263[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\npossible violation of the DPPA because \nthe depositor has not cited one of the \nrequired or permissible uses for \ndisclosure. " ]
+questionnaire_flow_c1_HSH__DLR_265[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
+questionnaire_flow_c1_HSH__DLR_268[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[ DUA:[ TimeLimit:none ] ]\n" ]
 questionnaire_flow_c1_HSH__DLR_27[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nreject data and flag for review; \npossible violation of 38 U.S.C. 4132 due \nto the release of VA medical records \nwithout a valid exception. " ]
-questionnaire_flow_c1_HSH__DLR_272[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[ DUA:[ TimeLimit:none ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_274[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[ DUA:[ TimeLimit:_50yr ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_276[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[ DUA:[ TimeLimit:_5yr ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_278[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[ DUA:[ TimeLimit:_1yr ] ]\n" ]
-questionnaire_flow_c1_HSH__DLR_281[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ ContractOrPolicy:yes ]\n" ]
-questionnaire_flow_c1_HSH__DLR_283[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ ContractOrPolicy:no ]\n" ]
-questionnaire_flow_c1_HSH__DLR_284[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
+questionnaire_flow_c1_HSH__DLR_270[ shape="oval" label="ask\nFor how long should we keep the data? " ]
+questionnaire_flow_c1_HSH__DLR_273[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[ DUA:[ TimeLimit:none ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_275[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[ DUA:[ TimeLimit:_50yr ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_277[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[ DUA:[ TimeLimit:_5yr ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_279[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[ DUA:[ TimeLimit:_1yr ] ]\n" ]
+questionnaire_flow_c1_HSH__DLR_282[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ ContractOrPolicy:yes ]\n" ]
+questionnaire_flow_c1_HSH__DLR_284[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ ContractOrPolicy:no ]\n" ]
+questionnaire_flow_c1_HSH__DLR_285[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
 questionnaire_flow_c1_HSH__DLR_29[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ MedicalRecords:[ Part2:veteransMedicalData ] ]\n" ]
 questionnaire_flow_c1_HSH__DLR_31[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ MedicalRecords:[ Part2:deidentified ] ]\nCode=green\nAssertions=[ DataType:[ Effort:deidentified ] ]\nHandling=[ Transit:clear Storage:clear ]\n" ]
 questionnaire_flow_c1_HSH__DLR_36[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ MedicalRecords:[ Part2:consent ] ]\nCode=orange\nAssertions=[ DataType:[ Harm:civil Effort:identifiable ] ]\nHandling=[ Transit:encrypt Storage:encrypt ]\n" ]
@@ -161,53 +162,53 @@ questionnaire_flow_c1_HSH_ppraCompliance[ shape="oval" label="ppraCompliance\nas
 start -> questionnaire_flow_c1_HSH__DLR_1[ penwidth="4.0" color="#008800" ]questionnaire_flow_c1_HSH__DLR_1 -> questionnaire_flow_c1_HSH__DLR_4[ taillabel="yes" ]
 questionnaire_flow_c1_HSH__DLR_1 -> questionnaire_flow_c1_HSH__DLR_7[ taillabel="no" ]
 questionnaire_flow_c1_HSH__DLR_10 -> questionnaire_flow_c1_HSH__DLR_11
-questionnaire_flow_c1_HSH__DLR_101 -> questionnaire_flow_c1_HSH_ppra5
+questionnaire_flow_c1_HSH__DLR_101 -> questionnaire_flow_c1_HSH__DLR_102
 questionnaire_flow_c1_HSH__DLR_11 -> questionnaire_flow_c1_HSH__DLR_12
-questionnaire_flow_c1_HSH__DLR_110 -> questionnaire_flow_c1_HSH_ppra6
-questionnaire_flow_c1_HSH__DLR_119 -> questionnaire_flow_c1_HSH__DLR_121
+questionnaire_flow_c1_HSH__DLR_111 -> questionnaire_flow_c1_HSH_ppra6
 questionnaire_flow_c1_HSH__DLR_12 -> questionnaire_flow_c1_HSH__DLR_13
+questionnaire_flow_c1_HSH__DLR_120 -> questionnaire_flow_c1_HSH__DLR_122
 questionnaire_flow_c1_HSH__DLR_13 -> questionnaire_flow_c1_HSH__DLR_14
-questionnaire_flow_c1_HSH__DLR_132 -> questionnaire_flow_c1_HSH__DLR_133
-questionnaire_flow_c1_HSH__DLR_141 -> questionnaire_flow_c1_HSH__DLR_144
-questionnaire_flow_c1_HSH__DLR_143 -> questionnaire_flow_c1_HSH__DLR_144
-questionnaire_flow_c1_HSH__DLR_148 -> questionnaire_flow_c1_HSH__DLR_149
-questionnaire_flow_c1_HSH__DLR_149 -> questionnaire_flow_c1_HSH__DLR_168
-questionnaire_flow_c1_HSH__DLR_153 -> questionnaire_flow_c1_HSH_ferpa14
-questionnaire_flow_c1_HSH__DLR_158 -> questionnaire_flow_c1_HSH__DLR_159
-questionnaire_flow_c1_HSH__DLR_159 -> questionnaire_flow_c1_HSH_ferpa15
-questionnaire_flow_c1_HSH__DLR_162 -> questionnaire_flow_c1_HSH__DLR_163
-questionnaire_flow_c1_HSH__DLR_163 -> questionnaire_flow_c1_HSH__DLR_168
-questionnaire_flow_c1_HSH__DLR_169 -> questionnaire_flow_c1_HSH__DLR_170
-questionnaire_flow_c1_HSH__DLR_179 -> questionnaire_flow_c1_HSH_ESRA1
-questionnaire_flow_c1_HSH__DLR_183 -> questionnaire_flow_c1_HSH_ESRA1
-questionnaire_flow_c1_HSH__DLR_194 -> questionnaire_flow_c1_HSH_CIPSEA1
-questionnaire_flow_c1_HSH__DLR_196 -> questionnaire_flow_c1_HSH_CIPSEA1
-questionnaire_flow_c1_HSH__DLR_203 -> questionnaire_flow_c1_HSH_PA1
-questionnaire_flow_c1_HSH__DLR_205 -> questionnaire_flow_c1_HSH__DLR_206
-questionnaire_flow_c1_HSH__DLR_206 -> questionnaire_flow_c1_HSH_PA1
-questionnaire_flow_c1_HSH__DLR_212 -> questionnaire_flow_c1_HSH__DLR_213
-questionnaire_flow_c1_HSH__DLR_213 -> questionnaire_flow_c1_HSH__DLR_219
-questionnaire_flow_c1_HSH__DLR_215 -> questionnaire_flow_c1_HSH__DLR_219
-questionnaire_flow_c1_HSH__DLR_226 -> questionnaire_flow_c1_HSH__DLR_264
-questionnaire_flow_c1_HSH__DLR_230 -> questionnaire_flow_c1_HSH_DPPA3
-questionnaire_flow_c1_HSH__DLR_233 -> questionnaire_flow_c1_HSH__DLR_264
-questionnaire_flow_c1_HSH__DLR_242 -> questionnaire_flow_c1_HSH__DLR_264
-questionnaire_flow_c1_HSH__DLR_244 -> questionnaire_flow_c1_HSH__DLR_264
-questionnaire_flow_c1_HSH__DLR_250 -> questionnaire_flow_c1_HSH__DLR_264
-questionnaire_flow_c1_HSH__DLR_252 -> questionnaire_flow_c1_HSH__DLR_264
-questionnaire_flow_c1_HSH__DLR_256 -> questionnaire_flow_c1_HSH__DLR_264
-questionnaire_flow_c1_HSH__DLR_260 -> questionnaire_flow_c1_HSH__DLR_264
-questionnaire_flow_c1_HSH__DLR_267 -> questionnaire_flow_c1_HSH_duaAdditional
-questionnaire_flow_c1_HSH__DLR_269 -> questionnaire_flow_c1_HSH__DLR_274[ taillabel="50 years" ]
-questionnaire_flow_c1_HSH__DLR_269 -> questionnaire_flow_c1_HSH__DLR_272[ taillabel="indefinitely" ]
-questionnaire_flow_c1_HSH__DLR_269 -> questionnaire_flow_c1_HSH__DLR_276[ taillabel="5 years" ]
-questionnaire_flow_c1_HSH__DLR_269 -> questionnaire_flow_c1_HSH__DLR_278[ taillabel="1 year" ]
-questionnaire_flow_c1_HSH__DLR_272 -> questionnaire_flow_c1_HSH_duaAdditional
-questionnaire_flow_c1_HSH__DLR_274 -> questionnaire_flow_c1_HSH_duaAdditional
-questionnaire_flow_c1_HSH__DLR_276 -> questionnaire_flow_c1_HSH_duaAdditional
-questionnaire_flow_c1_HSH__DLR_278 -> questionnaire_flow_c1_HSH_duaAdditional
-questionnaire_flow_c1_HSH__DLR_281 -> questionnaire_flow_c1_HSH__DLR_284
-questionnaire_flow_c1_HSH__DLR_283 -> questionnaire_flow_c1_HSH__DLR_284
+questionnaire_flow_c1_HSH__DLR_133 -> questionnaire_flow_c1_HSH__DLR_134
+questionnaire_flow_c1_HSH__DLR_142 -> questionnaire_flow_c1_HSH__DLR_145
+questionnaire_flow_c1_HSH__DLR_144 -> questionnaire_flow_c1_HSH__DLR_145
+questionnaire_flow_c1_HSH__DLR_149 -> questionnaire_flow_c1_HSH__DLR_150
+questionnaire_flow_c1_HSH__DLR_150 -> questionnaire_flow_c1_HSH__DLR_169
+questionnaire_flow_c1_HSH__DLR_154 -> questionnaire_flow_c1_HSH_ferpa14
+questionnaire_flow_c1_HSH__DLR_159 -> questionnaire_flow_c1_HSH__DLR_160
+questionnaire_flow_c1_HSH__DLR_160 -> questionnaire_flow_c1_HSH_ferpa15
+questionnaire_flow_c1_HSH__DLR_163 -> questionnaire_flow_c1_HSH__DLR_164
+questionnaire_flow_c1_HSH__DLR_164 -> questionnaire_flow_c1_HSH__DLR_169
+questionnaire_flow_c1_HSH__DLR_170 -> questionnaire_flow_c1_HSH__DLR_171
+questionnaire_flow_c1_HSH__DLR_180 -> questionnaire_flow_c1_HSH_ESRA1
+questionnaire_flow_c1_HSH__DLR_184 -> questionnaire_flow_c1_HSH_ESRA1
+questionnaire_flow_c1_HSH__DLR_195 -> questionnaire_flow_c1_HSH_CIPSEA1
+questionnaire_flow_c1_HSH__DLR_197 -> questionnaire_flow_c1_HSH_CIPSEA1
+questionnaire_flow_c1_HSH__DLR_204 -> questionnaire_flow_c1_HSH_PA1
+questionnaire_flow_c1_HSH__DLR_206 -> questionnaire_flow_c1_HSH__DLR_207
+questionnaire_flow_c1_HSH__DLR_207 -> questionnaire_flow_c1_HSH_PA1
+questionnaire_flow_c1_HSH__DLR_213 -> questionnaire_flow_c1_HSH__DLR_214
+questionnaire_flow_c1_HSH__DLR_214 -> questionnaire_flow_c1_HSH__DLR_220
+questionnaire_flow_c1_HSH__DLR_216 -> questionnaire_flow_c1_HSH__DLR_220
+questionnaire_flow_c1_HSH__DLR_227 -> questionnaire_flow_c1_HSH__DLR_265
+questionnaire_flow_c1_HSH__DLR_231 -> questionnaire_flow_c1_HSH_DPPA3
+questionnaire_flow_c1_HSH__DLR_234 -> questionnaire_flow_c1_HSH__DLR_265
+questionnaire_flow_c1_HSH__DLR_243 -> questionnaire_flow_c1_HSH__DLR_265
+questionnaire_flow_c1_HSH__DLR_245 -> questionnaire_flow_c1_HSH__DLR_265
+questionnaire_flow_c1_HSH__DLR_251 -> questionnaire_flow_c1_HSH__DLR_265
+questionnaire_flow_c1_HSH__DLR_253 -> questionnaire_flow_c1_HSH__DLR_265
+questionnaire_flow_c1_HSH__DLR_257 -> questionnaire_flow_c1_HSH__DLR_265
+questionnaire_flow_c1_HSH__DLR_261 -> questionnaire_flow_c1_HSH__DLR_265
+questionnaire_flow_c1_HSH__DLR_268 -> questionnaire_flow_c1_HSH_duaAdditional
+questionnaire_flow_c1_HSH__DLR_270 -> questionnaire_flow_c1_HSH__DLR_275[ taillabel="50 years" ]
+questionnaire_flow_c1_HSH__DLR_270 -> questionnaire_flow_c1_HSH__DLR_273[ taillabel="indefinitely" ]
+questionnaire_flow_c1_HSH__DLR_270 -> questionnaire_flow_c1_HSH__DLR_277[ taillabel="5 years" ]
+questionnaire_flow_c1_HSH__DLR_270 -> questionnaire_flow_c1_HSH__DLR_279[ taillabel="1 year" ]
+questionnaire_flow_c1_HSH__DLR_273 -> questionnaire_flow_c1_HSH_duaAdditional
+questionnaire_flow_c1_HSH__DLR_275 -> questionnaire_flow_c1_HSH_duaAdditional
+questionnaire_flow_c1_HSH__DLR_277 -> questionnaire_flow_c1_HSH_duaAdditional
+questionnaire_flow_c1_HSH__DLR_279 -> questionnaire_flow_c1_HSH_duaAdditional
+questionnaire_flow_c1_HSH__DLR_282 -> questionnaire_flow_c1_HSH__DLR_285
+questionnaire_flow_c1_HSH__DLR_284 -> questionnaire_flow_c1_HSH__DLR_285
 questionnaire_flow_c1_HSH__DLR_29 -> questionnaire_flow_c1_HSH_MR7
 questionnaire_flow_c1_HSH__DLR_31 -> questionnaire_flow_c1_HSH_MR5
 questionnaire_flow_c1_HSH__DLR_36 -> questionnaire_flow_c1_HSH_MR7
@@ -228,44 +229,44 @@ questionnaire_flow_c1_HSH_CIPSEA1 -> questionnaire_flow_c1_HSH_CIPSEA2[ taillabe
 questionnaire_flow_c1_HSH_CIPSEA1 -> questionnaire_flow_c1_HSH_PA1[ taillabel="no" ]
 questionnaire_flow_c1_HSH_CIPSEA2 -> questionnaire_flow_c1_HSH_CIPSEA3[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_CIPSEA2 -> questionnaire_flow_c1_HSH_PA1[ taillabel="no" ]
-questionnaire_flow_c1_HSH_CIPSEA3 -> questionnaire_flow_c1_HSH__DLR_205[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_CIPSEA3 -> questionnaire_flow_c1_HSH__DLR_203[ taillabel="no" ]
+questionnaire_flow_c1_HSH_CIPSEA3 -> questionnaire_flow_c1_HSH__DLR_206[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_CIPSEA3 -> questionnaire_flow_c1_HSH__DLR_204[ taillabel="no" ]
 questionnaire_flow_c1_HSH_Census1 -> questionnaire_flow_c1_HSH_Census2[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_Census1 -> questionnaire_flow_c1_HSH_ESRA1[ taillabel="no" ]
-questionnaire_flow_c1_HSH_Census2 -> questionnaire_flow_c1_HSH__DLR_179[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_Census2 -> questionnaire_flow_c1_HSH__DLR_180[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_Census2 -> questionnaire_flow_c1_HSH_Census3[ taillabel="no" ]
-questionnaire_flow_c1_HSH_Census3 -> questionnaire_flow_c1_HSH__DLR_183[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_Census3 -> questionnaire_flow_c1_HSH__DLR_185[ taillabel="no" ]
+questionnaire_flow_c1_HSH_Census3 -> questionnaire_flow_c1_HSH__DLR_184[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_Census3 -> questionnaire_flow_c1_HSH__DLR_186[ taillabel="no" ]
 questionnaire_flow_c1_HSH_DPPA1 -> questionnaire_flow_c1_HSH_DPPA2[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_DPPA1 -> questionnaire_flow_c1_HSH__DLR_264[ taillabel="no" ]
+questionnaire_flow_c1_HSH_DPPA1 -> questionnaire_flow_c1_HSH__DLR_265[ taillabel="no" ]
 questionnaire_flow_c1_HSH_DPPA2 -> questionnaire_flow_c1_HSH_DPPA2a[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_DPPA2 -> questionnaire_flow_c1_HSH__DLR_230[ taillabel="no" ]
-questionnaire_flow_c1_HSH_DPPA2a -> questionnaire_flow_c1_HSH__DLR_226[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_DPPA2a -> questionnaire_flow_c1_HSH__DLR_228[ taillabel="no" ]
-questionnaire_flow_c1_HSH_DPPA3 -> questionnaire_flow_c1_HSH__DLR_233[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_DPPA2 -> questionnaire_flow_c1_HSH__DLR_231[ taillabel="no" ]
+questionnaire_flow_c1_HSH_DPPA2a -> questionnaire_flow_c1_HSH__DLR_227[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_DPPA2a -> questionnaire_flow_c1_HSH__DLR_229[ taillabel="no" ]
+questionnaire_flow_c1_HSH_DPPA3 -> questionnaire_flow_c1_HSH__DLR_234[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_DPPA3 -> questionnaire_flow_c1_HSH_DPPA4[ taillabel="no" ]
 questionnaire_flow_c1_HSH_DPPA4 -> questionnaire_flow_c1_HSH_DPPA5[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_DPPA4 -> questionnaire_flow_c1_HSH__DLR_237[ taillabel="no" ]
+questionnaire_flow_c1_HSH_DPPA4 -> questionnaire_flow_c1_HSH__DLR_238[ taillabel="no" ]
 questionnaire_flow_c1_HSH_DPPA5 -> questionnaire_flow_c1_HSH_DPPA5a[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_DPPA5 -> questionnaire_flow_c1_HSH_DPPA6[ taillabel="no" ]
-questionnaire_flow_c1_HSH_DPPA5a -> questionnaire_flow_c1_HSH__DLR_242[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_DPPA5a -> questionnaire_flow_c1_HSH__DLR_244[ taillabel="no" ]
+questionnaire_flow_c1_HSH_DPPA5a -> questionnaire_flow_c1_HSH__DLR_243[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_DPPA5a -> questionnaire_flow_c1_HSH__DLR_245[ taillabel="no" ]
 questionnaire_flow_c1_HSH_DPPA6 -> questionnaire_flow_c1_HSH_DPPA6a[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_DPPA6 -> questionnaire_flow_c1_HSH_DPPA7[ taillabel="no" ]
-questionnaire_flow_c1_HSH_DPPA6a -> questionnaire_flow_c1_HSH__DLR_250[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_DPPA6a -> questionnaire_flow_c1_HSH__DLR_252[ taillabel="no" ]
-questionnaire_flow_c1_HSH_DPPA7 -> questionnaire_flow_c1_HSH__DLR_256[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_DPPA6a -> questionnaire_flow_c1_HSH__DLR_251[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_DPPA6a -> questionnaire_flow_c1_HSH__DLR_253[ taillabel="no" ]
+questionnaire_flow_c1_HSH_DPPA7 -> questionnaire_flow_c1_HSH__DLR_257[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_DPPA7 -> questionnaire_flow_c1_HSH_DPPA8[ taillabel="no" ]
-questionnaire_flow_c1_HSH_DPPA8 -> questionnaire_flow_c1_HSH__DLR_260[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_DPPA8 -> questionnaire_flow_c1_HSH__DLR_262[ taillabel="no" ]
+questionnaire_flow_c1_HSH_DPPA8 -> questionnaire_flow_c1_HSH__DLR_261[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_DPPA8 -> questionnaire_flow_c1_HSH__DLR_263[ taillabel="no" ]
 questionnaire_flow_c1_HSH_ESRA1 -> questionnaire_flow_c1_HSH_ESRA2[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_ESRA1 -> questionnaire_flow_c1_HSH_CIPSEA1[ taillabel="no" ]
 questionnaire_flow_c1_HSH_ESRA2 -> questionnaire_flow_c1_HSH_ESRA3[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_ESRA2 -> questionnaire_flow_c1_HSH__DLR_190[ taillabel="no" ]
-questionnaire_flow_c1_HSH_ESRA3 -> questionnaire_flow_c1_HSH__DLR_194[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_ESRA3 -> questionnaire_flow_c1_HSH__DLR_196[ taillabel="no" ]
+questionnaire_flow_c1_HSH_ESRA2 -> questionnaire_flow_c1_HSH__DLR_191[ taillabel="no" ]
+questionnaire_flow_c1_HSH_ESRA3 -> questionnaire_flow_c1_HSH__DLR_195[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_ESRA3 -> questionnaire_flow_c1_HSH__DLR_197[ taillabel="no" ]
 questionnaire_flow_c1_HSH_Gov1 -> questionnaire_flow_c1_HSH_Gov2[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_Gov1 -> questionnaire_flow_c1_HSH__DLR_219[ taillabel="no" ]
+questionnaire_flow_c1_HSH_Gov1 -> questionnaire_flow_c1_HSH__DLR_220[ taillabel="no" ]
 questionnaire_flow_c1_HSH_Gov2 -> questionnaire_flow_c1_HSH_Census1[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_Gov2 -> questionnaire_flow_c1_HSH_ESRA1[ taillabel="no" ]
 questionnaire_flow_c1_HSH_MR10 -> questionnaire_flow_c1_HSH_MR11[ taillabel="yes" ]
@@ -303,33 +304,33 @@ questionnaire_flow_c1_HSH_MR8b -> questionnaire_flow_c1_HSH_MR9[ taillabel="no" 
 questionnaire_flow_c1_HSH_MR9 -> questionnaire_flow_c1_HSH__DLR_57[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_MR9 -> questionnaire_flow_c1_HSH_MR10[ taillabel="no" ]
 questionnaire_flow_c1_HSH_PA1 -> questionnaire_flow_c1_HSH_PA2[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_PA1 -> questionnaire_flow_c1_HSH__DLR_219[ taillabel="no" ]
-questionnaire_flow_c1_HSH_PA2 -> questionnaire_flow_c1_HSH__DLR_212[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_PA2 -> questionnaire_flow_c1_HSH__DLR_215[ taillabel="no" ]
+questionnaire_flow_c1_HSH_PA1 -> questionnaire_flow_c1_HSH__DLR_220[ taillabel="no" ]
+questionnaire_flow_c1_HSH_PA2 -> questionnaire_flow_c1_HSH__DLR_213[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_PA2 -> questionnaire_flow_c1_HSH__DLR_216[ taillabel="no" ]
 questionnaire_flow_c1_HSH_dua -> questionnaire_flow_c1_HSH_duaTimeLimit
-questionnaire_flow_c1_HSH_duaAdditional -> questionnaire_flow_c1_HSH__DLR_281[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_duaAdditional -> questionnaire_flow_c1_HSH__DLR_283[ taillabel="no" ]
-questionnaire_flow_c1_HSH_duaTimeLimit -> questionnaire_flow_c1_HSH__DLR_269[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_duaTimeLimit -> questionnaire_flow_c1_HSH__DLR_267[ taillabel="no" ]
+questionnaire_flow_c1_HSH_duaAdditional -> questionnaire_flow_c1_HSH__DLR_282[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_duaAdditional -> questionnaire_flow_c1_HSH__DLR_284[ taillabel="no" ]
+questionnaire_flow_c1_HSH_duaTimeLimit -> questionnaire_flow_c1_HSH__DLR_270[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_duaTimeLimit -> questionnaire_flow_c1_HSH__DLR_268[ taillabel="no" ]
 questionnaire_flow_c1_HSH_ferpa10 -> questionnaire_flow_c1_HSH_ferpa11[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_ferpa10 -> questionnaire_flow_c1_HSH__DLR_132[ taillabel="no" ]
+questionnaire_flow_c1_HSH_ferpa10 -> questionnaire_flow_c1_HSH__DLR_133[ taillabel="no" ]
 questionnaire_flow_c1_HSH_ferpa11 -> questionnaire_flow_c1_HSH_ferpa11a[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_ferpa11 -> questionnaire_flow_c1_HSH_ferpa12[ taillabel="no" ]
-questionnaire_flow_c1_HSH_ferpa11a -> questionnaire_flow_c1_HSH__DLR_141[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_ferpa11a -> questionnaire_flow_c1_HSH__DLR_143[ taillabel="no" ]
-questionnaire_flow_c1_HSH_ferpa12 -> questionnaire_flow_c1_HSH__DLR_148[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_ferpa11a -> questionnaire_flow_c1_HSH__DLR_142[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_ferpa11a -> questionnaire_flow_c1_HSH__DLR_144[ taillabel="no" ]
+questionnaire_flow_c1_HSH_ferpa12 -> questionnaire_flow_c1_HSH__DLR_149[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_ferpa12 -> questionnaire_flow_c1_HSH_ferpa13[ taillabel="no" ]
-questionnaire_flow_c1_HSH_ferpa13 -> questionnaire_flow_c1_HSH__DLR_153[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_ferpa13 -> questionnaire_flow_c1_HSH__DLR_154[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_ferpa13 -> questionnaire_flow_c1_HSH_ferpa14[ taillabel="no" ]
-questionnaire_flow_c1_HSH_ferpa14 -> questionnaire_flow_c1_HSH__DLR_158[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_ferpa14 -> questionnaire_flow_c1_HSH__DLR_159[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_ferpa14 -> questionnaire_flow_c1_HSH_ferpa15[ taillabel="no" ]
-questionnaire_flow_c1_HSH_ferpa15 -> questionnaire_flow_c1_HSH__DLR_162[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_ferpa15 -> questionnaire_flow_c1_HSH__DLR_165[ taillabel="no" ]
+questionnaire_flow_c1_HSH_ferpa15 -> questionnaire_flow_c1_HSH__DLR_163[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_ferpa15 -> questionnaire_flow_c1_HSH__DLR_166[ taillabel="no" ]
 questionnaire_flow_c1_HSH_ferpa9 -> questionnaire_flow_c1_HSH_ferpa10[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_ferpa9 -> questionnaire_flow_c1_HSH__DLR_129[ taillabel="no" ]
+questionnaire_flow_c1_HSH_ferpa9 -> questionnaire_flow_c1_HSH__DLR_130[ taillabel="no" ]
 questionnaire_flow_c1_HSH_ferpaCompliance -> questionnaire_flow_c1_HSH_ferpa9[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_ferpaCompliance -> questionnaire_flow_c1_HSH__DLR_124[ taillabel="no" ]
-questionnaire_flow_c1_HSH_govRecsCompliance -> questionnaire_flow_c1_HSH__DLR_169
+questionnaire_flow_c1_HSH_ferpaCompliance -> questionnaire_flow_c1_HSH__DLR_125[ taillabel="no" ]
+questionnaire_flow_c1_HSH_govRecsCompliance -> questionnaire_flow_c1_HSH__DLR_170
 questionnaire_flow_c1_HSH_medicalRecordsCompliance -> questionnaire_flow_c1_HSH_MR2[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_medicalRecordsCompliance -> questionnaire_flow_c1_HSH__DLR_82[ taillabel="no" ]
 questionnaire_flow_c1_HSH_personalData -> questionnaire_flow_c1_HSH__DLR_10
@@ -340,14 +341,14 @@ questionnaire_flow_c1_HSH_ppra2a -> questionnaire_flow_c1_HSH__DLR_91[ taillabel
 questionnaire_flow_c1_HSH_ppra3 -> questionnaire_flow_c1_HSH_ppra4[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_ppra3 -> questionnaire_flow_c1_HSH_ppra5[ taillabel="no" ]
 questionnaire_flow_c1_HSH_ppra4 -> questionnaire_flow_c1_HSH__DLR_101[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_ppra4 -> questionnaire_flow_c1_HSH__DLR_105[ taillabel="Not Sure" ]
-questionnaire_flow_c1_HSH_ppra4 -> questionnaire_flow_c1_HSH__DLR_103[ taillabel="no" ]
-questionnaire_flow_c1_HSH_ppra5 -> questionnaire_flow_c1_HSH__DLR_110[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_ppra4 -> questionnaire_flow_c1_HSH__DLR_106[ taillabel="Not Sure" ]
+questionnaire_flow_c1_HSH_ppra4 -> questionnaire_flow_c1_HSH__DLR_104[ taillabel="no" ]
+questionnaire_flow_c1_HSH_ppra5 -> questionnaire_flow_c1_HSH__DLR_111[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_ppra5 -> questionnaire_flow_c1_HSH_ppra6[ taillabel="no" ]
 questionnaire_flow_c1_HSH_ppra6 -> questionnaire_flow_c1_HSH_ppra7[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_ppra6 -> questionnaire_flow_c1_HSH__DLR_121[ taillabel="no" ]
-questionnaire_flow_c1_HSH_ppra7 -> questionnaire_flow_c1_HSH__DLR_119[ taillabel="yes" ]
-questionnaire_flow_c1_HSH_ppra7 -> questionnaire_flow_c1_HSH__DLR_117[ taillabel="no" ]
+questionnaire_flow_c1_HSH_ppra6 -> questionnaire_flow_c1_HSH__DLR_122[ taillabel="no" ]
+questionnaire_flow_c1_HSH_ppra7 -> questionnaire_flow_c1_HSH__DLR_120[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_ppra7 -> questionnaire_flow_c1_HSH__DLR_118[ taillabel="no" ]
 questionnaire_flow_c1_HSH_ppraCompliance -> questionnaire_flow_c1_HSH_ppra2[ taillabel="yes" ]
 questionnaire_flow_c1_HSH_ppraCompliance -> questionnaire_flow_c1_HSH__DLR_85[ taillabel="no" ]
 {rank=source; start}
