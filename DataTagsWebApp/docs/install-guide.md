@@ -44,20 +44,23 @@ On the terminal, this would mean:
 
 ## Deploy to test server
 
-### Deploy app 
 Note: We try to hold multiple app versions on the server, to allow quick rollback when needed. This is done by having multiple application and questionnaire folders, and a symbolic link to a "current" one. Application folders have names like `app-MMDD`, and questionnaires have names like `q-MMDD`.
-1. Update any meta files, make sure everything is in place. Run the app for the last time.
-1. Prepare you local copy. At the `datatags-app` folder, type `activator clean dist`.
-2. Wait for a message along the lines of:
-    [info] Your package is ready in /Users/michael/Documents/Msc/IQSS/Data-Tags/Data-Tags_repo/DataTagsWebApp/datatags-app/target/universal/datatags-app-1.0-SNAPSHOT.zip
-3. `scp` the resulting package to `[your username]@dvnweb-vm1.hmdc.harvard.edu:tagging-server/`
+
+The local scripts are run from the `datatags-app` directory. *The scripts depend on having a valid `vars.sh` file in the `scripts` directory!*. To create one, copy the `vars-sample.sh` file in the `scripts` directory, update it according to your data, and rename it to `vars.sh`.
+
+Currently, only UNIX is supported. These scripts are tested on Mac OS X, using Bash.
+
+### Deploy app 
+#### On local machine
+Run the `upload-app.sh` script. It will create a file called `dist-mmdd.zip` where `mmdd` are the month and day, and will `scp` it to the server.
 
 #### On server
-1. Assume `dist` is the uploaded product of `activator dist`
+1. Assume `dist` is the uploaded product of the previous stage.
 2. `cd` to `tagging-server`
 2. Run `./deploy-app.sh dist` to create the application folder, properly names and all.
 3. The script will output the new app folder name, say `app-dist`
 3. Run `./link-app.sh app-dist` to delete the current application symlink, create a new one pointing to `app-dist`, and restart the tagging server.
+4. Validate the application is running by trying to use it.
 
 
 ### Deploy Questionnaire
@@ -65,10 +68,11 @@ We basically do the same thing - hold multiple questionnaires in directories nam
 
 #### On local machine
 Questionnaire is stored in `datatags-app/public/questionnaire`
+
 1. `cd` into the `datatags-app` directory.
 2. run the `upload-questionnaire.sh` script from the `scripts` folder. (`../scripts/upload-questionnaire.sh`).
 
 #### On Server
 2. `cd` to `tagging-server`
 3. Run the `link-q.sh` script with the questionnaire you want to link. Assuming it's called `q-1123`, that would be `./link-q.sh q-1123`. The script will update the symlinks, and restart the application.
-4. Validate that the application is running.
+4. Validate the application is running by trying to use it.

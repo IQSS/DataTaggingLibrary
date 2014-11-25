@@ -28,10 +28,11 @@ object Interview extends Controller {
     val userSession = UserSession.create( questionnaireId )
 
     Cache.set(userSession.key, userSession)
-    val fcs = QuestionnaireKits.kit.questionnaire
-    val dtt = QuestionnaireKits.kit.tags
-    Ok( views.html.interview.intro(fcs,dtt, Option(null) ))
-      .withSession( request2session + ("uuid" -> userSession.key) )
+    Ok( views.html.interview.intro(
+          QuestionnaireKits.kit.questionnaire,
+          QuestionnaireKits.kit.tags,
+          Option(null) )
+      ).withSession( request2session + ("uuid" -> userSession.key) )
   }
 
   def startInterview( questionnaireId:String ) = UserSessionAction { implicit req =>

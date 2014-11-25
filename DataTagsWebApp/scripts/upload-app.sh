@@ -15,8 +15,8 @@ echo server: $SERVER
 echo app: $APP
 
 
-activator clean dist | tee activator.log
-DIST_=`grep "package is ready" activator.log | cut -d" " -f7 | sed -e "s/\x1b\[[0-9;]\{1,5\}m//g"`
+activator -Dsbt.log.noformat=true clean dist | tee activator.log
+DIST=`grep "package is ready" activator.log | cut -d" " -f7`
 
 echo Distribution file is $DIST
 mv $DIST $APP

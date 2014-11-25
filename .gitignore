@@ -11,5 +11,5 @@
 *.sublime-workspace
 DataTagsWebApp/datatags-app/public/last-commit
 DataTagsWebApp/scripts/username
-
+DataTagsWebApp/scripts/vars.sh
 /DataTagsWebApp/datatags-app-nb/datatags-app/nbproject/private/
