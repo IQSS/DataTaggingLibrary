@@ -85,7 +85,7 @@ public class FlowChartSetComplier {
 		chartSet.setDefaultChartId( chart.getId() );
         try {
             for ( List<InstructionNodeRef> nodes : breakList(parsedNodes) ) {
-                Node startNode = buildNodes( nodes, chart, chart.getEndNode() );
+                Node startNode = buildNodes( nodes, chart, new EndNode("$"+chart.getId()) );
                 if ( chart.getStart()== null ) { 
                     chart.setStart(startNode);
                 }
@@ -207,6 +207,7 @@ public class FlowChartSetComplier {
 			}
 		};
 		
+        // TODO this may not be needed. Maybe empty list at this point is a syntax error.
 		return nodes.isEmpty() ? defaultNode : C.head( nodes ).accept(builder);
 	}
 	

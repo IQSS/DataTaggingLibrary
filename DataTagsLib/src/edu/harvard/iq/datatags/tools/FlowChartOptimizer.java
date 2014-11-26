@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.charts.FlowChartSet;
+import edu.harvard.iq.datatags.model.charts.FlowChart;
 
 /**
  * Interface for flow chart optimizers.
@@ -11,6 +11,6 @@ public interface FlowChartOptimizer {
    
     String getTitle();
     
-    FlowChartSet optimize( FlowChartSet fcs );
+    FlowChart optimize( FlowChart fcs );
     
 }

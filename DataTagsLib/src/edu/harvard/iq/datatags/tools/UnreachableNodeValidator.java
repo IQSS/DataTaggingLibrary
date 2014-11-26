@@ -44,7 +44,6 @@ public class UnreachableNodeValidator extends VoidVisitor {
             flowChart = chart;
             chart.getStart().accept(this);
             flowChartNodeIds.removeAll(reachedNodeIds);
-            flowChartNodeIds.remove(flowChart.getEndNode().getId());
             
             if (!flowChartNodeIds.isEmpty()) {
                 for (String nodeId : flowChartNodeIds) {

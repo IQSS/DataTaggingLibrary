@@ -67,7 +67,7 @@ public abstract class GvObject<T extends GvObject> {
     }
 
     static String sanitizeString(String s) {
-        return s.replaceAll("\"", "\\\"").replaceAll("\n", "\\n");
+        return s.replaceAll("\"", "'").replaceAll("\n", "\\n");
     }
     
     public T url( String aUrl ) {

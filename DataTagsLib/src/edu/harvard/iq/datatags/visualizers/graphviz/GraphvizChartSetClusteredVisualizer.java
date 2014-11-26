@@ -17,13 +17,12 @@ import edu.harvard.iq.datatags.model.values.SimpleValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import edu.harvard.iq.datatags.util.ReachableNodesCollector;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +33,7 @@ import java.util.Set;
  * 
  * @author michael
  */
-public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
+public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
 	private FlowChartSet chartSet;
     
     private final TagValue.Visitor<String> valueNamer = new TagValue.Visitor<String>() {
@@ -84,16 +83,14 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
      */
     private Set<Node> findSubchartHeades(FlowChart fc) {
         final Set<Node> candidates = new HashSet<>();
-        for ( Node n : fc.nodes() ) {candidates.add(n);}
+        for ( Node n : fc.nodes() ) { candidates.add(n);}
         for ( Node n : fc.nodes() ) {
             if ( candidates.contains(n) ) {
                 n.accept( new Node.VoidVisitor(){
 
                     @Override
                     public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
-                        System.out.println("nd " + nd.getId());
                         for ( Answer n : nd.getAnswers() ) {
-                            System.out.println("n = " + n);
                             Node answerNode = nd.getNodeFor(n);
                             candidates.remove(answerNode);
                             answerNode.accept(this);
@@ -112,11 +109,13 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
                     @Override
                     public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
                         candidates.remove(nd.getNextNode());
+                        nd.getNextNode().accept(this);
                     }
 
                     @Override
                     public void visitImpl(TodoNode nd) throws DataTagsRuntimeException {
                         candidates.remove(nd.getNextNode());
+                        nd.getNextNode().accept(this);
                     }
 
                     @Override
@@ -223,11 +222,11 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
         }
 	}
 	
-	private final NodePainter nodePainter = new NodePainter();
-	
     @Override
     void printHeader(BufferedWriter out) throws IOException {
 		out.write("digraph " + getChartName() + " {");
+		out.newLine();
+        out.write( "fontname=\"Courier\"" );
 		out.newLine();
 		out.write("edge [fontname=\"Helvetica\" fontsize=\"10\"]");
 		out.newLine();
@@ -251,57 +250,52 @@ public class GraphvizChartSetVisualizer extends GraphvizVisualizer {
                         .penwidth(4)
                         .gv());
 		}
-		for (String s : nodePainter.edges) {
-			out.write(s);
-			out.newLine();
-		}
         out.write("{rank=source; start}");
 		out.newLine();
 	}
 	
+    
+    
 	void printChart( FlowChart fc, BufferedWriter wrt ) throws IOException {
 		wrt.write( "subgraph cluster_" + sanitizeId(fc.getId()) + " {");
+		wrt.newLine();
 		wrt.newLine();
 
 		wrt.write( String.format("label=\"%s\"", humanTitle(fc)) );
 		wrt.newLine();
 		
+        // group to subcharts
         Set<Node> subchartHeads = findSubchartHeades( fc );
-        
-        System.out.println("Subchart Heads");
-        for ( Node n:subchartHeads ) {
-            System.out.println(n);
-        }
-        System.out.println();
-        
-        Set<Node> sources = new HashSet<>();
-		for ( Node n : fc.nodes() ) {
-            sources.add(n);
-			try {
-				n.accept( nodePainter );
-			} catch (DataTagsRuntimeException ex) {
-				Logger.getLogger(GraphvizChartSetVisualizer.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-		
-		for ( String s : nodePainter.nodes ) {
-			wrt.write(s);
-			wrt.newLine();
-		}
-		
-        sources.removeAll( nodePainter.targets );
-        wrt.write("{ rank=same; " );
-        boolean first = true;
-        for ( Node n : sources ) {
-            if ( first ) {
-                first = false;
-            } else {
-                wrt.write(", "); 
+        List<String> edges = new LinkedList<>();
+        for ( Node chartHead :subchartHeads ) {
+            System.out.println("Subchart: " + sanitizeId(chartHead.getId()) );
+            wrt.write( "subgraph cluster_" + sanitizeId(chartHead.getId()) + " {");
+            wrt.newLine();
+            wrt.write( String.format("label=\"%s\"; color=\"#AABBDD\"; labeljust=\"l\"", sanitizeTitle(chartHead.getId())) );
+            wrt.newLine();
+            
+            ReachableNodesCollector rnc = new ReachableNodesCollector();
+            chartHead.accept(rnc);
+            
+            NodePainter np = new NodePainter();
+            for ( Node n : rnc.getCollection() ) {
+                n.accept(np);
             }
-            wrt.write( GvObject.sanitizeId(nodeId(n)) );
+            
+            for ( String s : np.nodes ) {
+                wrt.write(s);
+                wrt.newLine();
+            }
+            edges.addAll( np.edges );
+            wrt.newLine();
+            wrt.write("}");
+            wrt.newLine();
         }
-		wrt.write("}");
-		wrt.newLine();
+        
+        for ( String s : edges ) {
+            wrt.write( s );
+            wrt.newLine();
+        }
         
 		wrt.write("}");
 		wrt.newLine();

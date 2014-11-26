@@ -15,10 +15,10 @@ HIPAA[label="HIPAA" shape="egg" peripheries="2"]
 HIPAA_waiver[label="waiver" shape="box"]
 HIPAA_authorization[label="authorization" shape="box"]
 HIPAA_safeHarborDeidentified[label="safeHarborDeidentified" shape="box"]
-HIPAA_safeHarborExpert[label="safeHarborExpert" shape="box"]
+HIPAA_expertDetermination[label="expertDetermination" shape="box"]
 HIPAA_statistician[label="statistician" shape="box"]
 HIPAA_limitedDataset[label="limitedDataset" shape="box"]
-HIPAA_businessAssociateAgreement[label="businessAssociateAgreement" shape="box"]
+HIPAA_businessAssociateContract[label="businessAssociateContract" shape="box"]
 EducationRecords[label="EducationRecords" shape="octagon" peripheries="2"]
 FERPA[label="FERPA" shape="egg" peripheries="2"]
 FERPA_deidentified[label="deidentified" shape="box"]
@@ -154,10 +154,10 @@ MedicalRecords -> HIPAA
 HIPAA -> HIPAA_waiver
 HIPAA -> HIPAA_authorization
 HIPAA -> HIPAA_safeHarborDeidentified
-HIPAA -> HIPAA_safeHarborExpert
+HIPAA -> HIPAA_expertDetermination
 HIPAA -> HIPAA_statistician
 HIPAA -> HIPAA_limitedDataset
-HIPAA -> HIPAA_businessAssociateAgreement
+HIPAA -> HIPAA_businessAssociateContract
 Legal -> EducationRecords
 EducationRecords -> FERPA
 FERPA -> FERPA_deidentified

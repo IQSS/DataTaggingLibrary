@@ -178,10 +178,10 @@
       (Biometric record: Refers to a record of one or more measurable biological or behavioral characteristics that can be used for automated recognition of an individual. Examples include fingerprints; retina and iris patterns; voiceprints; DNA sequence; facial characteristics; and handwriting.)
       (Targeted request: Refers to a request by a person who the educational agency or institution reasonably believes knows the identity of the student to whom the education record relates. For example, if there was a rumor published in the local paper that a public official was disciplined for cheating during his senior year in high school, a request to the high school for the disciplinary records of students who were caught cheating during the year the public official was a senior would be considered a targeted request.)
     )
-    (no:
+    (yes:
       (set: PPRA=protected, Code=orange, Harm=civil,
             Transit=encrypt, Effort=identifiable))
-    (yes:
+    (no:
       (set: PPRA=protectedDeidentified, Code=green, Harm=minimal,
             Transit=clear, Effort=deidentified))
   )

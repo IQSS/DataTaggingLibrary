@@ -28,9 +28,6 @@ public class FlowChart extends ChartEntity {
 	private Node start;
 	private final Map<String, Node> nodes = new TreeMap<>();
 	
-    /** Unified end node, as most end nodes are the same. */
-    private final EndNode endNode;
-	
 	private final Node.Visitor<Node> nodeAdder = new Node.Visitor<Node>() {
 
 		@Override
@@ -81,9 +78,6 @@ public class FlowChart extends ChartEntity {
 	
 	public FlowChart(String anId) {
 		super(anId);
-		endNode = new EndNode("$" + anId + "-end");
-		nodes.put( endNode.getId(), endNode);
-		endNode.setChart(this);
 	}
     
 	public URL getSource() {
@@ -124,6 +118,15 @@ public class FlowChart extends ChartEntity {
 		n.accept( nodeAdder );
 		return n;
 	}
+    
+    /**
+     * Removes the passed node. Caller should validate there
+     * are no nodes in the chart that reference this node.
+     * @param n the node to be removed.
+     */
+    public void remove( Node n ) {
+        nodes.remove(n.getId());
+    }
 
 	public Iterable<Node> nodes() {
 		return nodes.values();
@@ -132,9 +135,5 @@ public class FlowChart extends ChartEntity {
     public Set<String> nodeIds() {
         return nodes.keySet();
     }
-
-	public EndNode getEndNode() {
-		return endNode;
-	}
 
 }
