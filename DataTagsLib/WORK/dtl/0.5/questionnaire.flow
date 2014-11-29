@@ -64,22 +64,20 @@
 												Includes the specific name or a designation of the program or person permitted to disclose the information; the name or title of the individual or the name of the organization to which disclosure is to be made; the name of the patient; the purpose of the disclosure; how much and what kind of information is to be disclosed; the signature of the patient, or a person authorized to sign on behalf of the patient; and the date on which the consent is signed.)
 										)
 										(yes:
-											(>MR5a< ask:
-												(text: Does the written consent include the name or general designation of the program, organization, or person permitted to disclose; the name or general designation of the program, organization, or person permitted to receive the information; the name of the individual patient[s]; the purpose of the disclosure; specifically what may be disclosed; an expiration date or condition for such consent; the signature of the individual; and a statement regarding the individual's right to revoke consent?)
+											(set: Part2=consent, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))
+										(no:
+											(>MR6< ask:
+												(text:Were the data shared by the substance abuse program for scientific research purposes?)
+												(terms:
+													(Scientific research purposes:
+													 This refers to information from substance abuse patient records disclosed for the purpose of conducting scientific research. The director of the substance abuse program may decide to release information for this purpose if he or she determines that the recipient of the patient identifiable information is qualified to conduct the research and has a research protocol under which the information will be maintained in accordance with specific security requirements under the substance abuse confidentiality regulations)
+												)
 												(yes: 
-													(set: Part2=consent, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))
-												(no:
-													(>MR6< ask:
-														(text:Were the data shared by the substance abuse program for scientific research purposes?)
-														(terms:
-															(Scientific research purposes:
-															 This refers to information from substance abuse patient records disclosed for the purpose of conducting scientific research. The director of the substance abuse program may decide to release information for this purpose if he or she determines that the recipient of the patient identifiable information is qualified to conduct the research and has a research protocol under which the information will be maintained in accordance with specific security requirements under the substance abuse confidentiality regulations)
-														)
-														(yes: 
-															(set: Part2=scientificResearch, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))
-													)
-											)))
-									))
+													(set: Part2=scientificResearch, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))
+											)
+										)
+									)
+								)
 					))
 			)))))
 (>MR7< ask:
@@ -98,13 +96,13 @@
 		)
 	(yes: 
 		(>MR8< ask: 
-			(text: Have all direct identifiers been removed from the data in order to prevent a person from linking existing data to an individual in the data?)
+			(text: Have all direct identifiers been removed from the data?)
 			(terms:
 				(Direct identifiers:
 					Refers to the following list of identifiers of the patient or of relatives, employers, or household members of the patient:
-					* Names, 
-					* geographic subdivisions smaller than a state, including street address, city, county, precinct, ZIP code, and their equivalent geocodes, except for the initial three digits of the ZIP code if, [1] the geographic unit formed by combining all ZIP codes with the same three initial digits contains more than 20,000 people; and [2] the initial three digits of a ZIP code for all such geographic units containing 20,000 or fewer people is changed to 000
-					* All elements of dates, except year, for dates that directly relate to an individual. For example, birth date, admission date, discharge date, death date, and all ages over 89
+					* Names
+					* Geographic subdivisions smaller than a state, including street address, city, county, precinct, ZIP code, and their equivalent geocodes, except for the initial three digits of the ZIP code if, [1] the geographic unit formed by combining all ZIP codes with the same three initial digits contains more than 20,000 people; and [2] the initial three digits of a ZIP code for all such geographic units containing 20,000 or fewer people is changed to 000
+					* All elements of dates [except year] for dates that directly relate to an individual [e.g., birth date, admission date, discharge date, death date, and all ages over 89]
 					* Telephone or fax numbers
 					* Email addresses
 					* Social security numbers
@@ -116,7 +114,8 @@
 					* Internet Protocol [IP] address numbers
 					* Biometric identifiers, including finger and voice prints
 					* Full face photographic images and any comparable images
-					* Any other unique identifying number, characteristic, or code))
+					* Any other unique identifying number, characteristic, or code
+					))
 			(yes:
 				(set:HIPAA=safeHarborDeidentified, Code=green, Harm=minimal, Transit=clear, Storage=clear, Effort=deidentified)
 				(end))
@@ -157,7 +156,7 @@
 						(>MR10< ask:
 							(text: Do the data contain protected health information from medical records? In other words, do the data contain any health information that can be used to identify an individual? This includes, but is not limited to, demographic information or anything related to an individual’s past, present, or future health condition and related treatments or payments.)
 							(terms:
-								(Protected health information
+								(Protected health information:
 									Protected health information is defined as individually identifiable health information that is transmitted or maintained in any form of media. It excludes individually identifiable health information in education records covered by the Family Educational Rights and Privacy Act [FERPA] and employment records held by a covered entity in its role as an employer.)
 								(Individually identifiable health information: 
 									Individually identifiable health information is information that is a subset of health information, including demographic information collected from an individual by a covered entity, that relates to an individual’s past, present, or future physical or mental health condition, the provision of health care to the individual, or the past, present, or future payment for the provision of health care to the individual. It often includes common identifiers such as name, address, birth date, Social Security number, or anything that can reasonably be used to identify the individual. When information relates to an individual’s past or current treatment for alcohol or drug abuse, this includes any information – recorded or unrecorded – that could be used to determine the patient’s identity directly or by reference to other publicly available information.))
@@ -228,10 +227,10 @@
     )
     (yes:
       (set: PPRA=protected, Code=orange, Harm=civil,
-            Transit=encrypt, Effort=identifiable))
+            Transit=encrypt, Storage=encrypt, Effort=identifiable))
     (no:
       (set: PPRA=protectedDeidentified, Code=green, Harm=minimal,
-            Transit=clear, Effort=deidentified))
+            Transit=clear, Storage=clear, Effort=deidentified))
   )
   (>ppra3< ask: 
     (text:Was the survey or assessment funded, in whole or in part, by the US Department of Education?)

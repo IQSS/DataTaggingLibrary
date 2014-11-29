@@ -78,10 +78,17 @@ Auditing: one of NotNeeded, Yearly, Monthly.
 
 MedicalRecords: HIPAA, Part2.
 HIPAA: some of
-		waiver,
-		authorization,
-		safeHarborDeidentified, safeHarborExpert, statistician, limitedDataset, businessAssociateAgreement.
-Part2: one of deidentified, veteransMedicalData, consent, scientificResearch.
+		waiver (The data contain identifiable health information disclosed with waiver or alteration of authorization by an IRB or Privacy Board),
+		authorization(The data contain identifiable health information disclosed for limited purposes with patient authorization),
+		safeHarborDeidentified (The data contain health information that have been deidentified according to the HIPAA Privacy Rule safe harbor standard), 
+		expertDetermination(The data contain health information that have been deidentified using the HIPAA Privacy Rule expert determination method), 
+		limitedDataset (The data contain identifiable health information disclosed as a limited data set under the HIPAA Privacy Rule), 
+		businessAssociateContract(The data contain identifiable health information disclosed pursuant to a HIPAA business associate contract).
+Part2: one of 
+	deidentified (The data contain deidentified information from patient records related to substance abuse diagnosis, referral, or treatment),
+	veteransMedicalData (The data contain identifying information about substance abuse treatment that was released from US Veterans Affairs or Armed Services medical records),
+	consent (The data contain identifying information about substance abuse treatment from records disclosed with the consent of the patient),
+	scientificResearch (The data contain identifiable information about substance abuse treatment from records disclosed under the scientific research exception to the substance abuse confidentiality regulations).
 
 EducationRecords: FERPA, PPRA.
 FERPA: some of 
@@ -106,4 +113,6 @@ Census: some of CensusPublished.
 ESRA: some of restricted, public.
 CIPSEA: some of deidentified, identifiable.
 PrivacyAct: some of deidentified, identifiable.
-ContractOrPolicy: one of no, yes.
+ContractOrPolicy: one of 
+	no, 
+	yes(Use or sharing of the data is restricted by a contract or policy).

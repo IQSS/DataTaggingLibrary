@@ -1,145 +1,192 @@
 (ask:
 	(text: Do the data concern living persons?)
-	(yes: (set: Code=green) (call:personalData) )
+	(yes:
+		(set: Code=green)
+		(call: medicalRecordsCompliance )
+		(call: ppraCompliance )
+		(call: ferpaCompliance )
+		(call: govRecsCompliance )
+		(todo: Arrest and Conviction Records, Bank and Financial Records, 
+			Cable Television, Computer Crime, 
+			Credit reporting and Investigations [including 'Credit Repair', 'Credit Clinics', Check-Cashing and Credit Cards],
+			Criminal Justice Information Systems, Electronic Surveillance [including Wiretapping, Telephone Monitoring, and Video Cameras],
+			Employment Records, Government Information on Individuals, Identity Theft,
+			Insurance Records [including use of Genetic Information], Library Records, 
+			Mailing Lists [including Video rentals and Spam],
+			Special Medical Records [including HIV Testing],
+			Non-Electronic Visual Surveillance. Breast-Feeding, Polygraphing in Employment,
+			Privacy Statutes/State Constitutions [including the Right to Publicity],
+			Privileged Communications, Social Security Numbers, Student Records, Tax Records,
+			Telephone Services [including Telephone Solicitation and Caller ID], 
+			Testing in Employment [including Urinalysis, Genetic and Blood Tests], Tracking Technologies,  Voter Records))
 	(no:  (set: Code=blue, Identity=noPersonData) ))
 (call: dua)
 (end)
 
-(>personalData< call: medicalRecordsCompliance )
-(call: ppraCompliance )
-(call: ferpaCompliance )
-(call: govRecsCompliance )
-(todo: Arrest and Conviction Records, Bank and Financial Records, 
-	Cable Television, Computer Crime, 
-	Credit reporting and Investigations [including 'Credit Repair', 'Credit Clinics', Check-Cashing and Credit Cards],
-	Criminal Justice Information Systems, Electronic Surveillance [including Wiretapping, Telephone Monitoring, and Video Cameras],
-	Employment Records, Government Information on Individuals, Identity Theft,
-	Insurance Records [including use of Genetic Information], Library Records, 
-	Mailing Lists [including Video rentals and Spam],
-	Special Medical Records [including HIV Testing],
-	Non-Electronic Visual Surveillance. Breast-Feeding, Polygraphing in Employment,
-	Privacy Statutes/State Constitutions [including the Right to Publicity],
-	Privileged Communications, Social Security Numbers, Student Records, Tax Records,
-	Telephone Services [including Telephone Solicitation and Caller ID], 
-	Testing in Employment [including Urinalysis, Genetic and Blood Tests], Tracking Technologies,  Voter Records)
-(end)
-
 (>medicalRecordsCompliance< ask:
 	(text: Do the data contain health or medical information?)
-	(yes: 
-		(>MR2< ask:
-			(text: Do the data contain information related to substance abuse diagnosis, referral, or treatment?)
-			(terms:
-			 (Information related to substance abuse diagnosis, referral, or treatment:
-				Any information, including information on referral and intake, about alcohol and drug abuse patients obtained by a program, such as a treatment or rehabilitation program, employee assistance program, program within a general hospital, school-based program, or a private practitioner that holds itself out as providing alcohol or drug abuse diagnosis, treatment, or referral for treatment.  This does not include emergency room services related to an apparent overdose, unless the primary function of this emergency room service is providing diagnosis, treatment or referral for alcohol or drug abuse.))
-			(yes: 
-				(>MR2a< ask:
-					(text:Were the data obtained from a federally assisted drug abuse program after March 20, 1972, or a federally assisted alcohol abuse program after May 13, 1974 [or if obtained before the pertinent date, were they maintained by a federally assisted alcohol or drug abuse program after that date as part of an ongoing treatment episode which extended past that date]?)
-					(terms:
-						(Federally assisted drug or alcohol abuse programs:
-							An alcohol or drug abuse program is considered to be federally assisted if it is conducted by any federal agency or department, whether in whole or in part, directly or by contract. This includes programs carried out under a license, certification, registration, or authorization granted by a federal department or agency. Also included are programs that receive funding from any federal department or agency, programs conducted by a state or local government that receives any form of federal financial assistance, programs carried out under certification of provider status under the Medicare program, or programs that are allowed income tax deductions for contributions to the program or are granted tax exempt status by the Internal Revenue Service.))
-					(yes: 
-						(>MR3< ask:
-							(text:Do the records identify one or more patients as an alcohol or drug abuser directly, by reference to other publicly available information, or through verification of identification by another person?)
-							(yes:
-								(>MR4< ask:
-									(text: Were the data maintained in connection with the Department of Veterans Affairs or US Armed Services?)
-									(yes:
-										(>MR4a< ask:
-											(text: Were the data maintained by the Department of Veterans Affairs either shared with the patients' consent for the purposes of scientific research, or shared without consent but in connection with a medical emergency or public health activity related to HIV?)
-											(no: (reject: reject data and flag for review; possible violation of 38 U.S.C. 4132 due to the release of VA medical records without a valid exception.))
-											(yes: (set: Part2=veteransMedicalData) )
-							))))
-							(no: 
-								(set: Part2=deidentified, Effort=deidentified, Storage=clear, Transit=clear, Code=green)
-								(>MR5< ask:
-									(text: Do you have written consent from the individual[s] to disclose their information?)
-									(yes:
-										(>MR5a< ask:
-											(text: Does the written consent include the name or general designation of the program, organization, or person permitted to disclose; the name or general designation of the program, organization, or person permitted to receive the information; the name of the individual patient[s]; the purpose of the disclosure; specifically what may be disclosed; an expiration date or condition for such consent; the signature of the individual; and a statement regarding the individual's right to revoke consent?)
-											(yes: 
-												(set: Part2=consent, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))
-											(no:
-												(>MR6< ask:
-													(text:Were the data shared by the substance abuse program for scientific research purposes?)
-													(yes: 
-														(set: Part2=scientificResearch, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))
-												)
-										)))
-								))
-					)))))
-(>MR7< ask:
-	(text: Are you a covered entity or a business associate of a covered entity, or were the data collected or disclosed by a covered entity or business associate?)
+	(no: (end) )
+)
+(>MR2< ask:
+	(text: Do the data contain information related to substance abuse diagnosis, referral, or treatment?)
 	(terms:
-		(Covered entity: A covered entity is a health plan, health care clearinghouse, or health care provider, who transmits any health information in electronic form.)
-		(Business associate: A business associate is any person or organization, including a subcontractor, that acts on behalf of, or provides services to, a covered entity involving the use or disclosure of protected health information. This includes legal, actuarial, accounting, consulting, claim processing, data analysis, administration, utilization review, quality assurance, billing, benefit management, practice management, and re-pricing activities.))
+	 (Information related to substance abuse diagnosis, referral, or treatment:
+		Any information, including information on referral and intake, about alcohol and drug abuse patients obtained by a program, such as a treatment or rehabilitation program, employee assistance program, program within a general hospital, school-based program, or a private practitioner that holds itself out as providing alcohol or drug abuse diagnosis, treatment, or referral for treatment.  This does not include emergency room services related to an apparent overdose, unless the primary function of this emergency room service is providing diagnosis, treatment or referral for alcohol or drug abuse.))
+	(yes: 
+		(>MR2a< ask:
+			(text:Were the data obtained from a federally assisted drug abuse program after March 20, 1972, or a federally assisted alcohol abuse program after May 13, 1974 [or if obtained before the pertinent date, were they maintained by a federally assisted alcohol or drug abuse program after that date as part of an ongoing treatment episode which extended past that date]?)
+			(terms:
+				(Federally assisted drug or alcohol abuse programs:
+					An alcohol or drug abuse program is considered to be federally assisted if it is conducted by any federal agency or department, whether in whole or in part, directly or by contract. This includes programs carried out under a license, certification, registration, or authorization granted by a federal department or agency. Also included are programs that receive funding from any federal department or agency, programs conducted by a state or local government that receives any form of federal financial assistance, programs carried out under certification of provider status under the Medicare program, or programs that are allowed income tax deductions for contributions to the program or are granted tax exempt status by the Internal Revenue Service.))
+			(yes: 
+				(>MR3< ask:
+					(text:Do any of the substance abuse records contain patient identifying information, or information that would identify a patient as an alcohol or drug abuser either directly or by reference to other publicly available information?)
+					(terms:
+						(Patient identifying information:
+								This means the name, address, Social Security number, fingerprints, photograph, or similar information by which the identity of a patient can be determined with reasonable accuracy and speed either directly or by reference to other publicly available information. The term does not include a number assigned to a patient by a program, if that number does not consist of, or contain numbers, such as a Social Security, or driver’s license number, which could be used to identify a patient with reasonable accuracy and speed from sources external to the program.)
+					)
+					(no: 
+						(set: Part2=deidentified, Effort=deidentified, Storage=clear, Transit=clear, Code=green) )
+					(yes:
+						(>MR4< ask:
+							(text: Were the data maintained in connection with the US Department of Veterans Affairs or US Armed Services?)
+							(yes:
+								(>MR4a< ask:
+									(text: Were the data maintained by the Department of Veterans Affairs either shared with the patients’ consent for the purposes of scientific research, or shared without consent but in connection with a medical emergency or public health activity related to HIV?)
+									(no: (reject: reject data and flag for review; possible violation of 38 U.S.C. 4132 due to the release of VA medical records without a valid exception.))
+									(yes: (set: Part2=veteransMedicalData, Code=orange, Harm=civil, Transit=encrypt, Effort=identifiable) )
+								))
+								(no: 	
+									(>MR5< ask:
+										(text: Did the individuals provide written consent for the disclosure of their information?)
+										(terms:
+											(Written consent:
+												Includes the specific name or a designation of the program or person permitted to disclose the information; the name or title of the individual or the name of the organization to which disclosure is to be made; the name of the patient; the purpose of the disclosure; how much and what kind of information is to be disclosed; the signature of the patient, or a person authorized to sign on behalf of the patient; and the date on which the consent is signed.)
+										)
+										(yes:
+											(set: Part2=consent, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))
+										(no:
+											(>MR6< ask:
+												(text:Were the data shared by the substance abuse program for scientific research purposes?)
+												(terms:
+													(Scientific research purposes:
+													 This refers to information from substance abuse patient records disclosed for the purpose of conducting scientific research. The director of the substance abuse program may decide to release information for this purpose if he or she determines that the recipient of the patient identifiable information is qualified to conduct the research and has a research protocol under which the information will be maintained in accordance with specific security requirements under the substance abuse confidentiality regulations)
+												)
+												(yes: 
+													(set: Part2=scientificResearch, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))
+											)
+										)
+									)
+								)
+					))
+			)))))
+(>MR7< ask:
+	(text: Do the data contain information from a covered entity or business associate of a covered entity?)
+	(terms:
+		(Covered entity: A covered entity is a health plan, health care clearinghouse, or health care provider that transmits any health information in electronic form.
+			* Health plans include health insurance companies, health maintenance organizations [HMOs], company health plans, and government programs that pay for health care, such as Medicare, Medicaid, and the military and veterans health care programs.
+			* Health care providers include doctors, clinics, psychologists, dentists, chiropractors, nursing homes, and pharmacies.
+			* Health care clearinghouses include entities that process nonstandard health information they receive from another entity into a standard, i.e. standard electronic format or data content, or vice versa. 
+		)
+		(Business associate: A business associate is any person or organization, including a subcontractor, that acts on behalf of, or provides services to, a covered entity involving the use or disclosure of protected health information. This includes, but is not limited to, legal, actuarial, accounting, consulting, claim processing, data analysis, administration, utilization review, quality assurance, billing, benefit management, practice management, and re-pricing activities.))
+	(no: (end) )
+	(Not Sure: 
+		(reject:  For additional guidance on determining whether an individual or organization is a covered entity, please review the charts provided by the Centers for Medicare & Medicaid Services at
+							http://www.cms.gov/Regulations-and-Guidance/HIPAA-Administrative-Simplification/HIPAAGenInfo/Downloads/CoveredEntitycharts.pdf)
+		)
 	(yes: 
 		(>MR8< ask: 
-			(text: Has demographic, contact, and other uniquely identifiable information been removed from the data so that such health information cannot be used to re-identify the individual whom it belongs to?)
+			(text: Have all direct identifiers been removed from the data?)
+			(terms:
+				(Direct identifiers:
+					Refers to the following list of identifiers of the patient or of relatives, employers, or household members of the patient:
+					* Names
+					* Geographic subdivisions smaller than a state, including street address, city, county, precinct, ZIP code, and their equivalent geocodes, except for the initial three digits of the ZIP code if, [1] the geographic unit formed by combining all ZIP codes with the same three initial digits contains more than 20,000 people; and [2] the initial three digits of a ZIP code for all such geographic units containing 20,000 or fewer people is changed to 000
+					* All elements of dates [except year] for dates that directly relate to an individual [e.g., birth date, admission date, discharge date, death date, and all ages over 89]
+					* Telephone or fax numbers
+					* Email addresses
+					* Social security numbers
+					* Medical record, health plan beneficiary, and all other account numbers
+					* Certificate/license numbers
+					* Vehicle identifiers and serial numbers, including license plate numbers
+					* Device identifiers and serial numbers
+					* Web universal resource locators [URLs]
+					* Internet Protocol [IP] address numbers
+					* Biometric identifiers, including finger and voice prints
+					* Full face photographic images and any comparable images
+					* Any other unique identifying number, characteristic, or code
+					))
 			(yes:
+				(set:HIPAA=safeHarborDeidentified, Code=green, Harm=minimal, Transit=clear, Storage=clear, Effort=deidentified)
+				(end))
+			(no:
 				(>MR8a< ask:
-					(text: Have all direct identifiers been removed from the data in order to prevent a person from linking existing data to an individual in the data?)
+					(text: Has an expert in statistical or scientific principles and methods for deidentification certified that the data have been deidentified?)
 					(terms:
-						(Direct identifiers:
-							The eighteen identifiers under the HIPAA Privacy Rule safe harbor deidentification standard include: 
-							* Names, 
-							* geographic subdivisions smaller than a state, 
-							* all elements of date except for year, 
-							* telephone numbers, 
-							* fax machine numbers, 
-							* electronic mail addresses, 
-							* social security numbers, 
-							* medical record numbers, 
-							* health plan beneficiary numbers, 
-							* all other account numbers, 
-							* certificate/license numbers, 
-							* vehicle identifiers and serial numbers, including license plate numbers, 
-							* device identifiers and serial numbers, 
-							* web universal resource locators - URLs, 
-							* internet protocol numbers - IP addresses, 
-							* biometric identifiers including finger and voice prints, 
-							* full face photographic images and other comparable images, 
-							* any other unique identifying number, characteristic, or code.))
-					(yes: (set:HIPAA=safeHarborDeidentified, Code=green, Harm=minimal, Transit=clear, Storage=clear, Effort=deidentified))
+						(Certification:
+							Means the expert has applied appropriate principles and methods and determined that the risk is very small that the information could be used, alone or in combination with other reasonably available information, to identify one of the data subjects, and has documented the methods and results of the analysis justifying such determination.)
+					)
+					(yes: 
+						(set:HIPAA=expertDetermination, Code=green, Harm=minimal, Transit=clear, Storage=clear, Effort=deidentified)
+						(end))
 					(no:
-						(>MR8b< ask:
-							(text: Has an expert in statistics or scientific deidentification processes certified and documented that the data, when used alone or in combination with other information, presents a minimal risk of being used to re-identify any individual?)
-							(yes: (set:HIPAA=safeHarborExpert, Code=green, Harm=minimal, Transit=clear, Storage=clear, Effort=deidentified))
-							(no:
-								(>MR9< ask:
-									(text: Do the data constitute a limited data set?)
+						(>MR9< ask:
+							(text: Do the data constitute a limited data set under the HIPAA Privacy Rule?)
+							(terms:
+							 (Limited data set:
+										A limited data set contains patient information that has been stripped of all of the following identifiers and is shared according to the terms of a data use agreement.
+										* Names
+										* Postal address information other than city or town, state, and ZIP code
+										* Telephone or fax numbers
+										* Email addresses
+										* Social security numbers
+										* Medical record, health plan beneficiary, or other account numbers
+										* Certificate/license numbers
+										* Vehicle identifiers or serial numbers, including license plate numbers
+										* Device identifiers or serial numbers
+										* Web universal resource locators [URLs]
+										* Internet Protocol [IP] address numbers
+										* Biometric identifiers including finger and voice prints
+										* Full face photographic images or other comparable images
+										))
+							(yes: 
+								(set:HIPAA=limitedDataset, Code=green, Harm=minimal, Transit=clear, Storage=clear, Effort=deidentified)
+								(end)
+						))
+						(>MR10< ask:
+							(text: Do the data contain protected health information from medical records? In other words, do the data contain any health information that can be used to identify an individual? This includes, but is not limited to, demographic information or anything related to an individual’s past, present, or future health condition and related treatments or payments.)
+							(terms:
+								(Protected health information:
+									Protected health information is defined as individually identifiable health information that is transmitted or maintained in any form of media. It excludes individually identifiable health information in education records covered by the Family Educational Rights and Privacy Act [FERPA] and employment records held by a covered entity in its role as an employer.)
+								(Individually identifiable health information: 
+									Individually identifiable health information is information that is a subset of health information, including demographic information collected from an individual by a covered entity, that relates to an individual’s past, present, or future physical or mental health condition, the provision of health care to the individual, or the past, present, or future payment for the provision of health care to the individual. It often includes common identifiers such as name, address, birth date, Social Security number, or anything that can reasonably be used to identify the individual. When information relates to an individual’s past or current treatment for alcohol or drug abuse, this includes any information – recorded or unrecorded – that could be used to determine the patient’s identity directly or by reference to other publicly available information.))
+							(yes:
+								(>MR11< ask:
+									(text: Do the data contain health information from patients who have provided written authorization for their information to be disclosed to or used by third parties?)
 									(terms:
-									 (Limited data set: A limited data set does NOT include in the dataset: [1] names, [2] postal addresses other than city/town, zip code, and state, [3] telephone numbers, [4] fax machine numbers, [5] electronic mail addresses, [6] social security numbers, [7] medical record numbers, [8] health plan beneficiary numbers, [9] account numbers, [10] certificate/license numbers, [11] vehicle identifiers or serial numbers, including license plate numbers, [12] device identifiers or serial numbers, [13] web universal resource locators - URLs, [14] internet protocol numbers - IP addresses, [15] biometric identifiers including finger and voice prints, and [16] full face photographic images or other comparable images.))
-									(yes: 
-										(set:HIPAA=limitedDataset, Code=green, Harm=minimal, Transit=clear, Storage=clear, Effort=deidentified)
-										(end)
-								))
-								(>MR10< ask:
-									(text: Do the data contain medical records that constitute protected health information [PHI]? In other words, do the data contain any health information that can be used to identify an individual? This includes, but is not limited to, demographic information or anything related to an individual's past, present, or future health condition and related treatments or payments.)
-									(terms:
-										(Protected health information: Protected health information is defined as individually identifiable health information that is transmitted or maintained in any form of media. It excludes individually identifiable health information in education records covered by the Family Educational Rights and Privacy Act [FERPA] and employment records held by a covered entity in its role as an employer.)
-										(Individually identifiable health information: Individually identifiable health information is information that is a subset of health information, including demographic information collected from an individual by a covered entity, that relates to an individual's past, present, or future physical or mental health condition, the provision of health care to the individual, or the past, present, or future payment for the provision of health care to the individual. It often includes common identifiers such as name, address, birth date, Social Security number, or anything that can reasonably be used to identify the individual. When information relates to an individual's past or current treatment for alcohol or drug abuse, this includes any information - recorded or unrecorded - that could be used to determine the patient's identity directly or by reference to other publicly available information.))
-									(yes:
-										(>MR11< ask:
-											(text: Have the data subjects provided written Authorization for their data to be used by or disclosed to third-parties?)
+										(Authorization:
+											Refers to an individual’s signed permission to allow a covered entity to use or disclose the individual's protected health information. It includes a detailed description of the information to be used or disclosed, specific persons authorized to use or disclose the information, a description of the purpose of use or disclosure of the information, and an expiration date. Authorization may be combined with a consent to participate in the research, or with any other legal permission related to the research study.))
+									(yes: (set: HIPAA=authorization, Harm=civil, Effort=identifiable, Code=orange, Transit=encrypt, Storage=encrypt))
+									(no: 
+										(>MR12< ask:
+											(text: Has an oversight body such as an Institutional Review Board [IRB] or Privacy Board reviewed how the data will be used or disclosed and approved a request to alter or waive the Authorization requirement?)
 											(terms:
-												(Authorization: An individual's signed permission to allow a covered entity to use or disclose the individual's protected health information for the purpose and to the recipient stated in the Authorization.))
-											(yes: (set: HIPAA=authorization, Harm=civil, Effort=identifiable, Code=orange, Transit=encrypt, Storage=encrypt))
+												(Institutional review board - IRB:
+													A board, committee or group formally designated by an institution to review research involving human subjects. Most universities and academic medical centers that receive federal funding often have designated IRBs.)
+												(Privacy Board: 
+													An alternative to an IRB, comprised of members of varying backgrounds and appropriate professional competencies as necessary to review the effect of the research protocol on individual privacy rights and related interests. Privacy Boards must have at least one member who is not affiliated with the covered entity that will use or disclose the PHI involved in the research project, not affiliated with any entity conducting or sponsoring the research, and not related to any person who is affiliated with such entities, and members may not have conflicts of interest regarding the projects they review.)
+												(Alterations / Waivers to Authorization: 
+													An IRB or Privacy Board may approve a waiver or alteration of the research participants’ authorization for use or disclosure of information about them for research purposes. This provision can be used to conduct records research when the research could not practicably be conducted if research participants’ authorization were required. A covered entity may use or disclose protected health information for research purposes pursuant to a waiver of authorization by an IRB or Privacy Board, provided it has obtained documentation describing the IRB or Privacy Board, the date of approval, a description of the information to be used or disclosed, and a statement that the use or disclosure has been reviewed and approved under either normal or expedited review procedures.))
+											(yes: (set: HIPAA=waiver, Code=orange, Harm=civil, Storage=encrypt, Transit=encrypt, Effort=identifiable))
 											(no: 
-												(>MR12< ask:
-													(text: Has an oversight body such as an Institutional Review Board [IRB] or Privacy Board reviewed how the data will be used or disclosed and approved a request to alter or waive the Authorization requirement?)
+												(>MR13< ask:
+													(text: Were the data disclosed pursuant to a HIPAA business associate contract?)
 													(terms:
-														(Institutional review board - IRB:A board, committee or group formally designated by an institution to review research involving human subjects. Most universities and academic medical centers that receive federal funding often have designated IRBs.)
-														(Privacy Board: An alternative to an IRB, comprised of members of varying backgrounds and appropriate professional competencies as necessary to review the effect of the research protocol on individual privacy rights and related interests. Privacy Boards must have at least one member who is not affiliated with the covered entity that will use or disclose the PHI involved in the research project, not affiliated with any entity conducting or sponsoring the research, and not related to any person who is affiliated with such entities, and members may not have conflicts of interest regarding the projects they review.)
-														(Alterations / Waivers to Authorization: Certain criteria must be met when an IRB or Privacy Board issues a statement approving a waiver or alteration to the Authorization requirement. First, the use or disclosure of the PHI must involve no more than a minimal risk to the privacy of individuals based on plans to protect PHI identifiers from improper use and disclosure, plans to destroy identifiers when convenient with research procedures, and written assurance that PHI will not be reused or re-disclosed to any other person or entity, except for authorized oversight of the research project, or where permitted or required by law. The waiver or alteration must also state that the research could not practicably be conducted without the waiver or alteration, or without access to or use of the PHI, and include a brief description of the PHI to be used or disclosed.))
-													(yes: (set: HIPAA=waiver, Code=orange, Harm=civil, Storage=encrypt, Transit=encrypt, Effort=identifiable))
-													(no: 
-														(>MR13< ask:
-															(text: Did you acquire the data under a HIPAA Business Associate Agreement?)
-															(yes: (set: HIPAA=businessAssociateAgreement, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))))
-											))))))
-)))))))
-))
+														(Business associate contract:
+															A covered entity is required to enter into a business associate contract when it discloses protected health information to a business associate, or an individual or entity providing claims processing or administration, data analysis, processing or administration, utilization review, quality assurance, or similar functions or activities on behalf of the covered entity. A covered entity may also, but is not required to, enter in such a contract when disclosing protected health information to a researcher.)
+													)
+													(yes: (set: HIPAA=businessAssociateContract, Code=orange, Harm=civil, Transit=encrypt, Storage=encrypt, Effort=identifiable))))
+)))))))))))
 (end)
 
 (>ppraCompliance< ask: 
@@ -180,10 +227,10 @@
     )
     (yes:
       (set: PPRA=protected, Code=orange, Harm=civil,
-            Transit=encrypt, Effort=identifiable))
+            Transit=encrypt, Storage=encrypt, Effort=identifiable))
     (no:
       (set: PPRA=protectedDeidentified, Code=green, Harm=minimal,
-            Transit=clear, Effort=deidentified))
+            Transit=clear, Storage=clear, Effort=deidentified))
   )
   (>ppra3< ask: 
     (text:Was the survey or assessment funded, in whole or in part, by the US Department of Education?)

@@ -82,7 +82,6 @@ HIPAA: some of
 		authorization(The data contain identifiable health information disclosed for limited purposes with patient authorization),
 		safeHarborDeidentified (The data contain health information that have been deidentified according to the HIPAA Privacy Rule safe harbor standard), 
 		expertDetermination(The data contain health information that have been deidentified using the HIPAA Privacy Rule expert determination method), 
-		statistician, 
 		limitedDataset (The data contain identifiable health information disclosed as a limited data set under the HIPAA Privacy Rule), 
 		businessAssociateContract(The data contain identifiable health information disclosed pursuant to a HIPAA business associate contract).
 Part2: one of 
