@@ -6,7 +6,7 @@
 @simpleValue( value:SimpleValue ) = {
   <div class="value value-simple">
     <span class="typeName">@value.getType.getName</span>
-    <span class="valueAtom">@value.getName</span>
+   @valueAtom(value)
   </div>
 }
 
@@ -24,7 +24,7 @@
         <span class="valueAtom">empty</span>
     } else {
       @for(  sv <- value.getValues ){
-        <span class="valueAtom">@sv.getName</span>
+        @valueAtom(sv)
       }
     }
   </div>

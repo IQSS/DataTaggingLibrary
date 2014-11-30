@@ -20,7 +20,7 @@
                 <h3 class="panel-title">Question: Please select one answer</h3>
             </div>
             <div class="panel-body">
-                <span class="lead">@Helpers.bulletPoint(questionNode.getText)</span>
+                <span class="questionText">@Helpers.bulletPoint(questionNode.getText)</span>
                 @if( ! questionNode.getTermNames.isEmpty() ) {
                     <h4 class="text-muted">Terms</h4>
                     <dl>

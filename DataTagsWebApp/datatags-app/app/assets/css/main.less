@@ -1,7 +1,6 @@
 @import "globals.less";
 body {
   background-color: @bodyBackground;
-  // background-color: yellow;
 }
 
 h3 {
@@ -40,6 +39,11 @@ h3 {
   h3 {
     margin-top: 0;
   }
+}
+
+.questionText {
+  font-size: 18px;
+  font-weight: 300;
 }
 
 @rotate: -1deg;
@@ -165,7 +169,7 @@ table.engine-trace {
     color: #000;
     margin-left: 0.6em;
   }
-  .typeValues {
+  .typeValues, .value {
     .popover-content {
       line-height: 1.42857;
     }
@@ -179,6 +183,9 @@ table.engine-trace {
     margin-right: 3px;
     font-size: 0.9em;
     color: black;
+    display: inline-block;
+    line-height: normal;
+    margin: 2px;
     border: 1px solid rgba(0,0,0,0.4);
     white-space: nowrap;
   }

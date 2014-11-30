@@ -9,16 +9,7 @@
     </div>
     <div class="typeValues">
       @for( sv <- tp.values ) {
-        @if( sv.getInfo==null ) {
-          <span class="valueAtom">@sv.getName</span>
-        } else {
-          <span class="valueAtom" data-toggle="popover" data-trigger="hover" 
-             title="@sv.getName" data-content="@sv.getInfo"
-             data-placement="top">
-            @sv.getName
-            <span class="glyphicon glyphicon-info-sign"></span>
-          </span>
-        }
+        @valueAtom( sv )
       }
     </div>
   </div>
@@ -31,17 +22,8 @@
     </div>
     <div class="typeValues">
       @for( sv <- tp.getItemType.values ) {
-        @if( sv.getInfo==null ) {
-            <span class="valueAtom">@sv.getName</span>
-          } else {
-            <span class="valueAtom" data-toggle="popover" data-trigger="hover" 
-               title="@sv.getName" data-content="@sv.getInfo"
-               data-placement="top">
-              @sv.getName
-              <span class="glyphicon glyphicon-info-sign"></span>
-            </span>
-          }
-        }
+        @valueAtom( sv )
+      }
     </div>
   </div>
 }
