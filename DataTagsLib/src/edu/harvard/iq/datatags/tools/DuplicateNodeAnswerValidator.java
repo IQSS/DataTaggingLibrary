@@ -10,6 +10,7 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.RejectNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,19 +21,19 @@ import java.util.List;
  */
 public class DuplicateNodeAnswerValidator extends NullVisitor{
     
-    private LinkedList<InstructionNodeRef> duplicateAnswers;
+    private List<ValidationMessage> validationMessages = new LinkedList<>();
     
-    public List<InstructionNodeRef> validateDuplicateAnswers(List<InstructionNodeRef> allRefs) {
-        duplicateAnswers = new LinkedList<>();
+    public List<ValidationMessage> validateDuplicateAnswers(List<InstructionNodeRef> allRefs) {
+        validationMessages = new LinkedList<>();
         for (InstructionNodeRef ref: allRefs) {
             ref.accept(this);
         }
-        return duplicateAnswers;
+        return validationMessages;
     }
 
     @Override
     public void visitImpl(AskNodeRef nd) throws DataTagsRuntimeException {
-        LinkedList<AnswerNodeRef> noduplicates = new LinkedList<>();
+        List<AnswerNodeRef> noduplicates = new LinkedList<>();
         for (AnswerNodeRef ansRef : nd.getAnswers()) {
             for (InstructionNodeRef implementation: ansRef.getImplementation()) {
                 implementation.accept(this); // descend through the questionnaire structure
@@ -40,7 +41,7 @@ public class DuplicateNodeAnswerValidator extends NullVisitor{
             for (AnswerNodeRef ans : noduplicates) {
                 // compare answer text, since we don't want two no answers that have different implementations
                 if (ansRef.getAnswerText().equals(ans.getAnswerText())) {
-                    duplicateAnswers.add(nd);
+                    validationMessages.add(new ValidationMessage(Level.WARNING, "Ask node \"" + nd.getId() + "has duplicate answers"));
                 }
             }
             noduplicates.add(ansRef);

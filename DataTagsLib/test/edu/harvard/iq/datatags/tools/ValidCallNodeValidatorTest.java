@@ -55,7 +55,7 @@ public class ValidCallNodeValidatorTest {
         String code = "(todo: There's no id here to do anything with)(end)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
         fcs = fcsc.parse(refs, "unitName");
-        LinkedList<ValidationMessage> messages = instance.validateIdReferences(fcs);
+        LinkedList<NodeValidationMessage> messages = instance.validateIdReferences(fcs);
         assertEquals(new LinkedList<String>(), messages);
     }
 
@@ -65,7 +65,7 @@ public class ValidCallNodeValidatorTest {
                       "(>ppraCompliance< ask:(text: This should work!))(end)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
         fcs = fcsc.parse(refs, "unitName");
-        LinkedList<ValidationMessage> messages = instance.validateIdReferences(fcs);
+        LinkedList<NodeValidationMessage> messages = instance.validateIdReferences(fcs);
         assertEquals(new LinkedList<String>(), messages);
     }
     
@@ -75,9 +75,9 @@ public class ValidCallNodeValidatorTest {
                       "(>ppraCompliance< ask:(text: This shouldn't work.))(end)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
         fcs = fcsc.parse(refs, "unitName");
-        LinkedList<ValidationMessage> messages = instance.validateIdReferences(fcs);
-        LinkedList<ValidationMessage> expected = new LinkedList<>();
-        expected.addLast(new ValidationMessage(Level.ERROR, "Call node \"[CallNode id:$0 title:null]\" calls nonexistent node."));
+        LinkedList<NodeValidationMessage> messages = instance.validateIdReferences(fcs);
+        LinkedList<NodeValidationMessage> expected = new LinkedList<>();
+        expected.addLast(new NodeValidationMessage(Level.ERROR, "Call node \"[CallNode id:$0 title:null]\" calls nonexistent node."));
         assertEquals(expected, messages);
     }
     

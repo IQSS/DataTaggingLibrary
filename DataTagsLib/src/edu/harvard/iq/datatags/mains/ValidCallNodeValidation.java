@@ -19,6 +19,8 @@ import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartSetComplier;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import edu.harvard.iq.datatags.tools.NodeValidationMessage;
+import edu.harvard.iq.datatags.tools.OldValidationMessage;
 import edu.harvard.iq.datatags.tools.RepeatIdValidator;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidCallNodeValidator;
@@ -115,15 +117,15 @@ public class ValidCallNodeValidation {
             System.out.println("====================");
             UnreachableNodeValidator unv = new UnreachableNodeValidator();
             System.out.println("Validating unreachable nodes");
-            List<ValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
-            for ( ValidationMessage m : unreachableNodeMessages ) {
+            List<NodeValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
+            for ( NodeValidationMessage m : unreachableNodeMessages ) {
                 System.out.println(m);
                 System.out.println("\t" + m.getEntities());
             }
             
             System.out.println("Validating Call nodes");
             ValidCallNodeValidator fcv = new ValidCallNodeValidator();
-            LinkedList<ValidationMessage> callNodeMessages = fcv.validateIdReferences(fcs);
+            LinkedList<NodeValidationMessage> callNodeMessages = fcv.validateIdReferences(fcs);
             if (callNodeMessages.size() > 0) {
                 System.out.println(callNodeMessages);
                 System.exit(-1);

@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.junit.After;
@@ -71,20 +70,20 @@ public class UnreachableNodeValidatorTest {
         System.out.println("refs = " + refs);
         
         fcs = fcsc.parse(refs, "unitName");
-        List<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
+        List<NodeValidationMessage> messages = instance.validateUnreachableNodes(fcs);
         
         Set<ChartEntity> expected = Collections.<ChartEntity>emptySet();
         Set<ChartEntity> actualEntities = new HashSet<>();
-        Set<ValidationMessage.Level> actualLevels = EnumSet.noneOf(ValidationMessage.Level.class);
+        Set<NodeValidationMessage.Level> actualLevels = EnumSet.noneOf(NodeValidationMessage.Level.class);
         
-        for ( ValidationMessage vm : messages ) {
+        for ( NodeValidationMessage vm : messages ) {
             actualEntities.addAll(vm.getEntities());
             actualLevels.add(vm.getLevel());
         }
         System.out.println("actual = " + actualEntities);
         System.out.println("expected = " + expected);
         
-        assertEquals( new HashSet<ValidationMessage>(), actualLevels);
+        assertEquals( new HashSet<OldValidationMessage>(), actualLevels);
         assertEquals(expected, actualEntities);
         
         System.out.println("/Reachable\n\n");
@@ -99,20 +98,20 @@ public class UnreachableNodeValidatorTest {
         System.out.println("refs = " + refs);
         
         fcs = fcsc.parse(refs, "unitName");
-        List<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
+        List<NodeValidationMessage> messages = instance.validateUnreachableNodes(fcs);
         
         Set<ChartEntity> expected = Collections.<ChartEntity>singleton( new EndNode("nr") );
         Set<ChartEntity> actualEntities = new HashSet<>();
-        Set<ValidationMessage.Level> actualLevels = EnumSet.noneOf(ValidationMessage.Level.class);
+        Set<NodeValidationMessage.Level> actualLevels = EnumSet.noneOf(NodeValidationMessage.Level.class);
         
-        for ( ValidationMessage vm : messages ) {
+        for ( NodeValidationMessage vm : messages ) {
             actualEntities.addAll(vm.getEntities());
             actualLevels.add(vm.getLevel());
         }
         System.out.println("actual = " + actualEntities);
         System.out.println("expected = " + expected);
         
-        assertEquals( EnumSet.of(ValidationMessage.Level.WARNING), actualLevels);
+        assertEquals( EnumSet.of(OldValidationMessage.Level.WARNING), actualLevels);
         assertEquals(expected, actualEntities);
         
         System.out.println("/Minimal\n\n");
@@ -133,22 +132,22 @@ public class UnreachableNodeValidatorTest {
         System.out.println("refs = " + refs);
         
         fcs = fcsc.parse(refs, "unitName");
-        List<ValidationMessage> messages = instance.validateUnreachableNodes(fcs);
+        List<NodeValidationMessage> messages = instance.validateUnreachableNodes(fcs);
         
         Set<ChartEntity> expected = new HashSet<ChartEntity>(Arrays.asList(new RejectNode("reject4", "Still no."),
                                     new RejectNode("reject3", "No."), new EndNode("end1"), new AskNode("ask2")));
         
         Set<ChartEntity> actualEntities = new HashSet<>();
-        Set<ValidationMessage.Level> actualLevels = EnumSet.noneOf(ValidationMessage.Level.class);
+        Set<NodeValidationMessage.Level> actualLevels = EnumSet.noneOf(NodeValidationMessage.Level.class);
         
-        for ( ValidationMessage vm : messages ) {
+        for ( NodeValidationMessage vm : messages ) {
             actualEntities.addAll(vm.getEntities());
             actualLevels.add(vm.getLevel());
         }
         System.out.println("actual = " + actualEntities);
         System.out.println("expected = " + expected);
         
-        assertEquals( EnumSet.of(ValidationMessage.Level.WARNING), actualLevels);
+        assertEquals( EnumSet.of(OldValidationMessage.Level.WARNING), actualLevels);
         assertEquals(expected, actualEntities);
         
         System.out.println("/Unreachable\n\n");

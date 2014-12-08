@@ -10,55 +10,52 @@ import edu.harvard.iq.datatags.model.charts.nodes.Node.VoidVisitor;
 import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.values.CompoundValue;
+import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
-import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
-import java.util.LinkedList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Checks that every id referenced in a CallNode exists.
- * Returns an ERROR with each nonexistent node.
- * 
+ * Traverse the interview and gather all used tag values
+ * (used in set nodes).
+ *
  * @author Naomi
  */
-public class ValidCallNodeValidator extends VoidVisitor {
+public class InterviewTagValues extends VoidVisitor {
+    private Set<TagValue> usedTagValues = new HashSet<>();
     
-    private final LinkedList<NodeValidationMessage> validationMessages = new LinkedList<>();
-    private FlowChart chart;
-    
-    
-    public LinkedList<NodeValidationMessage> validateIdReferences(FlowChartSet fcs) {
-        Iterable<FlowChart> chartGroup = fcs.charts();
-        for (FlowChart c : chartGroup) {
-            chart = c;
-            Iterable<Node> chartNodes = chart.nodes();
-            for (Node allnodes : chartNodes) {
-                allnodes.accept(this);
+    public Set<TagValue> gatherInterviewTagValues(FlowChartSet fcs) {
+        for (FlowChart chart : fcs.charts()) {
+            for (Node node : chart.nodes()) {
+                node.accept(this);
             }
         }
-        return validationMessages;
+        return usedTagValues;
     }
-    
-    
+
     @Override
-    public void visitImpl (CallNode cn) throws DataTagsRuntimeException {
-        Node exists = chart.getNode(cn.getCalleeNodeId());
-        if (exists == null) {
-            validationMessages.addLast(new NodeValidationMessage(Level.ERROR, "Call node \"" + cn + "\" calls nonexistent node."));
-        }
-    }
-    
-    @Override
-    public void visitImpl (AskNode cn) throws DataTagsRuntimeException {
+    public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
         // do nothing
     }
-    
+
     @Override
     public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
-        // do nothing
+        CompoundValue compound = nd.getTags();
+        for (TagType t : compound.getTypesWithNonNullValues()) {
+            usedTagValues.add(compound.get(t)); // each tagvalue in this setnode
+        }
     }
 
     @Override
     public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
+        // do nothing
+    }
+
+    @Override
+    public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
         // do nothing
     }
 
@@ -71,6 +68,5 @@ public class ValidCallNodeValidator extends VoidVisitor {
     public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
         // do nothing
     }
-
     
 }

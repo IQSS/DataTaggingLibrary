@@ -12,8 +12,10 @@ import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartSetComplier;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.tools.DuplicateNodeAnswerValidator;
+import edu.harvard.iq.datatags.tools.NodeValidationMessage;
 import edu.harvard.iq.datatags.tools.RepeatIdValidator;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
+import edu.harvard.iq.datatags.tools.UnusedTagsValidator;
 import edu.harvard.iq.datatags.tools.ValidCallNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import java.io.IOException;
@@ -60,20 +62,20 @@ public class QuestionnaireValidation {
             
             
             UnreachableNodeValidator unv = new UnreachableNodeValidator();
-            List<ValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
+            List<NodeValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
             if (!unreachableNodeMessages.isEmpty()) {
                 System.out.println("*****************\nUNREACHABLE NODES:");
-                for ( ValidationMessage m : unreachableNodeMessages ) {
+                for (NodeValidationMessage m : unreachableNodeMessages ) {
                     System.out.println(m);
                     System.out.println("\t" + m.getEntities());
                 }
             }
             
             ValidCallNodeValidator fcv = new ValidCallNodeValidator();
-            List<ValidationMessage> callNodeMessages = fcv.validateIdReferences(fcs);
+            List<NodeValidationMessage> callNodeMessages = fcv.validateIdReferences(fcs);
             if (!callNodeMessages.isEmpty()) {
                 System.out.println("*****************\nNONEXISTENT NODES:");
-                for ( ValidationMessage m : callNodeMessages ) {
+            for (NodeValidationMessage m : callNodeMessages ) {
                     System.out.println(m);
                 }
             }
@@ -82,17 +84,26 @@ public class QuestionnaireValidation {
             List<ValidationMessage> repeatIdMessages = riv.validateRepeatIds(refs);
             if (!repeatIdMessages.isEmpty()) {
                 System.out.println("*****************\nREPEATED IDS:");
-                for ( ValidationMessage m : repeatIdMessages) {
+                for (ValidationMessage m : repeatIdMessages) {
                     System.out.println(m);
                 }
             }
             
             DuplicateNodeAnswerValidator dupNode = new DuplicateNodeAnswerValidator();
-            List<InstructionNodeRef> duplicateNodeMessages = dupNode.validateDuplicateAnswers(refs);
+            List<ValidationMessage> duplicateNodeMessages = dupNode.validateDuplicateAnswers(refs);
             if (!duplicateNodeMessages.isEmpty()) {
                 System.out.println("*****************\nDUPLICATE ANSWERS:");
-                for ( InstructionNodeRef r : duplicateNodeMessages) {
-                    System.out.println(r);
+                for ( ValidationMessage m : duplicateNodeMessages) {
+                    System.out.println(m);
+                }
+            }
+            
+            UnusedTagsValidator utv = new UnusedTagsValidator();
+            List<ValidationMessage> unusedTagsMessages = utv.validateUnusedTags(fcs);
+            if (!unusedTagsMessages.isEmpty()) {
+                System.out.println("*****************UNUSED TAGS:");
+                for (ValidationMessage m : unusedTagsMessages) {
+                    System.out.println(m);
                 }
             }
             
