@@ -114,5 +114,5 @@ ESRA: some of restricted, public.
 CIPSEA: some of deidentified, identifiable.
 PrivacyAct: some of deidentified, identifiable.
 ContractOrPolicy: one of 
-	no, 
+	no(Use or sharing of the data is not restricted by a contract or policy), 
 	yes(Use or sharing of the data is restricted by a contract or policy).
