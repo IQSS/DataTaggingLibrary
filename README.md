@@ -1,4 +1,9 @@
-Data-Tags
+DataTags Language Tools
 ============
 
-A system to tag the how private datasets are, and how they should be handled
+Part of a the [DataTags](http://datatags.org) project, this library contains tools for the DataTags language, used to create questionnaires and tag spaces. Here you can find:
+
+* Language Parser
+* Embeddable runtime engine
+* Visualization tools
+* Validation tools

@@ -1,0 +1,44 @@
+digraph ChartSet {
+edge [fontname="Helvetica" fontsize="10"]
+node [fillcolor="lightgray" style="filled" fontname="Helvetica" fontsize="10"]
+start[ fillcolor="transparent" shape="none" fontcolor="#008800" fontsize="16" ]
+subgraph cluster_questionnaire_flow_c1 {
+label="questionnaire.flow-c1"
+questionnaire_flow_c1_HSH__DLR__DLR_questionnaire_flow_c1_end[ fillcolor="#333333" shape="point" width="0.2" height="0.2" ]
+questionnaire_flow_c1_HSH_i1[ fillcolor="#AADDAA" shape="rect" label="i1\nSet\nCode=blue\n" ]
+questionnaire_flow_c1_HSH_i2[ shape="oval" label="i2\nask\nHere is a simple question " ]
+questionnaire_flow_c1_HSH_i3[ fillcolor="#BBBBFF" shape="cds" label="i3\nquestionnaire.flow-c1/sec1" ]
+questionnaire_flow_c1_HSH_i4[ fillcolor="#BBBBFF" shape="cds" label="i4\nquestionnaire.flow-c1/sec2" ]
+questionnaire_flow_c1_HSH_i5[ fillcolor="#BBBBFF" shape="cds" label="i5\nquestionnaire.flow-c1/sec3" ]
+questionnaire_flow_c1_HSH_s1a[ fillcolor="#AADDAA" shape="rect" label="s1a\nSet\nCode=green\n" ]
+questionnaire_flow_c1_HSH_s2a[ fillcolor="#AADDAA" shape="rect" label="s2a\nSet\nHandling=[ DUA:[ Use:IRB ] ]\n" ]
+questionnaire_flow_c1_HSH_s2b[ fillcolor="#AADDAA" shape="rect" label="s2b\nSet\nHandling=[ DUA:[ Use:Research ] ]\n" ]
+questionnaire_flow_c1_HSH_s3a[ fillcolor="#AADDAA" shape="rect" label="s3a\nSet\nHandling=[ DUA:[ Use:IRB ] ]\n" ]
+questionnaire_flow_c1_HSH_s3b[ fillcolor="#AADDAA" shape="rect" label="s3b\nSet\nHandling=[ DUA:[ Use:Research ] ]\n" ]
+questionnaire_flow_c1_HSH_s3c[ fillcolor="#AADDAA" shape="rect" label="s3c\nSet\nHandling=[ DUA:[ Use:Research ] ]\n" ]
+questionnaire_flow_c1_HSH_sec1[ shape="oval" label="sec1\nask\nSimple questio with only 'no' " ]
+questionnaire_flow_c1_HSH_sec2[ shape="oval" label="sec2\nask\nNow with 2 answers. " ]
+questionnaire_flow_c1_HSH_sec3[ shape="oval" label="sec3\nask\nAaaaaaand here are 3 ans " ]
+{ rank=same; questionnaire_flow_c1_HSH_i1, questionnaire_flow_c1_HSH_sec3, questionnaire_flow_c1_HSH_sec1, questionnaire_flow_c1_HSH_sec2}
+}
+start -> questionnaire_flow_c1_HSH_i1[ penwidth="4.0" color="#008800" ]questionnaire_flow_c1_HSH_i1 -> questionnaire_flow_c1_HSH_i2
+questionnaire_flow_c1_HSH_i2 -> questionnaire_flow_c1_HSH_i3[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_i2 -> questionnaire_flow_c1_HSH_i3[ taillabel="no" ]
+questionnaire_flow_c1_HSH_i3 -> questionnaire_flow_c1_HSH_i4
+questionnaire_flow_c1_HSH_i4 -> questionnaire_flow_c1_HSH_i5
+questionnaire_flow_c1_HSH_i5 -> questionnaire_flow_c1_HSH__DLR__DLR_questionnaire_flow_c1_end
+questionnaire_flow_c1_HSH_s1a -> questionnaire_flow_c1_HSH__DLR__DLR_questionnaire_flow_c1_end
+questionnaire_flow_c1_HSH_s2a -> questionnaire_flow_c1_HSH__DLR__DLR_questionnaire_flow_c1_end
+questionnaire_flow_c1_HSH_s2b -> questionnaire_flow_c1_HSH__DLR__DLR_questionnaire_flow_c1_end
+questionnaire_flow_c1_HSH_s3a -> questionnaire_flow_c1_HSH__DLR__DLR_questionnaire_flow_c1_end
+questionnaire_flow_c1_HSH_s3b -> questionnaire_flow_c1_HSH__DLR__DLR_questionnaire_flow_c1_end
+questionnaire_flow_c1_HSH_s3c -> questionnaire_flow_c1_HSH__DLR__DLR_questionnaire_flow_c1_end
+questionnaire_flow_c1_HSH_sec1 -> questionnaire_flow_c1_HSH__DLR__DLR_questionnaire_flow_c1_end[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_sec1 -> questionnaire_flow_c1_HSH_s1a[ taillabel="no" ]
+questionnaire_flow_c1_HSH_sec2 -> questionnaire_flow_c1_HSH_s2a[ taillabel="yes" ]
+questionnaire_flow_c1_HSH_sec2 -> questionnaire_flow_c1_HSH_s2b[ taillabel="no" ]
+questionnaire_flow_c1_HSH_sec3 -> questionnaire_flow_c1_HSH_s3b[ taillabel="World" ]
+questionnaire_flow_c1_HSH_sec3 -> questionnaire_flow_c1_HSH_s3a[ taillabel="Hello" ]
+questionnaire_flow_c1_HSH_sec3 -> questionnaire_flow_c1_HSH_s3c[ taillabel="!!" ]
+{rank=source; start}
+}
