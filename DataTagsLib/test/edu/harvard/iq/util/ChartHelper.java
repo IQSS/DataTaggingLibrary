@@ -1,13 +1,13 @@
 package edu.harvard.iq.util;
 
-import edu.harvard.iq.datatags.runtime.ChartRunningTest;
-import edu.harvard.iq.datatags.model.values.Answer;
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
-import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
+import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
+import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.SimpleType;
+import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.runtime.ChartRunningTest;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.runtime.listeners.RuntimeEnginePrintStreamListener;

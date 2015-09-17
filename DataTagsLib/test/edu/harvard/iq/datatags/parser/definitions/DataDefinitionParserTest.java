@@ -12,9 +12,9 @@ import edu.harvard.iq.datatags.parser.definitions.references.ToDoTypeReference;
 import edu.harvard.iq.datatags.parser.definitions.references.TypeReference;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.List;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *

@@ -10,15 +10,14 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.RejectNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
+import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
+import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
-import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 
 /**
  * 

@@ -2,7 +2,7 @@ digraph ChartSet {
 edge [fontname="Helvetica" fontsize="10"]
 node [fillcolor="lightgray" style="filled" fontname="Helvetica" fontsize="10"]
 rankdir=LR
-graph [overlap=true ranksep=3]
+graph [overlap=true ranksep=4]
 DataTags[label="DataTags" shape="octagon" peripheries="2"]
 Legal[label="Legal" shape="octagon" peripheries="2"]
 MedicalRecords[label="MedicalRecords" shape="octagon" peripheries="2"]

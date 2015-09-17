@@ -44,11 +44,11 @@ DUA:
 
 
 TimeLimit: one of
- none (Data stored indefinitely), 
- _1yr (Data will be deleted after 1 years),
- _2yr (Data will be deleted after 2 years),
+ none (Data stored indefinitely),
+ _50yr (Data will be deleted after 50 years),
  _5yr (Data will be deleted after 5 years),
- _50yr (Data will be deleted after 50 years).
+ _2yr (Data will be deleted after 2 years),
+ _1yr (Data will be deleted after 1 years).
 
 Sharing: one of
 		Anyone,
@@ -69,7 +69,7 @@ Approval: one of None, Email, Signed.
 
 auth: one of approval, none.
 
-Identity: one of 
+Identity: one of
 	noPersonData (Data is about inanimate objects),
 	notPersonSpecific (Data is about living people, but in aggregated form - where aggregation is over a group large enough),
 	personSpecific (Personal information can be directly inferred from the data).
@@ -80,18 +80,18 @@ MedicalRecords: HIPAA, Part2.
 HIPAA: some of
 		waiver (The data contain identifiable health information disclosed with waiver or alteration of authorization by an IRB or Privacy Board),
 		authorization(The data contain identifiable health information disclosed for limited purposes with patient authorization),
-		safeHarborDeidentified (The data contain health information that have been deidentified according to the HIPAA Privacy Rule safe harbor standard), 
-		expertDetermination(The data contain health information that have been deidentified using the HIPAA Privacy Rule expert determination method), 
-		limitedDataset (The data contain identifiable health information disclosed as a limited data set under the HIPAA Privacy Rule), 
+		safeHarborDeidentified (The data contain health information that have been deidentified according to the HIPAA Privacy Rule safe harbor standard),
+		expertDetermination(The data contain health information that have been deidentified using the HIPAA Privacy Rule expert determination method),
+		limitedDataset (The data contain identifiable health information disclosed as a limited data set under the HIPAA Privacy Rule),
 		businessAssociateContract(The data contain identifiable health information disclosed pursuant to a HIPAA business associate contract).
-Part2: one of 
+Part2: one of
 	deidentified (The data contain deidentified information from patient records related to substance abuse diagnosis, referral, or treatment),
 	veteransMedicalData (The data contain identifying information about substance abuse treatment that was released from US Veterans Affairs or Armed Services medical records),
 	consent (The data contain identifying information about substance abuse treatment from records disclosed with the consent of the patient),
 	scientificResearch (The data contain identifiable information about substance abuse treatment from records disclosed under the scientific research exception to the substance abuse confidentiality regulations).
 
 EducationRecords: FERPA, PPRA.
-FERPA: some of 
+FERPA: some of
 	deidentified (The data contain deidentified education records as defined in FERPA),
 	directoryOptOut (The data contain directory information from students who have requested to opt out of the disclosure of this information),
 	directoryInfo (The data contain identifiable information from education records designated by an educational agency or institution as directory information),
@@ -113,6 +113,6 @@ Census: some of CensusPublished.
 ESRA: some of restricted, public.
 CIPSEA: some of deidentified, identifiable.
 PrivacyAct: some of deidentified, identifiable.
-ContractOrPolicy: one of 
-	no(Use or sharing of the data is not restricted by a contract or policy), 
+ContractOrPolicy: one of
+	no(Use or sharing of the data is not restricted by a contract or policy),
 	yes(Use or sharing of the data is restricted by a contract or policy).

@@ -20,7 +20,7 @@
 			Telephone Services [including Telephone Solicitation and Caller ID], 
 			Testing in Employment [including Urinalysis, Genetic and Blood Tests], Tracking Technologies,  Voter Records))
 	(no:  (set: Code=blue, Identity=noPersonData) ))
-(call: dua)
+	(call: dua)
 (end)
 
 (>medicalRecordsCompliance< ask:

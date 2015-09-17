@@ -6,7 +6,6 @@ import edu.harvard.iq.datatags.model.types.SimpleType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.ToDoType;
 import edu.harvard.iq.datatags.model.values.SimpleValue;
-import edu.harvard.iq.datatags.model.values.TagValue;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.LinkedList;

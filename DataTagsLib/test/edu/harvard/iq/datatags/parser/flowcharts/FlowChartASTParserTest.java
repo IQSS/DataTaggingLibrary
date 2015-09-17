@@ -4,8 +4,8 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.AnswerNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.AskNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.CallNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.EndNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.NodeHeadRef;
+import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TermNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TextNodeRef;
 import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
@@ -18,9 +18,9 @@ import org.codehaus.jparsec.Scanners;
 import org.codehaus.jparsec.error.ParserException;
 import org.codehaus.jparsec.functors.Pair;
 import org.junit.After;
+import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *

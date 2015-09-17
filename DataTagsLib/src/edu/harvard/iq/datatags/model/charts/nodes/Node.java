@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.model.charts.nodes;
 
-import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.model.charts.ChartEntity;
+import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 
 /**

@@ -1,6 +1,5 @@
 package edu.harvard.iq.datatags.parser.flowcharts;
 
-import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
@@ -14,6 +13,7 @@ import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.SimpleType;
 import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.model.types.ToDoType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.Answer;

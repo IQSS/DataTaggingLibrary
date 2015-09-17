@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.model.types;
 
-import java.util.Collections;
-import java.util.SortedSet;
 import edu.harvard.iq.datatags.model.values.*;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeSet;
 /**
  * A type whose values cannot be divided. Values of this type are not

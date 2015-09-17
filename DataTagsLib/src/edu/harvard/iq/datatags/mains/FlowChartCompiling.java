@@ -1,18 +1,16 @@
 package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
-import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.parser.definitions.DataDefinitionParser;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartSetComplier;
-import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
-import edu.harvard.iq.datatags.tools.EndNodeOptimizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetClusteredVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDataStructureVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeRefVizalizer;

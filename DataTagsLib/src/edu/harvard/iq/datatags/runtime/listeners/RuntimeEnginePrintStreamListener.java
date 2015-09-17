@@ -2,7 +2,6 @@ package edu.harvard.iq.datatags.runtime.listeners;
 
 import edu.harvard.iq.datatags.model.charts.nodes.Node;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
-import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.io.PrintStream;
 import java.util.Arrays;
 

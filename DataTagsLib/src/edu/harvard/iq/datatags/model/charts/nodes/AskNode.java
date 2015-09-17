@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.model.charts.nodes;
 
-import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.model.charts.FlowChart;
+import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.HashMap;
 import java.util.Map;

@@ -1,17 +1,17 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.model.values.Answer;
-import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
-import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.charts.FlowChart;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
+import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
+import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
+import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.charts.nodes.Node;
 import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
+import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.SimpleValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
@@ -19,12 +19,12 @@ import edu.harvard.iq.datatags.model.values.ToDoValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.util.ReachableNodesCollector;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
+import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
