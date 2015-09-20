@@ -5,7 +5,7 @@ import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
-import edu.harvard.iq.datatags.parser.definitions.DataDefinitionParser;
+import edu.harvard.iq.datatags.parser.definitions.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
@@ -27,6 +27,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -46,8 +47,8 @@ public class QuestionnaireValidation {
             System.out.println("Reading tags: " + tagsFile);
             System.out.println(" (full:  " + tagsFile.toAbsolutePath() + ")");
 
-            DataDefinitionParser tagsParser = new DataDefinitionParser();
-            TagType baseType = tagsParser.parseTagDefinitions(readAll(tagsFile), tagsFile.getFileName().toString());
+            TagSpaceParser tagsParser = new TagSpaceParser();
+            TagType baseType = tagsParser.parse(readAll(tagsFile)).buildType("DataTags").get();
 
             System.out.println("Reading chart: " + chartFile);
             System.out.println(" (full:  " + chartFile.toAbsolutePath() + ")");
@@ -81,7 +82,7 @@ public class QuestionnaireValidation {
             }
             
             RepeatIdValidator riv = new RepeatIdValidator();
-            List<ValidationMessage> repeatIdMessages = riv.validateRepeatIds(refs);
+            Set<ValidationMessage> repeatIdMessages = riv.validateRepeatIds(refs);
             if (!repeatIdMessages.isEmpty()) {
                 System.out.println("*****************\nREPEATED IDS:");
                 for (ValidationMessage m : repeatIdMessages) {

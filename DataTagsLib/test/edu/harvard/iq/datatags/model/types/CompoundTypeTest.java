@@ -70,14 +70,14 @@ public class CompoundTypeTest {
     @Test
     public void testSimpleSet() {
         CompoundValue val = ctSut.createInstance();
-        val.set( stA.registerValue("A-0", null) );
-        val.set( stB.registerValue("B-0", null));
+        val.set( TypeHelper.getCreateValue(stA, "A-0", null) );
+        val.set( TypeHelper.getCreateValue(stB, "B-0", null) );
         
         assertEquals( C.set(stA, stB), val.getTypesWithNonNullValues() );
         assertEquals( values.get(stA).get(0), val.get(stA) );
         assertEquals( values.get(stB).get(0), val.get(stB) );
         
-        val.set( stB.registerValue("B-1", null));
+        val.set( TypeHelper.getCreateValue(stB, "B-1", null) );
         assertEquals( values.get(stB).get(1), val.get(stB) );
         assertEquals( values.get(stA).get(0), val.get(stA) );
         

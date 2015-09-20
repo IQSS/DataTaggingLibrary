@@ -66,19 +66,22 @@ public class ValidCallNodeValidatorTest {
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
         fcs = fcsc.parse(refs, "unitName");
         LinkedList<NodeValidationMessage> messages = instance.validateIdReferences(fcs);
-        assertEquals(new LinkedList<String>(), messages);
+        assertEquals(new LinkedList<>(), messages);
     }
     
     @Test
     public void validateIdReferencesTest_invalidId() throws BadSetInstructionException {
         String code = "(call: ferpaCompliance )" +
-                      "(>ppraCompliance< ask:(text: This shouldn't work.))(end)";
+                      "(>ppraCompliance< ask:(text: This shouldn't work.))" +
+                      "(end)";
+        
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
         fcs = fcsc.parse(refs, "unitName");
-        LinkedList<NodeValidationMessage> messages = instance.validateIdReferences(fcs);
+        LinkedList<NodeValidationMessage> actual = instance.validateIdReferences(fcs);
         LinkedList<NodeValidationMessage> expected = new LinkedList<>();
         expected.addLast(new NodeValidationMessage(Level.ERROR, "Call node \"[CallNode id:$0 title:null]\" calls nonexistent node."));
-        assertEquals(expected, messages);
+        assertEquals(ValidationMessage.Level.ERROR, actual.get(0).getLevel());
+        assertTrue( actual.get(0).getMessage().contains("id:$0") );
     }
     
 }

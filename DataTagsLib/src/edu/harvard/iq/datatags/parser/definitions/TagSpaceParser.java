@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.parser.definitions;
 
 import edu.harvard.iq.datatags.parser.definitions.ast.AbstractSlot;
-import edu.harvard.iq.datatags.parser.definitions.references.CompilationUnitLocationReference;
+import edu.harvard.iq.datatags.parser.definitions.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import java.util.HashMap;

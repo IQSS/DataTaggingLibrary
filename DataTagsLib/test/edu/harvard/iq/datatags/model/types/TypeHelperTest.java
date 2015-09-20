@@ -5,7 +5,7 @@
 package edu.harvard.iq.datatags.model.types;
 
 import edu.harvard.iq.datatags.model.values.TagValue;
-import edu.harvard.iq.datatags.parser.definitions.DataDefinitionParser;
+import edu.harvard.iq.datatags.parser.definitions.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
@@ -25,18 +25,17 @@ public class TypeHelperTest {
     
     @Before
     public void setUp() throws DataTagsParseException {
-        String source = "DataTags: color, meal, styles, nextThing.\n"
-                + "TODO: nextThing.\n"
+        String source = "DataTags: consists of color, meal, styles, nextThing.\n"
+                + "nextThing: TODO.\n"
                 + "color: one of red, green, blue, yellow.\n"
                 + "styles: some of HipHip, Jazz, Blues, RockAndRoll.\n"
-                + "meal: open, main, desert.\n"
+                + "meal: consists of open, main, desert.\n"
                 + "open: one of salad, soup, beetle.\n"
                 + "main: some of meat, rice, potato, lettuce.\n"
                 + "desert: one of iceCream, chocolate, appleSauce.\n"
                 ;
         
-        DataDefinitionParser ddfp = new DataDefinitionParser();
-        dataTagsType = ddfp.parseTagDefinitions(source, "unitTestExample");
+        dataTagsType = new TagSpaceParser().parse(source).buildType("DataTags").get();
     }
     
     @After
@@ -49,7 +48,7 @@ public class TypeHelperTest {
     @Test
     public void testSafeGet_simple() {
         AtomicType colorType = (AtomicType)((CompoundType)dataTagsType).getTypeNamed("color");
-        TagValue red = colorType.registerValue("red", null);
+        TagValue red = TypeHelper.getCreateValue(colorType, "red", "");
         assertEquals( red, TypeHelper.safeGet(dataTagsType, "color", "red") );
     }
     

@@ -26,7 +26,7 @@ import java.util.Set;
  */
 public class UnreachableNodeValidator extends VoidVisitor {
     
-    private final LinkedList<NodeValidationMessage> validationMessages = new LinkedList<>();
+    private final List<NodeValidationMessage> validationMessages = new LinkedList<>();
     private final Set<String> reachedNodeIds = new HashSet<>();
     private FlowChart flowChart = new FlowChart();
     
@@ -47,8 +47,9 @@ public class UnreachableNodeValidator extends VoidVisitor {
             
             if (!flowChartNodeIds.isEmpty()) {
                 for (String nodeId : flowChartNodeIds) {
-                    validationMessages.addLast(new NodeValidationMessage(Level.WARNING,
-                                              "Node \"" + nodeId + "\" is unreachable.", chart.getNode(nodeId)));
+                    validationMessages.add(new NodeValidationMessage(Level.WARNING,
+                                                    "Node \"" + nodeId + "\" is unreachable.",
+                                                    chart.getNode(nodeId)));
                 }
             }
         }

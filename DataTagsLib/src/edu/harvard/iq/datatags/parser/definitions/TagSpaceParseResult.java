@@ -10,7 +10,7 @@ import edu.harvard.iq.datatags.parser.definitions.ast.AggregateSlot;
 import edu.harvard.iq.datatags.parser.definitions.ast.AtomicSlot;
 import edu.harvard.iq.datatags.parser.definitions.ast.CompoundSlot;
 import edu.harvard.iq.datatags.parser.definitions.ast.ToDoSlot;
-import edu.harvard.iq.datatags.parser.definitions.references.CompilationUnitLocationReference;
+import edu.harvard.iq.datatags.parser.definitions.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import java.util.Collection;
 import java.util.Map;

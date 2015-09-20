@@ -12,8 +12,10 @@ import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Checks that every id in the questionnaire is unique.
@@ -23,20 +25,18 @@ import java.util.List;
  */
 public class RepeatIdValidator extends NullVisitor {
     
-    private HashSet<String> seenIds = new HashSet<>();
-    private List<ValidationMessage> validationMessages = new LinkedList<>();
+    private final Set<String> seenIds = new HashSet<>();
+    private final Map<String, ValidationMessage> validationMessages = new TreeMap<>();
     
-    public List<ValidationMessage> validateRepeatIds(List<InstructionNodeRef> refs) {
-        for (InstructionNodeRef ref : refs) {
-            ref.accept(this);
-        }
-        return validationMessages;
+    public Set<ValidationMessage> validateRepeatIds(List<InstructionNodeRef> refs) {
+        refs.stream().forEach( ref -> ref.accept(this) );
+        return new HashSet<>(validationMessages.values());
     }
 
     @Override
     public void visitImpl(AskNodeRef nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
-                validationMessages.add(new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
+                validationMessages.put( nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {
             seenIds.add(nd.getId());
         }
@@ -50,7 +50,7 @@ public class RepeatIdValidator extends NullVisitor {
     @Override
     public void visitImpl(SetNodeRef nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
-            validationMessages.add(new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
+            validationMessages.put( nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {
             seenIds.add(nd.getId());
         }
@@ -59,7 +59,7 @@ public class RepeatIdValidator extends NullVisitor {
     @Override
     public void visitImpl(RejectNodeRef nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
-            validationMessages.add(new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
+            validationMessages.put( nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {
             seenIds.add(nd.getId());
         }    
@@ -68,7 +68,7 @@ public class RepeatIdValidator extends NullVisitor {
     @Override
     public void visitImpl(CallNodeRef nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
-            validationMessages.add(new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
+            validationMessages.put( nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {
             seenIds.add(nd.getId());
         }
@@ -77,7 +77,7 @@ public class RepeatIdValidator extends NullVisitor {
     @Override
     public void visitImpl(TodoNodeRef nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
-            validationMessages.add(new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
+            validationMessages.put( nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {
             seenIds.add(nd.getId());
         }
@@ -86,7 +86,7 @@ public class RepeatIdValidator extends NullVisitor {
     @Override
     public void visitImpl(EndNodeRef nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
-            validationMessages.add(new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
+            validationMessages.put( nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {
             seenIds.add(nd.getId());
         }

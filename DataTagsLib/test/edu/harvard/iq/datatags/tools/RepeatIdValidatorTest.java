@@ -4,8 +4,10 @@ import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.*;
@@ -50,8 +52,8 @@ public class RepeatIdValidatorTest {
                       "(call: ferpaCompliance )\n" +
                       "(call: govRecsCompliance )";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
-        List<ValidationMessage> messages = instance.validateRepeatIds(refs);
-        assertEquals(new LinkedList<String>(), messages);
+        Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
+        assertEquals(Collections.emptySet(), messages);
     }
     
     @Test
@@ -60,8 +62,8 @@ public class RepeatIdValidatorTest {
                       "(>medicalRecordsCompliance< call: ppraCompliance)" +
                       "(>MR2< call: ppraCompliance)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
-        List<ValidationMessage> messages = instance.validateRepeatIds(refs);
-        assertEquals(new LinkedList<String>(), messages);
+        Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
+        assertEquals(Collections.emptySet(), messages);
     }
     
     @Test
@@ -70,23 +72,28 @@ public class RepeatIdValidatorTest {
                       "(>medicalRecordsCompliance< call: ppraCompliance)" +
                       "(>personalData< call: ppraCompliance)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
-        List<ValidationMessage> messages = instance.validateRepeatIds(refs);
-        List<ValidationMessage> expected = new LinkedList<>(Arrays.asList(new ValidationMessage(Level.ERROR, "Duplicate node id: \"personalData\".")));
-       // expected.add("Validation message: ERROR: Duplicate node id: \"personalData\".");
+        Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
+        Set<ValidationMessage> expected = Collections.singleton(new ValidationMessage(Level.ERROR, "Duplicate node id: \"personalData\"."));
         assertEquals(expected, messages);
     }
     
     // THIS NEEDS TO FAIL: FIX THE REPEATIDVALIDATOR WITH VISITORS ASAP
     @Test
     public void validateRepeatIdsTest_layeredIds() {
-        String code = "(>personalData< ask: (text: first )"
-                + "(yes: (>repeat< ask: (text: second)"
-                + "(no: (>todo1< todo: nothing!)))))"
-                + "(>repeat< ask: (text: is this a repeat?)"
-                + "(yes: (>todo1< todo: yes.)))";
+        String code = 
+                  "(>personalData< ask: (text: first )"
+                + "   (yes: (>repeat< ask: "
+                + "       (text: second)"
+                + "       (no: (>todo1< todo: nothing!)))))"
+                + "(>repeat< ask: "
+                + "    (text: is this a repeat?)"
+                + "    (yes: (>todo1< todo: yes.)))";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
-        List<ValidationMessage> messages = instance.validateRepeatIds(refs);
-        assertEquals(new LinkedList<String>(), messages);
+        Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
+        assertEquals(new HashSet<>( 
+                Arrays.asList(new ValidationMessage(Level.ERROR, "Duplicate node id: \"repeat\"."),
+                               new ValidationMessage(Level.ERROR, "Duplicate node id: \"todo1\"."))),
+                messages);
     }
 
     

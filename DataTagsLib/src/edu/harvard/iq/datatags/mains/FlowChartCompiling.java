@@ -5,7 +5,7 @@ import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
-import edu.harvard.iq.datatags.parser.definitions.DataDefinitionParser;
+import edu.harvard.iq.datatags.parser.definitions.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
@@ -57,8 +57,8 @@ public class FlowChartCompiling {
         System.out.println("Reading tags: " + tagsFile );
         System.out.println(" (full:  " + tagsFile.toAbsolutePath() + ")" );
         
-        DataDefinitionParser tagsParser = new  DataDefinitionParser();
-        TagType baseType = tagsParser.parseTagDefinitions(readAll(tagsFile), tagsFile.getFileName().toString());
+        TagSpaceParser tagsParser = new  TagSpaceParser();
+        TagType baseType = tagsParser.parse(readAll(tagsFile)).buildType("DataTags").get();
         
         GraphvizDataStructureVisualizer tagViz = new GraphvizDataStructureVisualizer(baseType);
         Path tagsOutPath = tagsFile.resolveSibling(tagsFile.getFileName().toString() + ".gv");

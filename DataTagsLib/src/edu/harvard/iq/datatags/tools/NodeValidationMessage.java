@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.charts.ChartEntity;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -17,13 +18,14 @@ public class NodeValidationMessage extends ValidationMessage {
 
     public NodeValidationMessage(Level l, String m, ChartEntity... involvedEntities) {
         super(l, m);
+        entities.addAll( Arrays.asList(involvedEntities) );
     }
     
     public Set<ChartEntity> getEntities() {
         return entities;
     }
     
-        @Override
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -36,6 +38,11 @@ public class NodeValidationMessage extends ValidationMessage {
             return false;
         }
         return modelsEqual(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
     
     /**

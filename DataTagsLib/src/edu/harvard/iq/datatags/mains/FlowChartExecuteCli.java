@@ -4,7 +4,7 @@ import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.TagType;
-import edu.harvard.iq.datatags.parser.definitions.DataDefinitionParser;
+import edu.harvard.iq.datatags.parser.definitions.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartSetComplier;
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class FlowChartExecuteCli {
         System.out.println("Reading definitions: " + definitionsFile );
         System.out.println(" (full:  " + definitionsFile.toAbsolutePath() + ")" );
         
-        return new  DataDefinitionParser().parseTagDefinitions(readAll(definitionsFile), definitionsFile.getFileName().toString());
+        return new TagSpaceParser().parse(readAll(definitionsFile)).buildType("DataTags").get();
     }
     
     private static String readAll( Path p ) throws IOException {

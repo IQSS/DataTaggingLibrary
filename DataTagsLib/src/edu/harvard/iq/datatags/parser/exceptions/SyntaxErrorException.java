@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.parser.exceptions;
 
-import edu.harvard.iq.datatags.parser.definitions.references.CompilationUnitLocationReference;
+import edu.harvard.iq.datatags.parser.definitions.ast.CompilationUnitLocationReference;
 
 /**
  * An exception thrown when there is an error in the syntax, and

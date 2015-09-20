@@ -75,6 +75,9 @@ public class AskNode extends Node {
     
     @Override
     public String toString() {
-        return String.format("[AskNode id:%s text:'%s']", getId(), text.length()>20? text.substring(0,20) : text);
+        return String.format("[AskNode id:%s text:'%s']", getId(), 
+                ( text != null )
+                    ? (text.length()>20? text.substring(0,20) : text)
+                        : "<null>" );
     }
 }

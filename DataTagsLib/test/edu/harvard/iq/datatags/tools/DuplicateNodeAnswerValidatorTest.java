@@ -7,6 +7,7 @@ import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.flowcharts.FlowChartSetComplier;
 import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.After;
@@ -54,7 +55,7 @@ public class DuplicateNodeAnswerValidatorTest {
         String code = "(todo: there are no answers here to check)(end)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
         List<ValidationMessage> duplicates = instance.validateDuplicateAnswers(refs);
-        assertEquals(new LinkedList<String>(), duplicates);
+        assertEquals(new LinkedList<>(), duplicates);
     } 
     
     @Test
@@ -65,7 +66,7 @@ public class DuplicateNodeAnswerValidatorTest {
                 + "(>end1<end)";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
         List<ValidationMessage> duplicates = instance.validateDuplicateAnswers(refs);
-        assertEquals(new LinkedList<String>(), duplicates);
+        assertEquals(new LinkedList<>(), duplicates);
     } 
     
     @Test
@@ -75,10 +76,13 @@ public class DuplicateNodeAnswerValidatorTest {
                 + "(yes: (>todo2< todo: yes there is!))"
                 + "(no: (>todo3< todo: this is just another answer)))";
         List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
-        List<ValidationMessage> duplicates = instance.validateDuplicateAnswers(refs);
+        List<ValidationMessage> actual = instance.validateDuplicateAnswers(refs);
         // the first instruction node should be a repeat
-        LinkedList<InstructionNodeRef> expected = new LinkedList<>(Arrays.asList(refs.get(0)));
-        assertEquals(expected, duplicates);
+        List<ValidationMessage> expected = Collections.singletonList(
+                new ValidationMessage(ValidationMessage.Level.WARNING,
+                    "Ask node \"" + refs.get(0).getId() + "\" has duplicate answers"));
+        
+        assertEquals(expected, actual);
     }
     
 }

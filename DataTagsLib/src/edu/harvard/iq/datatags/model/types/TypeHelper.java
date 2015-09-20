@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.model.types;
 
+import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 
 /**
@@ -38,4 +39,10 @@ public class TypeHelper {
         });
     }
     
+    static public AtomicValue getCreateValue( AtomicType tt, String valueName, String note ) {
+        return (tt.valueOf(valueName) != null ) 
+                ? tt.valueOf( valueName )
+                : tt.registerValue(valueName, note);
+            
+    }
 }

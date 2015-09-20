@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.definitions.references;
+package edu.harvard.iq.datatags.parser.definitions.ast;
 
 import java.util.Objects;
 

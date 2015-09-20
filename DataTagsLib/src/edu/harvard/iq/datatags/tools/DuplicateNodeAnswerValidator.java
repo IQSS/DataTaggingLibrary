@@ -25,9 +25,7 @@ public class DuplicateNodeAnswerValidator extends NullVisitor{
     
     public List<ValidationMessage> validateDuplicateAnswers(List<InstructionNodeRef> allRefs) {
         validationMessages = new LinkedList<>();
-        for (InstructionNodeRef ref: allRefs) {
-            ref.accept(this);
-        }
+        allRefs.stream().forEach( ref -> ref.accept(this) );
         return validationMessages;
     }
 
@@ -41,7 +39,7 @@ public class DuplicateNodeAnswerValidator extends NullVisitor{
             for (AnswerNodeRef ans : noduplicates) {
                 // compare answer text, since we don't want two no answers that have different implementations
                 if (ansRef.getAnswerText().equals(ans.getAnswerText())) {
-                    validationMessages.add(new ValidationMessage(Level.WARNING, "Ask node \"" + nd.getId() + "has duplicate answers"));
+                    validationMessages.add(new ValidationMessage(Level.WARNING, "Ask node \"" + nd.getId() + "\" has duplicate answers"));
                 }
             }
             noduplicates.add(ansRef);

@@ -11,7 +11,7 @@ import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.TypeHelper;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
-import edu.harvard.iq.datatags.parser.definitions.DataDefinitionParser;
+import edu.harvard.iq.datatags.parser.definitions.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import java.util.Map;
 import org.junit.AfterClass;
@@ -29,30 +29,21 @@ public class StringMapFormatTest {
     public StringMapFormatTest() {
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
     TagType dataTagsType;
     
     @Before
     public void setUp() throws DataTagsParseException {
-        String source = "DataTags: color, meal, styles, nextThing.\n"
-                + "TODO: nextThing.\n"
+        String source = "DataTags: consists of color, meal, styles, nextThing.\n"
+                + "nextThing: TODO.\n"
                 + "color: one of red, green, blue, yellow.\n"
                 + "styles: some of HipHip, Jazz, Blues, RockAndRoll.\n"
-                + "meal: open, main, desert.\n"
+                + "meal: consists of open, main, desert.\n"
                 + "open: one of salad, soup, beetle.\n"
                 + "main: some of meat, rice, potato, lettuce.\n"
                 + "desert: one of iceCream, chocolate, appleSauce.\n"
                 ;
         
-        DataDefinitionParser ddfp = new DataDefinitionParser();
-        dataTagsType = ddfp.parseTagDefinitions(source, "unitTestExample");
+        dataTagsType = new TagSpaceParser().parse(source).buildType("DataTags").get();
     }
     
     /**
@@ -124,8 +115,8 @@ public class StringMapFormatTest {
         val.set( TypeHelper.safeGet(dataTagsType, "color", "red") );
         AggregateValue stylesVal = (AggregateValue) TypeHelper.safeGet(dataTagsType, "styles", "Jazz");
         AggregateType stylesType = stylesVal.getType();
-        stylesVal.add( stylesType.getItemType().registerValue("Blues", null) );
-        stylesVal.add( stylesType.getItemType().registerValue("RockAndRoll", null) );
+        stylesVal.add( TypeHelper.getCreateValue( stylesType.getItemType(), "Blues", "") );
+        stylesVal.add( TypeHelper.getCreateValue( stylesType.getItemType(), "RockAndRoll", "") );
         CompoundType mealType = (CompoundType) val.getType().getTypeNamed("meal");
         CompoundValue meal = mealType.createInstance();
         meal.set( TypeHelper.safeGet(mealType, "open", "salad") );
