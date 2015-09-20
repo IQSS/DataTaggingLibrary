@@ -29,16 +29,11 @@ public class DataDefinitionASTParser extends AbstractASTParser {
 		// Basically "flatmap"
 		return typeDefinition().sepBy( Scanners.WHITESPACES.optional() )
 					.followedBy( Scanners.WHITESPACES.optional() )
-				.map( new Map<List<List<? extends TypeReference>>, Collection<TypeReference>>(){
-			@Override
-			public Collection<TypeReference> map(List<List<? extends TypeReference>> from) {
-				List<TypeReference> types = new LinkedList<>();
-				for ( List<? extends TypeReference> l : from ) {
-					types.addAll( l );
-				}
-				return types;
-			}
-		});
+				.map((List<List<? extends TypeReference>> from) -> {
+                    List<TypeReference> types = new LinkedList<>();
+                    from.stream().forEach( l -> types.addAll(l) );
+                    return types;
+        });
 	}
 	
 	Parser<List<? extends TypeReference>> typeDefinition() {

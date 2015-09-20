@@ -1,12 +1,12 @@
 package edu.harvard.iq.datatags.model.values;
 
-import edu.harvard.iq.datatags.model.types.SimpleType;
+import edu.harvard.iq.datatags.model.types.AtomicType;
 
 /**
  *
  * @author michael
  */
-public class SimpleValue extends TagValue implements Comparable<SimpleValue>{
+public class AtomicValue extends TagValue implements Comparable<AtomicValue>{
 	
 	private final int ordinal;
     private final String name;
@@ -20,7 +20,7 @@ public class SimpleValue extends TagValue implements Comparable<SimpleValue>{
 	 * @param type the type of the value
 	 * @param someInfo additional info
 	 */
-	public SimpleValue(int ordinal, String aName, SimpleType type, String someInfo) {
+	public AtomicValue(int ordinal, String aName, AtomicType type, String someInfo) {
 		super(type);
 		this.ordinal = ordinal;
         name = aName;
@@ -28,13 +28,13 @@ public class SimpleValue extends TagValue implements Comparable<SimpleValue>{
 	}
 	
     @Override
-    public SimpleType getType() {
-        return (SimpleType) super.getType();
+    public AtomicType getType() {
+        return (AtomicType) super.getType();
     }
     
     
 	@Override
-	public int compareTo(SimpleValue o) {
+	public int compareTo(AtomicValue o) {
 		return getOrdinal() - o.getOrdinal();
 	}
 
@@ -59,10 +59,10 @@ public class SimpleValue extends TagValue implements Comparable<SimpleValue>{
 		if (obj == null) {
 			return false;
 		}
-		if ( ! (obj instanceof SimpleValue) ) {
+		if ( ! (obj instanceof AtomicValue) ) {
 			return false;
 		}
-		final SimpleValue other = (SimpleValue) obj;
+		final AtomicValue other = (AtomicValue) obj;
 		return super.equals(obj) && getOrdinal() == other.getOrdinal();
 	}
 

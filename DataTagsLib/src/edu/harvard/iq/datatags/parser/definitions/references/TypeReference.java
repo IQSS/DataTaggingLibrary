@@ -24,11 +24,11 @@ public abstract class TypeReference {
 	public TypeReference(String typeName, List<?> someSubValueNames) {
 		this.typeName = typeName;
 		subValueNames = new ArrayList<>(someSubValueNames.size());
-		for ( Object o : someSubValueNames ) {
-			subValueNames.add( (o instanceof NamedReference) ?
-									(NamedReference)o
-									:new NamedReference(o.toString()) );
-		}
+        someSubValueNames.stream().forEach((o) -> {
+            subValueNames.add( (o instanceof NamedReference) ?
+                    (NamedReference)o
+                    :new NamedReference(o.toString()) );
+        });
 	}
 	
 	

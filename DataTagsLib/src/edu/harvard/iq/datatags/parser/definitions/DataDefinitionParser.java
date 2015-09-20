@@ -2,7 +2,7 @@ package edu.harvard.iq.datatags.parser.definitions;
 
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.SimpleType;
+import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.ToDoType;
 import edu.harvard.iq.datatags.parser.definitions.references.AggregateTypeReference;
@@ -64,7 +64,7 @@ public class DataDefinitionParser {
 
 		@Override
 		public TagTypeFunc visitSimpleTypeReference(SimpleTypeReference ref) {
-			final SimpleType res = new SimpleType(ref.getTypeName(), null );
+			final AtomicType res = new AtomicType(ref.getTypeName(), null );
 			for ( NamedReference nr : ref.getSubValueNames() ) {
 				res.make(nr.getName(), nr.getComment() );
 			}
@@ -89,7 +89,7 @@ public class DataDefinitionParser {
 		@Override
 		public TagTypeFunc visitAggregateTypeReference(AggregateTypeReference ref) {
             // create type for the items (implied type).
-			SimpleType itemType = new SimpleType( ref.getTypeName() + "#item",
+			AtomicType itemType = new AtomicType( ref.getTypeName() + "#item",
 					"Synthetic item type for " + ref.getTypeName());
 			for ( NamedReference nr : ref.getSubValueNames() ) {
 				itemType.make(nr.getName(), nr.getComment() );

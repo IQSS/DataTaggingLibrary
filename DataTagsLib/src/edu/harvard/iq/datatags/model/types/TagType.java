@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.model.types;
 
 import edu.harvard.iq.datatags.model.values.AggregateValue;
-import edu.harvard.iq.datatags.model.values.SimpleValue;
+import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public abstract class TagType {
 	
 	public interface Visitor<T> {
-		T visitSimpleType( SimpleType t );
+		T visitSimpleType( AtomicType t );
 		T visitAggregateType( AggregateType t );
 		T visitCompoundType( CompoundType t );
 		T visitTodoType( ToDoType t );
@@ -24,7 +24,7 @@ public abstract class TagType {
 	
     public abstract static class VoidVisitor implements Visitor<Void> {
         @Override
-        public Void visitSimpleType( SimpleType t ) {
+        public Void visitSimpleType( AtomicType t ) {
             visitSimpleTypeImpl(t);
             return null;
         }
@@ -47,7 +47,7 @@ public abstract class TagType {
             return null;
         }
 
-        public abstract void visitSimpleTypeImpl( SimpleType t );
+        public abstract void visitSimpleTypeImpl( AtomicType t );
         public abstract void visitAggregateTypeImpl( AggregateType t );
         public abstract void visitCompoundTypeImpl( CompoundType t );
         public abstract void visitTodoTypeImpl( ToDoType t );
@@ -79,7 +79,7 @@ public abstract class TagType {
         return accept(new TagType.Visitor<TagValueLookupResult>() {
             
             @Override
-            public TagValueLookupResult visitSimpleType(SimpleType t) {
+            public TagValueLookupResult visitSimpleType(AtomicType t) {
                 if ( slotName.equals(t.getName()) ) {
                     TagValue v = t.valueOf( valueName );
                     return (v!=null) ? TagValueLookupResult.Success(v)
@@ -93,7 +93,7 @@ public abstract class TagType {
             public TagValueLookupResult visitAggregateType(AggregateType t) {
                 if ( slotName.equals(t.getName()) ) {
                     AggregateValue res = t.createInstance();
-                    SimpleValue singleValue = t.getItemType().valueOf(valueName);
+                    AtomicValue singleValue = t.getItemType().valueOf(valueName);
                     
                     if ( singleValue == null ) {
                         return TagValueLookupResult.ValueNotFound(TagType.this, valueName);

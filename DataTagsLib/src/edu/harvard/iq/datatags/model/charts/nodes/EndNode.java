@@ -1,8 +1,9 @@
 
 package edu.harvard.iq.datatags.model.charts.nodes;
 
+import edu.harvard.iq.datatags.model.charts.ChartEntity;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
-import org.codehaus.jparsec.util.Objects;
+import java.util.Objects;
 
 /**
  * A node that terminates the run, if and when the execution gets to it.
@@ -28,7 +29,7 @@ public class EndNode extends Node {
     public boolean equals( Object o ) {
         if ( o == null ) return false;
         if ( o instanceof EndNode ) {
-            return Objects.equals(getId(), ((EndNode)o).getId() );
+            return Objects.equals(getId(), ((ChartEntity)o).getId() );
         } else {
             return false;
         }

@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.model.types;
 
-import edu.harvard.iq.datatags.model.values.SimpleValue;
+import edu.harvard.iq.datatags.model.values.AtomicValue;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -38,19 +38,19 @@ public class SimpleValueTypeTest {
 	}
 
 	/**
-	 * Test of make method, of class SimpleType.
+	 * Test of make method, of class AtomicType.
 	 */
 	@Test
 	public void testMake() {
-		SimpleType instance = new SimpleType("Test", null);
+		AtomicType instance = new AtomicType("Test", null);
 		
 		assertTrue( instance.values().isEmpty() );
 		
-		SimpleValue v1 = instance.make("1", null);
-		SimpleValue v2 = instance.make("2", null);
-		SimpleValue v3 = instance.make("3", null);
+		AtomicValue v1 = instance.make("1", null);
+		AtomicValue v2 = instance.make("2", null);
+		AtomicValue v3 = instance.make("3", null);
 		
-		List<SimpleValue> vals = Arrays.asList(v3,v1,v2);
+		List<AtomicValue> vals = Arrays.asList(v3,v1,v2);
 		Collections.sort(vals);
 		
 		assertEquals( "Values should be ordered in increasing order", Arrays.asList(v1,v2,v3),  vals );

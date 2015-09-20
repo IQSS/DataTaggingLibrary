@@ -2,10 +2,10 @@ package edu.harvard.iq.datatags.visualizers.graphviz;
 
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.SimpleType;
+import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.ToDoType;
-import edu.harvard.iq.datatags.model.values.SimpleValue;
+import edu.harvard.iq.datatags.model.values.AtomicValue;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -41,10 +41,10 @@ public class GraphvizDataStructureVisualizer extends GraphvizVisualizer {
 		TagType.Visitor typePainter = new TagType.Visitor<Void>(){
 
 			@Override
-			public Void visitSimpleType(SimpleType t) {
+			public Void visitSimpleType(AtomicType t) {
 				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[label=\""+t.getName()+"\" shape=\"egg\"]");
-				for ( SimpleValue val : t.values() ) {
+				for ( AtomicValue val : t.values() ) {
 					String sValue = sTypeName+"_"+sanitizeId( val.getName() );
 					nodes.add( sValue + "[label=\""+val.getName()+"\" shape=\"box\"]");
 					edges.add( sTypeName + " -> " + sValue );
@@ -56,7 +56,7 @@ public class GraphvizDataStructureVisualizer extends GraphvizVisualizer {
 			public Void visitAggregateType(AggregateType t) {
 				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[label=\""+t.getName()+"\" shape=\"egg\" peripheries=\"2\"]");
-				for ( SimpleValue val : t.getItemType().values() ) {
+				for ( AtomicValue val : t.getItemType().values() ) {
 					String sValue = sTypeName+"_"+sanitizeId( val.getName() );
 					nodes.add( sValue + "[label=\""+val.getName()+"\" shape=\"box\"]");
 					edges.add( sTypeName + " -> " + sValue );

@@ -2,12 +2,12 @@ package edu.harvard.iq.datatags.io;
 
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.SimpleType;
+import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.ToDoType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
-import edu.harvard.iq.datatags.model.values.SimpleValue;
+import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
@@ -29,7 +29,7 @@ public class StringMapFormat {
         final Map<String, String> res = new TreeMap<>();
         if ( value==null ) return res;
         
-        value.accept( new TagValue.Visitor<Void>() {
+        value.accept(new TagValue.Visitor<Void>() {
             
             List<String> stack = new LinkedList<>();
             
@@ -40,7 +40,7 @@ public class StringMapFormat {
             }
 
             @Override
-            public Void visitSimpleValue(SimpleValue v) {
+            public Void visitSimpleValue(AtomicValue v) {
                 res.put(pathAsString() + v.getType().getName(), v.getName() );
                 return null;
             }
@@ -48,7 +48,7 @@ public class StringMapFormat {
             @Override
             public Void visitAggregateValue(AggregateValue v) {
                 StringBuilder sb = new StringBuilder();
-                for ( SimpleValue sv : v.getValues() ) {
+                for ( AtomicValue sv : v.getValues() ) {
                     sb.append(sv.getName()).append(",");
                 }
                 String val = sb.toString();
@@ -97,7 +97,7 @@ public class StringMapFormat {
         return type.accept(new TagType.Visitor<TagValue>() {
 
             @Override
-            public TagValue visitSimpleType(SimpleType t) {
+            public TagValue visitSimpleType(AtomicType t) {
                 // We expect a single value.
                 return t.valueOf(node.getSingleKey());
             }

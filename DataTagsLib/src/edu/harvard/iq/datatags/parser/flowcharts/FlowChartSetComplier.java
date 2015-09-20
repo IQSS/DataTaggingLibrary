@@ -11,7 +11,7 @@ import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
 import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.SimpleType;
+import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.model.types.ToDoType;
@@ -254,7 +254,7 @@ public class FlowChartSetComplier {
         C.head(path).accept(new TagType.VoidVisitor() {
 
             @Override
-            public void visitSimpleTypeImpl(SimpleType t) {
+            public void visitSimpleTypeImpl(AtomicType t) {
                 value.set(endValue);
             }
 
@@ -391,7 +391,7 @@ public class FlowChartSetComplier {
         types.add( topLevelType );
         
         while ( ! types.isEmpty() ) {
-            types.pop().accept( new TagType.VoidVisitor() {
+            types.pop().accept(new TagType.VoidVisitor() {
 
                 @Override
                 public void visitCompoundTypeImpl(CompoundType t) {
@@ -403,7 +403,7 @@ public class FlowChartSetComplier {
                     }
                 }
 
-                @Override public void visitSimpleTypeImpl(SimpleType t) {}
+                @Override public void visitSimpleTypeImpl(AtomicType t) {}
                 @Override public void visitAggregateTypeImpl(AggregateType t) {}
                 @Override public void visitTodoTypeImpl(ToDoType t) {}
             });

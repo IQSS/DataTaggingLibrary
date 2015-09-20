@@ -17,18 +17,18 @@ import java.util.Set;
  */
 public class AggregateValue extends TagValue {
 	
-	private final Set<SimpleValue> values = new HashSet<>();
+	private final Set<AtomicValue> values = new HashSet<>();
 
     public AggregateValue(AggregateType type) {
 		super(type);
 	}
 	
-	public Set<SimpleValue> getValues() {
+	public Set<AtomicValue> getValues() {
 		return Collections.unmodifiableSet(values);
 	}
 	
-	public void add( Collection<? extends SimpleValue> valueCollection ) {
-		for ( SimpleValue v : valueCollection ) {
+	public void add( Collection<? extends AtomicValue> valueCollection ) {
+		for ( AtomicValue v : valueCollection ) {
 			add( v );
 		}
 	}
@@ -38,7 +38,7 @@ public class AggregateValue extends TagValue {
         return (AggregateType) super.getType();
     }
     
-	public void add( SimpleValue tagValue ) {
+	public void add( AtomicValue tagValue ) {
 		if ( ! tagValue.getType().equals(getType().getItemType()) ) {
 			throw new IllegalArgumentException( "Added value type ("+tagValue.getType()+") "
 					+ "different from aggregated type (" + getType().getItemType() + ")");
@@ -55,7 +55,7 @@ public class AggregateValue extends TagValue {
 	@Override
 	public AggregateValue getOwnableInstance() {
 		AggregateValue copy = new AggregateValue(getType());
-		for ( SimpleValue v : values ) {
+		for ( AtomicValue v : values ) {
 			copy.add( v );
 		}
 		return copy;

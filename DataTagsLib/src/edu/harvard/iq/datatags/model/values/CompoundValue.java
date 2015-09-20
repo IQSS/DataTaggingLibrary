@@ -95,9 +95,8 @@ public class CompoundValue extends TagValue {
     @Override
     protected String tagValueToString() {
         StringBuilder sb = new StringBuilder();
-        for ( TagValue tv : fields.values() ) {
-            sb.append( tv.toString() );
-        }
+        fields.values().stream()
+                .forEach( tv -> sb.append( tv.toString() ) );
         return "<" + sb + ">";
     }
     
@@ -155,13 +154,12 @@ public class CompoundValue extends TagValue {
 class Resolver implements TagValue.Visitor<TagValue.Function> {
 
 	@Override
-	public TagValue.Function visitSimpleValue( final SimpleValue op1 ) {
-		return new TagValue.Function(){
-			@Override public TagValue apply(TagValue v) {
-				if ( v==null ) return op1.getOwnableInstance();
-				SimpleValue op2 = (SimpleValue) v;
-				return ( op1.compareTo(op2) > 0 ? op1 : op2).getOwnableInstance();
-		}};
+	public TagValue.Function visitSimpleValue( final AtomicValue op1 ) {
+		return (TagValue v) -> {
+            if ( v==null ) return op1.getOwnableInstance();
+            AtomicValue op2 = (AtomicValue) v;
+            return ( op1.compareTo(op2) > 0 ? op1 : op2).getOwnableInstance();
+        };
 	}
 
 	@Override
@@ -171,7 +169,7 @@ class Resolver implements TagValue.Visitor<TagValue.Function> {
 				AggregateValue res = op1.getOwnableInstance();
 				if ( v==null ) return res;
 				AggregateValue op2 = (AggregateValue) v;
-				for ( SimpleValue tv : op2.getValues() ) {
+				for ( AtomicValue tv : op2.getValues() ) {
 					res.add(tv);
 				}
 				return res;
@@ -180,10 +178,7 @@ class Resolver implements TagValue.Visitor<TagValue.Function> {
 
 	@Override
 	public TagValue.Function visitToDoValue( ToDoValue v ) {
-		return new TagValue.Function() {
-			@Override public TagValue apply(TagValue v) {
-				return v;
-		}};
+		return (TagValue v1) -> v1;
 	}
 
 	@Override

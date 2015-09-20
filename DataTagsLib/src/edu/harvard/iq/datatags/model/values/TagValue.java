@@ -11,7 +11,7 @@ public abstract class TagValue {
 	
 	public interface Visitor<R> {
 		R visitToDoValue(ToDoValue v);
-		R visitSimpleValue(SimpleValue v);
+		R visitSimpleValue(AtomicValue v);
 		R visitAggregateValue(AggregateValue v);
 		R visitCompoundValue(CompoundValue aThis);
 	}

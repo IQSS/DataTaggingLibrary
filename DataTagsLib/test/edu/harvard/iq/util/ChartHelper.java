@@ -5,7 +5,7 @@ import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
 import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.SimpleType;
+import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.ChartRunningTest;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
@@ -47,7 +47,7 @@ public class ChartHelper {
 	
     public static CompoundType mockTopLevelType() {
         CompoundType mock = new CompoundType("Mock", "A mock type to just have a type there.");
-        SimpleType st1 = new SimpleType("st1",null);
+        AtomicType st1 = new AtomicType("st1",null);
         st1.make("v1", null);
         st1.make("v2", null);
         st1.make("v3", null);

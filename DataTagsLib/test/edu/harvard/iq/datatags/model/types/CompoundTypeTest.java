@@ -6,7 +6,7 @@ package edu.harvard.iq.datatags.model.types;
 
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
-import edu.harvard.iq.datatags.model.values.SimpleValue;
+import edu.harvard.iq.datatags.model.values.AtomicValue;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,23 +37,23 @@ public class CompoundTypeTest {
     }
     
     CompoundType ctSut;
-    SimpleType stA, stB;
+    AtomicType stA, stB;
     AggregateType aggT;
-    SimpleType stSetItem;
+    AtomicType stSetItem;
     
-    Map<SimpleType,List<SimpleValue>> values;
+    Map<AtomicType,List<AtomicValue>> values;
     
     @Before
     public void setUp() {
-        stA = new SimpleType("A", null);
-        stB = new SimpleType("B", null);
-        stSetItem = new SimpleType("SetItem",null);
+        stA = new AtomicType("A", null);
+        stB = new AtomicType("B", null);
+        stSetItem = new AtomicType("SetItem",null);
         aggT = new AggregateType("SetOfItems", null, stSetItem);
         
         values = new HashMap<>();
         
-        for ( SimpleType st : C.list(stA, stB, stSetItem) ) {
-            List<SimpleValue> valueList = new ArrayList<>(4);
+        for ( AtomicType st : C.list(stA, stB, stSetItem) ) {
+            List<AtomicValue> valueList = new ArrayList<>(4);
             for ( int i=0; i<4; i++ ) {
                 valueList.add(st.make( st.getName() + "-" +i, null));
             }
@@ -86,7 +86,7 @@ public class CompoundTypeTest {
     @Test( expected=IllegalArgumentException.class)
     public void testSimpleSet_fail() {
         CompoundValue val = ctSut.createInstance();
-        val.set( new SimpleType("NotThere","").make("banana", null) );
+        val.set( new AtomicType("NotThere","").make("banana", null) );
         
     }
     
@@ -96,7 +96,7 @@ public class CompoundTypeTest {
         CompoundValue val = ctSut.createInstance();
         
         AggregateValue aggValOne = aggT.createInstance();
-        List<SimpleValue> itemInstances = values.get(stSetItem);
+        List<AtomicValue> itemInstances = values.get(stSetItem);
         
         aggValOne.add( itemInstances.get(0) );
         aggValOne.add( itemInstances.get(1) );
@@ -117,13 +117,13 @@ public class CompoundTypeTest {
     
     @Test
 	public void testComposeWith_simple() {
-		SimpleType simple_t1 = new SimpleType("st1", null);
-		SimpleType simple_t2 = new SimpleType("st2", null);
+		AtomicType simple_t1 = new AtomicType("st1", null);
+		AtomicType simple_t2 = new AtomicType("st2", null);
 		
-		SimpleValue v1_t1 = simple_t1.make("1", null);
-		SimpleValue v2_t1 = simple_t1.make("2", null);
+		AtomicValue v1_t1 = simple_t1.make("1", null);
+		AtomicValue v2_t1 = simple_t1.make("2", null);
 		
-		SimpleValue v1_t2 = simple_t2.make("1", null);
+		AtomicValue v1_t2 = simple_t2.make("1", null);
 		
         CompoundType ct = new CompoundType("compoundType", null);
         ct.addFieldType( simple_t1 );
@@ -151,7 +151,7 @@ public class CompoundTypeTest {
 
 	@Test
 	public void testComposeWith_aggregate() {
-		SimpleType simple_t = new SimpleType( "t1", null );
+		AtomicType simple_t = new AtomicType( "t1", null );
 		AggregateType agg_t = new AggregateType( "a1", null, simple_t );
 		
 		AggregateValue agg_1 = agg_t.createInstance();
@@ -162,7 +162,7 @@ public class CompoundTypeTest {
 		agg_2.add( simple_t.make("iii",null) );
 		agg_2.add( simple_t.make("iv",null) );
 		
-		SimpleValue inBoth = simple_t.make("inBoth",null);
+		AtomicValue inBoth = simple_t.make("inBoth",null);
 		agg_1.add(inBoth);
 		agg_2.add(inBoth);
 		
@@ -186,17 +186,17 @@ public class CompoundTypeTest {
 	
 	@Test
 	public void testComposeWith_compound_single() {
-		SimpleType simple_t1 = new SimpleType( "OnA", null );
-		SimpleType simple_t2 = new SimpleType( "OnB", null );
-		SimpleType simple_t3 = new SimpleType( "OnBoth-A bigger", null );
-		SimpleType simple_t4 = new SimpleType( "OnBoth-B bigger", null );
+		AtomicType simple_t1 = new AtomicType( "OnA", null );
+		AtomicType simple_t2 = new AtomicType( "OnB", null );
+		AtomicType simple_t3 = new AtomicType( "OnBoth-A bigger", null );
+		AtomicType simple_t4 = new AtomicType( "OnBoth-B bigger", null );
 		
-		List<SimpleType> simpleTypes = Arrays.asList( simple_t1, simple_t2, simple_t3, simple_t4 );
+		List<AtomicType> simpleTypes = Arrays.asList( simple_t1, simple_t2, simple_t3, simple_t4 );
 		
 		CompoundType compound_t = new CompoundType("compound_t", "The type we test");
-		for ( SimpleType st : simpleTypes ) compound_t.addFieldType(st);
+		for ( AtomicType st : simpleTypes ) compound_t.addFieldType(st);
 		
-		for ( SimpleType st : simpleTypes ) {
+		for ( AtomicType st : simpleTypes ) {
 			int idx=0;
 			st.make(st.getName() + (++idx), null);
 			st.make(st.getName() + (++idx), null);
@@ -234,7 +234,7 @@ public class CompoundTypeTest {
 	
 	@Test
 	public void testComposeWith_compound_aggregate() {
-		SimpleType items_t = new SimpleType("Type of items", null);
+		AtomicType items_t = new AtomicType("Type of items", null);
 		
 		for ( int i=0; i<3; i++ ) items_t.make("item " + i, null);
 		

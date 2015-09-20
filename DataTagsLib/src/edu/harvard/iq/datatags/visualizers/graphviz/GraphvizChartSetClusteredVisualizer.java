@@ -13,7 +13,7 @@ import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
-import edu.harvard.iq.datatags.model.values.SimpleValue;
+import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -44,7 +44,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
         }
 
         @Override
-        public String visitSimpleValue(SimpleValue v) {
+        public String visitSimpleValue(AtomicValue v) {
             return v.getName();
         }
 

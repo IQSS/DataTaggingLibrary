@@ -8,14 +8,14 @@ import edu.harvard.iq.datatags.model.values.AggregateValue;
  */
 public class AggregateType extends TagType {
 	
-	private final SimpleType itemType;
+	private final AtomicType itemType;
 	
-	public AggregateType(String name, String info, SimpleType itemType) {
+	public AggregateType(String name, String info, AtomicType itemType) {
 		super(name, info);
 		this.itemType = itemType;
 	}
 
-	public SimpleType getItemType() {
+	public AtomicType getItemType() {
 		return itemType;
 	}
 	

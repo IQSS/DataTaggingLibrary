@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.parser.flowcharts.references;
 
-import org.codehaus.jparsec.util.Objects;
+import java.util.Objects;
 
 /**
  * Top level class of node references. Nothing much here.

@@ -3,11 +3,11 @@ package edu.harvard.iq.datatags.tools;
 import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.SimpleType;
+import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.TagType.VoidVisitor;
 import edu.harvard.iq.datatags.model.types.ToDoType;
-import edu.harvard.iq.datatags.model.values.SimpleValue;
+import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,8 +27,8 @@ public class AllTagValues extends VoidVisitor {
     }
 
     @Override
-    public void visitSimpleTypeImpl(SimpleType t) {
-        for (SimpleValue simpleValue : t.values()) {
+    public void visitSimpleTypeImpl(AtomicType t) {
+        for (AtomicValue simpleValue : t.values()) {
             definedTagValues.add(simpleValue);
         }
     }
