@@ -39,7 +39,9 @@ public abstract class AbstractSlot {
     public String toString() {
         String[] className = getClass().getName().split("\\.");
         return "[" + C.last(className) + ": name:" + getName() 
-                + " " + toStringExtras() + " note:" + getNote() + "]";
+                + " " + toStringExtras() 
+                + ((note.length() > 0 ) ? " note:" + getNote() : "" ) 
+        + "]";
     }
     
     protected String toStringExtras() {

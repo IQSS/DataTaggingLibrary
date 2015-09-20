@@ -21,7 +21,7 @@ public class DefinitionsParsing {
 	
 	public static void main(String[] args) throws IOException {
 		TagSpaceParser parser = new TagSpaceParser();
-		Path base = Paths.get("dtl","0.5");
+		Path base = Paths.get("dtl","0.8");
 		Path in = base.resolve("definitions.ts");
 		out.println("reading " + in.toAbsolutePath().toString() );
 		String source = new String(Files.readAllBytes(in), StandardCharsets.UTF_8);

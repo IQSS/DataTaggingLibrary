@@ -27,7 +27,9 @@ public class ValueDefinition {
     
     @Override
     public String toString() {
-        return "[ValueDefinition name:" + getName() + " note:" + getNote() + "]";
+        return "[ValueDefinition name:" + getName() 
+                + ((note.length() > 0 ) ? " note:" + getNote() : "" ) 
+                + "]";
     }
     
     @Override
