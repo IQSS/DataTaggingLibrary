@@ -124,8 +124,8 @@ public class StringMapFormatTest {
         val.set( TypeHelper.safeGet(dataTagsType, "color", "red") );
         AggregateValue stylesVal = (AggregateValue) TypeHelper.safeGet(dataTagsType, "styles", "Jazz");
         AggregateType stylesType = stylesVal.getType();
-        stylesVal.add( stylesType.getItemType().make("Blues", null) );
-        stylesVal.add( stylesType.getItemType().make("RockAndRoll", null) );
+        stylesVal.add( stylesType.getItemType().registerValue("Blues", null) );
+        stylesVal.add( stylesType.getItemType().registerValue("RockAndRoll", null) );
         CompoundType mealType = (CompoundType) val.getType().getTypeNamed("meal");
         CompoundValue meal = mealType.createInstance();
         meal.set( TypeHelper.safeGet(mealType, "open", "salad") );

@@ -4,7 +4,7 @@ import edu.harvard.iq.datatags.parser.definitions.ast.AbstractSlot;
 import edu.harvard.iq.datatags.parser.definitions.ast.AggregateSlot;
 import edu.harvard.iq.datatags.parser.definitions.ast.AtomicSlot;
 import edu.harvard.iq.datatags.parser.definitions.ast.CompoundSlot;
-import edu.harvard.iq.datatags.parser.definitions.ast.TodoSlot;
+import edu.harvard.iq.datatags.parser.definitions.ast.ToDoSlot;
 import edu.harvard.iq.datatags.parser.definitions.ast.ValueDefinition;
 import java.util.List;
 import org.codehaus.jparsec.Parser;
@@ -64,13 +64,12 @@ public class TagSpaceRuleParser {
             ( String name, String desc, Object _slotType, List<String> defs, Object _d ) -> new CompoundSlot(name, cleanDescription(desc), defs)
     );
     
-    final static Parser<TodoSlot> TODO_RULE = Parsers.sequence(
-            Terminals.Identifier.PARSER,
+    final static Parser<ToDoSlot> TODO_RULE = Parsers.sequence(Terminals.Identifier.PARSER,
             Terminals.fragment("description").optional(),
             TagSpaceTerminalParser.keyword(":"),
             Terminals.fragment("todo"),
             TagSpaceTerminalParser.keyword("."), 
-            ( String name, String description, Object _a, Object _b, Object _c) -> new TodoSlot( name, cleanDescription(description) )
+            ( String name, String description, Object _a, Object _b, Object _c) -> new ToDoSlot( name, cleanDescription(description) )
     );
     
     final static Parser<? extends AbstractSlot> RULE = Parsers.or( TODO_RULE, COMPOUND_SLOT_RULE, AGGREGATE_SLOT_RULE, ATOMIC_SLOT_RULE);

@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * A type whose values contain fields. As there is only one field of each type,
  * the fields are accessible by using the type as key.
- * <br />
+ * <br>
  * Corollary: Instances of compound types are maps from types to fields of those types.
  * 
  * @author michael
@@ -16,8 +16,8 @@ import java.util.Set;
 public class CompoundType extends TagType {
 	private final Set<TagType> fieldTypes = new HashSet<>();
 
-	public CompoundType(String name, String info) {
-		super(name, info);
+	public CompoundType(String name, String note) {
+		super(name, note);
 	}
 	
 	public void addFieldType( TagType tt ) {

@@ -19,8 +19,8 @@ public class AtomicType extends TagType {
 	
 	private final Map<String, AtomicValue> values = new HashMap<>(); 
 
-	public AtomicType(String name, String info) {
-		super(name, info);
+	public AtomicType(String name, String note) {
+		super(name, note);
 	}
 
 	public SortedSet<AtomicValue> values() {
@@ -31,16 +31,18 @@ public class AtomicType extends TagType {
 	 * Creates a new value of this type. Maintains all the bookkeeping,
 	 * such as ordinality and value aggregation.<br>
      * Values are cached, so subsequent calls with the same name yield the same object.
-     * In these cases, the info parameter is ignored.
+     * 
 	 * @param name name of the new value.
-	 * @param info additional info (if applicable)
+	 * @param note additional info (if applicable)
 	 * @return A new value of this type.
+     * @throws IllegalArgumentException if a value by this name is already registered.
+     * @see #valueOf(java.lang.String) 
 	 */
-	public AtomicValue make( String name, String info ) {
+	public AtomicValue registerValue( String name, String note ) {
         if ( values.containsKey(name) ) {
-            return values.get(name);
+            throw new IllegalArgumentException("Value " + name + " already regiseterd.");
         }
-		AtomicValue v = new AtomicValue( nextOrdinal++, name, this, info );
+		AtomicValue v = new AtomicValue( nextOrdinal++, name, this, note );
 		values.put( name, v );
 		return v;
 	}

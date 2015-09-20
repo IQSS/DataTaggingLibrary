@@ -66,7 +66,7 @@ public class DataDefinitionParser {
 		public TagTypeFunc visitSimpleTypeReference(SimpleTypeReference ref) {
 			final AtomicType res = new AtomicType(ref.getTypeName(), null );
 			for ( NamedReference nr : ref.getSubValueNames() ) {
-				res.make(nr.getName(), nr.getComment() );
+				res.registerValue(nr.getName(), nr.getComment() );
 			}
 			return new TagTypeFunc() {
 				@Override
@@ -92,7 +92,7 @@ public class DataDefinitionParser {
 			AtomicType itemType = new AtomicType( ref.getTypeName() + "#item",
 					"Synthetic item type for " + ref.getTypeName());
 			for ( NamedReference nr : ref.getSubValueNames() ) {
-				itemType.make(nr.getName(), nr.getComment() );
+				itemType.registerValue(nr.getName(), nr.getComment() );
 			}
             
             // now create the aggregate type
@@ -112,7 +112,7 @@ public class DataDefinitionParser {
 					CompoundType ret = new CompoundType(ref.getTypeName(), null);
 					for ( NamedReference nr : ref.getSubValueNames() ) {
 						TagType fieldType = buildType(nr.getName(), refs, usedTypes);
-						fieldType.setInfo( nr.getComment() );
+						fieldType.setNote( nr.getComment() );
 						ret.addFieldType( fieldType );
 					}
 					return ret;

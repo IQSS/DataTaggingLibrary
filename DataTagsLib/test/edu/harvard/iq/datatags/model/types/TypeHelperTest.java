@@ -49,7 +49,7 @@ public class TypeHelperTest {
     @Test
     public void testSafeGet_simple() {
         AtomicType colorType = (AtomicType)((CompoundType)dataTagsType).getTypeNamed("color");
-        TagValue red = colorType.make("red", null);
+        TagValue red = colorType.registerValue("red", null);
         assertEquals( red, TypeHelper.safeGet(dataTagsType, "color", "red") );
     }
     

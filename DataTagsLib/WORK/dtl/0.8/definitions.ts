@@ -17,7 +17,6 @@ Assertions: consists of DataType, IP, Identity. <-- These are the assertions FXX
  * Porro molestias aliquid quaerat aut, ex cumque vero alias non possimus tenetur
  * voluptates nostrum minus, nobis repudiandae.
  *>
-Legal2: EducationRecords, MedicalRecords, GovernmentRecords, ContractOrPolicy.
 
 IP: TODO.
 AnotherOne: TODO.

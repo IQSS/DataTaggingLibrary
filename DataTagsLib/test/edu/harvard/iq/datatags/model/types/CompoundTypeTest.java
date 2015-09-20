@@ -55,7 +55,7 @@ public class CompoundTypeTest {
         for ( AtomicType st : C.list(stA, stB, stSetItem) ) {
             List<AtomicValue> valueList = new ArrayList<>(4);
             for ( int i=0; i<4; i++ ) {
-                valueList.add(st.make( st.getName() + "-" +i, null));
+                valueList.add(st.registerValue( st.getName() + "-" +i, null));
             }
             values.put(st, valueList);
         }
@@ -70,14 +70,14 @@ public class CompoundTypeTest {
     @Test
     public void testSimpleSet() {
         CompoundValue val = ctSut.createInstance();
-        val.set( stA.make("A-0", null) );
-        val.set( stB.make("B-0", null));
+        val.set( stA.registerValue("A-0", null) );
+        val.set( stB.registerValue("B-0", null));
         
         assertEquals( C.set(stA, stB), val.getTypesWithNonNullValues() );
         assertEquals( values.get(stA).get(0), val.get(stA) );
         assertEquals( values.get(stB).get(0), val.get(stB) );
         
-        val.set( stB.make("B-1", null));
+        val.set( stB.registerValue("B-1", null));
         assertEquals( values.get(stB).get(1), val.get(stB) );
         assertEquals( values.get(stA).get(0), val.get(stA) );
         
@@ -86,7 +86,7 @@ public class CompoundTypeTest {
     @Test( expected=IllegalArgumentException.class)
     public void testSimpleSet_fail() {
         CompoundValue val = ctSut.createInstance();
-        val.set( new AtomicType("NotThere","").make("banana", null) );
+        val.set( new AtomicType("NotThere","").registerValue("banana", null) );
         
     }
     
@@ -120,10 +120,10 @@ public class CompoundTypeTest {
 		AtomicType simple_t1 = new AtomicType("st1", null);
 		AtomicType simple_t2 = new AtomicType("st2", null);
 		
-		AtomicValue v1_t1 = simple_t1.make("1", null);
-		AtomicValue v2_t1 = simple_t1.make("2", null);
+		AtomicValue v1_t1 = simple_t1.registerValue("1", null);
+		AtomicValue v2_t1 = simple_t1.registerValue("2", null);
 		
-		AtomicValue v1_t2 = simple_t2.make("1", null);
+		AtomicValue v1_t2 = simple_t2.registerValue("1", null);
 		
         CompoundType ct = new CompoundType("compoundType", null);
         ct.addFieldType( simple_t1 );
@@ -157,12 +157,12 @@ public class CompoundTypeTest {
 		AggregateValue agg_1 = agg_t.createInstance();
 		AggregateValue agg_2 = agg_t.createInstance();
 		
-		agg_1.add( simple_t.make("i",null) );
-		agg_1.add( simple_t.make("ii",null) );
-		agg_2.add( simple_t.make("iii",null) );
-		agg_2.add( simple_t.make("iv",null) );
+		agg_1.add( simple_t.registerValue("i",null) );
+		agg_1.add( simple_t.registerValue("ii",null) );
+		agg_2.add( simple_t.registerValue("iii",null) );
+		agg_2.add( simple_t.registerValue("iv",null) );
 		
-		AtomicValue inBoth = simple_t.make("inBoth",null);
+		AtomicValue inBoth = simple_t.registerValue("inBoth",null);
 		agg_1.add(inBoth);
 		agg_2.add(inBoth);
 		
@@ -198,8 +198,8 @@ public class CompoundTypeTest {
 		
 		for ( AtomicType st : simpleTypes ) {
 			int idx=0;
-			st.make(st.getName() + (++idx), null);
-			st.make(st.getName() + (++idx), null);
+			st.registerValue(st.getName() + (++idx), null);
+			st.registerValue(st.getName() + (++idx), null);
 		}
 		
 		CompoundValue cv1 = compound_t.createInstance();
@@ -236,7 +236,7 @@ public class CompoundTypeTest {
 	public void testComposeWith_compound_aggregate() {
 		AtomicType items_t = new AtomicType("Type of items", null);
 		
-		for ( int i=0; i<3; i++ ) items_t.make("item " + i, null);
+		for ( int i=0; i<3; i++ ) items_t.registerValue("item " + i, null);
 		
 		AggregateType agg_t = new AggregateType("agg1",null, items_t);
 		

@@ -1,8 +1,16 @@
 package edu.harvard.iq.datatags.parser.definitions;
 
+import edu.harvard.iq.datatags.model.types.AggregateType;
+import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.types.ToDoType;
 import edu.harvard.iq.datatags.parser.definitions.ast.AbstractSlot;
+import edu.harvard.iq.datatags.parser.definitions.ast.AggregateSlot;
+import edu.harvard.iq.datatags.parser.definitions.ast.AtomicSlot;
 import edu.harvard.iq.datatags.parser.definitions.ast.CompoundSlot;
+import edu.harvard.iq.datatags.parser.definitions.ast.ToDoSlot;
+import edu.harvard.iq.datatags.parser.definitions.references.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import java.util.Collection;
 import java.util.Map;
@@ -19,6 +27,24 @@ import java.util.Set;
 public class TagSpaceParseResult {
     
     private final Map<String, ? extends AbstractSlot> slotsByName;
+    
+    class MissingSlotException extends RuntimeException {
+        private final String missingSlotName;
+        private final String definingSlot;
+        MissingSlotException( String aMissingSlotName, String aDefiningSlot ) {
+            missingSlotName = aMissingSlotName;
+            definingSlot = aDefiningSlot;
+        }
+
+        public String getMissingSlotName() {
+            return missingSlotName;
+        }
+
+        public String getDefiningSlot() {
+            return definingSlot;
+        }
+        
+    }
     
     TagSpaceParseResult( Map<String, ? extends AbstractSlot> slots ) {
         slotsByName = slots;
@@ -45,8 +71,62 @@ public class TagSpaceParseResult {
      * @throws edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException if the slot is of the wrong type.
      */
     public Optional<CompoundType> buildType( String slotName ) throws SemanticsErrorException  {
-        // TODO implement
-        return Optional.empty();
+        
+        AbstractSlot slot = slotsByName.get( slotName );
+        if ( slot == null ) return Optional.empty();
+        if ( ! (slot instanceof CompoundSlot) ) throw new SemanticsErrorException(null, "Slot " + slotName + " is not a compound (consists of) slot");
+        
+        CompoundSlot baseSlot = (CompoundSlot) slot;
+        TypeBuilder tb = new TypeBuilder();
+        
+        try {
+            return Optional.of( (CompoundType)baseSlot.accept(tb) );
+            
+        } catch ( MissingSlotException mse ) {
+            throw new SemanticsErrorException( new CompilationUnitLocationReference(-1, -1), 
+                    "Slot " + mse.getDefiningSlot() + " references nonexistent slot named " + mse.getMissingSlotName() );
+        }
     }
     
+    /**
+     * Visits a slot, builds a type based on it.
+     */
+    class TypeBuilder implements AbstractSlot.Visitor<TagType> {
+
+        @Override
+        public TagType visit(ToDoSlot slot) {
+            return new ToDoType(slot.getName(), slot.getNote());
+        }
+
+        @Override
+        public TagType visit(AtomicSlot slot) {
+            AtomicType newType = new AtomicType(slot.getName(), slot.getNote());
+            slot.getValueDefinitions().forEach( vd -> newType.registerValue(vd.getName(), vd.getNote()) );
+            
+            return newType;
+        }
+
+        @Override
+        public TagType visit(AggregateSlot slot) {
+            AtomicType itemType = new AtomicType( slot.getName() + "#item", "" );
+            AggregateType newType = new AggregateType(slot.getName(), slot.getNote(), itemType );
+            
+            slot.getValueDefinitions().forEach( vd -> itemType.registerValue(vd.getName(), vd.getNote()) );
+            
+            return newType;
+        }
+
+        @Override
+        public CompoundType visit(CompoundSlot slot) {
+            CompoundType newType = new CompoundType(slot.getName(), slot.getNote());
+            slot.getSubSlotNames().forEach( 
+                (String name) -> 
+                    newType.addFieldType( 
+                            Optional.ofNullable(slotsByName.get(name))
+                                .orElseThrow( ()->new MissingSlotException(name, slot.getName()) )
+                                .accept(TypeBuilder.this)));
+                    
+            return newType;
+        }
+    }
 }

@@ -7,7 +7,7 @@ import edu.harvard.iq.datatags.parser.definitions.ast.AbstractSlot;
 import edu.harvard.iq.datatags.parser.definitions.ast.AggregateSlot;
 import edu.harvard.iq.datatags.parser.definitions.ast.AtomicSlot;
 import edu.harvard.iq.datatags.parser.definitions.ast.CompoundSlot;
-import edu.harvard.iq.datatags.parser.definitions.ast.TodoSlot;
+import edu.harvard.iq.datatags.parser.definitions.ast.ToDoSlot;
 import edu.harvard.iq.datatags.parser.definitions.ast.ValueDefinition;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -104,19 +104,19 @@ public class TagSpaceRuleParserTest {
     
     @Test
     public void testTodoRule() {
-        Parser<TodoSlot> sut = TagSpaceTerminalParser.buildParser( TagSpaceRuleParser.TODO_RULE );
-        assertEquals( new TodoSlot("Procrastination", ""), sut.parse("Procrastination: TODO.") );
-        assertEquals( new TodoSlot("Procrastination", ""), sut.parse("Procrastination: TODO   .") );
-        assertEquals( new TodoSlot("Procrastination", ""), sut.parse("Procrastination: TODO   \n.") );
-        assertEquals( new TodoSlot("Procrastination", ""), sut.parse("\t \t Procrastination: \n \t \t \tTODO<*!!!*>   \n.") );
-        assertEquals( new TodoSlot("Procrastination", "I'll get to this later"), sut.parse("Procrastination [I'll get to this later]: TODO.") );
-        assertEquals( new TodoSlot("Procrastination", "I'll get to this later"), sut.parse("Procrastination [I'll get to this later] <--- Yeah, right\n\t: TODO.") );
+        Parser<ToDoSlot> sut = TagSpaceTerminalParser.buildParser( TagSpaceRuleParser.TODO_RULE );
+        assertEquals(new ToDoSlot("Procrastination", ""), sut.parse("Procrastination: TODO.") );
+        assertEquals(new ToDoSlot("Procrastination", ""), sut.parse("Procrastination: TODO   .") );
+        assertEquals(new ToDoSlot("Procrastination", ""), sut.parse("Procrastination: TODO   \n.") );
+        assertEquals(new ToDoSlot("Procrastination", ""), sut.parse("\t \t Procrastination: \n \t \t \tTODO<*!!!*>   \n.") );
+        assertEquals(new ToDoSlot("Procrastination", "I'll get to this later"), sut.parse("Procrastination [I'll get to this later]: TODO.") );
+        assertEquals(new ToDoSlot("Procrastination", "I'll get to this later"), sut.parse("Procrastination [I'll get to this later] <--- Yeah, right\n\t: TODO.") );
     }
     
     @Test
     public void testRule() {
         Parser<? extends AbstractSlot> sut = TagSpaceTerminalParser.buildParser( TagSpaceRuleParser.RULE );
-        assertEquals( new TodoSlot("Test",""), sut.parse("Test: TODO."));
+        assertEquals(new ToDoSlot("Test",""), sut.parse("Test: TODO."));
         assertEquals( new AtomicSlot("Test","a test slot", Arrays.asList(vDef("A"), vDef("B","value b"))),
                             sut.parse("Test [a test slot]: one of A, B[value b]."));
         assertEquals( new AggregateSlot("Test", "", Arrays.asList(vDef("A"), vDef("B","value b"))),
@@ -129,8 +129,7 @@ public class TagSpaceRuleParserTest {
     public void testRules() {
         Parser<List<? extends AbstractSlot>> sut = TagSpaceTerminalParser.buildParser( TagSpaceRuleParser.RULES );
         
-        List<? extends AbstractSlot> expected = Arrays.asList(
-                new TodoSlot("ATodoNode",""),
+        List<? extends AbstractSlot> expected = Arrays.asList(new ToDoSlot("ATodoNode",""),
                 new AtomicSlot("AnAtomicSlot","one value", Arrays.asList(vDef("I"), vDef("II"), vDef("III","one two three")) ),
                 new AggregateSlot("AnAggregateSlot","multi value", Arrays.asList(vDef("I"), vDef("II"), vDef("III","one two three")) )
         );

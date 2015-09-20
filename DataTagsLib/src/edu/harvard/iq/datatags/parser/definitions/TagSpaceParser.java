@@ -22,12 +22,18 @@ public class TagSpaceParser {
    
     private final Parser<List<? extends AbstractSlot>> parser = TagSpaceTerminalParser.buildParser( TagSpaceRuleParser.RULES );
     
-    
+    /**
+     * Parse Tag Space code into a result that can be used to create actual types.
+     * @param tagSpaceCode
+     * @return
+     * @throws SyntaxErrorException
+     * @throws SemanticsErrorException 
+     */
     public TagSpaceParseResult parse( String tagSpaceCode ) throws SyntaxErrorException, SemanticsErrorException {
         
         try {
             // Parse and collect
-            List<? extends AbstractSlot> slots = parser.parse(tagSpaceCode);
+            List<? extends AbstractSlot> slots = ParseSlots(tagSpaceCode);
             Map<String, List<AbstractSlot>> slotMap = slots.stream().collect(Collectors.groupingBy(AbstractSlot::getName));
             
             // Validate that the there are no duplicate slot names
@@ -47,6 +53,25 @@ public class TagSpaceParser {
                     "The following slots were defined more than once: " + duplicates );
             }
             
+        } catch ( org.codehaus.jparsec.error.ParserException pe ) {
+			throw new SyntaxErrorException( new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),
+											pe.getMessage(),
+											pe);
+        }
+    }
+
+    /**
+     * Lists the slots defined in the code. A lower-level method, useful for tools inspecting 
+     * the code.
+     * 
+     * @param tagSpaceCode
+     * @return List of all defined slots.
+     * @throws SyntaxErrorException 
+     */
+    public List<? extends AbstractSlot> ParseSlots(String tagSpaceCode) throws SyntaxErrorException {
+        try {
+            List<? extends AbstractSlot> slots = parser.parse(tagSpaceCode);
+            return slots;
         } catch ( org.codehaus.jparsec.error.ParserException pe ) {
 			throw new SyntaxErrorException( new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),
 											pe.getMessage(),

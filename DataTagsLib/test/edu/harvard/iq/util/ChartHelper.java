@@ -48,10 +48,10 @@ public class ChartHelper {
     public static CompoundType mockTopLevelType() {
         CompoundType mock = new CompoundType("Mock", "A mock type to just have a type there.");
         AtomicType st1 = new AtomicType("st1",null);
-        st1.make("v1", null);
-        st1.make("v2", null);
-        st1.make("v3", null);
-        st1.make("v4", null);
+        st1.registerValue("v1", null);
+        st1.registerValue("v2", null);
+        st1.registerValue("v3", null);
+        st1.registerValue("v4", null);
         mock.addFieldType(st1);
         
         return mock;

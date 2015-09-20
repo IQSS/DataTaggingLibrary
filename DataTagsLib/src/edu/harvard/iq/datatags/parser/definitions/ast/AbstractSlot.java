@@ -10,7 +10,7 @@ import java.util.Objects;
 public abstract class AbstractSlot {
     
     public interface Visitor<R> {
-        R visit(TodoSlot slot);
+        R visit(ToDoSlot slot);
         R visit(AtomicSlot slot);
         R visit(AggregateSlot slot);
         R visit(CompoundSlot slot);

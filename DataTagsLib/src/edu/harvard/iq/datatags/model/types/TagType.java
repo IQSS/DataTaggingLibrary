@@ -54,19 +54,19 @@ public abstract class TagType {
     }
     
 	private final String name;
-	private String info;
+	private String note;
 
-	public TagType(String name, String info) {
+	public TagType(String name, String note) {
 		this.name = name;
-		this.info = info;
+		this.note = note;
 	}
 
-	public String getInfo() {
-		return info;
+	public String getNote() {
+		return note;
 	}
 
-	public void setInfo(String info) {
-		this.info = info;
+	public void setNote(String note) {
+		this.note = note;
 	}
 	
 	public String getName() {
@@ -167,7 +167,7 @@ public abstract class TagType {
 	public int hashCode() {
 		int hash = 3;
 		hash = 89 * hash + Objects.hashCode(this.name);
-		hash = 89 * hash + Objects.hashCode(this.info);
+		hash = 89 * hash + Objects.hashCode(this.note);
 		return hash;
 	}
 
@@ -184,7 +184,7 @@ public abstract class TagType {
 			return false;
 		}
 	
-		return Objects.equals(this.info, other.info);
+		return Objects.equals(this.note, other.note);
 	}
 
 	@Override

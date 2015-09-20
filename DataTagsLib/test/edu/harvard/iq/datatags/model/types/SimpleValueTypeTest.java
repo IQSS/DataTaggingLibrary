@@ -38,7 +38,7 @@ public class SimpleValueTypeTest {
 	}
 
 	/**
-	 * Test of make method, of class AtomicType.
+	 * Test of registerValue method, of class AtomicType.
 	 */
 	@Test
 	public void testMake() {
@@ -46,9 +46,9 @@ public class SimpleValueTypeTest {
 		
 		assertTrue( instance.values().isEmpty() );
 		
-		AtomicValue v1 = instance.make("1", null);
-		AtomicValue v2 = instance.make("2", null);
-		AtomicValue v3 = instance.make("3", null);
+		AtomicValue v1 = instance.registerValue("1", null);
+		AtomicValue v2 = instance.registerValue("2", null);
+		AtomicValue v3 = instance.registerValue("3", null);
 		
 		List<AtomicValue> vals = Arrays.asList(v3,v1,v2);
 		Collections.sort(vals);

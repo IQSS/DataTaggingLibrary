@@ -13,9 +13,9 @@ package edu.harvard.iq.datatags.parser.definitions.ast;
  * }
  * @author michael
  */
-public class TodoSlot extends AbstractSlot {
+public class ToDoSlot extends AbstractSlot {
     
-    public TodoSlot(String aName, String aNote) {
+    public ToDoSlot(String aName, String aNote) {
         super(aName, aNote);
     }
     
