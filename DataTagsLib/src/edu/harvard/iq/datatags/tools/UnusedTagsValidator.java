@@ -6,6 +6,7 @@ import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Checks that all tag values are used in set nodes.
@@ -41,24 +42,22 @@ public class UnusedTagsValidator {
      * and the TodoType) -- in InterviewTagValues I could be
      * counting CompoundValues and AggregateValues as well as
      * SimpleValues and TodoValues.
+     * 
+     * @param fcs
+     * @return A list of validation messages regarding the flow chart set.
      */
-    
     public List<ValidationMessage> validateUnusedTags(FlowChartSet fcs) {
         InterviewTagValues interviewValues = new InterviewTagValues();
         Set<TagValue> usedValues = interviewValues.gatherInterviewTagValues(fcs);
-        System.out.println("Interview tag values: " + usedValues.size());
         
         AllTagValues allValues = new AllTagValues();
         Set<TagValue> definedValues = allValues.gatherAllTagValues(fcs);
-        System.out.println("All tag values: " + definedValues.size());
-        
         
         definedValues.removeAll(usedValues);
-        System.out.println("Unused tag values: " + definedValues.size());
         
-        for (TagValue unused : definedValues) {
-            validationMessages.add(new ValidationMessage(Level.WARNING, unused.toString()));
-        }
+        validationMessages.addAll( 
+                definedValues.stream().map(
+                        unused -> new ValidationMessage(Level.WARNING, unused.toString())).collect(Collectors.toList()));
         
         return validationMessages;
     }
