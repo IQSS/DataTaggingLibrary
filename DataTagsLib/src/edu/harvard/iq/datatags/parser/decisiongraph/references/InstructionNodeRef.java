@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.flowcharts.references;
+package edu.harvard.iq.datatags.parser.decisiongraph.references;
 
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
@@ -93,9 +93,13 @@ public abstract class InstructionNodeRef extends NodeRef {
         return Objects.equals(getId(), other.getId());
     }
     
+    protected String toStringExtras() {
+        return "";
+    }
+    
     @Override
     public String toString() {
         String[] classNameComps = getClass().getCanonicalName().split("\\.");
-        return "[" + classNameComps[classNameComps.length-1] + " id:" + getId() + " ]";
+        return "[" + classNameComps[classNameComps.length-1] + " id:" + getId() + " " + toStringExtras() + "]";
     }
 }

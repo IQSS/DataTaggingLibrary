@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.parser.exceptions;
 
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
-import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.SetNodeRef;
 
 /**
  *

@@ -19,7 +19,8 @@ public class TagSpaceTerminalParser {
     static final Terminals KEYWORD_TOKENS = Terminals.operators(":", "one", "some", "consists", "of", ",", ".");
     static final Parser<?> KEYWORDS = KEYWORD_TOKENS.tokenizer();
     static final Parser<?> IDENTIFIER = Terminals.Identifier.TOKENIZER;
-    static final Parser<Fragment> DESCRIPTION = Scanners.nestableBlockComment("[", "]").source().map( s -> Tokens.fragment(s, "description"));
+    static final Parser<Fragment> DESCRIPTION = Scanners.nestableBlockComment("[", "]")
+                                                        .source().map( s -> Tokens.fragment(s, "description"));
     static final Parser<Fragment> TODO = Patterns.regex("TODO").toScanner("todo").map( _s -> Tokens.fragment("", "todo") );
     
     static final Parser<Object> TOKENIZER = Parsers.<Object>or(KEYWORDS, TODO, IDENTIFIER, DESCRIPTION);

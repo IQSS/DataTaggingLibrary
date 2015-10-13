@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.flowcharts.references;
+package edu.harvard.iq.datatags.parser.decisiongraph.references;
 
 import java.util.Objects;
 
@@ -30,7 +30,7 @@ public class TodoNodeRef extends InstructionNodeRef {
 		hash = 89 * hash + Objects.hashCode(this.todoText);
 		return hash;
 	}
-
+    
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
@@ -44,6 +44,9 @@ public class TodoNodeRef extends InstructionNodeRef {
 				&& equalsAsInstructionNodeRef(other);
 	}
 	
-	
+	@Override
+    protected String toStringExtras() {
+        return "text:<" + getTodoText() + ">";
+    }
 
 }

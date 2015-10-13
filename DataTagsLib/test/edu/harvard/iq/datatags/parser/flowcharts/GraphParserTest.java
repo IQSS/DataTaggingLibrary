@@ -1,8 +1,9 @@
 package edu.harvard.iq.datatags.parser.flowcharts;
 
-import edu.harvard.iq.datatags.parser.flowcharts.references.CallNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.EndNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.CallNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.EndNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeRefVizalizer;
 import java.io.IOException;
 import java.io.OutputStreamWriter;

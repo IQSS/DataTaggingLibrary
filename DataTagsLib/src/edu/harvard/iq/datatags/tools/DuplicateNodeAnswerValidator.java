@@ -1,14 +1,14 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.parser.flowcharts.references.AnswerNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.AskNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.CallNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.EndNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef.NullVisitor;
-import edu.harvard.iq.datatags.parser.flowcharts.references.RejectNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.SetNodeRef;
-import edu.harvard.iq.datatags.parser.flowcharts.references.TodoNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AnswerNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AskNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.CallNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.EndNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.InstructionNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.InstructionNodeRef.NullVisitor;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.RejectNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.SetNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.TodoNodeRef;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.LinkedList;

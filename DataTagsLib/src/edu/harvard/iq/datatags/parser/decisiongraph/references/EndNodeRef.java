@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.flowcharts.references;
+package edu.harvard.iq.datatags.parser.decisiongraph.references;
 
 /**
  * A reference to an {@code (end)} node in a chart.

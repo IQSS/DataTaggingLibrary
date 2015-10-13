@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.flowcharts.references;
+package edu.harvard.iq.datatags.parser.decisiongraph.references;
 
 import java.util.List;
 import java.util.Objects;

@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.mains;
 
-import edu.harvard.iq.datatags.parser.flowcharts.FlowChartASTParser;
-import edu.harvard.iq.datatags.parser.flowcharts.references.InstructionNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.InstructionNodeRef;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeRefVizalizer;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
