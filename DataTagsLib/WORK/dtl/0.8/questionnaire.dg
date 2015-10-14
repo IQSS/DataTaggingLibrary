@@ -79,7 +79,7 @@ Top levels:
 [>td< todo: la la la la]
 [>ca< call: sectionId]
 [>rj< reject: lotsa text here ]
-[>se< set: a=lll, b/c=kkr, q/d/rr/k+=alpha, beta, gamma, d += mov, set]
+[>se< set: a=lll; b/c=kkr; q/d/rr/k+=alpha, beta, gamma; d += mov, set]
 [>as< ask:
        {text: why?}
        {terms:
@@ -87,8 +87,11 @@ Top levels:
         {b:Goodbye!}
        }
     {answers:
-      yes:[][][]
-       no:[][] maybe so:[]}
+       {yes:[][][]}
+       {no:[][]}
+       {maybe so:[]}
+       {Five years: [end]}
+    }
 ]
 *>
 

@@ -1,14 +1,14 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AnswerNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AskNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.CallNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.EndNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.InstructionNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.InstructionNodeRef.NullVisitor;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.RejectNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.SetNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.TodoNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstAskNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstCallNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode.NullVisitor;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstSetNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstTodoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.HashSet;
@@ -28,27 +28,27 @@ public class RepeatIdValidator extends NullVisitor {
     private final Set<String> seenIds = new HashSet<>();
     private final Map<String, ValidationMessage> validationMessages = new TreeMap<>();
     
-    public Set<ValidationMessage> validateRepeatIds(List<InstructionNodeRef> refs) {
+    public Set<ValidationMessage> validateRepeatIds(List<AstNode> refs) {
         refs.stream().forEach( ref -> ref.accept(this) );
         return new HashSet<>(validationMessages.values());
     }
 
     @Override
-    public void visitImpl(AskNodeRef nd) throws DataTagsRuntimeException {
+    public void visitImpl(AstAskNode nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
                 validationMessages.put( nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {
             seenIds.add(nd.getId());
         }
-        for (AnswerNodeRef ansRef : nd.getAnswers()) {
-            for (InstructionNodeRef node : ansRef.getImplementation()) {
+        for (AstAnswerSubNode ansRef : nd.getAnswers()) {
+            for (AstNode node : ansRef.getSubGraph()) {
                 node.accept(this);
             }
         }
     }
 
     @Override
-    public void visitImpl(SetNodeRef nd) throws DataTagsRuntimeException {
+    public void visitImpl(AstSetNode nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
             validationMessages.put( nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {
@@ -57,7 +57,7 @@ public class RepeatIdValidator extends NullVisitor {
     }
 
     @Override
-    public void visitImpl(RejectNodeRef nd) throws DataTagsRuntimeException {
+    public void visitImpl(AstRejectNode nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
             validationMessages.put( nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {
@@ -66,7 +66,7 @@ public class RepeatIdValidator extends NullVisitor {
     }
 
     @Override
-    public void visitImpl(CallNodeRef nd) throws DataTagsRuntimeException {
+    public void visitImpl(AstCallNode nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
             validationMessages.put( nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {
@@ -75,7 +75,7 @@ public class RepeatIdValidator extends NullVisitor {
     }
 
     @Override
-    public void visitImpl(TodoNodeRef nd) throws DataTagsRuntimeException {
+    public void visitImpl(AstTodoNode nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
             validationMessages.put( nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {
@@ -84,7 +84,7 @@ public class RepeatIdValidator extends NullVisitor {
     }
 
     @Override
-    public void visitImpl(EndNodeRef nd) throws DataTagsRuntimeException {
+    public void visitImpl(AstEndNode nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
             validationMessages.put( nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {

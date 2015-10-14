@@ -4,8 +4,8 @@ import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
-import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartSetComplier;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.InstructionNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +23,7 @@ import org.junit.Test;
 public class ValidCallNodeValidatorTest {
     
     ValidCallNodeValidator instance;
-    FlowChartSetComplier fcsc;
+    DecisionGraphParser fcsc;
     FlowChartSet fcs;
     FlowChartASTParser astParser;
     
@@ -40,7 +40,7 @@ public class ValidCallNodeValidatorTest {
     
     @Before
     public void setUp() {
-        fcsc = new FlowChartSetComplier(new CompoundType("", ""));
+        fcsc = new DecisionGraphParser(new CompoundType("", ""));
         instance = new ValidCallNodeValidator();
         astParser = new FlowChartASTParser();
     }
@@ -53,7 +53,7 @@ public class ValidCallNodeValidatorTest {
     @Test
     public void validateIdReferencesTest_noId() throws BadSetInstructionException {
         String code = "(todo: There's no id here to do anything with)(end)";
-        List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
+        List<AstNode> refs = astParser.graphParser().parse(code);
         fcs = fcsc.parse(refs, "unitName");
         LinkedList<NodeValidationMessage> messages = instance.validateIdReferences(fcs);
         assertEquals(new LinkedList<String>(), messages);
@@ -63,7 +63,7 @@ public class ValidCallNodeValidatorTest {
     public void validateIdReferencesTest_validId() throws BadSetInstructionException {
         String code = "(call: ppraCompliance )" +
                       "(>ppraCompliance< ask:(text: This should work!))(end)";
-        List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
+        List<AstNode> refs = astParser.graphParser().parse(code);
         fcs = fcsc.parse(refs, "unitName");
         LinkedList<NodeValidationMessage> messages = instance.validateIdReferences(fcs);
         assertEquals(new LinkedList<>(), messages);
@@ -75,7 +75,7 @@ public class ValidCallNodeValidatorTest {
                       "(>ppraCompliance< ask:(text: This shouldn't work.))" +
                       "(end)";
         
-        List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
+        List<AstNode> refs = astParser.graphParser().parse(code);
         fcs = fcsc.parse(refs, "unitName");
         LinkedList<NodeValidationMessage> actual = instance.validateIdReferences(fcs);
         LinkedList<NodeValidationMessage> expected = new LinkedList<>();

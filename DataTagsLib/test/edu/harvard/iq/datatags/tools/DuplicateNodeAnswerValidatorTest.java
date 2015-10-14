@@ -4,8 +4,8 @@ import edu.harvard.iq.datatags.model.charts.FlowChartSet;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
-import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartSetComplier;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.InstructionNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -24,7 +24,7 @@ import org.junit.Test;
 public class DuplicateNodeAnswerValidatorTest {
     
     DuplicateNodeAnswerValidator instance;
-    FlowChartSetComplier fcsc;
+    DecisionGraphParser fcsc;
     FlowChartSet fcs;
     FlowChartASTParser astParser;
     
@@ -42,7 +42,7 @@ public class DuplicateNodeAnswerValidatorTest {
     @Before
     public void setUp() {
         instance = new DuplicateNodeAnswerValidator();
-        fcsc = new FlowChartSetComplier(new CompoundType("", ""));
+        fcsc = new DecisionGraphParser(new CompoundType("", ""));
         astParser = new FlowChartASTParser();
     }
     
@@ -53,7 +53,7 @@ public class DuplicateNodeAnswerValidatorTest {
     @Test
     public void validateDuplicateAnswerTest_noAnswers() throws BadSetInstructionException {
         String code = "(todo: there are no answers here to check)(end)";
-        List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
+        List<AstNode> refs = astParser.graphParser().parse(code);
         List<ValidationMessage> duplicates = instance.validateDuplicateAnswers(refs);
         assertEquals(new LinkedList<>(), duplicates);
     } 
@@ -64,7 +64,7 @@ public class DuplicateNodeAnswerValidatorTest {
                 + "(yes: (>todo1< todo: no duplicates))"
                 + "(no: (>todo2< todo: still no duplicates)))"
                 + "(>end1<end)";
-        List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
+        List<AstNode> refs = astParser.graphParser().parse(code);
         List<ValidationMessage> duplicates = instance.validateDuplicateAnswers(refs);
         assertEquals(new LinkedList<>(), duplicates);
     } 
@@ -75,7 +75,7 @@ public class DuplicateNodeAnswerValidatorTest {
                 + "(yes: (>todo1< todo: there's a duplicate!))"
                 + "(yes: (>todo2< todo: yes there is!))"
                 + "(no: (>todo3< todo: this is just another answer)))";
-        List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
+        List<AstNode> refs = astParser.graphParser().parse(code);
         List<ValidationMessage> actual = instance.validateDuplicateAnswers(refs);
         // the first instruction node should be a repeat
         List<ValidationMessage> expected = Collections.singletonList(

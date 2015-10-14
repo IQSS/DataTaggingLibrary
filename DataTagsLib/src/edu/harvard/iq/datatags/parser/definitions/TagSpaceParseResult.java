@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * The result of parsing a Tag Space file. While the main target of this class
  * is to build the actual types defined in the file (as the parse result generates an AST, not types),
- * it can also be used for low-level language inspections, such as duplicate value names.
+ * it can also be used for low-level language inspections.
  * 
  * @author michael
  */

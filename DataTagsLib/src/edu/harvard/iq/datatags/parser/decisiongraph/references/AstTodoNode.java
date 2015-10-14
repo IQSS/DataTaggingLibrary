@@ -6,11 +6,11 @@ import java.util.Objects;
  * 
  * @author Michael Bar-Sinai
  */
-public class TodoNodeRef extends InstructionNodeRef {
+public class AstTodoNode extends AstNode {
 
 	private final String todoText;
 	
-    public TodoNodeRef(String id, String body) {
+    public AstTodoNode(String id, String body) {
         super( id );
 		todoText = body;
     }
@@ -36,10 +36,10 @@ public class TodoNodeRef extends InstructionNodeRef {
 		if (obj == null) {
 			return false;
 		}
-		if ( ! (obj instanceof TodoNodeRef) ) {
+		if ( ! (obj instanceof AstTodoNode) ) {
 			return false;
 		}
-		final TodoNodeRef other = (TodoNodeRef) obj;
+		final AstTodoNode other = (AstTodoNode) obj;
 		return Objects.equals(this.todoText, other.todoText)
 				&& equalsAsInstructionNodeRef(other);
 	}

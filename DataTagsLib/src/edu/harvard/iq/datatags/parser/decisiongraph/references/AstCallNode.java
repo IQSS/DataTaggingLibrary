@@ -6,14 +6,14 @@ import java.util.Objects;
  * 
  * @author Michael Bar-Sinai
  */
-public class CallNodeRef extends InstructionNodeRef {
+public class AstCallNode extends AstNode {
     private final String calleeId;
     
-    public CallNodeRef( String calleeId ) {
+    public AstCallNode( String calleeId ) {
         this( null, calleeId );
     }
     
-    public CallNodeRef( String id, String calleeId ) {
+    public AstCallNode( String id, String calleeId ) {
         super( id );
         this.calleeId = calleeId;
     }
@@ -39,10 +39,10 @@ public class CallNodeRef extends InstructionNodeRef {
         if (obj == null) {
             return false;
         }
-        if ( ! (obj instanceof CallNodeRef) ) {
+        if ( ! (obj instanceof AstCallNode) ) {
             return false;
         }
-        final CallNodeRef other = (CallNodeRef) obj;
+        final AstCallNode other = (AstCallNode) obj;
         if (!Objects.equals(this.calleeId, other.calleeId)) {
             return false;
         }

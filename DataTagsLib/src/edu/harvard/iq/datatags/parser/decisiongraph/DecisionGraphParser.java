@@ -21,16 +21,17 @@ import static edu.harvard.iq.datatags.model.values.Answer.Answer;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AnswerNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AskNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.CallNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.EndNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.InstructionNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.NodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.RejectNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.SetNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.TermNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.TodoNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstAskNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstCallNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstSetNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstTermSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstTodoNode;
+import edu.harvard.iq.datatags.parser.definitions.ast.CompilationUnitLocationReference;
+import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,15 +41,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.codehaus.jparsec.Parser;
+import org.codehaus.jparsec.error.ParserException;
 
 /**
- * Parser for the chart set graphs.
+ * Takes a string, returns a decision graph, or the AST, in case you're writing
+ * some code tool.
  * 
  * @author michael
  */
-public class FlowChartSetComplier {
+public class DecisionGraphParser {
 	
-	private final Map<String, NodeRef> id2NodeRef = new HashMap<>();
+	private final Map<String, AstNode> id2NodeRef = new HashMap<>();
 	private final Map<String, List<CallNode>> callNodesToLink = new HashMap<>();
 	
     /**
@@ -60,16 +64,25 @@ public class FlowChartSetComplier {
     
     private final Map<TagType, TagType> parentType = new HashMap<>();
     
-    public FlowChartSetComplier(CompoundType baseType) {
+    public DecisionGraphParser(CompoundType baseType) {
         this.topLevelType = baseType;
     }
     
     
-	public FlowChartSet parse( String source, String unitName ) throws BadSetInstructionException { 
-		return parse( new FlowChartASTParser().graphParser().parse(source), unitName );
+	public DecisionGraphParseResult parse( String source ) throws DataTagsParseException { 
+		Parser<List<? extends AstNode>> parser = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.graphParser() );
+        try {
+            List<? extends AstNode> astNodeList = parser.parse(source);
+            // TODO add AST-level validators here. Add results to parse result.
+            return new DecisionGraphParseResult(astNodeList);
+            
+        } catch ( ParserException pe ) {
+            throw new DataTagsParseException(new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),
+                    "Error parsing decision graph code: " + pe.getMessage(), pe);
+        }
 	}
 	
-	public FlowChartSet parse( List<? extends InstructionNodeRef> parsedNodes, String unitName ) throws BadSetInstructionException { 
+	public FlowChartSet parse( List<? extends AstNode> parsedNodes, String unitName ) throws BadSetInstructionException { 
 		// TODO implement the namespace, use unit name.
         
         buildParentTypeRelations();
@@ -84,7 +97,7 @@ public class FlowChartSetComplier {
 		chartSet.addFlowChart(chart);
 		chartSet.setDefaultChartId( chart.getId() );
         try {
-            for ( List<InstructionNodeRef> nodes : breakList(parsedNodes) ) {
+            for ( List<AstNode> nodes : breakList(parsedNodes) ) {
                 Node startNode = buildNodes( nodes, chart, new EndNode("$"+chart.getId()) );
                 if ( chart.getStart()== null ) { 
                     chart.setStart(startNode);
@@ -109,13 +122,13 @@ public class FlowChartSetComplier {
 	 * @param parsed
 	 * @return 
 	 */
-	List<List<InstructionNodeRef>> breakList( List<? extends InstructionNodeRef> parsed ) {
-		List<List<InstructionNodeRef>> res = new LinkedList<>();
-		List<InstructionNodeRef> cur = new LinkedList<>();
+	List<List<AstNode>> breakList( List<? extends AstNode> parsed ) {
+		List<List<AstNode>> res = new LinkedList<>();
+		List<AstNode> cur = new LinkedList<>();
 		
-		for ( InstructionNodeRef node : parsed ) {
+		for ( AstNode node : parsed ) {
 			cur.add( node );
-			if ( node instanceof EndNodeRef ) {
+			if ( node instanceof AstEndNode ) {
 				res.add( cur );
 				cur = new LinkedList<>();
 			}
@@ -134,24 +147,24 @@ public class FlowChartSetComplier {
 	 *					  is returned.
 	 * @return the node at the root of the execution path.
 	 */
-	private Node buildNodes( final List<? extends InstructionNodeRef> nodes, final FlowChart chart, final Node defaultNode ) {
+	private Node buildNodes( final List<? extends AstNode> nodes, final FlowChart chart, final Node defaultNode ) {
 		
-		InstructionNodeRef.Visitor<Node> builder = new InstructionNodeRef.Visitor<Node>(){
+		AstNode.Visitor<Node> builder = new AstNode.Visitor<Node>(){
             int nextEndId = 0;
 			@Override
-			public Node visit(AskNodeRef askRef) {
+			public Node visit(AstAskNode askRef) {
 				AskNode res = new AskNode( askRef.getId() );
 				
 				res.setText( askRef.getTextNode().getText() );
-				for ( TermNodeRef termRef : askRef.getTerms() ) {
+				for ( AstTermSubNode termRef : askRef.getTerms() ) {
 					res.addTerm(termRef.getTerm(), termRef.getExplanation() );
 				}
 				
 				Node syntacticallyNext = buildNodes(C.tail(nodes), chart, defaultNode );
 				
-				for ( AnswerNodeRef ansRef : askRef.getAnswers() ) {
+				for ( AstAnswerSubNode ansRef : askRef.getAnswers() ) {
 					res.setNodeFor( Answer(ansRef.getAnswerText()), 
-								    buildNodes(ansRef.getImplementation(), chart, syntacticallyNext)
+								    buildNodes(ansRef.getSubGraph(), chart, syntacticallyNext)
 								  );
 				}
 				
@@ -164,7 +177,7 @@ public class FlowChartSetComplier {
 			}
 
 			@Override
-			public Node visit(CallNodeRef callRef) {
+			public Node visit(AstCallNode callRef) {
 				CallNode res = new CallNode( callRef.getId() );
 				res.setCalleeChartId( chart.getId() );
 				res.setCalleeNodeId( callRef.getCalleeId() );
@@ -177,18 +190,18 @@ public class FlowChartSetComplier {
 			}
 
 			@Override
-			public Node visit(EndNodeRef endRef) {
+			public Node visit(AstEndNode endRef) {
                 String id = (endRef.getId() != null)  ? endRef.getId() : "end_$" + (nextEndId++);
 				return chart.add(new EndNode( id ));
 			}	
 
             @Override
-            public Node visit(RejectNodeRef setRef) {
+            public Node visit(AstRejectNode setRef) {
                 return chart.add(new RejectNode( setRef.getId(), setRef.getReason() ));
             }
             
 			@Override
-			public Node visit(SetNodeRef setRef) {
+			public Node visit(AstSetNode setRef) {
                 try {
                     SetNode res = new SetNode( buildDataTags(setRef), setRef.getId() );
                     res.setNextNode(buildNodes( C.tail(nodes), chart, defaultNode));
@@ -199,7 +212,7 @@ public class FlowChartSetComplier {
 			}
 
 			@Override
-			public Node visit(TodoNodeRef todoRef) {
+			public Node visit(AstTodoNode todoRef) {
 				TodoNode res = new TodoNode( todoRef.getId() );
 				res.setTodoText(todoRef.getTodoText() );
 				res.setNextNode( buildNodes( C.tail(nodes), chart, defaultNode) );
@@ -211,7 +224,7 @@ public class FlowChartSetComplier {
 		return nodes.isEmpty() ? defaultNode : C.head( nodes ).accept(builder);
 	}
 	
-	CompoundValue buildDataTags( SetNodeRef nodeRef ) throws BadSetInstructionException {
+	CompoundValue buildDataTags( AstSetNode nodeRef ) throws BadSetInstructionException {
 		CompoundValue topLeveltypeInstance = topLevelType.createInstance();
         
         for ( String slotName : nodeRef.getSlotNames() ) {
@@ -301,22 +314,17 @@ public class FlowChartSetComplier {
 	 * user-assigned ids in {@link #id2NodeRef}.
 	 * @param nodeRefs 
 	 */
-	protected void initIds( List<? extends InstructionNodeRef> nodeRefs ) {
-		final InstructionNodeRef.Visitor<Void> visitor = new InstructionNodeRef.Visitor<Void>() {
+	protected void initIds( List<? extends AstNode> nodeRefs ) {
+		final AstNode.Visitor<Void> visitor = new AstNode.Visitor<Void>() {
 			
 			private int nextId=0;
 			
 			@Override
-			public Void visit(AskNodeRef askRef) {
+			public Void visit(AstAskNode askRef) {
 				visitSimpleNode( askRef );
-				visitSimpleNode( askRef.getTextNode() );
-				for ( TermNodeRef tnd:askRef.getTerms() ) {
-					visitSimpleNode(tnd);
-				}
 				
-				for ( AnswerNodeRef ans : askRef.getAnswers() ) {
-					visitSimpleNode(ans);
-					for ( InstructionNodeRef inr : ans.getImplementation() ) {
+				for ( AstAnswerSubNode ans : askRef.getAnswers() ) {
+					for ( AstNode inr : ans.getSubGraph() ) {
 						inr.accept(this);
 					}
 				}
@@ -325,31 +333,31 @@ public class FlowChartSetComplier {
 			}
 
 			@Override
-			public Void visit(CallNodeRef callRef) {
+			public Void visit(AstCallNode callRef) {
 				return visitSimpleNode(callRef);
 			}
 
 			@Override
-			public Void visit(EndNodeRef nedRef) {
+			public Void visit(AstEndNode nedRef) {
 				return visitSimpleNode(nedRef);
 			}
 
 			@Override
-			public Void visit(SetNodeRef setRef) {
+			public Void visit(AstSetNode setRef) {
 				return visitSimpleNode(setRef);
 			}
 
 			@Override
-			public Void visit(TodoNodeRef todoRef) {
+			public Void visit(AstTodoNode todoRef) {
 				return visitSimpleNode(todoRef);
 			}
             
             @Override
-            public Void visit( RejectNodeRef rej ) {
+            public Void visit( AstRejectNode rej ) {
                 return visitSimpleNode(rej);
             }
 			
-			private Void visitSimpleNode( NodeRef simpleNodeRef ) {
+			private Void visitSimpleNode( AstNode simpleNodeRef ) {
 				if ( simpleNodeRef.getId() == null ) {
 					simpleNodeRef.setId(nextId());
 				} 
@@ -363,7 +371,7 @@ public class FlowChartSetComplier {
 			}
 		};
 		
-		for ( InstructionNodeRef inr: nodeRefs ) {
+		for ( AstNode inr: nodeRefs ) {
 			inr.accept(visitor);
 		}
 	}

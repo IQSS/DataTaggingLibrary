@@ -1,16 +1,16 @@
 package edu.harvard.iq.datatags.parser.decisiongraph.references;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
+ * A reference to @{code [set XXX]} instruction.
  * 
  * @author Michael Bar-Sinai
  */
-public class SetNodeRef extends InstructionNodeRef {
+public class AstSetNode extends AstNode {
     
     public abstract static class Assignment {
         final List<String> slot;
@@ -101,24 +101,18 @@ public class SetNodeRef extends InstructionNodeRef {
         }
     }
     
-    private final Map<String, String> assignments = new HashMap<>();
+    private final List<Assignment> assignments;
 
-    public SetNodeRef(String id) {
+    public AstSetNode(String id, List<Assignment> someAssignments) {
         super( id );
+        assignments = someAssignments;
     }
     
-    public void addAssignment( String slotName, String value ) {
-        assignments.put( slotName, value );
+    
+    public Set<List<String>> getSlotNames() {
+        return assignments.stream().map( a -> a.slot ).collect( Collectors.toSet() );
     }
     
-    public Set<String> getSlotNames() {
-        return assignments.keySet();
-    }
-    
-    public String getValue( String slotName ) {
-        return assignments.get(slotName);
-    }
-	
 	@Override
 	public <T> T accept( Visitor<T> v ) {
 		return v.visit(this);
@@ -136,17 +130,17 @@ public class SetNodeRef extends InstructionNodeRef {
         if (obj == null) {
             return false;
         }
-        if ( ! ( obj instanceof SetNodeRef) ) {
+        if ( ! ( obj instanceof AstSetNode) ) {
             return false;
         }
                 
-        final SetNodeRef other = (SetNodeRef) obj;
+        final AstSetNode other = (AstSetNode) obj;
         return other.assignments.equals(assignments) && super.equalsAsInstructionNodeRef(other);
     }
     
     @Override
-    public String toString() {
-        return "[SetNodeRef " + super.toString() + " assignments:" + assignments + "]";
+    public String toStringExtras() {
+        return "assignments:" + assignments;
     }
    
 }

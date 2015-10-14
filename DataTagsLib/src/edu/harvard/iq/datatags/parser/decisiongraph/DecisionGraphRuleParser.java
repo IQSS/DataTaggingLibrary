@@ -2,86 +2,192 @@ package edu.harvard.iq.datatags.parser.decisiongraph;
 
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphTerminalParser.Tags;
 import static edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphTerminalParser.nodeStructurePart;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.EndNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.NodeHeadRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.RejectNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.SetNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.TodoNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstAskNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstCallNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNodeHead;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstSetNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstTermSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstTextSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstTodoNode;
+import java.util.LinkedList;
+import java.util.List;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
 import org.codehaus.jparsec.Terminals;
-import org.codehaus.jparsec.functors.Pair;
 
 /**
  * Parses the terminals of a decision graph code into AST.
+ * This parsers in this class are <em>token level</em> parsers - they expect
+ * a token stream input, rather than a String-based one.
+ * 
+ * @see DecisionGraphTerminalParser
  * 
  * @author michael
  */
 public class DecisionGraphRuleParser {
     
-    static Parser<NodeHeadRef> nodeHeadWithId( String keyword ){
-        return Parsers.sequence(
-            Terminals.fragment( Tags.NODE_ID ),
-            nodeStructurePart(keyword),
-            (  id,  word ) -> new NodeHeadRef(id, keyword) );
-    }
-    
-    static Parser<NodeHeadRef> nodeHeadNoId(String keyword) {
-            return nodeStructurePart(keyword).map(( _w ) -> new NodeHeadRef(null, keyword) );
-    }
-    
-    static Parser<NodeHeadRef> nodeHead( String keyword ) {
-        return Parsers.or( nodeHeadWithId(keyword), nodeHeadNoId(keyword));
-    }
-    
     // -------------------------------
     // Node parts and helper parsers.
     // -------------------------------
     
-    final static Parser<String> NODE_TEXT_BODY = Parsers.or(
-            Terminals.fragment( Tags.NODE_TEXT ),
-            Terminals.identifier()
-    ).many().source();
-            
-            
-    final static Parser<SetNodeRef.AtomicAssignment> ATOMIC_ASSIGNMENT_SLOT = Parsers.sequence(
-            Terminals.identifier().sepBy(nodeStructurePart("/")),
+    static Parser<AstNodeHead> nodeHeadWithId( String keyword ){
+        return Parsers.sequence(
+                Terminals.fragment( Tags.NODE_ID ),
+                nodeStructurePart(keyword),
+                (  id,  word ) -> new AstNodeHead(id, keyword) );
+    }
+    
+    static Parser<AstNodeHead> nodeHeadNoId(String keyword) {
+            return nodeStructurePart(keyword).map(( _w ) -> new AstNodeHead(null, keyword) );
+    }
+    
+    static Parser<AstNodeHead> nodeHead( String keyword ) {
+        return Parsers.or( nodeHeadWithId(keyword), nodeHeadNoId(keyword));
+    }
+    
+    final static Parser<String> textbodyUpTo( String terminatingNodePart ) {
+        List<Parser<?>> parsers = new LinkedList<>();
+        parsers.add( Terminals.fragment(Tags.TEXT_BODY ) );
+        parsers.add( Terminals.identifier() );
+        String includedParts = DecisionGraphTerminalParser.NODE_TEXT_TERMINATORS.replaceAll(terminatingNodePart, "");
+        for ( int i=0; 
+              i<includedParts.length();
+              i++ ) {
+            String okPart = includedParts.substring(i, i+1);
+            parsers.add(nodeStructurePart(okPart));
+        }
+        return Parsers.or(parsers).many().source();
+    }
+    
+    final static Parser<AstSetNode.AtomicAssignment> ATOMIC_ASSIGNMENT_SLOT = Parsers.sequence(Terminals.identifier().sepBy(nodeStructurePart("/")),
             nodeStructurePart("="),
             Terminals.identifier(),
-            (path, _eq, value) -> new SetNodeRef.AtomicAssignment(path, value.trim())
+            (path, _eq, value) -> new AstSetNode.AtomicAssignment(path, value.trim())
         );
     
-    final static Parser<SetNodeRef.AggregateAssignment> AGGREGATE_ASSIGNMENT_SLOT = Parsers.sequence(
-            Terminals.identifier().sepBy(nodeStructurePart("/")),
+    final static Parser<AstSetNode.AggregateAssignment> AGGREGATE_ASSIGNMENT_SLOT = Parsers.sequence(Terminals.identifier().sepBy(nodeStructurePart("/")),
             nodeStructurePart("+="),
             Terminals.identifier().sepBy( nodeStructurePart(",") ),
-            (path, _eq, value) -> new SetNodeRef.AggregateAssignment(path, value)
+            (path, _eq, value) -> new AstSetNode.AggregateAssignment(path, value)
         );
+    
+    final static Parser<AstTextSubNode> TEXT_SUBNODE = Parsers.sequence(
+            nodeStructurePart("{"),
+            nodeStructurePart("text"),
+            nodeStructurePart(":"),
+            textbodyUpTo("}"),
+            nodeStructurePart("}"),
+            (_s, _t, _c, text, _e) -> new AstTextSubNode(text)
+    ); 
+    
+    final static Parser<AstTermSubNode> TERM_SUBNODE = Parsers.sequence(
+            nodeStructurePart("{"),
+            textbodyUpTo(":"),
+            nodeStructurePart(":"),
+            textbodyUpTo("}"),
+            nodeStructurePart("}"),
+            (_s, name, _c, text, _e) -> new AstTermSubNode(name, text)
+    );
+    
+    final static Parser<List<AstTermSubNode>> TERMS_SUBNODE = Parsers.sequence(
+            nodeStructurePart("{"),
+            nodeStructurePart( "terms"),
+            nodeStructurePart(":"),
+            TERM_SUBNODE.many(),
+            nodeStructurePart("}"),
+            (_s, _h, _c, termNodes, _e) -> termNodes
+    );
+    
+    final static Parser<AstAnswerSubNode> answerSubNode( Parser<List<? extends AstNode>> bodyParser ) {
+        return Parsers.sequence(
+            nodeStructurePart("{"),
+            textbodyUpTo(":"),
+            nodeStructurePart(":"),
+            bodyParser,
+            nodeStructurePart("}"),
+            (_s, name, _c, body, _e) -> new AstAnswerSubNode(name, body));
+    }
+    
+    final static Parser<List<AstAnswerSubNode>> answersSubNode( Parser<List<? extends AstNode>> bodyParser ) {
+        return Parsers.sequence(
+            nodeStructurePart("{"),
+            nodeStructurePart("answers"),
+            nodeStructurePart(":"),
+            answerSubNode(bodyParser).many1(),
+            nodeStructurePart("}"),
+            (_s, _name, _c, answers, _e) -> answers );
+    }
     
     // -------------------------------
     // Top-level (instruction) nodes.
     // -------------------------------
-    final static Parser<EndNodeRef> END_NODE = Parsers.sequence(
+    final static Parser<AstEndNode> END_NODE = Parsers.sequence(
             nodeStructurePart("["),
             nodeHead("end"),
             nodeStructurePart("]"),
-            ( _s, nhr, _e ) -> new EndNodeRef(nhr.getId()));
+            ( _s, nhr, _e ) -> new AstEndNode(nhr.getId()));
     
-    final static Parser<TodoNodeRef> TODO_NODE = Parsers.sequence(
+    final static Parser<AstTodoNode> TODO_NODE = Parsers.sequence(
             nodeStructurePart("["),
             nodeHead("todo"),
             nodeStructurePart(":"),
-            NODE_TEXT_BODY,
+            textbodyUpTo("]"),
             nodeStructurePart("]"),
-            ( _s, headRef, _clmn, text, _e ) -> new TodoNodeRef( headRef.getId(), text.trim()) );
+            ( _s, headRef, _clmn, text, _e ) -> new AstTodoNode( headRef.getId(), text.trim()) );
     
-    final static Parser<RejectNodeRef> REJECT_NODE = Parsers.sequence(
+    final static Parser<AstCallNode> CALL_NODE = Parsers.sequence(
+            nodeStructurePart("["),
+            nodeHead("call"),
+            nodeStructurePart(":"),
+            textbodyUpTo("]"),
+            nodeStructurePart("]"),
+            ( _s, headRef, _clmn, text, _e ) -> new AstCallNode( headRef.getId(), text.trim()) );
+    
+    final static Parser<AstRejectNode> REJECT_NODE = Parsers.sequence(
             nodeStructurePart("["),
             nodeHead("reject"),
             nodeStructurePart(":"),
-            NODE_TEXT_BODY,
+            textbodyUpTo("]"),
             nodeStructurePart("]"),
-            ( _s, headRef, _clmn, text, _e ) -> new RejectNodeRef( headRef.getId(), text.trim()) );
+            ( _s, headRef, _clmn, text, _e ) -> new AstRejectNode( headRef.getId(), text.trim()) );
    
+    final static Parser<AstSetNode> SET_NODE = Parsers.sequence(
+            nodeStructurePart("["),
+            nodeHead("set"),
+            nodeStructurePart(":"),
+            Parsers.or( ATOMIC_ASSIGNMENT_SLOT, AGGREGATE_ASSIGNMENT_SLOT).sepBy(nodeStructurePart(";")),
+            nodeStructurePart("]"),
+            ( _s, head, _c, slots, _e) -> new AstSetNode(head.getId(), slots));
+            
+    final static Parser<AstAskNode> askNode( Parser<List<? extends AstNode>> bodyParser ) {
+        return Parsers.sequence(
+                Parsers.sequence(
+                        nodeStructurePart("["),
+                        nodeHead("ask"),
+                        nodeStructurePart(":"),
+                        (_s, h, _c) -> h ),
+                TEXT_SUBNODE,
+                TERMS_SUBNODE.optional(),
+                answersSubNode(bodyParser),
+                nodeStructurePart("]"),
+                ( head, text, terms, answers, _e) -> new AstAskNode( head.getId(), text, terms, answers ));
+    }       
     
+    
+    // -------------------------------
+    // Program-level parsers.
+    // -------------------------------
+    
+    final static Parser<List<? extends AstNode>> graphParser() {
+        Parser.Reference<List<? extends AstNode>> nodeListParserRef = Parser.newReference();
+        Parser<? extends AstNode> singleAstNode = Parsers.or( END_NODE, CALL_NODE, TODO_NODE, REJECT_NODE, SET_NODE, askNode(nodeListParserRef.lazy()));
+        Parser<List<? extends AstNode>> nodeSequence = singleAstNode.many().cast();
+        nodeListParserRef.set( nodeSequence );
+        
+        return nodeSequence;
+    }
 }

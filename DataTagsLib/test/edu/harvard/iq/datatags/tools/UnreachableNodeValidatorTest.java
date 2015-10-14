@@ -8,8 +8,8 @@ import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
-import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartSetComplier;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.InstructionNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -31,7 +31,7 @@ import org.junit.Test;
 public class UnreachableNodeValidatorTest {
     
     UnreachableNodeValidator instance;
-    FlowChartSetComplier fcsc;
+    DecisionGraphParser fcsc;
     FlowChartSet fcs;
     FlowChartASTParser astParser;
     
@@ -49,7 +49,7 @@ public class UnreachableNodeValidatorTest {
     @Before
     public void setUp() {
         instance = new UnreachableNodeValidator();
-        fcsc = new FlowChartSetComplier(new CompoundType("", ""));
+        fcsc = new DecisionGraphParser(new CompoundType("", ""));
         astParser = new FlowChartASTParser();
     }
     
@@ -66,7 +66,7 @@ public class UnreachableNodeValidatorTest {
                 + "(>shouldWork< ask: (text: This should work.)"
                 + "(yes: (>reject1< reject: Good, it works.))"
                 + "(no: (>reject2< reject: This should have worked.)))";
-        List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
+        List<AstNode> refs = astParser.graphParser().parse(code);
         
         System.out.println("refs = " + refs);
         
@@ -93,7 +93,7 @@ public class UnreachableNodeValidatorTest {
     @Test
     public void validateUnreachableNodesTest_minimal() throws BadSetInstructionException {
         String code = "(>r< end)(>nr< end)";
-        List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
+        List<AstNode> refs = astParser.graphParser().parse(code);
         
         fcs = fcsc.parse(refs, "unitName");
         List<NodeValidationMessage> messages = instance.validateUnreachableNodes(fcs);
@@ -121,7 +121,7 @@ public class UnreachableNodeValidatorTest {
                 + "(yes: (>reject3< reject: No.))"
                 + "(no: (>reject4< reject: Still no.)))"
                 + "(>end1< end)";
-        List<InstructionNodeRef> refs = astParser.graphParser().parse(code);
+        List<AstNode> refs = astParser.graphParser().parse(code);
         
         fcs = fcsc.parse(refs, "unitName");
         List<NodeValidationMessage> messages = instance.validateUnreachableNodes(fcs);

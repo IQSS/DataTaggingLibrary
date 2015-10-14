@@ -3,15 +3,17 @@ package edu.harvard.iq.datatags.parser.decisiongraph.references;
 import java.util.Objects;
 
 /**
- * 
+ * A sub-node holding a question text.
+ * {@code 
+ *  [ask: {text: this is the text sub-node} ...]
+ * }
  * @author Michael Bar-Sinai
  */
-public class TextNodeRef extends NodeRef {
+public class AstTextSubNode {
     
 	private final String bodyText;
 	
-    public TextNodeRef( String id, String text ) {
-        super( id );
+    public AstTextSubNode( String text ) {
 		bodyText = text;
     }
     
@@ -31,10 +33,10 @@ public class TextNodeRef extends NodeRef {
 		if (obj == null) {
 			return false;
 		}
-		if ( ! (obj instanceof TextNodeRef) ) {
+		if ( ! (obj instanceof AstTextSubNode) ) {
 			return false;
 		}
-		final TextNodeRef other = (TextNodeRef) obj;
+		final AstTextSubNode other = (AstTextSubNode) obj;
 		
 		return Objects.equals(this.bodyText, other.bodyText);
 	}

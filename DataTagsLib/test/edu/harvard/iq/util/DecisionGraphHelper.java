@@ -7,6 +7,7 @@ import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstSetNode;
 import edu.harvard.iq.datatags.runtime.ChartRunningTest;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -20,11 +21,11 @@ import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Helps building charts for tests.
+ * Helps building decision graphs for tests.
  * 
  * @author michael
  */
-public class ChartHelper {
+public class DecisionGraphHelper {
 	
 	/**
 	 * Generates a chart with {@code length} {@link AskNode}s, terminated by an {@link EndNode}.
@@ -70,21 +71,17 @@ public class ChartHelper {
 	}
 	
 	public static void assertExecutionTrace(FlowChartSet fcs, String flowChartName, List<String> expectedIds, boolean logToStdOut) {
-		Iterable<Answer> yesMan = new Iterable<Answer>(){
-			@Override
-			public Iterator<Answer> iterator() {
-				return new Iterator<Answer>(){
-						@Override
-						public boolean hasNext() { return true; }
-
-						@Override
-						public Answer next() { return Answer.YES; }
-
-						@Override
-						public void remove() {}
-						
-			};}
-		};
+		Iterable<Answer> yesMan = () -> new Iterator<Answer>(){
+            @Override
+            public boolean hasNext() { return true; }
+            
+            @Override
+            public Answer next() { return Answer.YES; }
+            
+            @Override
+            public void remove() {}
+            
+        };
 		
 		assertExecutionTrace(fcs, flowChartName, yesMan, expectedIds, logToStdOut);
 	}
@@ -92,6 +89,7 @@ public class ChartHelper {
 	public static void assertExecutionTrace(FlowChartSet fcs, String flowChartName, Iterable<Answer> answers, Iterable<String> expectedIds) {
 		assertExecutionTrace(fcs, flowChartName, answers, expectedIds, true);
 	}
+    
 	public static void assertExecutionTrace(FlowChartSet fcs, String flowChartName, Iterable<Answer> answers, Iterable<String> expectedIds, boolean logToStdOut) {
 		RuntimeEngine ngn = new RuntimeEngine();
 		ngn.setChartSet(fcs);
@@ -111,4 +109,5 @@ public class ChartHelper {
 		assertEquals( expectedIds,
 				      l.getVisitedNodeIds() );
 	}
+    
 }

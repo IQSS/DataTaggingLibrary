@@ -7,28 +7,28 @@ import java.util.Objects;
  * 
  * @author Michael Bar-Sinai
  */
-public class AskNodeRef extends InstructionNodeRef {
+public class AstAskNode extends AstNode {
     
-    private final TextNodeRef text;
-    private final List<TermNodeRef> terms;
-    private final List<AnswerNodeRef> answers;
+    private final AstTextSubNode text;
+    private final List<AstTermSubNode> terms;
+    private final List<AstAnswerSubNode> answers;
 
-    public AskNodeRef(String id, TextNodeRef aTextNode, List<TermNodeRef> someTerms, List<AnswerNodeRef> someAnswers ) {
+    public AstAskNode(String id, AstTextSubNode aTextNode, List<AstTermSubNode> someTerms, List<AstAnswerSubNode> someAnswers ) {
         super( id );
         text = aTextNode;
         terms = someTerms;
         answers = someAnswers;
     }
 
-    public List<AnswerNodeRef> getAnswers() {
+    public List<AstAnswerSubNode> getAnswers() {
         return answers;
     }
 
-    public List<TermNodeRef> getTerms() {
+    public List<AstTermSubNode> getTerms() {
         return terms;
     }
 
-    public TextNodeRef getTextNode() {
+    public AstTextSubNode getTextNode() {
         return text;
     }
     
@@ -49,10 +49,10 @@ public class AskNodeRef extends InstructionNodeRef {
         if (obj == null) {
             return false;
         }
-        if ( !(obj instanceof AskNodeRef) ) {
+        if ( !(obj instanceof AstAskNode) ) {
             return false;
         }
-        final AskNodeRef other = (AskNodeRef) obj;
+        final AstAskNode other = (AstAskNode) obj;
         
         if (!Objects.equals(this.text, other.text)) {
             return false;
@@ -65,6 +65,9 @@ public class AskNodeRef extends InstructionNodeRef {
         }
         return equalsAsInstructionNodeRef(other);
     }
-    
+     @Override
+     public String toStringExtras() {
+         return String.format("text:«%s» terms:%s answers:%s", getTextNode().getText(), getTerms(), getAnswers());
+     }
     
 }

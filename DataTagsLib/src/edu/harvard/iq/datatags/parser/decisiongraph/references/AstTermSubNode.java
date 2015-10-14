@@ -7,11 +7,11 @@ import java.util.Objects;
  * These nodes are not as structured: Both their heads and their body are just plain text.
  * @author Michael Bar-Sinai
  */
-public class TermNodeRef extends NodeRef {
+public class AstTermSubNode {
     private final String term;
     private final String explanation;
 
-    public TermNodeRef(String term, String explanation) {
+    public AstTermSubNode(String term, String explanation) {
         this.term = term;
         this.explanation = explanation;
     }
@@ -37,16 +37,20 @@ public class TermNodeRef extends NodeRef {
         if (obj == null) {
             return false;
         }
-        if ( !(obj instanceof TermNodeRef) ) {
+        if ( !(obj instanceof AstTermSubNode) ) {
             return false;
         }
-        final TermNodeRef other = (TermNodeRef) obj;
+        final AstTermSubNode other = (AstTermSubNode) obj;
         if (!Objects.equals(this.term, other.term)) {
             return false;
         }
         return Objects.equals(this.explanation, other.explanation);
     }
     
+    @Override
+    public String toString() {
+        return String.format("[term:«%s» explanation:«%s»]", getTerm(), getExplanation() );
+    }
     
     
 }

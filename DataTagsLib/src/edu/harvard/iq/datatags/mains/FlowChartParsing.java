@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.InstructionNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeRefVizalizer;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,7 +27,7 @@ public class FlowChartParsing {
         
         FlowChartASTParser astParser = new FlowChartASTParser();
         
-        List<InstructionNodeRef> refs = astParser.graphParser().parse(source);
+        List<AstNode> refs = astParser.graphParser().parse(source);
         GraphvizGraphNodeRefVizalizer viz = new GraphvizGraphNodeRefVizalizer(refs);
         Path outfile = inputFile.resolveSibling( inputFile.getFileName().toString() + ".gv" );
         System.out.println("Writing: " + outfile );

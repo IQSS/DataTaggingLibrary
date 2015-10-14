@@ -7,22 +7,21 @@ import java.util.Objects;
  * 
  * @author Michael Bar-Sinai
  */
-public class AnswerNodeRef extends NodeRef {
-    private final List<? extends InstructionNodeRef> implementation;
+public class AstAnswerSubNode {
+    private final List<? extends AstNode> subGraph;
 	private final String answerText;
 
-    public AnswerNodeRef(NodeHeadRef head, List<? extends InstructionNodeRef> implementation) {
-		super( head.getId() );
-        answerText = head.getTitle();
-        this.implementation = implementation;
+    public AstAnswerSubNode(String text, List<? extends AstNode> implementation) {
+        answerText = text;
+        this.subGraph = implementation;
     }
 
 	public String getAnswerText() {
 		return answerText;
 	}
 	
-    public List<? extends InstructionNodeRef> getImplementation() {
-        return implementation;
+    public List<? extends AstNode> getSubGraph() {
+        return subGraph;
     }
 
     @Override
@@ -37,19 +36,20 @@ public class AnswerNodeRef extends NodeRef {
         if (obj == null) {
             return false;
         }
-        if ( ! (obj instanceof AnswerNodeRef)) {
+        if ( ! (obj instanceof AstAnswerSubNode)) {
             return false;
         }
-        final AnswerNodeRef other = (AnswerNodeRef) obj;
+        final AstAnswerSubNode other = (AstAnswerSubNode) obj;
         if (!Objects.equals(this.answerText, other.answerText)) {
             return false;
         }
-        if (!Objects.equals(this.implementation, other.implementation)) {
-            return false;
-        }
-        return equalsAsNodeRef(other);
+        return Objects.equals(this.subGraph, other.subGraph);
     }
-
+    
+    @Override
+    public String toString() {
+        return "{" + getAnswerText() + ":" + getSubGraph() + "}";
+    }
     
     
     

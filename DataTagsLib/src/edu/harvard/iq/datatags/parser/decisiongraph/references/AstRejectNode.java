@@ -6,11 +6,11 @@ import java.util.Objects;
  * Node reference for for {@code (reject: reason)} operation.
  * @author michael
  */
-public class RejectNodeRef extends InstructionNodeRef {
+public class AstRejectNode extends AstNode {
     
     private final String reason;
 
-    public RejectNodeRef(String id, String reason) {
+    public AstRejectNode(String id, String reason) {
         super( id );
         this.reason = reason;
     }
@@ -36,10 +36,10 @@ public class RejectNodeRef extends InstructionNodeRef {
         if (obj == null) {
             return false;
         }
-        if ( ! (obj instanceof RejectNodeRef) ) {
+        if ( ! (obj instanceof AstRejectNode) ) {
             return false;
         }
-        final RejectNodeRef other = (RejectNodeRef) obj;
+        final AstRejectNode other = (AstRejectNode) obj;
         return Objects.equals(this.reason, other.reason) && super.equalsAsInstructionNodeRef(other);
     }
     

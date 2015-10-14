@@ -8,7 +8,7 @@ import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
 import edu.harvard.iq.datatags.model.values.Answer;
 import static edu.harvard.iq.datatags.model.values.Answer.*;
 import static edu.harvard.iq.datatags.util.CollectionHelper.*;
-import static edu.harvard.iq.util.ChartHelper.*;
+import static edu.harvard.iq.util.DecisionGraphHelper.*;
 import java.util.Arrays;
 import org.junit.Test;
 

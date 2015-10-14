@@ -9,8 +9,8 @@ import edu.harvard.iq.datatags.parser.definitions.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
-import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartSetComplier;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.InstructionNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
 import edu.harvard.iq.datatags.tools.NodeValidationMessage;
 import edu.harvard.iq.datatags.tools.RepeatIdValidator;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
@@ -52,7 +52,7 @@ public class ValidCallNodeValidation {
             String source = readAll(chartFile);
 
             FlowChartASTParser astParser = new FlowChartASTParser();
-            List<InstructionNodeRef> refs = astParser.graphParser().parse(source);
+            List<AstNode> refs = astParser.graphParser().parse(source);
             GraphvizGraphNodeRefVizalizer viz = new GraphvizGraphNodeRefVizalizer(refs);
             Path outfile = chartFile.resolveSibling(chartFile.getFileName().toString() + "-ast.gv");
             System.out.println("Writing: " + outfile);
@@ -68,7 +68,7 @@ public class ValidCallNodeValidation {
                 System.out.println(repeatIdMessages);
             }
             
-            FlowChartSetComplier fcsParser = new FlowChartSetComplier((CompoundType) baseType);
+            DecisionGraphParser fcsParser = new DecisionGraphParser((CompoundType) baseType);
             FlowChartSet fcs = fcsParser.parse(refs, chartFile.getFileName().toString());
 
             System.out.println();

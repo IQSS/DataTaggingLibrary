@@ -1,15 +1,14 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AnswerNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AskNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.CallNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.EndNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.InstructionNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.NodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.RejectNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.SetNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.TermNodeRef;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.TodoNodeRef;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstAskNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstCallNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstSetNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstTermSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.references.AstTodoNode;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 import java.io.BufferedWriter;
@@ -25,20 +24,20 @@ import java.util.Map;
  */
 public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
     
-    private final List<InstructionNodeRef> nodeList;
+    private final List<AstNode> nodeList;
     
     List<String> nodes = new LinkedList<>();
     List<String> edges = new LinkedList<>();
     
-    interface NodeRefHandler<T extends NodeRef> {
+    interface AstNodeHandler<T extends AstNode> {
         void handle( T node, int depth );
     }
     
-    private final Map<Class<?>, NodeRefHandler> handlers = new HashMap<>();
+    private final Map<Class<?>, AstNodeHandler> handlers = new HashMap<>();
     
     int nextId = 0;
     
-    public GraphvizGraphNodeRefVizalizer(List<InstructionNodeRef> aNodeList) {
+    public GraphvizGraphNodeRefVizalizer(List<AstNode> aNodeList) {
         nodeList = aNodeList;
         initMap();
         setChartName("ParsedChart");
@@ -60,9 +59,9 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
         }
     }
     
-    void visualizeNodeList( List<? extends InstructionNodeRef> list, int depth ) {
-        InstructionNodeRef last = null;
-        for ( InstructionNodeRef inr : list ) {
+    void visualizeNodeList( List<? extends AstNode> list, int depth ) {
+        AstNode last = null;
+        for ( AstNode inr : list ) {
             if ( last != null ) {
                 edges.add( edge(getNodeId(last), getNodeId(inr) )
                             .color("#AAAABB")
@@ -78,7 +77,7 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
         }
     }
     
-    void writeTermNode( TermNodeRef node ) {
+    void writeTermNode( AstTermSubNode node ) {
         nodes.add( node(getNodeId(node))
                     .label( nodeLabel(node, "term\\n" + node.getExplanation()))
                     .fillColor("#BBBB22")
@@ -87,19 +86,19 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
                     .gv() );
     }
     
-    void writeAnswerNode( AnswerNodeRef node, int depth ) {
+    void writeAnswerNode( AstAnswerSubNode node, int depth ) {
         nodes.add( node(getNodeId(node)).label(nodeLabel(node,"answer")).gv() );
-        if ( ! node.getImplementation().isEmpty() ) {
-            edges.add( edge(getNodeId(node), getNodeId(node.getImplementation().get(0))).label("impl").gv());
+        if ( ! node.getSubGraph().isEmpty() ) {
+            edges.add( edge(getNodeId(node), getNodeId(node.getSubGraph().get(0))).label("impl").gv());
         }
-        visualizeNodeList( node.getImplementation(), depth);
+        visualizeNodeList( node.getSubGraph(), depth);
     }
     
     private void initMap() {
         
-        addNode( AskNodeRef.class, new NodeRefHandler<AskNodeRef>() {
+        addNode(AstAskNode.class, new AstNodeHandler<AstAskNode>() {
             @Override
-            public void handle(AskNodeRef node, int depth) {
+            public void handle(AstAskNode node, int depth) {
                 nodes.add( node(getNodeId(node))
                         .label(nodeLabel(node, "ask"))
                         .fillColor("#BBBBFF")
@@ -108,11 +107,11 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
                 edges.add( edge(getNodeId(node),getNodeId(node.getTextNode())).label("text").gv());
                 
                 nodes.add( node(getNodeId(node.getTextNode())).label(nodeLabel(node.getTextNode(),node.getTextNode().getText())).gv() );
-                for ( AnswerNodeRef a : node.getAnswers() ) {
+                for ( AstAnswerSubNode a : node.getAnswers() ) {
                     edges.add( edge(getNodeId(node),getNodeId(a)).label(a.getAnswerText()).gv()) ;
                     writeAnswerNode(a, depth);
                 }
-                for ( TermNodeRef a : node.getTerms()) {
+                for ( AstTermSubNode a : node.getTerms()) {
                     edges.add( edge(getNodeId(node), getNodeId(a)).label(a.getTerm()).gv() );
                     writeTermNode(a);
                 }
@@ -120,9 +119,9 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
             }
         } );
         
-        addNode( CallNodeRef.class, new NodeRefHandler<CallNodeRef>() {
+        addNode(AstCallNode.class, new AstNodeHandler<AstCallNode>() {
             @Override
-            public void handle(CallNodeRef node, int depth) {
+            public void handle(AstCallNode node, int depth) {
                 nodes.add( node(getNodeId(node))
 						.shape( GvNode.Shape.cds )
 						.fillColor("#BBDDFF")
@@ -130,16 +129,16 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
             }
         });
         
-        addNode( EndNodeRef.class, new NodeRefHandler<EndNodeRef>(){
+        addNode(AstEndNode.class, new AstNodeHandler<AstEndNode>(){
             @Override
-            public void handle(EndNodeRef node, int depth) {
+            public void handle(AstEndNode node, int depth) {
                 nodes.add( node(getNodeId(node)).label(nodeLabel(node, "end")).shape(GvNode.Shape.point).gv() );
             }
         } );
         
-        addNode( SetNodeRef.class, new NodeRefHandler<SetNodeRef>() {
+        addNode(AstSetNode.class, new AstNodeHandler<AstSetNode>() {
             @Override
-            public void handle(SetNodeRef node, int depth) {
+            public void handle(AstSetNode node, int depth) {
 				StringBuilder sb = new StringBuilder();
 				for ( String slot: node.getSlotNames() ) {
 					sb.append( slot ).append("=").append(node.getValue(slot) )
@@ -154,9 +153,9 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
 				);
             }
         });
-        addNode( TodoNodeRef.class, new NodeRefHandler<TodoNodeRef>() {
+        addNode(AstTodoNode.class, new AstNodeHandler<AstTodoNode>() {
             @Override
-            public void handle(TodoNodeRef node, int depth) {
+            public void handle(AstTodoNode node, int depth) {
                 nodes.add( node(getNodeId(node))
 							.fillColor("#AAFFAA")
 							.shape(GvNode.Shape.note)
@@ -164,9 +163,9 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
             }
         });
         
-        addNode( RejectNodeRef.class, new NodeRefHandler<RejectNodeRef>() {
+        addNode(AstRejectNode.class, new AstNodeHandler<AstRejectNode>() {
             @Override
-            public void handle(RejectNodeRef node, int depth) {
+            public void handle(AstRejectNode node, int depth) {
                 nodes.add( node(getNodeId(node))
 							.fillColor("#FFAAAA")
 							.shape(GvNode.Shape.hexagon).label(nodeLabel(node, "reject\\n"+node.getReason())).gv() );
@@ -176,18 +175,18 @@ public class GraphvizGraphNodeRefVizalizer extends GraphvizVisualizer {
         
     }
     
-    private <T extends InstructionNodeRef> void addNode( Class<T> clazz, NodeRefHandler<T> hnd ) {
+    private <T extends AstNode> void addNode( Class<T> clazz, AstNodeHandler<T> hnd ) {
         handlers.put(clazz, hnd);
     }
     
-    String nodeLabel( NodeRef n, String extras ) {
+    String nodeLabel( AstNode n, String extras ) {
 		String nodeId = getNodeId(n);
 		return wrap( sanitizeTitle( ( nodeId.startsWith("$") )
                     ? extras
                     : ">" + nodeId +"<\\n" + extras ));
     }
     
-    String getNodeId( NodeRef nr ) {
+    String getNodeId( AstNode nr ) {
         if ( nr.getId() == null ) {
             nr.setId( nextId() );
         }
