@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.LinkedList;
@@ -43,15 +43,15 @@ public class UnusedTagsValidator {
      * counting CompoundValues and AggregateValues as well as
      * SimpleValues and TodoValues.
      * 
-     * @param fcs
+     * @param dg
      * @return A list of validation messages regarding the flow chart set.
      */
-    public List<ValidationMessage> validateUnusedTags(FlowChartSet fcs) {
+    public List<ValidationMessage> validateUnusedTags( DecisionGraph dg ) {
         InterviewTagValues interviewValues = new InterviewTagValues();
-        Set<TagValue> usedValues = interviewValues.gatherInterviewTagValues(fcs);
+        Set<TagValue> usedValues = interviewValues.gatherInterviewTagValues(dg);
         
         AllTagValues allValues = new AllTagValues();
-        Set<TagValue> definedValues = allValues.gatherAllTagValues(fcs);
+        Set<TagValue> definedValues = allValues.gatherAllTagValues(dg);
         
         definedValues.removeAll(usedValues);
         

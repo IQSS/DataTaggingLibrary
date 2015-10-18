@@ -4,7 +4,7 @@
 
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.model.graphs.ChartEntity;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public abstract class GraphvizVisualizer {
 	protected final Pattern whitespace = Pattern.compile("\\s|-");
     
-    private String chartName = "ChartSet";
+    private String decisionGraphName = "DecisionGraph";
     
 	/**
 	 * Convenience method to write to a file.
@@ -51,7 +51,7 @@ public abstract class GraphvizVisualizer {
 	protected abstract void printBody( BufferedWriter out ) throws IOException;
 	
 	void printHeader(BufferedWriter out) throws IOException {
-		out.write("digraph " + getChartName() + " {");
+		out.write("digraph " + getDecisionGraphName() + " {");
 		out.newLine();
 		out.write("edge [fontname=\"Helvetica\" fontsize=\"10\"]");
 		out.newLine();
@@ -66,7 +66,7 @@ public abstract class GraphvizVisualizer {
 		out.newLine();
 	}
 
-	protected String humanTitle(ChartEntity ent) {
+	protected String humanTitle(DecisionGraph ent) {
 		return (ent.getTitle() != null) ? String.format("%s: %s", ent.getId(), ent.getTitle()) : ent.getId();
 	}
 
@@ -82,12 +82,12 @@ public abstract class GraphvizVisualizer {
 		return (first > '0' && first < '9') ? "_"+candidate : candidate;
 	}
 
-    public String getChartName() {
-        return chartName;
+    public String getDecisionGraphName() {
+        return decisionGraphName;
     }
 
-    public void setChartName(String chartName) {
-        this.chartName = chartName;
+    public void setDecisionGraphName(String aName) {
+        this.decisionGraphName = aName;
     }
     
     public String wrap( String source ) {

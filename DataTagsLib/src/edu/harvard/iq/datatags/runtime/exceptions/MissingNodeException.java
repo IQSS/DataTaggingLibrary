@@ -1,6 +1,5 @@
 package edu.harvard.iq.datatags.runtime.exceptions;
 
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 
@@ -13,15 +12,9 @@ public class MissingNodeException extends LinkageException {
 	
 	private String nodeId;
 
-	public MissingNodeException(FlowChartSet chartSet, RuntimeEngine engine, CallNode caller) {
-		super(chartSet, engine, String.format("Node id '%s' does not exist in chart '%s'", caller.getCalleeNodeId(), caller.getCalleeNodeId()) );
-		setSourceNode(caller);
+	public MissingNodeException(RuntimeEngine engine, CallNode caller) {
+		super( caller, engine, String.format("Node id '%s' does not exist. Called from node '%s'", caller.getCalleeNodeId(), caller.getId()) );
 		nodeId = caller.getCalleeNodeId();
-	}
-	
-	public MissingNodeException(FlowChartSet chartSet, RuntimeEngine engine, String nodeId, String message) {
-		super(chartSet, engine, message);
-		this.nodeId = nodeId;
 	}
 	
 	public String getNodeId() {

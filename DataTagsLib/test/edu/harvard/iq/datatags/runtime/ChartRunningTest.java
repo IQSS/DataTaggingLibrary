@@ -1,7 +1,6 @@
 package edu.harvard.iq.datatags.runtime;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
@@ -31,11 +30,7 @@ public class ChartRunningTest {
 		
 		c1.setStart(start);
 		
-		FlowChartSet fcs = new FlowChartSet();
-        fcs.setTopLevelType( mockTopLevelType() );
-		fcs.addFlowChart(c1);
-		
-		assertExecutionTrace( fcs, flowChartName,
+		assertExecutionTrace( c1, flowChartName,
 				Arrays.asList("1", "2", "3", "4", "END"), false);
 				
 	}
@@ -58,10 +53,7 @@ public class ChartRunningTest {
 		
 		c1.setStart(start);
 		
-		FlowChartSet fcs = new FlowChartSet("Branching", mockTopLevelType());
-		fcs.addFlowChart(c1);
-		
-		assertExecutionTrace( fcs, flowChartName,
+		assertExecutionTrace( c1, flowChartName,
 				C.list( YES, NO, YES, NO ),
 				C.list("1", "2", "3", "4", "END"), false);
 		
@@ -72,62 +64,26 @@ public class ChartRunningTest {
 		String subchartName = "flowChart-sub";
 		DecisionGraph subChart = new DecisionGraph( subchartName );
 		
-		AskNode start = subChart.add( new AskNode("A") );
-		start.setNodeFor( Answer.YES, subChart.add(new AskNode("B")) )
-			 .setNodeFor( Answer.YES, subChart.add(new EndNode("SUB_END")) );
-		subChart.setStart(start);
-		
 		String mainChartName = "flowChart-main";
 		DecisionGraph mainChart = new DecisionGraph( mainChartName );
 		
-		start = mainChart.add( new AskNode("1") );
+		AskNode start = mainChart.add( new AskNode("1") );
 		start.setNodeFor( Answer.YES, mainChart.add(new AskNode("2")) )
 			 .setNodeFor( Answer.YES, mainChart.add(new CallNode("c-m")) )
 			 .setNextNode(mainChart.add(new AskNode("3")) )
 			 .setNodeFor( Answer.YES, mainChart.add(new EndNode("END")) );
 		
-		((CallNode)mainChart.getNode("c-m")).setCalleeChartId(subchartName);
 		((CallNode)mainChart.getNode("c-m")).setCalleeNodeId("A");
-		
-		mainChart.setStart( start );
-		
-		FlowChartSet fcs = new FlowChartSet("single call", mockTopLevelType());
-		fcs.addFlowChart(mainChart);
-		fcs.addFlowChart(subChart);
-		
-		assertExecutionTrace(fcs, mainChartName, Arrays.asList("1","2","c-m",
-																	"A","B", "SUB_END",
-																"3", "END"), false );
-	}
-	
-	@Test
-	public void chartWithTailCall() {
-		String subchartName = "flowChart-sub";
-		DecisionGraph subChart = new DecisionGraph( subchartName );
-		
-		AskNode start = subChart.add( new AskNode("A") );
+        start = subChart.add( new AskNode("A") );
 		start.setNodeFor( Answer.YES, subChart.add(new AskNode("B")) )
 			 .setNodeFor( Answer.YES, subChart.add(new EndNode("SUB_END")) );
-		subChart.setStart(start);
-		
-		String mainChartName = "flowChart-main";
-		DecisionGraph mainChart = new DecisionGraph( mainChartName );
-		
-		start = mainChart.add( new AskNode("1") );
-		start.setNodeFor( Answer.YES, mainChart.add(new AskNode("2")) )
-			 .setNodeFor( Answer.YES, mainChart.add(new CallNode("c-m")) )
-			 .setNextNode(mainChart.add(new EndNode("END")) );
-		
-		((CallNode)mainChart.getNode("c-m")).setCalleeChartId(subchartName);
-		((CallNode)mainChart.getNode("c-m")).setCalleeNodeId("A");
-		
+        mainChart.add( start );
+        
 		mainChart.setStart( start );
 		
-		FlowChartSet fcs = new FlowChartSet("tail call", mockTopLevelType());
-		fcs.addFlowChart(mainChart);
-		fcs.addFlowChart(subChart);
-		
-		assertExecutionTrace( fcs, mainChartName, C.list("1","2", "c-m","A","B","SUB_END","END"), false );
+		assertExecutionTrace(mainChart, mainChartName, Arrays.asList("1","2","c-m",
+																	"A","B", "SUB_END",
+																"3", "END"), false );
 	}
 	
 	@Test
@@ -137,13 +93,10 @@ public class ChartRunningTest {
 		
 		AskNode n2 = (AskNode)rec.getNode(chartId+"_2");
 		CallNode caller = n2.setNodeFor(NO, rec.add(new CallNode("Caller")));
-		caller.setCalleeChartId(chartId);
 		caller.setCalleeNodeId( chartId + "_1");
 		caller.setNextNode( new EndNode("CallerEnd") );
 		
-		FlowChartSet fcs = chartSet( rec );
-		
-		assertExecutionTrace( fcs, chartId,
+		assertExecutionTrace( rec, chartId,
 				C.list(YES, NO, 
 						YES, NO,
 						YES, YES, YES ),
@@ -165,13 +118,10 @@ public class ChartRunningTest {
 		
 		AskNode n2 = (AskNode)rec.getNode(chartId+"_2");
 		CallNode caller = n2.setNodeFor(NO, rec.add(new CallNode("Caller")));
-		caller.setCalleeChartId(chartId);
 		caller.setCalleeNodeId( chartId + "_1");
 		caller.setNextNode( new EndNode("CallerEnd") );
 		
-		FlowChartSet fcs = chartSet( rec );
-		
-		assertExecutionTrace( fcs, chartId,
+		assertExecutionTrace( rec, chartId,
 				C.list(YES, NO, 
 						YES, NO,
 						YES, NO,
@@ -201,14 +151,17 @@ public class ChartRunningTest {
 		DecisionGraph subB = linearYesChart("sub_b", 3);
 		DecisionGraph subC = linearYesChart("sub_c", 3);
 		
-		CallNode start = main.add( new CallNode("1", "sub_a", "sub_a_1") );
-		start.setNextNode( main.add( new CallNode("2", "sub_b", "sub_b_1")) )
-			 .setNextNode( main.add( new CallNode("3", "sub_c", "sub_c_1")) )
+		CallNode start = main.add( new CallNode("1", "sub_a_1") );
+		start.setNextNode( main.add( new CallNode("2", "sub_b_1")) )
+			 .setNextNode( main.add( new CallNode("3", "sub_c_1")) )
 			 .setNextNode( main.add( new EndNode("END")) );
-		
+		main.add(subA.getStart());
+		main.add(subB.getStart());
+		main.add(subC.getStart());
+        
 		main.setStart(start);
 		
-		assertExecutionTrace( chartSet(main, subA, subB, subC), "threaded-main",
+		assertExecutionTrace( main, "threaded-main",
 				C.list("1","sub_a_1", "sub_a_2","sub_a_3", "sub_a_END",
 						"2","sub_b_1", "sub_b_2","sub_b_3","sub_b_END",
 						"3","sub_c_1", "sub_c_2","sub_c_3","sub_c_END", 

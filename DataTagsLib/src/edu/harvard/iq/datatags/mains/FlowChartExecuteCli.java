@@ -1,9 +1,8 @@
     package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.parser.definitions.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
@@ -23,24 +22,24 @@ public class FlowChartExecuteCli {
         Path definitionFile = Paths.get(args[0]);
         Path chartFile = Paths.get(args[1]);
 
-        CompoundType definitions = (CompoundType) parseDefinitions(definitionFile);
+        CompoundType definitions = parseDefinitions(definitionFile);
         
-        DecisionGraphParser fcsParser = new DecisionGraphParser( definitions );
+        DecisionGraphParser fcsParser = new DecisionGraphParser();
         
         System.out.println("Reading chart: " + chartFile );
         System.out.println(" (full:  " + chartFile.toAbsolutePath() + ")" );
         
         String source = readAll(chartFile);
         
-        FlowChartSet fcs = fcsParser.parse(source, chartFile.getFileName().toString() );
+        DecisionGraph dg = fcsParser.parse(source).compile(definitions);
         
         CliRunner cliRunner = new CliRunner();
-        cliRunner.setFcs(fcs);
+        cliRunner.setDecisionGraph(dg);
         cliRunner.go();
         
     }
     
-    public static TagType parseDefinitions(Path definitionsFile) throws DataTagsParseException, IOException {
+    public static CompoundType parseDefinitions(Path definitionsFile) throws DataTagsParseException, IOException {
         
         System.out.println("Reading definitions: " + definitionsFile );
         System.out.println(" (full:  " + definitionsFile.toAbsolutePath() + ")" );

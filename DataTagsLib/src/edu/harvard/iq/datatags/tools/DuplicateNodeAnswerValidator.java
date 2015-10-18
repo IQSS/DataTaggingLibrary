@@ -23,7 +23,7 @@ public class DuplicateNodeAnswerValidator extends NullVisitor{
     
     private List<ValidationMessage> validationMessages = new LinkedList<>();
     
-    public List<ValidationMessage> validateDuplicateAnswers(List<AstNode> allRefs) {
+    public List<ValidationMessage> validateDuplicateAnswers(List<? extends AstNode> allRefs) {
         validationMessages = new LinkedList<>();
         allRefs.stream().forEach( ref -> ref.accept(this) );
         return validationMessages;

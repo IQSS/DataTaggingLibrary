@@ -1,8 +1,9 @@
 package edu.harvard.iq.datatags.mains;
 
-import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeRefVizalizer;
+import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVizalizer;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class FlowChartParsing {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, DataTagsParseException {
         Path inputFile = Paths.get(args[0]);
         
         System.out.println("Reading " + inputFile );
@@ -25,10 +26,11 @@ public class FlowChartParsing {
         
         String source = new String(Files.readAllBytes(inputFile), StandardCharsets.UTF_8);
         
-        FlowChartASTParser astParser = new FlowChartASTParser();
+        DecisionGraphParser astParser = new DecisionGraphParser();
         
-        List<AstNode> refs = astParser.graphParser().parse(source);
-        GraphvizGraphNodeRefVizalizer viz = new GraphvizGraphNodeRefVizalizer(refs);
+        List<? extends AstNode> refs = astParser.parse(source).getNodes();
+        
+        GraphvizGraphNodeAstVizalizer viz = new GraphvizGraphNodeAstVizalizer(refs);
         Path outfile = inputFile.resolveSibling( inputFile.getFileName().toString() + ".gv" );
         System.out.println("Writing: " + outfile );
         viz.vizualize( outfile );

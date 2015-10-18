@@ -88,6 +88,8 @@ public class DecisionGraphParseResult {
         }
         
         product.setStart( product.getNode(C.head(astNodes).getId()) );
+        product.setTopLevelType(topLevelType);
+        
         // TODO Graph-level validators go here.
         
         return product;
@@ -159,7 +161,7 @@ public class DecisionGraphParseResult {
                     : C.head(astNodes).accept(new AstNode.Visitor<Node>() {
                 @Override
                 public Node visit(AstAskNode astNode) {
-                    AskNode res = new AskNode(astNode.getId());
+                    AskNode res = new AskNode(getCreateId(astNode));
                     res.setText(astNode.getTextNode().getText());
                     astNode.getTerms().forEach(t -> res.addTerm(t.getTerm(), t.getExplanation()));
                     
@@ -195,7 +197,7 @@ public class DecisionGraphParseResult {
                         throw new RuntimeException(new BadSetInstructionException(re.getMessage() + " (at node " + astNode + ")", astNode));
                     }
 
-                    return product.add( new SetNode(astNode.getId(), topValue) );
+                    return product.add( new SetNode(getCreateId(astNode), topValue) );
                 }
 
                 @Override

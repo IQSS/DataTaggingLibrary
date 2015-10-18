@@ -1,6 +1,5 @@
 package edu.harvard.iq.datatags.runtime.exceptions;
 
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 
@@ -12,37 +11,17 @@ import edu.harvard.iq.datatags.runtime.RuntimeEngine;
  */
 public class LinkageException extends DataTagsRuntimeException {
 	
-	private FlowChartSet chartSet;
 	private CallNode sourceNode;
 
-	public LinkageException(FlowChartSet chartSet, RuntimeEngine engine, String message) {
-		super(engine, message);
-		this.chartSet = chartSet;
+	public LinkageException(CallNode aSourceNode, RuntimeEngine anEngine, String aMessage) {
+		super(anEngine, aMessage);
+        sourceNode = aSourceNode;
 	}
 
-	public LinkageException(FlowChartSet chartSet, RuntimeEngine engine, String message, Throwable cause) {
-		super(engine, message, cause);
-		this.chartSet = chartSet;
-	}
-
-	public LinkageException(FlowChartSet chartSet, RuntimeEngine engine, Throwable cause) {
-		super(engine, cause);
-		this.chartSet = chartSet;
-	}
-
-	public LinkageException(FlowChartSet chartSet, RuntimeEngine engine, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public LinkageException( RuntimeEngine engine, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(engine, message, cause, enableSuppression, writableStackTrace);
-		this.chartSet = chartSet;
 	}
 	
-	public FlowChartSet getChartSet() {
-		return chartSet;
-	}
-
-	public void setChartSet(FlowChartSet chartSet) {
-		this.chartSet = chartSet;
-	}
-
 	public CallNode getSourceNode() {
 		return sourceNode;
 	}

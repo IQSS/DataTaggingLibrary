@@ -1,12 +1,11 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
-import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
-import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
-import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
+import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.After;
@@ -23,9 +22,9 @@ import org.junit.Test;
 public class ValidCallNodeValidatorTest {
     
     ValidCallNodeValidator instance;
-    DecisionGraphParser fcsc;
-    FlowChartSet fcs;
-    FlowChartASTParser astParser;
+    DecisionGraphParser dgParser;
+    DecisionGraph dg;
+    DecisionGraphParseResult parseResult;
     
     public ValidCallNodeValidatorTest() {
     }
@@ -40,9 +39,8 @@ public class ValidCallNodeValidatorTest {
     
     @Before
     public void setUp() {
-        fcsc = new DecisionGraphParser(new CompoundType("", ""));
+        dgParser = new DecisionGraphParser();
         instance = new ValidCallNodeValidator();
-        astParser = new FlowChartASTParser();
     }
     
     @After
@@ -51,35 +49,34 @@ public class ValidCallNodeValidatorTest {
 
     
     @Test
-    public void validateIdReferencesTest_noId() throws BadSetInstructionException {
+    public void validateIdReferencesTest_noId() throws BadSetInstructionException, DataTagsParseException {
         String code = "(todo: There's no id here to do anything with)(end)";
-        List<AstNode> refs = astParser.graphParser().parse(code);
-        fcs = fcsc.parse(refs, "unitName");
-        LinkedList<NodeValidationMessage> messages = instance.validateIdReferences(fcs);
-        assertEquals(new LinkedList<String>(), messages);
+        parseResult = dgParser.parse(code);
+        dg = parseResult.compile(new CompoundType("", ""));
+        List<NodeValidationMessage> messages = instance.validateIdReferences(dg);
+        assertEquals(new LinkedList<>(), messages);
     }
 
     @Test
-    public void validateIdReferencesTest_validId() throws BadSetInstructionException {
+    public void validateIdReferencesTest_validId() throws BadSetInstructionException, DataTagsParseException {
         String code = "(call: ppraCompliance )" +
                       "(>ppraCompliance< ask:(text: This should work!))(end)";
-        List<AstNode> refs = astParser.graphParser().parse(code);
-        fcs = fcsc.parse(refs, "unitName");
-        LinkedList<NodeValidationMessage> messages = instance.validateIdReferences(fcs);
+        parseResult = dgParser.parse(code);
+        dg = parseResult.compile(new CompoundType("", ""));
+        
+        List<NodeValidationMessage> messages = instance.validateIdReferences(dg);
         assertEquals(new LinkedList<>(), messages);
     }
     
     @Test
-    public void validateIdReferencesTest_invalidId() throws BadSetInstructionException {
+    public void validateIdReferencesTest_invalidId() throws BadSetInstructionException, DataTagsParseException {
         String code = "(call: ferpaCompliance )" +
                       "(>ppraCompliance< ask:(text: This shouldn't work.))" +
                       "(end)";
         
-        List<AstNode> refs = astParser.graphParser().parse(code);
-        fcs = fcsc.parse(refs, "unitName");
-        LinkedList<NodeValidationMessage> actual = instance.validateIdReferences(fcs);
-        LinkedList<NodeValidationMessage> expected = new LinkedList<>();
-        expected.addLast(new NodeValidationMessage(Level.ERROR, "Call node \"[CallNode id:$0 title:null]\" calls nonexistent node."));
+        parseResult = dgParser.parse(code);
+        dg = parseResult.compile(new CompoundType("", ""));
+        List<NodeValidationMessage> actual = instance.validateIdReferences(dg);
         assertEquals(ValidationMessage.Level.ERROR, actual.get(0).getLevel());
         assertTrue( actual.get(0).getMessage().contains("id:$0") );
     }

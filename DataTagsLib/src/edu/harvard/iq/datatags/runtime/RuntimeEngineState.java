@@ -98,19 +98,13 @@ public class RuntimeEngineState implements java.io.Serializable {
         if (!Objects.equals(this.flowchartSetVersion, other.flowchartSetVersion)) {
             return false;
         }
-        if (!Objects.equals(this.currentChartId, other.currentChartId)) {
-            return false;
-        }
         if (!Objects.equals(this.currentNodeId, other.currentNodeId)) {
             return false;
         }
         if (!Objects.equals(this.stack, other.stack)) {
             return false;
         }
-        if (!Objects.equals(this.serializedTagValue, other.serializedTagValue)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.serializedTagValue, other.serializedTagValue);
     }
     
     

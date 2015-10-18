@@ -1,14 +1,13 @@
 package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
 import edu.harvard.iq.datatags.parser.definitions.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
-import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.tools.DuplicateNodeAnswerValidator;
@@ -48,22 +47,20 @@ public class QuestionnaireValidation {
             System.out.println(" (full:  " + tagsFile.toAbsolutePath() + ")");
 
             TagSpaceParser tagsParser = new TagSpaceParser();
-            TagType baseType = tagsParser.parse(readAll(tagsFile)).buildType("DataTags").get();
+            CompoundType baseType = tagsParser.parse(readAll(tagsFile)).buildType("DataTags").get();
 
             System.out.println("Reading chart: " + chartFile);
             System.out.println(" (full:  " + chartFile.toAbsolutePath() + ")");
 
             String source = readAll(chartFile);
 
-            FlowChartASTParser astParser = new FlowChartASTParser();
-            List<AstNode> refs = astParser.graphParser().parse(source);
-            DecisionGraphParser fcsParser = new DecisionGraphParser((CompoundType) baseType);
-            FlowChartSet fcs = fcsParser.parse(refs, chartFile.getFileName().toString());
-            
-            
+            DecisionGraphParser dgParser = new DecisionGraphParser();
+            final DecisionGraphParseResult parseResult = dgParser.parse(source);
+            List<? extends AstNode> refs = parseResult.getNodes();
+            DecisionGraph dg = parseResult.compile(baseType);
             
             UnreachableNodeValidator unv = new UnreachableNodeValidator();
-            List<NodeValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
+            List<NodeValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(dg);
             if (!unreachableNodeMessages.isEmpty()) {
                 System.out.println("*****************\nUNREACHABLE NODES:");
                 for (NodeValidationMessage m : unreachableNodeMessages ) {
@@ -73,7 +70,7 @@ public class QuestionnaireValidation {
             }
             
             ValidCallNodeValidator fcv = new ValidCallNodeValidator();
-            List<NodeValidationMessage> callNodeMessages = fcv.validateIdReferences(fcs);
+            List<NodeValidationMessage> callNodeMessages = fcv.validateIdReferences(dg);
             if (!callNodeMessages.isEmpty()) {
                 System.out.println("*****************\nNONEXISTENT NODES:");
             for (NodeValidationMessage m : callNodeMessages ) {
@@ -100,7 +97,7 @@ public class QuestionnaireValidation {
             }
             
             UnusedTagsValidator utv = new UnusedTagsValidator();
-            List<ValidationMessage> unusedTagsMessages = utv.validateUnusedTags(fcs);
+            List<ValidationMessage> unusedTagsMessages = utv.validateUnusedTags(dg);
             if (!unusedTagsMessages.isEmpty()) {
                 System.out.println("*****************UNUSED TAGS:");
                 for (ValidationMessage m : unusedTagsMessages) {

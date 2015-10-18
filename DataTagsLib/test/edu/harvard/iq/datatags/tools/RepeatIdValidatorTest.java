@@ -1,7 +1,8 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
+import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +23,7 @@ import org.junit.Test;
 public class RepeatIdValidatorTest {
     
     RepeatIdValidator instance;
-    FlowChartASTParser astParser;
+    DecisionGraphParser dgParser;
     
     public RepeatIdValidatorTest() {
     }
@@ -38,7 +39,7 @@ public class RepeatIdValidatorTest {
     @Before
     public void setUp() {
         instance = new RepeatIdValidator();
-        astParser = new FlowChartASTParser();
+        dgParser = new DecisionGraphParser();
     }
     
     @After
@@ -47,31 +48,31 @@ public class RepeatIdValidatorTest {
 
     
     @Test
-    public void validateRepeatIdsTest_noId() {
+    public void validateRepeatIdsTest_noId() throws DataTagsParseException {
         String code = "(call: ppraCompliance )\n" +
                       "(call: ferpaCompliance )\n" +
                       "(call: govRecsCompliance )";
-        List<AstNode> refs = astParser.graphParser().parse(code);
+        List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
         assertEquals(Collections.emptySet(), messages);
     }
     
     @Test
-    public void validateRepeatIdsTest_diffIds() {
+    public void validateRepeatIdsTest_diffIds() throws DataTagsParseException {
         String code = "(>personalData< call: medicalRecordsCompliance )" +
                       "(>medicalRecordsCompliance< call: ppraCompliance)" +
                       "(>MR2< call: ppraCompliance)";
-        List<AstNode> refs = astParser.graphParser().parse(code);
+        List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
         assertEquals(Collections.emptySet(), messages);
     }
     
     @Test
-    public void validateRepeatIdsTest_sameIds() {
+    public void validateRepeatIdsTest_sameIds() throws DataTagsParseException {
         String code = "(>personalData< call: medicalRecordsCompliance )" +
                       "(>medicalRecordsCompliance< call: ppraCompliance)" +
                       "(>personalData< call: ppraCompliance)";
-        List<AstNode> refs = astParser.graphParser().parse(code);
+        List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
         Set<ValidationMessage> expected = Collections.singleton(new ValidationMessage(Level.ERROR, "Duplicate node id: \"personalData\"."));
         assertEquals(expected, messages);
@@ -79,7 +80,7 @@ public class RepeatIdValidatorTest {
     
     // THIS NEEDS TO FAIL: FIX THE REPEATIDVALIDATOR WITH VISITORS ASAP
     @Test
-    public void validateRepeatIdsTest_layeredIds() {
+    public void validateRepeatIdsTest_layeredIds() throws DataTagsParseException {
         String code = 
                   "(>personalData< ask: (text: first )"
                 + "   (yes: (>repeat< ask: "
@@ -88,7 +89,7 @@ public class RepeatIdValidatorTest {
                 + "(>repeat< ask: "
                 + "    (text: is this a repeat?)"
                 + "    (yes: (>todo1< todo: yes.)))";
-        List<AstNode> refs = astParser.graphParser().parse(code);
+        List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
         assertEquals(new HashSet<>( 
                 Arrays.asList(new ValidationMessage(Level.ERROR, "Duplicate node id: \"repeat\"."),

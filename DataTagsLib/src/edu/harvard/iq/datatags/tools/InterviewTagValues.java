@@ -1,16 +1,13 @@
 package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node.VoidVisitor;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
-import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -24,14 +21,10 @@ import java.util.Set;
  * @author Naomi
  */
 public class InterviewTagValues extends VoidVisitor {
-    private Set<TagValue> usedTagValues = new HashSet<>();
+    private final Set<TagValue> usedTagValues = new HashSet<>();
     
-    public Set<TagValue> gatherInterviewTagValues(FlowChartSet fcs) {
-        for (DecisionGraph chart : fcs.charts()) {
-            for (Node node : chart.nodes()) {
-                node.accept(this);
-            }
-        }
+    public Set<TagValue> gatherInterviewTagValues( DecisionGraph dg ) {
+        dg.nodes().forEach( a -> a.accept(this));
         return usedTagValues;
     }
 
@@ -43,9 +36,9 @@ public class InterviewTagValues extends VoidVisitor {
     @Override
     public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
         CompoundValue compound = nd.getTags();
-        for (TagType t : compound.getTypesWithNonNullValues()) {
+        compound.getTypesWithNonNullValues().forEach((t) -> {
             usedTagValues.add(compound.get(t)); // each tagvalue in this setnode
-        }
+        });
     }
 
     @Override

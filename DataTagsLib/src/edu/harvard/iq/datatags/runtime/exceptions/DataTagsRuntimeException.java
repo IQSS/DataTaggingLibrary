@@ -1,6 +1,5 @@
 package edu.harvard.iq.datatags.runtime.exceptions;
 
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 
 /**

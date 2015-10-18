@@ -2,7 +2,6 @@ package edu.harvard.iq.datatags.cli;
 
 import edu.harvard.iq.datatags.io.StringMapFormat;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
@@ -28,31 +27,20 @@ import java.util.logging.Logger;
  */
 public class CliRunner {
     
-    private FlowChartSet fcs;
+    private DecisionGraph decisionGraph;
     RuntimeEngine ngn;
     BufferedReader reader;
     private final StringMapFormat dtFormat = new StringMapFormat();
     
     public void go() throws IOException {
-        println( "Running questionnaire %s, (version %s)", fcs.getSource(), fcs.getVersion() );
+        println( "Running questionnaire %s, (version %s)", decisionGraph.getSource() );
         ngn = new RuntimeEngine();
-        ngn.setChartSet(fcs);
+        ngn.setDecisionGraph(decisionGraph);
         
         try {
             if ( System.console() == null ) {
                 reader = new BufferedReader(new InputStreamReader(System.in));
             }
-
-            printTitle("Available Charts");
-            for ( DecisionGraph fc : fcs.charts() ) {
-                print( "%s (%s)\n", fc.getTitle(), fc.getId() );
-            }
-
-            String chartId = readLine("Select chart id [%s]", fcs.getDefaultChartId() );
-            if ( chartId.isEmpty() ) {
-                chartId = fcs.getDefaultChartId();
-            }
-            println("Selected chart is %s", chartId);
 
             ngn.setListener( new RuntimeEngine.Listener() {
 
@@ -109,7 +97,7 @@ public class CliRunner {
                 
             });
 
-            if ( ngn.start(chartId) ) {
+            if ( ngn.start() ) {
                 while ( ngn.consume( getAnswer() ) ) {}
             }
             
@@ -197,12 +185,12 @@ public class CliRunner {
         return reader.readLine();
     }
 
-    public FlowChartSet getFcs() {
-        return fcs;
+    public DecisionGraph getDecisionGraph() {
+        return decisionGraph;
     }
 
-    public void setFcs(FlowChartSet fcs) {
-        this.fcs = fcs;
+    public void setDecisionGraph(DecisionGraph fcs) {
+        this.decisionGraph = fcs;
     }
     
 }

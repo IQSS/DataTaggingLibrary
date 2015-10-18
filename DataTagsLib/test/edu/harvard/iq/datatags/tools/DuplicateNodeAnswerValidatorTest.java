@@ -1,12 +1,11 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
-import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
-import java.util.Arrays;
+import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,9 +23,8 @@ import org.junit.Test;
 public class DuplicateNodeAnswerValidatorTest {
     
     DuplicateNodeAnswerValidator instance;
-    DecisionGraphParser fcsc;
-    FlowChartSet fcs;
-    FlowChartASTParser astParser;
+    DecisionGraphParser dgParser;
+    DecisionGraph dg;
     
     public DuplicateNodeAnswerValidatorTest() {
     }
@@ -42,8 +40,7 @@ public class DuplicateNodeAnswerValidatorTest {
     @Before
     public void setUp() {
         instance = new DuplicateNodeAnswerValidator();
-        fcsc = new DecisionGraphParser(new CompoundType("", ""));
-        astParser = new FlowChartASTParser();
+        dgParser = new DecisionGraphParser();
     }
     
     @After
@@ -51,31 +48,31 @@ public class DuplicateNodeAnswerValidatorTest {
     }
 
     @Test
-    public void validateDuplicateAnswerTest_noAnswers() throws BadSetInstructionException {
+    public void validateDuplicateAnswerTest_noAnswers() throws BadSetInstructionException, DataTagsParseException {
         String code = "(todo: there are no answers here to check)(end)";
-        List<AstNode> refs = astParser.graphParser().parse(code);
+        List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         List<ValidationMessage> duplicates = instance.validateDuplicateAnswers(refs);
         assertEquals(new LinkedList<>(), duplicates);
     } 
     
     @Test
-    public void validateDuplicateAnswersTest_noDuplicates() throws BadSetInstructionException {
+    public void validateDuplicateAnswersTest_noDuplicates() throws BadSetInstructionException, DataTagsParseException {
         String code = "(>ask1< ask: (text: Are there any duplicates?)"
                 + "(yes: (>todo1< todo: no duplicates))"
                 + "(no: (>todo2< todo: still no duplicates)))"
                 + "(>end1<end)";
-        List<AstNode> refs = astParser.graphParser().parse(code);
+        List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         List<ValidationMessage> duplicates = instance.validateDuplicateAnswers(refs);
         assertEquals(new LinkedList<>(), duplicates);
     } 
     
     @Test
-    public void validateDuplicateAnswersTest_duplicates() throws BadSetInstructionException {
+    public void validateDuplicateAnswersTest_duplicates() throws BadSetInstructionException, DataTagsParseException {
         String code = "(>ask1< ask: (text: Are there any duplicates?)"
                 + "(yes: (>todo1< todo: there's a duplicate!))"
                 + "(yes: (>todo2< todo: yes there is!))"
                 + "(no: (>todo3< todo: this is just another answer)))";
-        List<AstNode> refs = astParser.graphParser().parse(code);
+        List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         List<ValidationMessage> actual = instance.validateDuplicateAnswers(refs);
         // the first instruction node should be a repeat
         List<ValidationMessage> expected = Collections.singletonList(

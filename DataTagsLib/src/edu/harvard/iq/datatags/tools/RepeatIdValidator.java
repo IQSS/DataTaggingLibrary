@@ -28,7 +28,7 @@ public class RepeatIdValidator extends NullVisitor {
     private final Set<String> seenIds = new HashSet<>();
     private final Map<String, ValidationMessage> validationMessages = new TreeMap<>();
     
-    public Set<ValidationMessage> validateRepeatIds(List<AstNode> refs) {
+    public Set<ValidationMessage> validateRepeatIds(List<? extends AstNode> refs) {
         refs.stream().forEach( ref -> ref.accept(this) );
         return new HashSet<>(validationMessages.values());
     }

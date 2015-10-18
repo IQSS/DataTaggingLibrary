@@ -1,7 +1,5 @@
 package edu.harvard.iq.datatags.model.graphs.nodes;
 
-import edu.harvard.iq.datatags.model.graphs.ChartEntity;
-import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import org.codehaus.jparsec.internal.util.Objects;
 

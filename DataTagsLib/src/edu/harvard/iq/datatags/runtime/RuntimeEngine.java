@@ -2,7 +2,6 @@ package edu.harvard.iq.datatags.runtime;
 
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
@@ -21,17 +20,17 @@ import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * The engine that executes {@link FlowChartSet}s.
+ * 
  * Intended usage pattern:
  * <code>
  *	if ( engine.start(node) ) {
  *		while ( engine.consume( getAns() ) ) {}
  *  }
  * </code>
- * The engine that executes {@link FlowChartSet}s.
  * 
  * @author michael
  */
-// TODO add a start() method, defaulting to start( getChartSet().getDefaultChart() ).
 public class RuntimeEngine {
 	
 	
@@ -45,9 +44,8 @@ public class RuntimeEngine {
 	private static final AtomicInteger COUNTER = new AtomicInteger(0);
 		
 	private String id = "RuntimeEngine-" + COUNTER.incrementAndGet();
-	private FlowChartSet chartSet;
+	private DecisionGraph decisionGraph;
     
-    // LATER for completeness, this should be TagValue, not just CompoundTagValue... or should it?
 	private CompoundValue currentTags;
 	private final Deque<CallNode> stack = new LinkedList<>();
 	private Node currentNode;
@@ -88,17 +86,10 @@ public class RuntimeEngine {
 		public Node visit( CallNode nd ) throws DataTagsRuntimeException {
 			stack.push(nd);
 			// Dynamic linking to the destination node.
-			DecisionGraph fs = getChartSet().getFlowChart(nd.getCalleeChartId());
-			if ( fs == null ) {
-				MissingFlowChartException mfce = new MissingFlowChartException(nd.getCalleeChartId(), chartSet, RuntimeEngine.this, "Can't find chart " + nd.getCalleeChartId() );
-				mfce.setSourceNode(nd);
-				status = RuntimeEngineStatus.Error;
-				throw mfce;
-			}
-			Node calleeNode = fs.getNode(nd.getCalleeNodeId());
+			Node calleeNode = decisionGraph.getNode(nd.getCalleeNodeId());
 			if ( calleeNode == null ) {
 				status = RuntimeEngineStatus.Error;
-				throw new MissingNodeException(chartSet, RuntimeEngine.this, nd);
+				throw new MissingNodeException(RuntimeEngine.this, nd);
 			}
 			
 			// enter the linked node
@@ -125,24 +116,16 @@ public class RuntimeEngine {
 	 * If there are no data tags for the engine, a new instance is created. Otherwise,
 	 * the current data tags are retained.
 	 * 
-	 * @param flowChartName name of the chart to start running at.
 	 * @return {@code true} iff there is a need to consume answers.
-	 * @throws MissingFlowChartException if that chart does not exist.
 	 */
-	public boolean start( String flowChartName ) throws DataTagsRuntimeException {
-		DecisionGraph fs = chartSet.getFlowChart(flowChartName);
-		if ( fs == null ) {
-			throw new MissingFlowChartException(flowChartName, 
-					chartSet, this, 
-					String.format("FlowChart named '%s' cannot be found",flowChartName));
-		}
+	public boolean start() throws DataTagsRuntimeException {
 		
 		if ( getCurrentTags() == null ) {
-			setCurrentTags( ((CompoundType)chartSet.getTopLevelType()).createInstance() );
+			setCurrentTags( getDecisionGraph().getTopLevelType().createInstance() );
 		}
 		status = RuntimeEngineStatus.Running;
 		if ( listener!=null ) listener.runStarted(this);
-		return processNode( fs.getStart() );
+		return processNode( getDecisionGraph().getStart() );
 	}
 	
 	protected boolean processNode( Node n ) throws DataTagsRuntimeException {
@@ -174,8 +157,6 @@ public class RuntimeEngine {
         
         state.setStatus(getStatus());
         state.setCurrentNodeId( getCurrentNode().getId() );
-        state.setFlowchartSetSource( getChartSet().getSource() );
-        state.setFlowchartSetVersion( getChartSet().getVersion() );
         
         getStack().forEach( nd -> state.pushNodeIdToStack( nd.getId() ) );
         
@@ -190,15 +171,12 @@ public class RuntimeEngine {
         }
         status = snapshot.getStatus();
         currentTags = (CompoundValue) new StringMapFormat().parse(
-                                                            ((CompoundType)chartSet.getTopLevelType()),
+                                                            (decisionGraph.getTopLevelType()),
                                                             snapshot.getSerializedTagValue());
-        currentNode = chartSet.getFlowChart( snapshot.getCurrentChartId() ).getNode( snapshot.getCurrentNodeId() );
+        currentNode = decisionGraph.getNode( snapshot.getCurrentNodeId() );
         
         stack.clear();
-        for ( String nodeId : snapshot.getStack() ) {
-            String[] comps = nodeId.split("/",-1);
-            stack.push( (CallNode) chartSet.getFlowChart(comps[0]).getNode(comps[1]) );
-        }
+        snapshot.getStack().forEach((nodeId) -> stack.push( (CallNode) decisionGraph.getNode(nodeId) ) );
         
     }
     
@@ -226,14 +204,14 @@ public class RuntimeEngine {
 		this.currentTags = currentTags;
 	}
 
-	public FlowChartSet getChartSet() {
-		return chartSet;
-	}
+    public DecisionGraph getDecisionGraph() {
+        return decisionGraph;
+    }
 
-	public void setChartSet(FlowChartSet chartSet) {
-		this.chartSet = chartSet;
-	}
-	
+    public void setDecisionGraph(DecisionGraph decisionGraph) {
+        this.decisionGraph = decisionGraph;
+    }
+
 	/**
 	 * @return The current stack of nodes. This is enough to know where 
 	 * the engine is, but not what the data tags state is.

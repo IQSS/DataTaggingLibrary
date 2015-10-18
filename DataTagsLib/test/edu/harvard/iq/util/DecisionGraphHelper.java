@@ -1,13 +1,11 @@
 package edu.harvard.iq.util;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.values.Answer;
-import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.runtime.ChartRunningTest;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -58,19 +56,12 @@ public class DecisionGraphHelper {
         return mock;
     }
     
-	public static FlowChartSet chartSet( DecisionGraph... flowCharts ) {
-		FlowChartSet fcs = new FlowChartSet( flowCharts[0].getId()+"_set", mockTopLevelType() );
-		for ( DecisionGraph fc : flowCharts ) {
-			fcs.addFlowChart(fc );
-		}
-		return fcs;
+	
+	public static void assertExecutionTrace(DecisionGraph dg, String flowChartName, List<String> expectedIds) {
+		assertExecutionTrace(dg, flowChartName, expectedIds, true);
 	}
 	
-	public static void assertExecutionTrace(FlowChartSet fcs, String flowChartName, List<String> expectedIds) {
-		assertExecutionTrace(fcs, flowChartName, expectedIds, true);
-	}
-	
-	public static void assertExecutionTrace(FlowChartSet fcs, String flowChartName, List<String> expectedIds, boolean logToStdOut) {
+	public static void assertExecutionTrace(DecisionGraph dg, String flowChartName, List<String> expectedIds, boolean logToStdOut) {
 		Iterable<Answer> yesMan = () -> new Iterator<Answer>(){
             @Override
             public boolean hasNext() { return true; }
@@ -83,23 +74,26 @@ public class DecisionGraphHelper {
             
         };
 		
-		assertExecutionTrace(fcs, flowChartName, yesMan, expectedIds, logToStdOut);
+		assertExecutionTrace(dg, flowChartName, yesMan, expectedIds, logToStdOut);
 	}
 	
-	public static void assertExecutionTrace(FlowChartSet fcs, String flowChartName, Iterable<Answer> answers, Iterable<String> expectedIds) {
-		assertExecutionTrace(fcs, flowChartName, answers, expectedIds, true);
+	public static void assertExecutionTrace(DecisionGraph dg, String flowChartName, Iterable<Answer> answers, Iterable<String> expectedIds) {
+		assertExecutionTrace(dg, flowChartName, answers, expectedIds, true);
 	}
     
-	public static void assertExecutionTrace(FlowChartSet fcs, String flowChartName, Iterable<Answer> answers, Iterable<String> expectedIds, boolean logToStdOut) {
-		RuntimeEngine ngn = new RuntimeEngine();
-		ngn.setChartSet(fcs);
+	public static void assertExecutionTrace(DecisionGraph dg, String flowChartName, Iterable<Answer> answers, Iterable<String> expectedIds, boolean logToStdOut) {
+		if ( dg.getTopLevelType() == null ) {
+            dg.setTopLevelType( new CompoundType("placeholder","") );
+        }
+        RuntimeEngine ngn = new RuntimeEngine();
+		ngn.setDecisionGraph(dg);
 		RuntimeEngineTracingListener l = ngn.setListener(
 											new RuntimeEngineTracingListener( 
 													logToStdOut ? new RuntimeEnginePrintStreamListener()
 																: new RuntimeEngineSilentListener()) );
 		Iterator<Answer> answerItr = answers.iterator();
 		try {
-			ngn.start( flowChartName );
+			ngn.start();
 			while ( ngn.consume(answerItr.next()) ) {}
 		
 		} catch ( DataTagsRuntimeException ex ) {

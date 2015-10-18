@@ -7,6 +7,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URL;
@@ -20,13 +21,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * @author michael
  */
-public class DecisionGraph extends ChartEntity {
+public class DecisionGraph {
 	
 	private static final AtomicInteger INDEX = new AtomicInteger(0);
 	
 	private URL source;
 	private Node start;
+    private CompoundType topLevelType = null;
 	private final Map<String, Node> nodes = new TreeMap<>();
+    private String id;
 	
 	private final Node.Visitor<Node> nodeAdder = new Node.Visitor<Node>() {
 
@@ -70,13 +73,14 @@ public class DecisionGraph extends ChartEntity {
 			return n;
 		}
 	};
+    protected String title;
 	
 	public DecisionGraph() {
-		this( "FlowChart-"+INDEX.incrementAndGet());
+		this( "DecisionGraph-"+INDEX.incrementAndGet());
 	}
 	
 	public DecisionGraph(String anId) {
-		super(anId);
+		id = anId;
 	}
     
 	public URL getSource() {
@@ -135,4 +139,28 @@ public class DecisionGraph extends ChartEntity {
         return nodes.keySet();
     }
 
+    public CompoundType getTopLevelType() {
+        return topLevelType;
+    }
+
+    public void setTopLevelType(CompoundType topLevelType) {
+        this.topLevelType = topLevelType;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+    
 }

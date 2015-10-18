@@ -1,13 +1,11 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.AtomicType;
-import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.TagType.VoidVisitor;
 import edu.harvard.iq.datatags.model.types.ToDoType;
-import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,16 +19,14 @@ import java.util.Set;
 public class AllTagValues extends VoidVisitor {
     private final Set<TagValue> definedTagValues = new HashSet<>();
     
-    public Set<TagValue> gatherAllTagValues(FlowChartSet fcs) {
-        fcs.getTopLevelType().accept(this);
+    public Set<TagValue> gatherAllTagValues( DecisionGraph dg ) {
+        dg.getTopLevelType().accept(this);
         return definedTagValues;
     }
 
     @Override
     public void visitAtomicTypeImpl(AtomicType t) {
-        for (AtomicValue simpleValue : t.values()) {
-            definedTagValues.add(simpleValue);
-        }
+        t.values().forEach( definedTagValues::add );
     }
 
     @Override
@@ -40,9 +36,7 @@ public class AllTagValues extends VoidVisitor {
 
     @Override
     public void visitCompoundTypeImpl(CompoundType t) {
-        for (TagType tagType : t.getFieldTypes()) {
-            tagType.accept(this);
-        }
+        t.getFieldTypes().forEach(tagType -> tagType.accept(this));
     }
 
     @Override

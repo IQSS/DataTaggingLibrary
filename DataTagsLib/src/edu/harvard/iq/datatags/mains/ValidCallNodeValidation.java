@@ -1,14 +1,13 @@
 package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
 import edu.harvard.iq.datatags.parser.definitions.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
-import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.tools.NodeValidationMessage;
@@ -16,13 +15,12 @@ import edu.harvard.iq.datatags.tools.RepeatIdValidator;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidCallNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeRefVizalizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVizalizer;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -44,16 +42,17 @@ public class ValidCallNodeValidation {
             System.out.println(" (full:  " + tagsFile.toAbsolutePath() + ")");
 
             TagSpaceParser tagsParser = new TagSpaceParser();
-            TagType baseType = tagsParser.parse(readAll(tagsFile)).buildType("DataTags").get();
+            CompoundType baseType = tagsParser.parse(readAll(tagsFile)).buildType("DataTags").get();
 
             System.out.println("Reading chart: " + chartFile);
             System.out.println(" (full:  " + chartFile.toAbsolutePath() + ")");
 
             String source = readAll(chartFile);
 
-            FlowChartASTParser astParser = new FlowChartASTParser();
-            List<AstNode> refs = astParser.graphParser().parse(source);
-            GraphvizGraphNodeRefVizalizer viz = new GraphvizGraphNodeRefVizalizer(refs);
+            DecisionGraphParser dgParser = new DecisionGraphParser();
+            DecisionGraphParseResult res = dgParser.parse(source);
+            List<? extends AstNode> refs = res.getNodes();
+            GraphvizGraphNodeAstVizalizer viz = new GraphvizGraphNodeAstVizalizer(refs);
             Path outfile = chartFile.resolveSibling(chartFile.getFileName().toString() + "-ast.gv");
             System.out.println("Writing: " + outfile);
             viz.vizualize(outfile);
@@ -68,15 +67,14 @@ public class ValidCallNodeValidation {
                 System.out.println(repeatIdMessages);
             }
             
-            DecisionGraphParser fcsParser = new DecisionGraphParser((CompoundType) baseType);
-            FlowChartSet fcs = fcsParser.parse(refs, chartFile.getFileName().toString());
+            DecisionGraph dg = res.compile(baseType);
 
             System.out.println();
             System.out.println("Semantic validations");
             System.out.println("====================");
             UnreachableNodeValidator unv = new UnreachableNodeValidator();
             System.out.println("Validating unreachable nodes");
-            List<NodeValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(fcs);
+            List<NodeValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(dg);
             unreachableNodeMessages.stream().map((m) -> {
                 System.out.println(m);
                 return m;
@@ -86,7 +84,7 @@ public class ValidCallNodeValidation {
             
             System.out.println("Validating Call nodes");
             ValidCallNodeValidator fcv = new ValidCallNodeValidator();
-            LinkedList<NodeValidationMessage> callNodeMessages = fcv.validateIdReferences(fcs);
+            List<NodeValidationMessage> callNodeMessages = fcv.validateIdReferences(dg);
             if (callNodeMessages.size() > 0) {
                 System.out.println(callNodeMessages);
                 System.exit(-1);

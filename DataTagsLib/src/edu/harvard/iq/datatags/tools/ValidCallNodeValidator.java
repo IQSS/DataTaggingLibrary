@@ -1,7 +1,6 @@
 package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
@@ -13,6 +12,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Checks that every id referenced in a CallNode exists.
@@ -22,18 +22,14 @@ import java.util.LinkedList;
  */
 public class ValidCallNodeValidator extends VoidVisitor {
     
-    private final LinkedList<NodeValidationMessage> validationMessages = new LinkedList<>();
+    private final List<NodeValidationMessage> validationMessages = new LinkedList<>();
     private DecisionGraph chart;
     
     
-    public LinkedList<NodeValidationMessage> validateIdReferences(FlowChartSet fcs) {
-        Iterable<DecisionGraph> chartGroup = fcs.charts();
-        for (DecisionGraph c : chartGroup) {
-            chart = c;
-            Iterable<Node> chartNodes = chart.nodes();
-            for (Node allnodes : chartNodes) {
-                allnodes.accept(this);
-            }
+    public List<NodeValidationMessage> validateIdReferences( DecisionGraph dg ) {
+        Iterable<Node> chartNodes = chart.nodes();
+        for (Node aNode : chartNodes) {
+            aNode.accept(this);
         }
         return validationMessages;
     }
@@ -41,9 +37,8 @@ public class ValidCallNodeValidator extends VoidVisitor {
     
     @Override
     public void visitImpl (CallNode cn) throws DataTagsRuntimeException {
-        Node exists = chart.getNode(cn.getCalleeNodeId());
-        if (exists == null) {
-            validationMessages.addLast(new NodeValidationMessage(Level.ERROR, "Call node \"" + cn + "\" calls nonexistent node."));
+        if ( chart.getNode(cn.getCalleeNodeId()) == null) {
+            validationMessages.add(new NodeValidationMessage(Level.ERROR, "Call node \"" + cn + "\" calls nonexistent node."));
         }
     }
     

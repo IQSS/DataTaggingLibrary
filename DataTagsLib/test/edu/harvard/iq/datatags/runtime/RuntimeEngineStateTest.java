@@ -1,11 +1,6 @@
-/*
- *  (C) Michael Bar-Sinai
- */
-
 package edu.harvard.iq.datatags.runtime;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
@@ -15,7 +10,6 @@ import static edu.harvard.iq.datatags.model.values.Answer.YES;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.runtime.listeners.RuntimeEngineSilentListener;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
-import static edu.harvard.iq.util.DecisionGraphHelper.chartSet;
 import static edu.harvard.iq.util.DecisionGraphHelper.linearYesChart;
 import java.util.List;
 import java.util.logging.Level;
@@ -55,15 +49,12 @@ public class RuntimeEngineStateTest {
     @Test 
     public void testSnapshots() {
         String chartId = "rec";
-		DecisionGraph rec = linearYesChart(chartId, 3);
+		DecisionGraph dg = linearYesChart(chartId, 3);
 		
-		AskNode n2 = (AskNode)rec.getNode(chartId+"_2");
-		CallNode caller = n2.setNodeFor(NO, rec.add(new CallNode("Caller")));
-		caller.setCalleeChartId(chartId);
+		AskNode n2 = (AskNode)dg.getNode(chartId+"_2");
+		CallNode caller = n2.setNodeFor(NO, dg.add(new CallNode("Caller")));
 		caller.setCalleeNodeId( chartId + "_1");
 		caller.setNextNode( new EndNode("CallerEnd") );
-		
-		FlowChartSet fcs = chartSet( rec );
 		
         List<Answer> answers = C.list(YES, NO, 
 						YES, NO,
@@ -71,11 +62,11 @@ public class RuntimeEngineStateTest {
 						YES, NO,
 						YES, NO); 
         RuntimeEngine ngn = new RuntimeEngine();
-		ngn.setChartSet(fcs);
+		ngn.setDecisionGraph(dg);
 		ngn.setListener( new RuntimeEngineSilentListener() );
 		
 		try {
-			ngn.start( chartId );
+			ngn.start();
 			for ( Answer ans : answers ) {
                 ngn.consume(ans);
             }

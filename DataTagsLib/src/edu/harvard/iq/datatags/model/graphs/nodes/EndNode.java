@@ -1,7 +1,6 @@
 
 package edu.harvard.iq.datatags.model.graphs.nodes;
 
-import edu.harvard.iq.datatags.model.graphs.ChartEntity;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
 
@@ -29,7 +28,7 @@ public class EndNode extends TerminalNode {
     public boolean equals( Object o ) {
         if ( o == null ) return false;
         if ( o instanceof EndNode ) {
-            return Objects.equals(getId(), ((ChartEntity)o).getId() );
+            return Objects.equals(getId(), ((Node)o).getId() );
         } else {
             return false;
         }

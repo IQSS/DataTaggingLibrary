@@ -1,25 +1,22 @@
 package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
 import edu.harvard.iq.datatags.parser.definitions.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
-import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
-import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetClusteredVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDataStructureVisualizer;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeRefVizalizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVizalizer;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 /**
  *
@@ -58,7 +55,7 @@ public class FlowChartCompiling {
         System.out.println(" (full:  " + tagsFile.toAbsolutePath() + ")" );
         
         TagSpaceParser tagsParser = new  TagSpaceParser();
-        TagType baseType = tagsParser.parse(readAll(tagsFile)).buildType("DataTags").get();
+        CompoundType baseType = tagsParser.parse(readAll(tagsFile)).buildType("DataTags").get();
         
         GraphvizDataStructureVisualizer tagViz = new GraphvizDataStructureVisualizer(baseType);
         Path tagsOutPath = tagsFile.resolveSibling(tagsFile.getFileName().toString() + ".gv");
@@ -70,23 +67,19 @@ public class FlowChartCompiling {
         
         String source = readAll(chartFile);
         
-        FlowChartASTParser astParser = new FlowChartASTParser();
-        List<AstNode> refs = astParser.graphParser().parse(source);
-        GraphvizGraphNodeRefVizalizer viz = new GraphvizGraphNodeRefVizalizer(refs);
+        DecisionGraphParser dgParser = new DecisionGraphParser();
+        DecisionGraphParseResult parsedGraph = dgParser.parse(source);
+        GraphvizGraphNodeAstVizalizer viz = new GraphvizGraphNodeAstVizalizer(parsedGraph.getNodes());
         Path outfile = chartFile.resolveSibling( chartFile.getFileName().toString() + "-ast.gv" );
         System.out.println("Writing: " + outfile );
         viz.vizualize( outfile );
-
-        DecisionGraphParser fcsParser = new DecisionGraphParser( (CompoundType)baseType );
-        FlowChartSet fcs = fcsParser.parse(refs, chartFile.getFileName().toString());
+        
+        DecisionGraph dg = parsedGraph.compile(baseType);
 		
-//        FlowChart fc = fcs.getFlowChart( fcs.getDefaultChartId() );
-//        fcs.addFlowChart(  new EndNodeOptimizer().optimize(fc) );
-//        
         GraphvizChartSetClusteredVisualizer fcsViz = new GraphvizChartSetClusteredVisualizer();
         outfile = chartFile.resolveSibling( chartFile.getFileName().toString() + "-fcs.gv" );
         System.out.println("Writing: " + outfile );
-		fcsViz.setChartSet(fcs);
+		fcsViz.setDecisionGraph(dg);
         fcsViz.vizualize( outfile );
 
     }

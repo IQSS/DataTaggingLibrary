@@ -2,7 +2,6 @@
 package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
@@ -33,24 +32,22 @@ public class UnreachableNodeValidator extends VoidVisitor {
     /**
      * Check each FlowChart in the FlowChartSet for unreachable nodes.
      * Begin from the start node identified by the FlowChart.
-     * @param fcs The chart set we validate.
+     * @param dg The graph we validate.
      * @return WARNING messages showing the unreachable nodes.
      */
-    public List<NodeValidationMessage> validateUnreachableNodes(FlowChartSet fcs) {
+    public List<NodeValidationMessage> validateUnreachableNodes( DecisionGraph dg ) {
         Set<String> flowChartNodeIds = new HashSet<>();
-        for (DecisionGraph chart : fcs.charts()) {
-            flowChartNodeIds.addAll( chart.nodeIds() );
-            
-            flowChart = chart;
-            chart.getStart().accept(this);
-            flowChartNodeIds.removeAll(reachedNodeIds);
-            
-            if (!flowChartNodeIds.isEmpty()) {
-                for (String nodeId : flowChartNodeIds) {
-                    validationMessages.add(new NodeValidationMessage(Level.WARNING,
-                                                    "Node \"" + nodeId + "\" is unreachable.",
-                                                    chart.getNode(nodeId)));
-                }
+        flowChartNodeIds.addAll( dg.nodeIds() );
+
+        flowChart = dg;
+        dg.getStart().accept(this);
+        flowChartNodeIds.removeAll(reachedNodeIds);
+
+        if (!flowChartNodeIds.isEmpty()) {
+            for (String nodeId : flowChartNodeIds) {
+                validationMessages.add(new NodeValidationMessage(Level.WARNING,
+                                                "Node \"" + nodeId + "\" is unreachable.",
+                                                dg.getNode(nodeId)));
             }
         }
         

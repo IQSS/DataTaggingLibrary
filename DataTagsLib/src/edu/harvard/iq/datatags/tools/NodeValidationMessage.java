@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.graphs.ChartEntity;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
@@ -14,14 +14,14 @@ import java.util.Set;
  */
 public class NodeValidationMessage extends ValidationMessage {
     
-    private final Set<ChartEntity> entities = new HashSet<>();
+    private final Set<Node> entities = new HashSet<>();
 
-    public NodeValidationMessage(Level l, String m, ChartEntity... involvedEntities) {
+    public NodeValidationMessage(Level l, String m, Node... involvedEntities) {
         super(l, m);
         entities.addAll( Arrays.asList(involvedEntities) );
     }
     
-    public Set<ChartEntity> getEntities() {
+    public Set<Node> getEntities() {
         return entities;
     }
     

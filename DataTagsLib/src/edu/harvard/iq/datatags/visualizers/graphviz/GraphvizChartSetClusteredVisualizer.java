@@ -1,7 +1,6 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
@@ -29,12 +28,11 @@ import java.util.Set;
 
 /**
  * Given a {@link FlowChartSet}, instances of this class create gravphviz files
- * visualizing the chartset flow.
+ * visualizing the decision graph flow.
  * 
  * @author michael
  */
 public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
-	private FlowChartSet chartSet;
     
     private final TagValue.Visitor<String> valueNamer = new TagValue.Visitor<String>() {
 
@@ -158,7 +156,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
 		@Override
 		public Void visit(CallNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
-						.label( idLabel(nd) + nd.getCalleeChartId() +"/" + nd.getCalleeNodeId())
+						.label( idLabel(nd) + nd.getCalleeNodeId())
 						.shape(GvNode.Shape.cds)
 						.fillColor("#BBBBFF")
 						.gv() );
@@ -222,9 +220,11 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
         }
 	}
 	
+    private DecisionGraph theGraph;
+    
     @Override
     void printHeader(BufferedWriter out) throws IOException {
-		out.write("digraph " + getChartName() + " {");
+		out.write("digraph " + getDecisionGraphName() + " {");
 		out.newLine();
         out.write( "fontname=\"Courier\"" );
 		out.newLine();
@@ -243,13 +243,11 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
     
 	@Override
 	protected void printBody(BufferedWriter out) throws IOException {
-		for (DecisionGraph fc : chartSet.charts()) {
-			printChart(fc, out);
-            out.write( edge("start", nodeId(fc.getStart()))
-                        .color("#008800")
-                        .penwidth(4)
-                        .gv());
-		}
+        printChart(theGraph, out);
+        out.write( edge("start", nodeId(theGraph.getStart()))
+                    .color("#008800")
+                    .penwidth(4)
+                    .gv());
         out.write("{rank=source; start}");
 		out.newLine();
 	}
@@ -303,19 +301,14 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
 	}
 
 	String nodeId( Node nd ) {
-		return nodeId( nd.getChart() != null ? nd.getChart().getId() : "chart_is_null", nd.getId() );
+		return nd.getId();
 	}
-	
-	String nodeId( String chartId, String nodeId ) {
-		return chartId + "#" + nodeId;
-	}
-	
-	public FlowChartSet getChartSet() {
-		return chartSet;
-	}
-
-	public void setChartSet(FlowChartSet chartSet) {
-		this.chartSet = chartSet;
-	}
-	
+    
+    public void setDecisionGraph( DecisionGraph aDecisionGraph ) {
+        theGraph = aDecisionGraph;
+    }
+    
+    public DecisionGraph getDecisionGraph() {
+        return theGraph;
+    }
 }
