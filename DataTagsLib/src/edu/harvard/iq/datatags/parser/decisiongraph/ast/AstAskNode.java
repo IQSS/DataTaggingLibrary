@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.decisiongraph.references;
+package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
 import java.util.List;
 import java.util.Objects;
@@ -63,7 +63,7 @@ public class AstAskNode extends AstNode {
         if (!Objects.equals(this.answers, other.answers)) {
             return false;
         }
-        return equalsAsInstructionNodeRef(other);
+        return equalsAsAstNode(other);
     }
      @Override
      public String toStringExtras() {

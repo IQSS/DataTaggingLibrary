@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.model.charts;
+package edu.harvard.iq.datatags.model.graphs;
 
 /**
  * Base class for classes that take part in a chart set.

@@ -4,16 +4,12 @@ import java.util.List;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
 import org.codehaus.jparsec.Scanners;
-import static org.codehaus.jparsec.Scanners.notAmong;
 import org.codehaus.jparsec.Terminals;
 import org.codehaus.jparsec.Tokens;
 import org.codehaus.jparsec.Tokens.Tag;
 import org.codehaus.jparsec.misc.Mapper;
 import org.codehaus.jparsec.pattern.Patterns;
-import static org.codehaus.jparsec.Scanners.notChar;
-import static org.codehaus.jparsec.Scanners.string;
 import static org.codehaus.jparsec.Scanners.notAmong;
-import static org.codehaus.jparsec.Scanners.notChar;
 import static org.codehaus.jparsec.Scanners.string;
 
 /**
@@ -54,7 +50,7 @@ public class DecisionGraphTerminalParser {
     
     static final Parser<Tokens.Fragment> NODE_ID = Parsers.between(
             Scanners.among(">"),
-            Patterns.among(".,/~?!@#$%^&*_+-").or(Patterns.range('a', 'z'))
+            Patterns.among(".,/~?!()@#$%^&*_+-").or(Patterns.range('a', 'z'))
                                 .or(Patterns.range('A', 'Z')).or(Patterns.range('0','9')).many1()
                                 .toScanner( Tags.NODE_ID.toString() ).source(),
             Scanners.among("<")).map( s -> Tokens.fragment(s, Tags.NODE_ID) );

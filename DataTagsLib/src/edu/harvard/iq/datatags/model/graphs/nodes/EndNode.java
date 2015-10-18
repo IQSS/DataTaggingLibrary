@@ -1,7 +1,7 @@
 
-package edu.harvard.iq.datatags.model.charts.nodes;
+package edu.harvard.iq.datatags.model.graphs.nodes;
 
-import edu.harvard.iq.datatags.model.charts.ChartEntity;
+import edu.harvard.iq.datatags.model.graphs.ChartEntity;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
 
@@ -9,7 +9,7 @@ import java.util.Objects;
  * A node that terminates the run, if and when the execution gets to it.
  * @author michael
  */
-public class EndNode extends Node {
+public class EndNode extends TerminalNode {
 
 	public EndNode(String id) {
 		super(id);

@@ -25,7 +25,7 @@ public abstract class TagType {
     public abstract static class VoidVisitor implements Visitor<Void> {
         @Override
         public Void visitSimpleType( AtomicType t ) {
-            visitSimpleTypeImpl(t);
+            visitAtomicTypeImpl(t);
             return null;
         }
         
@@ -47,7 +47,7 @@ public abstract class TagType {
             return null;
         }
 
-        public abstract void visitSimpleTypeImpl( AtomicType t );
+        public abstract void visitAtomicTypeImpl( AtomicType t );
         public abstract void visitAggregateTypeImpl( AggregateType t );
         public abstract void visitCompoundTypeImpl( CompoundType t );
         public abstract void visitTodoTypeImpl( ToDoType t );

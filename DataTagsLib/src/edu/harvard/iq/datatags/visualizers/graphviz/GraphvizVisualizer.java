@@ -4,7 +4,7 @@
 
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.model.charts.ChartEntity;
+import edu.harvard.iq.datatags.model.graphs.ChartEntity;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;

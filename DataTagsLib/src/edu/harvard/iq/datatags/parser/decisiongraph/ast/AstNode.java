@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.decisiongraph.references;
+package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
@@ -12,12 +12,12 @@ import java.util.Objects;
 public abstract class AstNode {
     
 	public interface Visitor<T> {
-		T visit( AstAskNode askRef );
-		T visit( AstCallNode callRef );
-		T visit( AstEndNode endRef );
-		T visit( AstSetNode setRef );
-		T visit( AstRejectNode setRef );
-		T visit( AstTodoNode todoRef );
+		T visit( AstAskNode    astNode );
+		T visit( AstCallNode   astNode );
+		T visit( AstEndNode    astNode );
+		T visit( AstSetNode    astNode );
+		T visit( AstRejectNode astNode );
+		T visit( AstTodoNode   astNode );
 	}
     
     public static abstract class NullVisitor implements Visitor<Void> {
@@ -58,12 +58,12 @@ public abstract class AstNode {
             return null;
         }
 
-        public abstract void visitImpl( AstAskNode nd    ) throws DataTagsRuntimeException;
-        public abstract void visitImpl( AstSetNode nd    ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( AstAskNode    nd ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( AstSetNode    nd ) throws DataTagsRuntimeException;
         public abstract void visitImpl( AstRejectNode nd ) throws DataTagsRuntimeException;
-        public abstract void visitImpl( AstCallNode nd   ) throws DataTagsRuntimeException;
-        public abstract void visitImpl( AstTodoNode nd   ) throws DataTagsRuntimeException;
-        public abstract void visitImpl( AstEndNode nd    ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( AstCallNode   nd ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( AstTodoNode   nd ) throws DataTagsRuntimeException;
+        public abstract void visitImpl( AstEndNode    nd ) throws DataTagsRuntimeException;
 
     }
 	
@@ -96,10 +96,10 @@ public abstract class AstNode {
         if ( ! (obj instanceof AstNode) ) {
             return false;
         }
-        return equalsAsInstructionNodeRef((AstNode) obj);
+        return equalsAsAstNode((AstNode) obj);
     }
     
-    public boolean equalsAsInstructionNodeRef( AstNode other ) {
+    public boolean equalsAsAstNode( AstNode other ) {
         return Objects.equals(getId(), other.getId());
     }
     

@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.decisiongraph.references;
+package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
 import java.util.Objects;
 
@@ -40,7 +40,7 @@ public class AstRejectNode extends AstNode {
             return false;
         }
         final AstRejectNode other = (AstRejectNode) obj;
-        return Objects.equals(this.reason, other.reason) && super.equalsAsInstructionNodeRef(other);
+        return Objects.equals(this.reason, other.reason) && super.equalsAsAstNode(other);
     }
     
     

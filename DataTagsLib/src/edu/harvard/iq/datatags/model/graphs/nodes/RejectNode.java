@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.model.charts.nodes;
+package edu.harvard.iq.datatags.model.graphs.nodes;
 
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
@@ -8,7 +8,7 @@ import java.util.Objects;
  * In effect, this means that the dataset cannot be accepted to the repository,
  * @author michael
  */
-public class RejectNode extends Node {
+public class RejectNode extends TerminalNode {
     
     private final String reason;
 
@@ -42,12 +42,12 @@ public class RejectNode extends Node {
             return false;
         }
         final RejectNode other = (RejectNode) obj;
-        return Objects.equals(this.reason, other.reason) && super.equals(obj);
+        return Objects.equals(this.reason, other.reason) && equalsAsNode(other);
     }
 
     @Override
     public String toStringExtras() {
-        return "reason=" + reason;
+        return "reason:" + reason;
     }
     
 }

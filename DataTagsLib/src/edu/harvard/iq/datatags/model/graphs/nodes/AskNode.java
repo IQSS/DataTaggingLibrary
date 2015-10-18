@@ -1,6 +1,6 @@
-package edu.harvard.iq.datatags.model.charts.nodes;
+package edu.harvard.iq.datatags.model.graphs.nodes;
 
-import edu.harvard.iq.datatags.model.charts.FlowChart;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.HashMap;
@@ -16,16 +16,9 @@ public class AskNode extends Node {
 	private final Map<String, String> terms = new HashMap<>();
 	private String text;
 	
-	public AskNode(String id, String title) {
-		this(id, title, null, null);
-	}
 
 	public AskNode(String id) {
-		this(id, null);
-	}
-
-	public AskNode(String id, String title, String text, FlowChart chart) {
-		super(id, title, text, chart);
+		super(id);
 	}
 	
 	@Override

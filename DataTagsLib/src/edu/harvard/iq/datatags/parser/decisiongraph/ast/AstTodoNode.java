@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.decisiongraph.references;
+package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
 import java.util.Objects;
 
@@ -41,7 +41,7 @@ public class AstTodoNode extends AstNode {
 		}
 		final AstTodoNode other = (AstTodoNode) obj;
 		return Objects.equals(this.todoText, other.todoText)
-				&& equalsAsInstructionNodeRef(other);
+				&& equalsAsAstNode(other);
 	}
 	
 	@Override

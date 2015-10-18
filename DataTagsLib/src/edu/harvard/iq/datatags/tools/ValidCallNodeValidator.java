@@ -1,15 +1,15 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.charts.FlowChart;
-import edu.harvard.iq.datatags.model.charts.FlowChartSet;
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
-import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
-import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
-import edu.harvard.iq.datatags.model.charts.nodes.Node;
-import edu.harvard.iq.datatags.model.charts.nodes.Node.VoidVisitor;
-import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
-import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
-import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node.VoidVisitor;
+import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.LinkedList;
@@ -23,12 +23,12 @@ import java.util.LinkedList;
 public class ValidCallNodeValidator extends VoidVisitor {
     
     private final LinkedList<NodeValidationMessage> validationMessages = new LinkedList<>();
-    private FlowChart chart;
+    private DecisionGraph chart;
     
     
     public LinkedList<NodeValidationMessage> validateIdReferences(FlowChartSet fcs) {
-        Iterable<FlowChart> chartGroup = fcs.charts();
-        for (FlowChart c : chartGroup) {
+        Iterable<DecisionGraph> chartGroup = fcs.charts();
+        for (DecisionGraph c : chartGroup) {
             chart = c;
             Iterable<Node> chartNodes = chart.nodes();
             for (Node allnodes : chartNodes) {

@@ -1,14 +1,14 @@
 package edu.harvard.iq.datatags.parser.decisiongraph;
 
-import edu.harvard.iq.datatags.model.charts.FlowChart;
-import edu.harvard.iq.datatags.model.charts.FlowChartSet;
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
-import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
-import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
-import edu.harvard.iq.datatags.model.charts.nodes.Node;
-import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
-import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
-import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.AtomicType;
@@ -21,15 +21,15 @@ import static edu.harvard.iq.datatags.model.values.Answer.Answer;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstAnswerSubNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstAskNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstCallNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstEndNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstRejectNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstSetNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstTermSubNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstTodoNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.parser.definitions.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
@@ -93,7 +93,7 @@ public class DecisionGraphParser {
 		FlowChartSet chartSet = new FlowChartSet();
         chartSet.setTopLevelType(topLevelType);
         
-		FlowChart chart = new FlowChart( unitName + "-c1" );
+		DecisionGraph chart = new DecisionGraph( unitName + "-c1" );
 		chartSet.addFlowChart(chart);
 		chartSet.setDefaultChartId( chart.getId() );
         try {
@@ -147,7 +147,7 @@ public class DecisionGraphParser {
 	 *					  is returned.
 	 * @return the node at the root of the execution path.
 	 */
-	private Node buildNodes( final List<? extends AstNode> nodes, final FlowChart chart, final Node defaultNode ) {
+	private Node buildNodes( final List<? extends AstNode> nodes, final DecisionGraph chart, final Node defaultNode ) {
 		
 		AstNode.Visitor<Node> builder = new AstNode.Visitor<Node>(){
             int nextEndId = 0;
@@ -179,7 +179,6 @@ public class DecisionGraphParser {
 			@Override
 			public Node visit(AstCallNode callRef) {
 				CallNode res = new CallNode( callRef.getId() );
-				res.setCalleeChartId( chart.getId() );
 				res.setCalleeNodeId( callRef.getCalleeId() );
 				if ( ! callNodesToLink.containsKey(res.getCalleeNodeId()) ) {
 					callNodesToLink.put( res.getCalleeNodeId(), new LinkedList<CallNode>() );
@@ -202,19 +201,19 @@ public class DecisionGraphParser {
             
 			@Override
 			public Node visit(AstSetNode setRef) {
-                try {
-                    SetNode res = new SetNode( buildDataTags(setRef), setRef.getId() );
-                    res.setNextNode(buildNodes( C.tail(nodes), chart, defaultNode));
-                    return chart.add( res );
-                } catch (BadSetInstructionException ex) {
-                    throw new RuntimeException("Bad Set", ex );
-                }
+//                try {
+//                    SetNode res = new SetNode( buildDataTags(setRef), setRef.getId() );
+//                    res.setNextNode(buildNodes( C.tail(nodes), chart, defaultNode));
+//                    return chart.add( res );
+//                } catch (BadSetInstructionException ex) {
+//                    throw new RuntimeException("Bad Set", ex );
+//                }
+                throw new UnsupportedOperationException();
 			}
 
 			@Override
 			public Node visit(AstTodoNode todoRef) {
-				TodoNode res = new TodoNode( todoRef.getId() );
-				res.setTodoText(todoRef.getTodoText() );
+				TodoNode res = new TodoNode( todoRef.getId(), todoRef.getTodoText() );
 				res.setNextNode( buildNodes( C.tail(nodes), chart, defaultNode) );
 				return chart.add(res);
 			}
@@ -227,15 +226,15 @@ public class DecisionGraphParser {
 	CompoundValue buildDataTags( AstSetNode nodeRef ) throws BadSetInstructionException {
 		CompoundValue topLeveltypeInstance = topLevelType.createInstance();
         
-        for ( String slotName : nodeRef.getSlotNames() ) {
-            TagValueLookupResult slr = topLevelType.lookupValue( slotName, nodeRef.getValue(slotName));
-            
-            try {
-                slr.accept( setOrFail(topLeveltypeInstance, slr) );
-            } catch ( BadSetInstructionException ble ) {
-                throw new BadSetInstructionException(ble.getBadResult(), nodeRef);
-            }
-        }
+//        for ( String slotName : nodeRef.getSlotNames() ) {
+//            TagValueLookupResult slr = topLevelType.lookupValue( slotName, nodeRef.getValue(slotName));
+//            
+//            try {
+//                slr.accept( setOrFail(topLeveltypeInstance, slr) );
+//            } catch ( BadSetInstructionException ble ) {
+//                throw new BadSetInstructionException(ble.getBadResult(), nodeRef);
+//            }
+//        }
         
 		return topLeveltypeInstance;
 	}
@@ -267,7 +266,7 @@ public class DecisionGraphParser {
         C.head(path).accept(new TagType.VoidVisitor() {
 
             @Override
-            public void visitSimpleTypeImpl(AtomicType t) {
+            public void visitAtomicTypeImpl(AtomicType t) {
                 value.set(endValue);
             }
 
@@ -411,7 +410,7 @@ public class DecisionGraphParser {
                     }
                 }
 
-                @Override public void visitSimpleTypeImpl(AtomicType t) {}
+                @Override public void visitAtomicTypeImpl(AtomicType t) {}
                 @Override public void visitAggregateTypeImpl(AggregateType t) {}
                 @Override public void visitTodoTypeImpl(ToDoType t) {}
             });

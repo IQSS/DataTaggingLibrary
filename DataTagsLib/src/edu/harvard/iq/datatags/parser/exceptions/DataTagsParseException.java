@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.parser.exceptions;
 
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.definitions.ast.CompilationUnitLocationReference;
 
 /**
@@ -9,7 +10,12 @@ import edu.harvard.iq.datatags.parser.definitions.ast.CompilationUnitLocationRef
 public class DataTagsParseException extends Exception {
 	
 	private CompilationUnitLocationReference where;
+    private AstNode offendingNode;
 
+	public DataTagsParseException(AstNode offending, String message) {
+        super(message);
+        offendingNode = offending;
+    }
 	public DataTagsParseException(CompilationUnitLocationReference where, String message) {
 		super(message);
 		this.where = where;
@@ -23,6 +29,13 @@ public class DataTagsParseException extends Exception {
 	public CompilationUnitLocationReference getWhere() {
 		return where;
 	}
-	
-	
+
+    public AstNode getOffendingNode() {
+        return offendingNode;
+    }
+
+    public void setOffendingNode(AstNode offendingNode) {
+        this.offendingNode = offendingNode;
+    }
+    
 }

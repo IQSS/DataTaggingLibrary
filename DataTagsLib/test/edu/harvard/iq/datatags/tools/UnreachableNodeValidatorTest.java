@@ -1,15 +1,15 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.charts.ChartEntity;
-import edu.harvard.iq.datatags.model.charts.FlowChartSet;
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
-import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
-import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.ChartEntity;
+import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;

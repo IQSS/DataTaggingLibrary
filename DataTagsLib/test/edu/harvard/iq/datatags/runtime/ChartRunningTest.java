@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.runtime;
 
-import edu.harvard.iq.datatags.model.charts.FlowChart;
-import edu.harvard.iq.datatags.model.charts.FlowChartSet;
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
-import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
-import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.values.Answer;
 import static edu.harvard.iq.datatags.model.values.Answer.*;
 import static edu.harvard.iq.datatags.util.CollectionHelper.*;
@@ -21,7 +21,7 @@ public class ChartRunningTest {
 	@Test
 	public void linearChart() {
 		String flowChartName = "flowChart";
-		FlowChart c1 = new FlowChart( flowChartName );
+		DecisionGraph c1 = new DecisionGraph( flowChartName );
 		
 		AskNode start = c1.add( new AskNode("1") );
 		start.setNodeFor( YES, c1.add(new AskNode("2")) )
@@ -43,7 +43,7 @@ public class ChartRunningTest {
 	@Test
 	public void chartWithBranches() {
 		String flowChartName = "flowChart";
-		FlowChart c1 = new FlowChart( flowChartName );
+		DecisionGraph c1 = new DecisionGraph( flowChartName );
         
 		AskNode start = c1.add( new AskNode("1") );
 		start.setNodeFor( YES, c1.add(new AskNode("2")) )
@@ -70,7 +70,7 @@ public class ChartRunningTest {
 	@Test
 	public void chartWithCall() {
 		String subchartName = "flowChart-sub";
-		FlowChart subChart = new FlowChart( subchartName );
+		DecisionGraph subChart = new DecisionGraph( subchartName );
 		
 		AskNode start = subChart.add( new AskNode("A") );
 		start.setNodeFor( Answer.YES, subChart.add(new AskNode("B")) )
@@ -78,7 +78,7 @@ public class ChartRunningTest {
 		subChart.setStart(start);
 		
 		String mainChartName = "flowChart-main";
-		FlowChart mainChart = new FlowChart( mainChartName );
+		DecisionGraph mainChart = new DecisionGraph( mainChartName );
 		
 		start = mainChart.add( new AskNode("1") );
 		start.setNodeFor( Answer.YES, mainChart.add(new AskNode("2")) )
@@ -103,7 +103,7 @@ public class ChartRunningTest {
 	@Test
 	public void chartWithTailCall() {
 		String subchartName = "flowChart-sub";
-		FlowChart subChart = new FlowChart( subchartName );
+		DecisionGraph subChart = new DecisionGraph( subchartName );
 		
 		AskNode start = subChart.add( new AskNode("A") );
 		start.setNodeFor( Answer.YES, subChart.add(new AskNode("B")) )
@@ -111,7 +111,7 @@ public class ChartRunningTest {
 		subChart.setStart(start);
 		
 		String mainChartName = "flowChart-main";
-		FlowChart mainChart = new FlowChart( mainChartName );
+		DecisionGraph mainChart = new DecisionGraph( mainChartName );
 		
 		start = mainChart.add( new AskNode("1") );
 		start.setNodeFor( Answer.YES, mainChart.add(new AskNode("2")) )
@@ -133,7 +133,7 @@ public class ChartRunningTest {
 	@Test
 	public void chartWithRecursion() {
 		String chartId = "rec";
-		FlowChart rec = linearYesChart(chartId, 3);
+		DecisionGraph rec = linearYesChart(chartId, 3);
 		
 		AskNode n2 = (AskNode)rec.getNode(chartId+"_2");
 		CallNode caller = n2.setNodeFor(NO, rec.add(new CallNode("Caller")));
@@ -161,7 +161,7 @@ public class ChartRunningTest {
 	@Test
 	public void chartWithDeeperRecursion() {
 		String chartId = "rec";
-		FlowChart rec = linearYesChart(chartId, 3);
+		DecisionGraph rec = linearYesChart(chartId, 3);
 		
 		AskNode n2 = (AskNode)rec.getNode(chartId+"_2");
 		CallNode caller = n2.setNodeFor(NO, rec.add(new CallNode("Caller")));
@@ -195,11 +195,11 @@ public class ChartRunningTest {
 	 */
 	@Test
 	public void testThreadedCode() {
-		FlowChart main = new FlowChart("threaded-main");
+		DecisionGraph main = new DecisionGraph("threaded-main");
 		
-		FlowChart subA = linearYesChart("sub_a", 3);
-		FlowChart subB = linearYesChart("sub_b", 3);
-		FlowChart subC = linearYesChart("sub_c", 3);
+		DecisionGraph subA = linearYesChart("sub_a", 3);
+		DecisionGraph subB = linearYesChart("sub_b", 3);
+		DecisionGraph subC = linearYesChart("sub_c", 3);
 		
 		CallNode start = main.add( new CallNode("1", "sub_a", "sub_a_1") );
 		start.setNextNode( main.add( new CallNode("2", "sub_b", "sub_b_1")) )

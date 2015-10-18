@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.decisiongraph.references;
+package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
 import java.util.List;
 import java.util.Objects;
@@ -13,6 +13,12 @@ import java.util.stream.Collectors;
 public class AstSetNode extends AstNode {
     
     public abstract static class Assignment {
+        
+        public interface Visitor {
+            void visit( AtomicAssignment aa );
+            void visit( AggregateAssignment aa );
+        }
+        
         final List<String> slot;
         
         public Assignment( List<String> aSlot ) {
@@ -22,6 +28,8 @@ public class AstSetNode extends AstNode {
         public List<String> getSlot() {
             return slot;
         }
+        
+        public abstract void accept( Visitor v );
     }
     
     public static class AtomicAssignment extends Assignment {
@@ -34,6 +42,12 @@ public class AstSetNode extends AstNode {
         public String getValue() {
             return value;
         }
+        
+        @Override
+        public void accept( Visitor v ) {
+            v.visit(this);
+        }
+        
         @Override
         public String toString() {
             return "[" + getSlot() + "=" + getValue() + "]";
@@ -73,6 +87,12 @@ public class AstSetNode extends AstNode {
         public List<String> getValue() {
             return value;
         }
+        
+        @Override
+        public void accept( Visitor v ) {
+            v.visit(this);
+        }
+        
         @Override
         public String toString() {
             return "[" + getSlot() + "+=" + getValue() + "]";
@@ -112,6 +132,10 @@ public class AstSetNode extends AstNode {
     public Set<List<String>> getSlotNames() {
         return assignments.stream().map( a -> a.slot ).collect( Collectors.toSet() );
     }
+
+    public List<Assignment> getAssignments() {
+        return assignments;
+    }
     
 	@Override
 	public <T> T accept( Visitor<T> v ) {
@@ -135,7 +159,7 @@ public class AstSetNode extends AstNode {
         }
                 
         final AstSetNode other = (AstSetNode) obj;
-        return other.assignments.equals(assignments) && super.equalsAsInstructionNodeRef(other);
+        return other.assignments.equals(assignments) && super.equalsAsAstNode(other);
     }
     
     @Override

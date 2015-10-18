@@ -1,8 +1,9 @@
-package edu.harvard.iq.datatags.model.charts.nodes;
+package edu.harvard.iq.datatags.model.graphs.nodes;
 
-import edu.harvard.iq.datatags.model.charts.ChartEntity;
-import edu.harvard.iq.datatags.model.charts.FlowChart;
+import edu.harvard.iq.datatags.model.graphs.ChartEntity;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import org.codehaus.jparsec.internal.util.Objects;
 
 /**
  * An atomic part of the program - the equivalent of a line of code 
@@ -10,7 +11,7 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
  * 
  * @author michael
  */
-public abstract class Node extends ChartEntity {
+public abstract class Node {
 	
 	public interface Visitor<R> {
 		R visit( AskNode nd ) throws DataTagsRuntimeException;
@@ -68,31 +69,35 @@ public abstract class Node extends ChartEntity {
 
     }
     
-	private FlowChart chart;
+    private final String id;
 
-	public Node(String id) {
-		this( id, null );
-	}
-
-	public Node(String id, String title) {
-		this( id, title, null, null );
-	}
-
-	public Node(String id, String title, String text, FlowChart chart) {
-		super(id);
-		this.title = title;
-		this.info = text;
-		this.chart = chart;
+	public Node(String anId) {
+		id = anId;
 	}
 
 	public abstract <R> R accept( Node.Visitor<R> vr ) throws DataTagsRuntimeException ;
 	
-	public FlowChart getChart() {
-		return chart;
+    @Override
+	public String toString() {
+		String comps[] = getClass().getName().split("\\.");
+        String toStringExtras = toStringExtras();
+        if ( ! toStringExtras.isEmpty() ) {
+            toStringExtras = " " + toStringExtras;
+        }
+		return String.format("[%s id:%s%s]",
+				comps[comps.length-1], getId(), toStringExtras);
 	}
+    
+    protected String toStringExtras() {
+        return "";
+    }
 
-	public void setChart(FlowChart chart) {
-		this.chart = chart;
-	}
-	
+    public String getId() {
+        return id;
+    }
+    
+    protected boolean equalsAsNode( Node otherNode ) {
+        return Objects.equals( getId(), otherNode.getId() );
+    }
+    
 }

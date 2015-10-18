@@ -1,14 +1,14 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.model.charts.FlowChart;
-import edu.harvard.iq.datatags.model.charts.FlowChartSet;
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
-import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
-import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
-import edu.harvard.iq.datatags.model.charts.nodes.Node;
-import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
-import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
-import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.Answer;
@@ -81,7 +81,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
      * @param fc the FlowChart we search in
      * @return Set of all nodes to draw subcharts from.
      */
-    private Set<Node> findSubchartHeades(FlowChart fc) {
+    private Set<Node> findSubchartHeades(DecisionGraph fc) {
         final Set<Node> candidates = new HashSet<>();
         for ( Node n : fc.nodes() ) { candidates.add(n);}
         for ( Node n : fc.nodes() ) {
@@ -243,7 +243,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
     
 	@Override
 	protected void printBody(BufferedWriter out) throws IOException {
-		for (FlowChart fc : chartSet.charts()) {
+		for (DecisionGraph fc : chartSet.charts()) {
 			printChart(fc, out);
             out.write( edge("start", nodeId(fc.getStart()))
                         .color("#008800")
@@ -256,7 +256,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
 	
     
     
-	void printChart( FlowChart fc, BufferedWriter wrt ) throws IOException {
+	void printChart( DecisionGraph fc, BufferedWriter wrt ) throws IOException {
 		wrt.write( "subgraph cluster_" + sanitizeId(fc.getId()) + " {");
 		wrt.newLine();
 		wrt.newLine();

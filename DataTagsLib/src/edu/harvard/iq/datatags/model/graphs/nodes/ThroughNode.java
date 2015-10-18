@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.model.charts.nodes;
+package edu.harvard.iq.datatags.model.graphs.nodes;
 
 /**
  * A node through which the runtime passes, with only a

@@ -1,11 +1,11 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.charts.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.LinkedList;
 import java.util.List;

@@ -19,7 +19,6 @@ public class RuntimeEngineState implements java.io.Serializable {
     private URL flowchartSetSource;
     private String flowchartSetVersion;
     
-    private String currentChartId;
     private String currentNodeId;
     private final Deque<String> stack = new LinkedList<>();
     
@@ -73,19 +72,10 @@ public class RuntimeEngineState implements java.io.Serializable {
         this.serializedTagValue = serializedTagValue;
     }
 
-    public String getCurrentChartId() {
-        return currentChartId;
-    }
-
-    public void setCurrentChartId(String currentChartId) {
-        this.currentChartId = currentChartId;
-    }
-
     @Override
     public int hashCode() {
         int hash = 5;
         hash = 47 * hash + Objects.hashCode(this.status);
-        hash = 47 * hash + Objects.hashCode(this.currentChartId);
         hash = 47 * hash + Objects.hashCode(this.currentNodeId);
         return hash;
     }

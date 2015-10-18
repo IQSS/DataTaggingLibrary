@@ -1,12 +1,12 @@
-package edu.harvard.iq.datatags.model.charts;
+package edu.harvard.iq.datatags.model.graphs;
 
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
-import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
-import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
-import edu.harvard.iq.datatags.model.charts.nodes.Node;
-import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
-import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
-import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URL;
@@ -16,11 +16,11 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A single flow chart that a users walks through.
+ * A single decision graph that a users walks through. A compiled decision graph file.
  * 
  * @author michael
  */
-public class FlowChart extends ChartEntity {
+public class DecisionGraph extends ChartEntity {
 	
 	private static final AtomicInteger INDEX = new AtomicInteger(0);
 	
@@ -66,17 +66,16 @@ public class FlowChart extends ChartEntity {
         }
 		
 		Node visitSimpleNode( Node n ) {
-			n.setChart(FlowChart.this);
 			nodes.put( n.getId(), n );
 			return n;
 		}
 	};
 	
-	public FlowChart() {
+	public DecisionGraph() {
 		this( "FlowChart-"+INDEX.incrementAndGet());
 	}
 	
-	public FlowChart(String anId) {
+	public DecisionGraph(String anId) {
 		super(anId);
 	}
     

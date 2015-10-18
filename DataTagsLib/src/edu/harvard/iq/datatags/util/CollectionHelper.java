@@ -38,9 +38,9 @@ public class CollectionHelper {
 	
 	public <T> Iterable<T> reverse( Deque<T> in ) {
 		ArrayList<T> arr = new ArrayList<>(in);
-        for ( T t : in ) {
+        in.stream().forEach((t) -> {
             arr.add(t);
-        }
+        });
         return reverse(arr);
     }
     
@@ -84,6 +84,10 @@ public class CollectionHelper {
 		return new LinkedList<>(ct);
 	}
 	
+    public <T> List<T> immutableList( Collection<T> ct ) {
+        return Collections.unmodifiableList( list(ct) );
+    }
+    
 	public <T> Set<T> unionSet( Collection<T> c1, Collection<T> c2 ) {
 		Set<T> out = new HashSet<>( c1 );
 		out.addAll( c2 );

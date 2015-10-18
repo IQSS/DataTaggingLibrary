@@ -73,8 +73,12 @@ public class TagSpaceParseResult {
     public Optional<CompoundType> buildType( String slotName ) throws SemanticsErrorException  {
         
         AbstractSlot slot = slotsByName.get( slotName );
-        if ( slot == null ) return Optional.empty();
-        if ( ! (slot instanceof CompoundSlot) ) throw new SemanticsErrorException(null, "Slot " + slotName + " is not a compound (consists of) slot");
+        if ( slot == null ) {
+            return Optional.empty();
+        }
+        if ( ! (slot instanceof CompoundSlot) ) {
+            throw new SemanticsErrorException(null, "Slot " + slotName + " is not a compound (consists of) slot");
+        }
         
         CompoundSlot baseSlot = (CompoundSlot) slot;
         TypeBuilder tb = new TypeBuilder();

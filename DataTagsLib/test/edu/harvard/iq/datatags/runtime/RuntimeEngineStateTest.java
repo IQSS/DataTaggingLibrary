@@ -4,11 +4,11 @@
 
 package edu.harvard.iq.datatags.runtime;
 
-import edu.harvard.iq.datatags.model.charts.FlowChart;
-import edu.harvard.iq.datatags.model.charts.FlowChartSet;
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
-import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
-import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.values.Answer;
 import static edu.harvard.iq.datatags.model.values.Answer.NO;
 import static edu.harvard.iq.datatags.model.values.Answer.YES;
@@ -55,7 +55,7 @@ public class RuntimeEngineStateTest {
     @Test 
     public void testSnapshots() {
         String chartId = "rec";
-		FlowChart rec = linearYesChart(chartId, 3);
+		DecisionGraph rec = linearYesChart(chartId, 3);
 		
 		AskNode n2 = (AskNode)rec.getNode(chartId+"_2");
 		CallNode caller = n2.setNodeFor(NO, rec.add(new CallNode("Caller")));

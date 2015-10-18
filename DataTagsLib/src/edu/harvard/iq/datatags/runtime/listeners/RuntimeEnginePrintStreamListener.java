@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.runtime.listeners;
 
-import edu.harvard.iq.datatags.model.charts.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ public class RuntimeEnginePrintStreamListener implements RuntimeEngine.Listener 
 
 	@Override
 	public void processedNode(RuntimeEngine ngn, Node node) {
-		out.println( title(ngn) +"entered: " + node.getId() + "(" + node.getTitle() + ")");
+		out.println( title(ngn) +"entered: " + node.getId());
 	}
 
 	@Override

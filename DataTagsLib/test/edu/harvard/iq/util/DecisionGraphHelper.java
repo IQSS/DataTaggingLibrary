@@ -1,13 +1,13 @@
 package edu.harvard.iq.util;
 
-import edu.harvard.iq.datatags.model.charts.FlowChart;
-import edu.harvard.iq.datatags.model.charts.FlowChartSet;
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
-import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.values.Answer;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstSetNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.runtime.ChartRunningTest;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -34,8 +34,8 @@ public class DecisionGraphHelper {
 	 * @param length amount of decision nodes - not including the end node.
 	 * @return the chart.
 	 */
-	public static FlowChart linearYesChart( String id, int length ) {
-		FlowChart retVal = new FlowChart(id);
+	public static DecisionGraph linearYesChart( String id, int length ) {
+		DecisionGraph retVal = new DecisionGraph(id);
 		
 		AskNode last = retVal.add( new AskNode( id + "_1" ) );
 		retVal.setStart( last );
@@ -58,9 +58,9 @@ public class DecisionGraphHelper {
         return mock;
     }
     
-	public static FlowChartSet chartSet( FlowChart... flowCharts ) {
+	public static FlowChartSet chartSet( DecisionGraph... flowCharts ) {
 		FlowChartSet fcs = new FlowChartSet( flowCharts[0].getId()+"_set", mockTopLevelType() );
-		for ( FlowChart fc : flowCharts ) {
+		for ( DecisionGraph fc : flowCharts ) {
 			fcs.addFlowChart(fc );
 		}
 		return fcs;

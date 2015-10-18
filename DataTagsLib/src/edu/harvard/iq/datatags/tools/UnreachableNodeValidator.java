@@ -1,15 +1,15 @@
 
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.charts.FlowChart;
-import edu.harvard.iq.datatags.model.charts.FlowChartSet;
-import edu.harvard.iq.datatags.model.charts.nodes.AskNode;
-import edu.harvard.iq.datatags.model.charts.nodes.CallNode;
-import edu.harvard.iq.datatags.model.charts.nodes.EndNode;
-import edu.harvard.iq.datatags.model.charts.nodes.Node.VoidVisitor;
-import edu.harvard.iq.datatags.model.charts.nodes.RejectNode;
-import edu.harvard.iq.datatags.model.charts.nodes.SetNode;
-import edu.harvard.iq.datatags.model.charts.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node.VoidVisitor;
+import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
@@ -28,7 +28,7 @@ public class UnreachableNodeValidator extends VoidVisitor {
     
     private final List<NodeValidationMessage> validationMessages = new LinkedList<>();
     private final Set<String> reachedNodeIds = new HashSet<>();
-    private FlowChart flowChart = new FlowChart();
+    private DecisionGraph flowChart = new DecisionGraph();
     
     /**
      * Check each FlowChart in the FlowChartSet for unreachable nodes.
@@ -38,7 +38,7 @@ public class UnreachableNodeValidator extends VoidVisitor {
      */
     public List<NodeValidationMessage> validateUnreachableNodes(FlowChartSet fcs) {
         Set<String> flowChartNodeIds = new HashSet<>();
-        for (FlowChart chart : fcs.charts()) {
+        for (DecisionGraph chart : fcs.charts()) {
             flowChartNodeIds.addAll( chart.nodeIds() );
             
             flowChart = chart;

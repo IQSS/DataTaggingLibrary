@@ -1,8 +1,15 @@
 package edu.harvard.iq.datatags.runtime;
 
+import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.io.StringMapFormat;
-import edu.harvard.iq.datatags.model.charts.*;
-import edu.harvard.iq.datatags.model.charts.nodes.*;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
@@ -81,7 +88,7 @@ public class RuntimeEngine {
 		public Node visit( CallNode nd ) throws DataTagsRuntimeException {
 			stack.push(nd);
 			// Dynamic linking to the destination node.
-			FlowChart fs = getChartSet().getFlowChart(nd.getCalleeChartId());
+			DecisionGraph fs = getChartSet().getFlowChart(nd.getCalleeChartId());
 			if ( fs == null ) {
 				MissingFlowChartException mfce = new MissingFlowChartException(nd.getCalleeChartId(), chartSet, RuntimeEngine.this, "Can't find chart " + nd.getCalleeChartId() );
 				mfce.setSourceNode(nd);
@@ -123,7 +130,7 @@ public class RuntimeEngine {
 	 * @throws MissingFlowChartException if that chart does not exist.
 	 */
 	public boolean start( String flowChartName ) throws DataTagsRuntimeException {
-		FlowChart fs = chartSet.getFlowChart(flowChartName);
+		DecisionGraph fs = chartSet.getFlowChart(flowChartName);
 		if ( fs == null ) {
 			throw new MissingFlowChartException(flowChartName, 
 					chartSet, this, 
@@ -166,14 +173,11 @@ public class RuntimeEngine {
         final RuntimeEngineState state = new RuntimeEngineState();
         
         state.setStatus(getStatus());
-        state.setCurrentChartId( getCurrentNode().getChart().getId() );
         state.setCurrentNodeId( getCurrentNode().getId() );
         state.setFlowchartSetSource( getChartSet().getSource() );
         state.setFlowchartSetVersion( getChartSet().getVersion() );
         
-        for ( Node nd : getStack() ) {
-            state.pushNodeIdToStack( nd.getChart().getId() + "/" + nd.getId() );
-        }
+        getStack().forEach( nd -> state.pushNodeIdToStack( nd.getId() ) );
         
         state.setSerializedTagValue( new StringMapFormat().format(currentTags) );
         

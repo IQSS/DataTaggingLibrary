@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.charts.ChartEntity;
+import edu.harvard.iq.datatags.model.graphs.ChartEntity;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;

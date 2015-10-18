@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.decisiongraph.references;
+package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
 /**
  * A reference to an {@code (end)} node in a chart.
@@ -33,6 +33,4 @@ public class AstEndNode extends AstNode {
     public int hashCode() {
         return super.hashCode();
     }
-    
-    
 }

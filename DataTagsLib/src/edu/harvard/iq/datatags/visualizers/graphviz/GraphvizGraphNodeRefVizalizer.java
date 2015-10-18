@@ -1,14 +1,14 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstAnswerSubNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstAskNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstCallNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstEndNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstRejectNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstSetNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstTermSubNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstTodoNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 import java.io.BufferedWriter;

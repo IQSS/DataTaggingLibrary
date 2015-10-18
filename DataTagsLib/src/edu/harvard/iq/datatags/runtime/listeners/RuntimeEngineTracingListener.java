@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.runtime.listeners;
 
-import edu.harvard.iq.datatags.model.charts.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import java.util.ArrayList;
 import java.util.LinkedList;

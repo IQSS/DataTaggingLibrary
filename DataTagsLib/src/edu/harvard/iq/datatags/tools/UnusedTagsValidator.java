@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.charts.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.LinkedList;

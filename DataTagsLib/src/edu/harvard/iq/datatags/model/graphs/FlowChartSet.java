@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.model.charts;
+package edu.harvard.iq.datatags.model.graphs;
 
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.TagType;
@@ -13,13 +13,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  * data tags, and the flow charts needed to fill them.
  * 
  * @author michael
+ * 
+ * TODO consider removing this class for now, as there's only a single decision graph.
+ * 
  */
 public class FlowChartSet extends ChartEntity {
 	private static final AtomicInteger INDEX = new AtomicInteger(0);
 	
 	private URL source;
     private String version;
-	private final Map<String, FlowChart> charts = new TreeMap<>();
+	private final Map<String, DecisionGraph> charts = new TreeMap<>();
 	private CompoundType topLevelType = null;
 	
 	/**
@@ -58,15 +61,15 @@ public class FlowChartSet extends ChartEntity {
         this.version = version;
     }
 	
-	public void addFlowChart( FlowChart c ) {
+	public void addFlowChart( DecisionGraph c ) {
 		charts.put( c.getId(),  c );
 	}
 	
-	public FlowChart getFlowChart( String id ) {
+	public DecisionGraph getFlowChart( String id ) {
 		return charts.get( id );
 	}
 
-	public Iterable<FlowChart> charts() {
+	public Iterable<DecisionGraph> charts() {
 		return charts.values();
 	}
 

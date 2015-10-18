@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.parser.decisiongraph.FlowChartASTParser;
-import edu.harvard.iq.datatags.parser.decisiongraph.references.AstNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.Arrays;
 import java.util.Collections;

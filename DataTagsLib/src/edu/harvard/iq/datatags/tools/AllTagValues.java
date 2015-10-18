@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.charts.FlowChartSet;
+import edu.harvard.iq.datatags.model.graphs.FlowChartSet;
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.AtomicType;
@@ -27,7 +27,7 @@ public class AllTagValues extends VoidVisitor {
     }
 
     @Override
-    public void visitSimpleTypeImpl(AtomicType t) {
+    public void visitAtomicTypeImpl(AtomicType t) {
         for (AtomicValue simpleValue : t.values()) {
             definedTagValues.add(simpleValue);
         }
