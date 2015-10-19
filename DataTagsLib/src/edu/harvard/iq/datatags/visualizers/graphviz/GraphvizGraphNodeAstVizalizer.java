@@ -111,11 +111,13 @@ public class GraphvizGraphNodeAstVizalizer extends GraphvizVisualizer {
                 writeAnswerNode(node.getId(), ansNodeId, a, depth);
             });
             
-            node.getTerms().forEach( tsn -> {
-                String termNodeId = node.getId() + "#TERM#" + sanitizeId( tsn.getTerm() );
-                edges.add( edge(node.getId(), termNodeId).label(tsn.getTerm()).gv() );
-                writeTermNode( termNodeId, tsn);
-            });
+            if (node.getTerms() != null ){
+                node.getTerms().forEach( tsn -> {
+                    String termNodeId = node.getId() + "#TERM#" + sanitizeId( tsn.getTerm() );
+                    edges.add( edge(node.getId(), termNodeId).label(tsn.getTerm()).gv() );
+                    writeTermNode( termNodeId, tsn);
+                });
+            }
         });
         
         setNodeTypeHandler(AstCallNode.class, (AstCallNode node, int depth) -> {

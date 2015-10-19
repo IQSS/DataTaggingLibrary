@@ -22,9 +22,9 @@ import java.nio.file.Paths;
  *
  * @author michael
  */
-public class FlowChartCompiling {
+public class DecisionGraphCompiling {
     public static void main(String[] args) {
-        FlowChartCompiling fcc = new FlowChartCompiling();
+        DecisionGraphCompiling fcc = new DecisionGraphCompiling();
         try {
             fcc.go(args);
         } catch (IOException ex) {
@@ -35,9 +35,11 @@ public class FlowChartCompiling {
         } catch (BadSetInstructionException ex) {
             TagValueLookupResult badRes = ex.getBadResult();
             
-            System.out.println("Bad Set instruction: " + ex.getMessage());
-            badRes.accept( new BadSetInstructionPrinter() );
-            
+            if ( badRes != null ) {
+                System.out.println("Bad Set instruction: " + ex.getMessage());
+                badRes.accept( new BadSetInstructionPrinter() );
+            }
+            System.out.println("Error in [set] node: " + ex.getMessage() );
             System.out.println("offending Set node: " + ex.getOffendingNode() );
             
         } catch (DataTagsParseException ex) {
@@ -54,7 +56,7 @@ public class FlowChartCompiling {
         System.out.println("Reading tags: " + tagsFile );
         System.out.println(" (full:  " + tagsFile.toAbsolutePath() + ")" );
         
-        TagSpaceParser tagsParser = new  TagSpaceParser();
+        TagSpaceParser tagsParser = new TagSpaceParser();
         CompoundType baseType = tagsParser.parse(readAll(tagsFile)).buildType("DataTags").get();
         
         GraphvizDataStructureVisualizer tagViz = new GraphvizDataStructureVisualizer(baseType);
@@ -69,6 +71,7 @@ public class FlowChartCompiling {
         
         DecisionGraphParser dgParser = new DecisionGraphParser();
         DecisionGraphParseResult parsedGraph = dgParser.parse(source);
+        
         GraphvizGraphNodeAstVizalizer viz = new GraphvizGraphNodeAstVizalizer(parsedGraph.getNodes());
         Path outfile = chartFile.resolveSibling( chartFile.getFileName().toString() + "-ast.gv" );
         System.out.println("Writing: " + outfile );

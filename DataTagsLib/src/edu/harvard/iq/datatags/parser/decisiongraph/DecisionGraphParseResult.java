@@ -68,6 +68,7 @@ public class DecisionGraphParseResult {
      */
     public DecisionGraph compile(CompoundType tagSpace) throws DataTagsParseException {
         buildTypeIndex(tagSpace);
+        
         product = new DecisionGraph();
         
         // stage 1: Ensure all AST nodes have ids.
@@ -288,11 +289,13 @@ public class DecisionGraphParseResult {
 
             @Override
             public void visitCompoundTypeImpl(CompoundType t) {
-                stack.push(t.getName());
-                t.getFieldTypes().forEach(tt -> {
-                    tt.accept(this);
-                });
-                stack.pop();
+                if ( ! t.equals(topLevelType) ) {
+                    stack.push(t.getName());
+                }
+                t.getFieldTypes().forEach(tt -> tt.accept(this) );
+                if ( ! t.equals(topLevelType) ) {
+                    stack.pop();
+                }
             }
 
             void addType(TagType tt) {
@@ -380,7 +383,7 @@ public class DecisionGraphParseResult {
     /**
      * Builds a value based on the assignments visited.
      */
-    private static class SetNodeValueBuilder implements AstSetNode.Assignment.Visitor {
+    private class SetNodeValueBuilder implements AstSetNode.Assignment.Visitor {
 
         private final CompoundValue topValue;
 
@@ -390,11 +393,11 @@ public class DecisionGraphParseResult {
 
         @Override
         public void visit(AstSetNode.AtomicAssignment aa) {
-            final CompoundValue additionPoint = descend(aa.getSlot(), topValue);
+            final CompoundValue additionPoint = descend( fullyQualifiedName.get(typesBySlot.get(aa.getSlot())) , topValue);
             TagType valueType = additionPoint.getType().getTypeNamed(C.last(aa.getSlot()));
             if (valueType == null) {
                 throw new RuntimeException("Type '" + additionPoint.getType().getName()
-                        + "' does not have a field of type '" + C.last(aa.getSlot()));
+                        + "' does not have a field of type '" + C.last(aa.getSlot()) + "'");
             }
             valueType.accept(new TagType.VoidVisitor() {
                 @Override
@@ -425,7 +428,7 @@ public class DecisionGraphParseResult {
 
         @Override
         public void visit(AstSetNode.AggregateAssignment aa) {
-            final CompoundValue additionPoint = descend(aa.getSlot(), topValue);
+            final CompoundValue additionPoint = descend(fullyQualifiedName.get(typesBySlot.get(aa.getSlot())), topValue);
             TagType valueType = additionPoint.getType().getTypeNamed(C.last(aa.getSlot()));
             if (valueType == null) {
                 throw new RuntimeException("Type '" + additionPoint.getType().getName()

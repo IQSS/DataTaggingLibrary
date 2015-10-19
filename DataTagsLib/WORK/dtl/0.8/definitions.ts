@@ -45,9 +45,9 @@ Storage: one of
 	doubleEncrypt [Encryption on the client, and then on the server. Both passwords are required in order to make use of the data].
 
 Transit [How the dataset should be transmitted]: one of
-	clear [ No encryption involved.],
-	encrypt [ Single encryption.],
-	doubleEncrypt [Encryption with two keys, which may be held by different parties.]
+	clear         [ No encryption involved.],
+	encrypt       [ Single encryption.],
+	doubleEncrypt [ Encryption with two keys, which may be held by different parties. ]
 .
 
 Authentication: some of
