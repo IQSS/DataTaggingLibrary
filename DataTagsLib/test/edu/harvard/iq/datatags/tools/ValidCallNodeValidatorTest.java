@@ -50,7 +50,7 @@ public class ValidCallNodeValidatorTest {
     
     @Test
     public void validateIdReferencesTest_noId() throws BadSetInstructionException, DataTagsParseException {
-        String code = "(todo: There's no id here to do anything with)(end)";
+        String code = "[todo: There's no id here to do anything with][end]";
         parseResult = dgParser.parse(code);
         dg = parseResult.compile(new CompoundType("", ""));
         List<NodeValidationMessage> messages = instance.validateIdReferences(dg);
@@ -59,8 +59,8 @@ public class ValidCallNodeValidatorTest {
 
     @Test
     public void validateIdReferencesTest_validId() throws BadSetInstructionException, DataTagsParseException {
-        String code = "(call: ppraCompliance )" +
-                      "(>ppraCompliance< ask:(text: This should work!))(end)";
+        String code = "[call: ppraCompliance ]" +
+                      "[>ppraCompliance< ask:{text: This should work!} {answers: {yes:[end]}}][end]";
         parseResult = dgParser.parse(code);
         dg = parseResult.compile(new CompoundType("", ""));
         
@@ -70,15 +70,15 @@ public class ValidCallNodeValidatorTest {
     
     @Test
     public void validateIdReferencesTest_invalidId() throws BadSetInstructionException, DataTagsParseException {
-        String code = "(call: ferpaCompliance )" +
-                      "(>ppraCompliance< ask:(text: This shouldn't work.))" +
-                      "(end)";
+        String code = "[>invalid-node< call: ferpaCompliance ]" +
+                      "[>ppraCompliance< ask:{text: This shouldn't work.}{answers: {yes:[end]}}]" +
+                      "[end]";
         
         parseResult = dgParser.parse(code);
         dg = parseResult.compile(new CompoundType("", ""));
         List<NodeValidationMessage> actual = instance.validateIdReferences(dg);
         assertEquals(ValidationMessage.Level.ERROR, actual.get(0).getLevel());
-        assertTrue( actual.get(0).getMessage().contains("id:$0") );
+        assertTrue( actual.get(0).getMessage().contains("invalid-node") );
     }
     
 }

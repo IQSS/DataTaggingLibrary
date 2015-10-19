@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.parser.decisiongraph;
 
+import java.util.Arrays;
 import java.util.List;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
@@ -31,10 +32,11 @@ public class DecisionGraphTerminalParser {
     }
     
     static final String NODE_TEXT_TERMINATORS = ":]}";
-    static final Terminals NODE_STRUCTURE_TOKENS = Terminals.operators( "/", "+=","=", ",", ";",
+    static final List<String> NODE_STRUCTURE_TOKENS = Arrays.asList( "/", "+=","=", ",", ";",
             "[", ":", "{", "}", "]",
             "ask","set","end","reject","call","todo",
             "text", "terms", "answers");
+    static final Terminals NODE_STRUCTURE_TERMINALS = Terminals.operators(NODE_STRUCTURE_TOKENS);
    
     static final Parser<Object> TOKENIZER;
     
@@ -58,7 +60,7 @@ public class DecisionGraphTerminalParser {
     
     static {
         TOKENIZER = 
-            Parsers.<Object>or(NODE_STRUCTURE_TOKENS.tokenizer(),
+            Parsers.<Object>or(NODE_STRUCTURE_TERMINALS.tokenizer(),
                                 NODE_ID,
                                 Terminals.Identifier.TOKENIZER,
                                 NODE_TEXT);
@@ -66,16 +68,11 @@ public class DecisionGraphTerminalParser {
     
     
     static Parser<?> nodeStructurePart(String part) {
-       return Mapper.skip(NODE_STRUCTURE_TOKENS.token(part));
+       return Mapper.skip(NODE_STRUCTURE_TERMINALS.token(part));
     }
     
     static <T> Parser<T> buildParser(Parser<T> base ) {
         return base.from(TOKENIZER, IGNORABLES.skipMany());
     }
     
-    static String join( List<String> list ) {
-        StringBuilder sb = new StringBuilder();
-        list.forEach( s -> sb.append(s).append(" ") );
-        return sb.toString().trim(); 
-    }
 }

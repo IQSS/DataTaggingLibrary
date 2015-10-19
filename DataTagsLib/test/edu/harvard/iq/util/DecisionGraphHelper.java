@@ -57,11 +57,11 @@ public class DecisionGraphHelper {
     }
     
 	
-	public static void assertExecutionTrace(DecisionGraph dg, String flowChartName, List<String> expectedIds) {
-		assertExecutionTrace(dg, flowChartName, expectedIds, true);
+	public static void assertExecutionTrace(DecisionGraph dg, List<String> expectedIds) {
+		assertExecutionTrace(dg, expectedIds, true);
 	}
 	
-	public static void assertExecutionTrace(DecisionGraph dg, String flowChartName, List<String> expectedIds, boolean logToStdOut) {
+	public static void assertExecutionTrace(DecisionGraph dg, List<String> expectedIds, boolean logToStdOut) {
 		Iterable<Answer> yesMan = () -> new Iterator<Answer>(){
             @Override
             public boolean hasNext() { return true; }
@@ -74,14 +74,14 @@ public class DecisionGraphHelper {
             
         };
 		
-		assertExecutionTrace(dg, flowChartName, yesMan, expectedIds, logToStdOut);
+		assertExecutionTrace(dg, yesMan, expectedIds, logToStdOut);
 	}
 	
-	public static void assertExecutionTrace(DecisionGraph dg, String flowChartName, Iterable<Answer> answers, Iterable<String> expectedIds) {
-		assertExecutionTrace(dg, flowChartName, answers, expectedIds, true);
+	public static void assertExecutionTrace(DecisionGraph dg, Iterable<Answer> answers, Iterable<String> expectedIds) {
+		assertExecutionTrace(dg, answers, expectedIds, true);
 	}
     
-	public static void assertExecutionTrace(DecisionGraph dg, String flowChartName, Iterable<Answer> answers, Iterable<String> expectedIds, boolean logToStdOut) {
+	public static void assertExecutionTrace(DecisionGraph dg, Iterable<Answer> answers, Iterable<String> expectedIds, boolean logToStdOut) {
 		if ( dg.getTopLevelType() == null ) {
             dg.setTopLevelType( new CompoundType("placeholder","") );
         }
@@ -93,8 +93,9 @@ public class DecisionGraphHelper {
 																: new RuntimeEngineSilentListener()) );
 		Iterator<Answer> answerItr = answers.iterator();
 		try {
-			ngn.start();
-			while ( ngn.consume(answerItr.next()) ) {}
+			if ( ngn.start() ) {
+                while ( ngn.consume(answerItr.next()) ) {}
+            }
 		
 		} catch ( DataTagsRuntimeException ex ) {
 			Logger.getLogger(ChartRunningTest.class.getName()).log(Level.SEVERE, null, ex);

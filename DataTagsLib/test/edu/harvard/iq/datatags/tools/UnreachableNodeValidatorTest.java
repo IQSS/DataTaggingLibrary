@@ -29,7 +29,6 @@ import org.junit.Test;
 public class UnreachableNodeValidatorTest {
     
     UnreachableNodeValidator instance;
-    DecisionGraphParser fcsc;
     DecisionGraphParser astParser;
     DecisionGraph decisionGraph;
     
@@ -47,7 +46,7 @@ public class UnreachableNodeValidatorTest {
     @Before
     public void setUp() {
         instance = new UnreachableNodeValidator();
-        fcsc = new DecisionGraphParser();
+        astParser = new DecisionGraphParser();
     }
     
     @After
@@ -58,11 +57,15 @@ public class UnreachableNodeValidatorTest {
     @Test
     public void validateUnreachableNodesTest_reachableNodes() throws DataTagsParseException {
         System.out.println("\n\nReachable");
-        String code = "(>ask1< ask: (text: Will this work?)"
-                + "(yes: (call:shouldWork) ))(>end1< end)"
-                + "(>shouldWork< ask: (text: This should work.)"
-                + "(yes: (>reject1< reject: Good, it works.))"
-                + "(no: (>reject2< reject: This should have worked.)))";
+        String code = "[>ask1< ask: {text: Will this work?}\n" +
+                        "  {answers:\n" +
+                        "    {yes: [call:shouldWork]}}]\n" +
+                        "[>end1< end]\n" +
+                        "[>shouldWork< ask: \n" +
+                        "  {text: This should work.}\n" +
+                        "  {answers:\n" +
+                        "    {yes: [>reject1< reject: Good it works.]}\n" +
+                        "    {no: [>reject2< reject: This should have worked.]}}]";
         DecisionGraphParseResult parseResult = astParser.parse(code);
         decisionGraph = parseResult.compile( new CompoundType("","") );
         List<NodeValidationMessage> messages = instance.validateUnreachableNodes(decisionGraph);
@@ -86,7 +89,7 @@ public class UnreachableNodeValidatorTest {
    
     @Test
     public void validateUnreachableNodesTest_minimal() throws BadSetInstructionException, DataTagsParseException {
-        String code = "(>r< end)(>nr< end)";
+        String code = "[>r< end][>nr< end]";
         DecisionGraphParseResult parseResult = astParser.parse(code);
         decisionGraph = parseResult.compile( new CompoundType("","") );
         List<NodeValidationMessage> messages = instance.validateUnreachableNodes(decisionGraph);
@@ -107,13 +110,16 @@ public class UnreachableNodeValidatorTest {
     
     @Test
     public void validateUnreachableNodesTest_unreachableNodes() throws BadSetInstructionException, DataTagsParseException {
-        String code = "(>ask1< ask: (text: Will this work?)"
-                + "(yes: (>reject1< reject: No.))"
-                + "(no: (>reject2< reject: Still no.)))"
-                + "(>ask2< ask: (text: This shouldn't work.)"
-                + "(yes: (>reject3< reject: No.))"
-                + "(no: (>reject4< reject: Still no.)))"
-                + "(>end1< end)";
+        String code = "[>ask1< ask: {text: Will this work?}\n" +
+                        "  {answers: {yes: [>reject1< reject: No.]}\n" +
+                        "  {no: [>reject2< reject: Still no.]}}]\n" +
+                        "[>ask2< ask: {text: This shouldn't work.}\n" +
+                        "  {answers: \n" +
+                        "    {yes: [>reject3< reject: No.]}\n" +
+                        "    {no:  [>reject4< reject: Still no.]}\n" +
+                        "  }\n" +
+                        "]\n" +
+                        "[>end1< end]";
         DecisionGraphParseResult parseResult = astParser.parse(code);
         decisionGraph = parseResult.compile( new CompoundType("","") );
         

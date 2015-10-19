@@ -49,9 +49,9 @@ public class RepeatIdValidatorTest {
     
     @Test
     public void validateRepeatIdsTest_noId() throws DataTagsParseException {
-        String code = "(call: ppraCompliance )\n" +
-                      "(call: ferpaCompliance )\n" +
-                      "(call: govRecsCompliance )";
+        String code = "[call: ppraCompliance]\n" +
+                      "[call: ferpaCompliance ]\n" +
+                      "[call: govRecsCompliance ]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
         assertEquals(Collections.emptySet(), messages);
@@ -59,9 +59,9 @@ public class RepeatIdValidatorTest {
     
     @Test
     public void validateRepeatIdsTest_diffIds() throws DataTagsParseException {
-        String code = "(>personalData< call: medicalRecordsCompliance )" +
-                      "(>medicalRecordsCompliance< call: ppraCompliance)" +
-                      "(>MR2< call: ppraCompliance)";
+        String code = "[>personalData< call: medicalRecordsCompliance ]" +
+                      "[>medicalRecordsCompliance< call: ppraCompliance]" +
+                      "[>MR2< call: ppraCompliance]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
         assertEquals(Collections.emptySet(), messages);
@@ -69,9 +69,9 @@ public class RepeatIdValidatorTest {
     
     @Test
     public void validateRepeatIdsTest_sameIds() throws DataTagsParseException {
-        String code = "(>personalData< call: medicalRecordsCompliance )" +
-                      "(>medicalRecordsCompliance< call: ppraCompliance)" +
-                      "(>personalData< call: ppraCompliance)";
+        String code = "[>personalData< call: medicalRecordsCompliance ]" +
+                      "[>medicalRecordsCompliance< call: ppraCompliance]" +
+                      "[>personalData< call: ppraCompliance]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
         Set<ValidationMessage> expected = Collections.singleton(new ValidationMessage(Level.ERROR, "Duplicate node id: \"personalData\"."));
@@ -82,13 +82,14 @@ public class RepeatIdValidatorTest {
     @Test
     public void validateRepeatIdsTest_layeredIds() throws DataTagsParseException {
         String code = 
-                  "(>personalData< ask: (text: first )"
-                + "   (yes: (>repeat< ask: "
-                + "       (text: second)"
-                + "       (no: (>todo1< todo: nothing!)))))"
-                + "(>repeat< ask: "
-                + "    (text: is this a repeat?)"
-                + "    (yes: (>todo1< todo: yes.)))";
+                  "[>personalData< ask: {text: first}"
+                + "{answers:"
+                + "   {yes: [>repeat< ask: "
+                + "       {text: second}"
+                + "       {answers: {no: [>todo1< todo: nothing!]}}]}}]"
+                + "[>repeat< ask: "
+                + "    {text: is this a repeat?}"
+                + "    {answers: {yes: [>todo1< todo: yes.]}}]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
         assertEquals(new HashSet<>( 

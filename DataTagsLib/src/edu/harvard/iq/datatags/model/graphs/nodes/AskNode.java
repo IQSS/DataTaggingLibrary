@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.model.graphs.nodes;
 
-import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -73,4 +73,37 @@ public class AskNode extends Node {
                     ? (text.length()>20? text.substring(0,20) : text)
                         : "<null>" );
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + Objects.hashCode(getId());
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if ( ! (obj instanceof AskNode) ) {
+            return false;
+        }
+        final AskNode other = (AskNode) obj;
+        if (!Objects.equals(this.text, other.text)) {
+            return false;
+        }
+        if (!Objects.equals(this.nextNodeByAnswer, other.nextNodeByAnswer)) {
+            return false;
+        }
+        if (!Objects.equals(this.terms, other.terms)) {
+            return false;
+        }
+        return equalsAsNode(other);
+    }
+    
+    
 }

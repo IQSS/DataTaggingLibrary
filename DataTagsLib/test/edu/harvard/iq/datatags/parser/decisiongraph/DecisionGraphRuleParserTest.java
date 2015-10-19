@@ -148,6 +148,13 @@ public class DecisionGraphRuleParserTest {
     }
     
     @Test
+    public void rejectNodeWithCommas() {
+        Parser<AstRejectNode> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.REJECT_NODE );
+        String rejectText = "unfortunately, we cannot accept your dataset. You're likely breaching §7.6.1(ii) of BANANAA. Can we ask why?";
+        assertEquals(new AstRejectNode(null, rejectText), sut.parse("[reject: " + rejectText + "]") );
+    }
+    
+    @Test
     public void atomicAssignmentSlotTest() {
         Parser<AstSetNode.AtomicAssignment> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.ATOMIC_ASSIGNMENT_SLOT );
         

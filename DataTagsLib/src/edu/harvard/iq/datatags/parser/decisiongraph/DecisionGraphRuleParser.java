@@ -53,13 +53,10 @@ public class DecisionGraphRuleParser {
         List<Parser<?>> parsers = new LinkedList<>();
         parsers.add( Terminals.fragment(Tags.TEXT_BODY ) );
         parsers.add( Terminals.identifier() );
-        String includedParts = DecisionGraphTerminalParser.NODE_TEXT_TERMINATORS.replaceAll(terminatingNodePart, "");
-        for ( int i=0; 
-              i<includedParts.length();
-              i++ ) {
-            String okPart = includedParts.substring(i, i+1);
-            parsers.add(nodeStructurePart(okPart));
-        }
+        DecisionGraphTerminalParser.NODE_STRUCTURE_TOKENS.stream()
+                .filter( t -> ! t.equals(terminatingNodePart) )
+                .forEach( okPart -> parsers.add(nodeStructurePart(okPart)) );
+        
         return Parsers.or(parsers).many().source();
     }
     

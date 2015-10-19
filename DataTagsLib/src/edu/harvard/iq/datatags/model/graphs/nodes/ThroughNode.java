@@ -27,5 +27,9 @@ public abstract class ThroughNode extends Node {
 		this.nextNode = aNode;
 		return aNode;
 	}
+    
+    public boolean hasNextNode() {
+        return getNextNode() != null;
+    }
 	
 }

@@ -26,6 +26,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,8 +45,6 @@ import java.util.Set;
  */
 public class DecisionGraphParseResult {
 
-    private int nextNodeId = 1;
-
     private final List<? extends AstNode> astNodes;
 
     final Map<List<String>, TagType> typesBySlot = new HashMap<>();
@@ -54,6 +53,8 @@ public class DecisionGraphParseResult {
     private CompoundType topLevelType;
     
     private DecisionGraph product;
+    
+    private final AstNodeIdProvider nodeIdProvider = new AstNodeIdProvider();
 
     public DecisionGraphParseResult(List<? extends AstNode> someAstNodes) {
         astNodes = someAstNodes;
@@ -68,9 +69,12 @@ public class DecisionGraphParseResult {
     public DecisionGraph compile(CompoundType tagSpace) throws DataTagsParseException {
         buildTypeIndex(tagSpace);
         product = new DecisionGraph();
-
-        // stage 1: Break nodes to componsnets, and
-        // stage 2: Compile and link direct nodes.
+        
+        // stage 1: Ensure all AST nodes have ids.
+        addIds( astNodes );
+        
+        // stage 2: Break nodes to componsnets, and
+        // stage 3: Compile and link direct nodes.
         EndNode endAll = new EndNode(null);
         try {
             breakAstNodeList(astNodes).forEach((segment) -> buildNodes(segment, endAll) );
@@ -161,9 +165,11 @@ public class DecisionGraphParseResult {
                     : C.head(astNodes).accept(new AstNode.Visitor<Node>() {
                 @Override
                 public Node visit(AstAskNode astNode) {
-                    AskNode res = new AskNode(getCreateId(astNode));
+                    AskNode res = new AskNode(astNode.getId());
                     res.setText(astNode.getTextNode().getText());
-                    astNode.getTerms().forEach(t -> res.addTerm(t.getTerm(), t.getExplanation()));
+                    if ( astNode.getTerms() != null ) {
+                        astNode.getTerms().forEach(t -> res.addTerm(t.getTerm(), t.getExplanation()));
+                    }
                     
                     Node syntacticallyNext = buildNodes(C.tail(astNodes), defaultNode );
                     
@@ -177,14 +183,10 @@ public class DecisionGraphParseResult {
 
                 @Override
                 public Node visit(AstCallNode astNode) {
-                    CallNode callNode = new CallNode(getCreateId(astNode));
+                    CallNode callNode = new CallNode(astNode.getId());
+                    callNode.setCalleeNodeId( astNode.getCalleeId() );
                     callNode.setNextNode( buildNodes(C.tail(astNodes), defaultNode) );
                     return product.add(callNode);
-                }
-
-                @Override
-                public Node visit(AstEndNode astNode) {
-                    return product.add( new EndNode(getCreateId(astNode)) );
                 }
 
                 @Override
@@ -196,19 +198,29 @@ public class DecisionGraphParseResult {
                     } catch (RuntimeException re) {
                         throw new RuntimeException(new BadSetInstructionException(re.getMessage() + " (at node " + astNode + ")", astNode));
                     }
-
-                    return product.add( new SetNode(getCreateId(astNode), topValue) );
-                }
-
-                @Override
-                public Node visit(AstRejectNode astNode) {
-                    return product.add(new RejectNode(getCreateId(astNode), astNode.getReason()));
+                    
+                    final SetNode setNode = new SetNode(astNode.getId(), topValue);
+                    setNode.setNextNode( buildNodes(C.tail(astNodes), defaultNode) );
+                    return product.add(setNode);
                 }
 
                 @Override
                 public Node visit(AstTodoNode astNode) {
-                    return product.add( new TodoNode(getCreateId(astNode), astNode.getTodoText()) );
+                    final TodoNode todoNode = new TodoNode(astNode.getId(), astNode.getTodoText());
+                    todoNode.setNextNode( buildNodes(C.tail(astNodes), defaultNode) );
+                    return product.add(todoNode);
                 }
+                
+                @Override
+                public Node visit(AstRejectNode astNode) {
+                    return product.add(new RejectNode(astNode.getId(), astNode.getReason()));
+                }
+
+                @Override
+                public Node visit(AstEndNode astNode) {
+                    return product.add( new EndNode(astNode.getId()) );
+                }
+
             });
 
         } catch (RuntimeException re) {
@@ -327,24 +339,44 @@ public class DecisionGraphParseResult {
 			default: return Collections.emptyList();	
 		}
 	}
+
+    private void addIds( List<? extends AstNode> nodes ) {
+        AstNode.NullVisitor idSupplier = new AstNode.NullVisitor() {
+            @Override
+            public void visitImpl(AstAskNode nd) throws DataTagsRuntimeException {
+                if ( nd.getId() == null ) nd.setId( nodeIdProvider.nextId() );
+                nd.getAnswers().forEach( ans -> addIds( ans.getSubGraph()) );
+            }
+
+            @Override
+            public void visitImpl(AstSetNode nd) throws DataTagsRuntimeException {
+                if ( nd.getId() == null ) nd.setId( nodeIdProvider.nextId() );
+            }
+
+            @Override
+            public void visitImpl(AstRejectNode nd) throws DataTagsRuntimeException {
+                if ( nd.getId() == null ) nd.setId( nodeIdProvider.nextId() );
+            }
+
+            @Override
+            public void visitImpl(AstCallNode nd) throws DataTagsRuntimeException {
+                if ( nd.getId() == null ) nd.setId( nodeIdProvider.nextId() );
+            }
+
+            @Override
+            public void visitImpl(AstTodoNode nd) throws DataTagsRuntimeException {
+                if ( nd.getId() == null ) nd.setId( nodeIdProvider.nextId() );
+            }
+
+            @Override
+            public void visitImpl(AstEndNode nd) throws DataTagsRuntimeException {
+                if ( nd.getId() == null ) nd.setId( nodeIdProvider.nextId() );
+            }
+        };
+        
+        nodes.forEach( n -> n.accept(idSupplier) );
+    }
     
-    /**
-     * @param aNode the node whose id we want.
-     * @return An id for the node (either from the code or generated).
-     */
-    private String getCreateId(AstNode aNode) {
-        return (aNode.getId() == null) ? nextNodeId() : aNode.getId();
-    }
-
-    /**
-     * Creates a new id, and updates the internal id counter.
-     *
-     * @return a unique id.
-     */
-    private String nextNodeId() {
-        return "[#" + nextNodeId++ + "]";
-    }
-
     /**
      * Builds a value based on the assignments visited.
      */

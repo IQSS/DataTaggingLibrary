@@ -27,8 +27,8 @@ public class ValidCallNodeValidator extends VoidVisitor {
     
     
     public List<NodeValidationMessage> validateIdReferences( DecisionGraph dg ) {
-        Iterable<Node> chartNodes = chart.nodes();
-        for (Node aNode : chartNodes) {
+        chart = dg;
+        for (Node aNode : chart.nodes()) {
             aNode.accept(this);
         }
         return validationMessages;

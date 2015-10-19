@@ -4,8 +4,11 @@ import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.values.Answer;
 import static edu.harvard.iq.datatags.model.values.Answer.*;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
+import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.*;
 import static edu.harvard.iq.util.DecisionGraphHelper.*;
 import java.util.Arrays;
@@ -30,7 +33,7 @@ public class ChartRunningTest {
 		
 		c1.setStart(start);
 		
-		assertExecutionTrace( c1, flowChartName,
+		assertExecutionTrace( c1,
 				Arrays.asList("1", "2", "3", "4", "END"), false);
 				
 	}
@@ -53,37 +56,18 @@ public class ChartRunningTest {
 		
 		c1.setStart(start);
 		
-		assertExecutionTrace( c1, flowChartName,
+		assertExecutionTrace( c1, 
 				C.list( YES, NO, YES, NO ),
 				C.list("1", "2", "3", "4", "END"), false);
 		
 	}
 	
 	@Test
-	public void chartWithCall() {
-		String subchartName = "flowChart-sub";
-		DecisionGraph subChart = new DecisionGraph( subchartName );
+	public void chartWithCall() throws DataTagsParseException {
+		String code = "[>a< todo:a][>b< todo:a][>c< call:n][>e<end][>n< end]";
+		DecisionGraph chart = new DecisionGraphParser().parse(code).compile( new CompoundType("",""));
 		
-		String mainChartName = "flowChart-main";
-		DecisionGraph mainChart = new DecisionGraph( mainChartName );
-		
-		AskNode start = mainChart.add( new AskNode("1") );
-		start.setNodeFor( Answer.YES, mainChart.add(new AskNode("2")) )
-			 .setNodeFor( Answer.YES, mainChart.add(new CallNode("c-m")) )
-			 .setNextNode(mainChart.add(new AskNode("3")) )
-			 .setNodeFor( Answer.YES, mainChart.add(new EndNode("END")) );
-		
-		((CallNode)mainChart.getNode("c-m")).setCalleeNodeId("A");
-        start = subChart.add( new AskNode("A") );
-		start.setNodeFor( Answer.YES, subChart.add(new AskNode("B")) )
-			 .setNodeFor( Answer.YES, subChart.add(new EndNode("SUB_END")) );
-        mainChart.add( start );
-        
-		mainChart.setStart( start );
-		
-		assertExecutionTrace(mainChart, mainChartName, Arrays.asList("1","2","c-m",
-																	"A","B", "SUB_END",
-																"3", "END"), false );
+		assertExecutionTrace(chart, Arrays.asList("a","b","c","n","e"), false );
 	}
 	
 	@Test
@@ -96,7 +80,7 @@ public class ChartRunningTest {
 		caller.setCalleeNodeId( chartId + "_1");
 		caller.setNextNode( new EndNode("CallerEnd") );
 		
-		assertExecutionTrace( rec, chartId,
+		assertExecutionTrace( rec, 
 				C.list(YES, NO, 
 						YES, NO,
 						YES, YES, YES ),
@@ -121,7 +105,7 @@ public class ChartRunningTest {
 		caller.setCalleeNodeId( chartId + "_1");
 		caller.setNextNode( new EndNode("CallerEnd") );
 		
-		assertExecutionTrace( rec, chartId,
+		assertExecutionTrace( rec, 
 				C.list(YES, NO, 
 						YES, NO,
 						YES, NO,
@@ -161,7 +145,7 @@ public class ChartRunningTest {
         
 		main.setStart(start);
 		
-		assertExecutionTrace( main, "threaded-main",
+		assertExecutionTrace( main,
 				C.list("1","sub_a_1", "sub_a_2","sub_a_3", "sub_a_END",
 						"2","sub_b_1", "sub_b_2","sub_b_3","sub_b_END",
 						"3","sub_c_1", "sub_c_2","sub_c_3","sub_c_END", 

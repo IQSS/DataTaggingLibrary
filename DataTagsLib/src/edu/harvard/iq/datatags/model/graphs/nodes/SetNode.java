@@ -55,5 +55,4 @@ public class SetNode extends ThroughNode {
         return Objects.equals(this.tags, other.tags) ? equalsAsNode(other) : false;
     }
     
-    
 }

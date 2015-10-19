@@ -49,7 +49,7 @@ public class DuplicateNodeAnswerValidatorTest {
 
     @Test
     public void validateDuplicateAnswerTest_noAnswers() throws BadSetInstructionException, DataTagsParseException {
-        String code = "(todo: there are no answers here to check)(end)";
+        String code = "[todo: there are no answers here to check][end]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         List<ValidationMessage> duplicates = instance.validateDuplicateAnswers(refs);
         assertEquals(new LinkedList<>(), duplicates);
@@ -57,10 +57,10 @@ public class DuplicateNodeAnswerValidatorTest {
     
     @Test
     public void validateDuplicateAnswersTest_noDuplicates() throws BadSetInstructionException, DataTagsParseException {
-        String code = "(>ask1< ask: (text: Are there any duplicates?)"
-                + "(yes: (>todo1< todo: no duplicates))"
-                + "(no: (>todo2< todo: still no duplicates)))"
-                + "(>end1<end)";
+        String code = "[>ask1< ask: {text: Are there any duplicates?}"
+                + "{answers: {yes: [>todo1< todo: no duplicates]}"
+                            + "{no: [>todo2< todo: still no duplicates]}}]"
+                + "[>end1<end]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         List<ValidationMessage> duplicates = instance.validateDuplicateAnswers(refs);
         assertEquals(new LinkedList<>(), duplicates);
@@ -68,10 +68,11 @@ public class DuplicateNodeAnswerValidatorTest {
     
     @Test
     public void validateDuplicateAnswersTest_duplicates() throws BadSetInstructionException, DataTagsParseException {
-        String code = "(>ask1< ask: (text: Are there any duplicates?)"
-                + "(yes: (>todo1< todo: there's a duplicate!))"
-                + "(yes: (>todo2< todo: yes there is!))"
-                + "(no: (>todo3< todo: this is just another answer)))";
+        String code = "[>ask1< ask: {text: Are there any duplicates?}"
+                + "{answers:"
+                + "{yes: [>todo1< todo: there's a duplicate!]}"
+                + "{yes: [>todo2< todo: yes there is!]}"
+                + "{no:  [>todo3< todo: this is just another answer]}}]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
         List<ValidationMessage> actual = instance.validateDuplicateAnswers(refs);
         // the first instruction node should be a repeat
