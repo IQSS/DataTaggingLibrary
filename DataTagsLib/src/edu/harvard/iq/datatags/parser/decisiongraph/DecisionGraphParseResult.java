@@ -47,8 +47,11 @@ public class DecisionGraphParseResult {
 
     private final List<? extends AstNode> astNodes;
 
-    final Map<List<String>, TagType> typesBySlot = new HashMap<>();
-    final Map<TagType, List<String>> fullyQualifiedName = new HashMap<>();
+    /** 
+     * Maps a name of a slot to its fully qualified version (i.e from the top type).
+     * For fully qualified names this is an identity function.  
+     */
+    final Map<List<String>, List<String>> fullyQualifiedSlotName = new HashMap<>();
 
     private CompoundType topLevelType;
     
@@ -195,7 +198,7 @@ public class DecisionGraphParseResult {
                     final CompoundValue topValue = topLevelType.createInstance();
                     SetNodeValueBuilder valueBuilder = new SetNodeValueBuilder(topValue);
                     try {
-                        astNode.getAssignments().forEach(asnmnt -> asnmnt.accept(valueBuilder));
+                        astNode.getAssignments().forEach(asnmnt -> asnmnt.accept(valueBuilder) );
                     } catch (RuntimeException re) {
                         throw new RuntimeException(new BadSetInstructionException(re.getMessage() + " (at node " + astNode + ")", astNode));
                     }
@@ -267,7 +270,8 @@ public class DecisionGraphParseResult {
      */
     void buildTypeIndex(CompoundType topLevel) {
         topLevelType = topLevel;
-
+        
+        List<List<String>> fullyQualifiedNames = new LinkedList<>();
         // initial index
         topLevelType.accept(new TagType.VoidVisitor() {
             LinkedList<String> stack = new LinkedList<>();
@@ -289,46 +293,48 @@ public class DecisionGraphParseResult {
 
             @Override
             public void visitCompoundTypeImpl(CompoundType t) {
-                if ( ! t.equals(topLevelType) ) {
-                    stack.push(t.getName());
-                }
+                stack.push(t.getName());
                 t.getFieldTypes().forEach(tt -> tt.accept(this) );
-                if ( ! t.equals(topLevelType) ) {
-                    stack.pop();
-                }
+                stack.pop();
             }
 
             void addType(TagType tt) {
                 stack.push(tt.getName());
-                typesBySlot.put(C.reverse((List) stack), tt);
+                fullyQualifiedNames.add(C.reverse((List) stack));
                 stack.pop();
             }
         });
 
-        // TypesBySlot now contains fully qualified names only. Reverse and store as index.
-        typesBySlot.forEach((s, tt) -> fullyQualifiedName.put(tt, s));
+        fullyQualifiedNames.forEach( n -> fullyQualifiedSlotName.put(n,n) );
 
         // add abbreviations
         Set<List<String>> ambiguous = new HashSet<>();
-        Map<List<String>, TagType> newEntries = new HashMap<>();
-
-        typesBySlot.keySet().forEach(slot -> {
+        Map<List<String>, List<String>> newEntries = new HashMap<>();
+        
+        fullyQualifiedNames.forEach(slot -> {
             List<String> cur = C.tail(slot);
             while (!cur.isEmpty()) {
-                if (typesBySlot.containsKey(cur) || newEntries.containsKey(cur)) {
+                if ( fullyQualifiedSlotName.containsKey(cur) || newEntries.containsKey(cur) ) {
                     ambiguous.add(cur);
                     break;
                 } else {
-                    newEntries.put(cur, typesBySlot.get(slot));
+                    newEntries.put(cur, slot);
                 }
                 cur = C.tail(cur);
             }
         });
 
         ambiguous.forEach(newEntries::remove);
-        typesBySlot.putAll(newEntries);
+        fullyQualifiedSlotName.putAll(newEntries);
     }
 
+    /**
+     * Nodes that has only a single "yes" of "no" answer, are considered to  
+     * implicitly have the reverse boolean answer. This methods detects this case
+     * and generates that answer.
+     * @param node
+     * @return A list of implied answers (might be empty, never {@code null}).
+     */
     List<Answer> impliedAnswers( AskNode node ) {
 		Set<Answer> answers = node.getAnswers();
 		if ( answers.size() > 1 ) return Collections.emptyList();
@@ -343,6 +349,10 @@ public class DecisionGraphParseResult {
 		}
 	}
 
+    /**
+     * Ensures that all nodes have ids. Generates ids if needed.
+     * @param nodes the nodes that will have IDs.
+     */
     private void addIds( List<? extends AstNode> nodes ) {
         AstNode.NullVisitor idSupplier = new AstNode.NullVisitor() {
             @Override
@@ -393,7 +403,7 @@ public class DecisionGraphParseResult {
 
         @Override
         public void visit(AstSetNode.AtomicAssignment aa) {
-            final CompoundValue additionPoint = descend( fullyQualifiedName.get(typesBySlot.get(aa.getSlot())) , topValue);
+            final CompoundValue additionPoint = descend(C.tail(fullyQualifiedSlotName.get(aa.getSlot())) , topValue);
             TagType valueType = additionPoint.getType().getTypeNamed(C.last(aa.getSlot()));
             if (valueType == null) {
                 throw new RuntimeException("Type '" + additionPoint.getType().getName()
@@ -428,7 +438,7 @@ public class DecisionGraphParseResult {
 
         @Override
         public void visit(AstSetNode.AggregateAssignment aa) {
-            final CompoundValue additionPoint = descend(fullyQualifiedName.get(typesBySlot.get(aa.getSlot())), topValue);
+            final CompoundValue additionPoint = descend(C.tail(fullyQualifiedSlotName.get(aa.getSlot())), topValue);
             TagType valueType = additionPoint.getType().getTypeNamed(C.last(aa.getSlot()));
             if (valueType == null) {
                 throw new RuntimeException("Type '" + additionPoint.getType().getName()
@@ -484,6 +494,7 @@ public class DecisionGraphParseResult {
                 throw new RuntimeException("Type '" + cType.getName()
                         + "' does not have a field of type '" + C.head(pathRemainder));
             }
+            
             return descend(C.tail(pathRemainder), nextTagType.accept(new TagType.Visitor<CompoundValue>() {
                 @Override
                 public CompoundValue visitSimpleType(AtomicType t) {
@@ -504,7 +515,9 @@ public class DecisionGraphParseResult {
 
                 @Override
                 public CompoundValue visitCompoundType(CompoundType t) {
-                    return t.createInstance();
+                    final CompoundValue newInstance = t.createInstance();
+                    cVal.set(newInstance);
+                    return newInstance;
                 }
             }));
         }

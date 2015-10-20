@@ -52,7 +52,8 @@ public class SetNode extends ThroughNode {
             return false;
         }
         final SetNode other = (SetNode) obj;
-        return Objects.equals(this.tags, other.tags) ? equalsAsNode(other) : false;
+        
+        return Objects.equals(this.tags, other.tags) && equalsAsNode(other);
     }
     
 }

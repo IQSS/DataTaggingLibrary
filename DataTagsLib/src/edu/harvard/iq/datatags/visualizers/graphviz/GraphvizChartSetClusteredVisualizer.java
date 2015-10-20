@@ -21,7 +21,6 @@ import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,24 +49,28 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
         @Override
         public String visitAggregateValue(AggregateValue v) {
             StringBuilder sb = new StringBuilder();
-            sb.append("[ ");
-            for ( TagValue tv : v.getValues() ) {
-                sb.append( tv.accept(this) );
-                sb.append(" ");
+            sb.append("{");
+            v.getValues().forEach( tv -> 
+                sb.append( tv.accept(this) ).append(",") );
+            if ( ! v.getValues().isEmpty() ) {
+                sb.setLength( sb.length()-1 );
             }
-            sb.append("]");
+            sb.append("}");
             return sb.toString();
         }
 
         @Override
         public String visitCompoundValue(CompoundValue aThis) {
             StringBuilder sb = new StringBuilder();
-            sb.append("[ ");
+            sb.append("[");
             for ( TagType tt : aThis.getTypesWithNonNullValues() ) {
                 sb.append( tt.getName() );
                 sb.append(":");
                 sb.append( aThis.get(tt).accept(this) );
                 sb.append( " " );
+            }
+            if ( ! aThis.getTypesWithNonNullValues().isEmpty() ) {
+                sb.setLength( sb.length()-1 );
             }
             sb.append("]");
             return sb.toString();
@@ -126,7 +129,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
         return candidates;
     }
             
-	private class NodePainter implements  Node.Visitor<Void> {
+	private class NodePainter extends  Node.VoidVisitor {
 		
 		List<String> nodes = new LinkedList<>(), edges = new LinkedList<>();
         Set<Node> targets = new HashSet<>();
@@ -137,25 +140,23 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
 		}
 		
 		@Override
-		public Void visit(AskNode nd) throws DataTagsRuntimeException {
+		public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
             String nodeText = nd.getText();
             if ( nodeText.length() > 140 ) {
                 nodeText = nodeText.substring(0,140) + "...";
             }
 			nodes.add( node(nodeId(nd))
 					.shape(GvNode.Shape.oval)
-					.label( idLabel(nd) + "ask\\n" + wrap(nodeText) )
+					.label( idLabel(nd) + "ask\n" + wrap(nodeText) )
 					.gv());
 			for ( Answer ans : nd.getAnswers() ) {
 				edges.add( edge(nodeId(nd), nodeId(nd.getNodeFor(ans))).tailLabel(ans.getAnswerText()).gv() );
                 targets.add( nd.getNodeFor(ans));
 			}
-
-			return null;
 		}
 
 		@Override
-		public Void visit(CallNode nd) throws DataTagsRuntimeException {
+		public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
 						.label( idLabel(nd) + nd.getCalleeNodeId())
 						.shape(GvNode.Shape.cds)
@@ -163,41 +164,38 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
 						.gv() );
 			edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).gv() );
             targets.add( nd.getNextNode() );
-			return null;
 		}
 		
         @Override
-		public Void visit(RejectNode nd) throws DataTagsRuntimeException {
+		public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
-						.label( idLabel(nd) + "REJECT\\n" + wrap(nd.getReason())  )
+						.label( idLabel(nd) + "REJECT\n" + wrap(nd.getReason())  )
 						.shape(GvNode.Shape.hexagon)
 						.fillColor("#FFAAAA")
 						.gv() );
-			return null;
 		}
 		
 		@Override
-		public Void visit(TodoNode node) throws DataTagsRuntimeException {
+		public void visitImpl(TodoNode node) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(node))
 							.fillColor("#AAFFAA")
 							.shape(GvNode.Shape.note)
-							.label(idLabel(node) + "todo\\n"+ wrap(node.getTodoText())).gv() );
+							.label(idLabel(node) + "todo\n"+ wrap(node.getTodoText())).gv() );
 			
             edges.add( edge(nodeId(node), nodeId(node.getNextNode())).gv() );
             targets.add( node.getNextNode() );
-			return null;
 		}
 		
 		@Override
-		public Void visit(SetNode nd) throws DataTagsRuntimeException {
+		public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
             StringBuilder label = new StringBuilder();
             label.append( idLabel(nd) )
-                    .append("Set\\n");
+                    .append("Set\n");
             for ( TagType tt : nd.getTags().getTypesWithNonNullValues() ) {
                 label.append( tt.getName() )
                         .append( "=" )
                         .append( nd.getTags().get(tt).accept(valueNamer) )
-                        .append("\\n");
+                        .append("\n");
             }
 			nodes.add( node(nodeId(nd))
 						.fillColor("#AADDAA")
@@ -206,18 +204,21 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
 						.gv());
             edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).gv() );
             targets.add( nd.getNextNode() );
-			return null;
 		}
 
 		@Override
-		public Void visit(EndNode nd) throws DataTagsRuntimeException {
-			nodes.add( node(nodeId(nd)).shape(GvNode.Shape.point)
-                            .fillColor("#333333").add("height", "0.2").add("width", "0.2").gv() );
-			return null;
+		public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
+			nodes.add( node(nodeId(nd))
+                        .shape(GvNode.Shape.point)
+                        .fontColor("#AAAAAA")
+                        .fillColor("#000000")
+                        .add("height", "0.2")
+                        .add("width", "0.2")
+                        .label("x").gv() );
 		}
 		
         private String idLabel( Node nd ) {
-            return nd.getId().startsWith("$") ? "" : nd.getId()+"\\n";// ">" + nodeId(nd) + "< ";
+            return nd.getId().startsWith("[#") ? "" : nd.getId()+"\\n";
         }
 	}
 	
@@ -302,7 +303,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
 	}
 
 	String nodeId( Node nd ) {
-		return Base64.getEncoder().withoutPadding().encodeToString(nd.getId().getBytes());
+		return sanitizeId( nd.getId() );
 	}
     
     public void setDecisionGraph( DecisionGraph aDecisionGraph ) {

@@ -79,20 +79,20 @@ public class DecisionGraphParseResultTest {
         
         res.buildTypeIndex( topType );
         
-        final Map<List<String>, TagType> typesBySlot = res.typesBySlot;
+        final Map<List<String>, List<String>> typesBySlot = res.fullyQualifiedSlotName;
         
-        Map<List<String>, TagType> expected = new HashMap<>();
-        expected.put( C.list("top","mid1","bottom1"), typesBySlot.get( C.list("top","mid1","bottom1")) );
-        expected.put( C.list("top","mid1","bottom2"), typesBySlot.get( C.list("top","mid1","bottom2")) );
-        expected.put( C.list("top","mid2","bottom2"), typesBySlot.get( C.list("top","mid2","bottom2")) );
-        expected.put( C.list("top","mid2","bottom3"), typesBySlot.get( C.list("top","mid2","bottom3")) );
+        Map<List<String>, List<String>> expected = new HashMap<>();
+        expected.put( C.list("top","mid1","bottom1"), C.list("top","mid1","bottom1") );
+        expected.put( C.list("top","mid1","bottom2"), C.list("top","mid1","bottom2") );
+        expected.put( C.list("top","mid2","bottom2"), C.list("top","mid2","bottom2") );
+        expected.put( C.list("top","mid2","bottom3"), C.list("top","mid2","bottom3") );
         
-        expected.put( C.list("mid1","bottom1"), typesBySlot.get( C.list("top","mid1","bottom1")) );
-        expected.put( C.list("bottom1"), typesBySlot.get( C.list("top","mid1","bottom1")) );
-        expected.put( C.list("mid2","bottom3"), typesBySlot.get( C.list("top","mid2","bottom3")) );
-        expected.put( C.list("bottom3"), typesBySlot.get( C.list("top","mid2","bottom3")) );
-        expected.put( C.list("mid2","bottom2"), typesBySlot.get( C.list("top","mid2","bottom2")) );
-        expected.put( C.list("mid1","bottom2"), typesBySlot.get( C.list("top","mid1","bottom2")) );
+        expected.put( C.list("mid1","bottom1"), C.list("top","mid1","bottom1") );
+        expected.put( C.list("bottom1"),        C.list("top","mid1","bottom1") );
+        expected.put( C.list("mid2","bottom3"), C.list("top","mid2","bottom3") );
+        expected.put( C.list("bottom3"),        C.list("top","mid2","bottom3") );
+        expected.put( C.list("mid2","bottom2"), C.list("top","mid2","bottom2") );
+        expected.put( C.list("mid1","bottom2"), C.list("top","mid1","bottom2") );
         
         assertEquals( expected, typesBySlot );
     }
@@ -243,6 +243,9 @@ public class DecisionGraphParseResultTest {
         
         expected.equals(actual);
         assertEquals( expected, actual );
+        
+        System.out.println( start.getTags() );
+        System.out.println( tags );
         
     }
     
