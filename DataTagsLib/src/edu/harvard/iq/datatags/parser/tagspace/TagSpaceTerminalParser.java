@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.definitions;
+package edu.harvard.iq.datatags.parser.tagspace;
 
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;

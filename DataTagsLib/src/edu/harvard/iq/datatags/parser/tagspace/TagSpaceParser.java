@@ -1,14 +1,10 @@
-package edu.harvard.iq.datatags.parser.definitions;
+package edu.harvard.iq.datatags.parser.tagspace;
 
-import edu.harvard.iq.datatags.parser.definitions.ast.AbstractSlot;
-import edu.harvard.iq.datatags.parser.definitions.ast.CompilationUnitLocationReference;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AbstractSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.codehaus.jparsec.Parser;
 
 /**
@@ -33,25 +29,7 @@ public class TagSpaceParser {
         
         try {
             // Parse and collect
-            List<? extends AbstractSlot> slots = ParseSlots(tagSpaceCode);
-            Map<String, List<AbstractSlot>> slotMap = slots.stream().collect(Collectors.groupingBy(AbstractSlot::getName));
-            
-            // Validate that the there are no duplicate slot names
-            Set<String> duplicates = slotMap.values().stream()
-                    .filter( l -> l.size()>1 )
-                    .map( l -> l.get(0).getName() )
-                    .collect(Collectors.toSet());
-            
-            if ( duplicates.isEmpty() ) {
-                Map<String, AbstractSlot> namedSlots = new HashMap<>();
-                slotMap.values().stream()
-                        .map( l -> l.get(0) )
-                        .forEach( s -> namedSlots.put( s.getName(), s) );
-                return new TagSpaceParseResult( namedSlots );
-            } else {
-                throw new SemanticsErrorException( new CompilationUnitLocationReference(-1, -1), 
-                    "The following slots were defined more than once: " + duplicates );
-            }
+            return new TagSpaceParseResult( parser.parse(tagSpaceCode) );
             
         } catch ( org.codehaus.jparsec.error.ParserException pe ) {
 			throw new SyntaxErrorException( new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),

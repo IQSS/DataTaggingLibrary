@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.parser.exceptions;
 
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
-import edu.harvard.iq.datatags.parser.definitions.ast.CompilationUnitLocationReference;
+import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 
 /**
  * Base class for exceptions thrown from the data tags parser.

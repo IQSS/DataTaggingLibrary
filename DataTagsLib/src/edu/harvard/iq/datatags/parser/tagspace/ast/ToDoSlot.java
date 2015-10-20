@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.definitions.ast;
+package edu.harvard.iq.datatags.parser.tagspace.ast;
 
 /**
  * A slot that is declared now, but not fulfilled yet. Can be referenced by other slots.

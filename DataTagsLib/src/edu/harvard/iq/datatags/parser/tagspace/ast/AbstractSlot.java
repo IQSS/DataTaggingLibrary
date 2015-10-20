@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.definitions.ast;
+package edu.harvard.iq.datatags.parser.tagspace.ast;
 
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Objects;

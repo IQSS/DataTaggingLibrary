@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.parser.definitions.ast;
+package edu.harvard.iq.datatags.parser.tagspace.ast;
 
 import java.util.List;
 import org.codehaus.jparsec.internal.util.Objects;

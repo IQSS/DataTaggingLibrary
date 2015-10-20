@@ -1,11 +1,11 @@
-package edu.harvard.iq.datatags.parser.definitions;
+package edu.harvard.iq.datatags.parser.tagspace;
 
-import edu.harvard.iq.datatags.parser.definitions.ast.AbstractSlot;
-import edu.harvard.iq.datatags.parser.definitions.ast.AggregateSlot;
-import edu.harvard.iq.datatags.parser.definitions.ast.AtomicSlot;
-import edu.harvard.iq.datatags.parser.definitions.ast.CompoundSlot;
-import edu.harvard.iq.datatags.parser.definitions.ast.ToDoSlot;
-import edu.harvard.iq.datatags.parser.definitions.ast.ValueDefinition;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AbstractSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AggregateSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AtomicSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.CompoundSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.ToDoSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.ValueDefinition;
 import java.util.List;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;

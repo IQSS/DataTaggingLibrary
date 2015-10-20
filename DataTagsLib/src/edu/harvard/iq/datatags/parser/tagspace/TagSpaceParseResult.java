@@ -1,21 +1,25 @@
-package edu.harvard.iq.datatags.parser.definitions;
+package edu.harvard.iq.datatags.parser.tagspace;
 
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.ToDoType;
-import edu.harvard.iq.datatags.parser.definitions.ast.AbstractSlot;
-import edu.harvard.iq.datatags.parser.definitions.ast.AggregateSlot;
-import edu.harvard.iq.datatags.parser.definitions.ast.AtomicSlot;
-import edu.harvard.iq.datatags.parser.definitions.ast.CompoundSlot;
-import edu.harvard.iq.datatags.parser.definitions.ast.ToDoSlot;
-import edu.harvard.iq.datatags.parser.definitions.ast.CompilationUnitLocationReference;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AbstractSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AggregateSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AtomicSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.CompoundSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.ToDoSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * The result of parsing a Tag Space file. While the main target of this class
@@ -26,7 +30,9 @@ import java.util.Set;
  */
 public class TagSpaceParseResult {
     
-    private final Map<String, ? extends AbstractSlot> slotsByName;
+    private final List<? extends AbstractSlot> slots; 
+    private final Map<String, AbstractSlot> slotsByName = new TreeMap<>();
+    private Set<String> duplicateSlotNames;
     
     class MissingSlotException extends RuntimeException {
         private final String missingSlotName;
@@ -46,12 +52,28 @@ public class TagSpaceParseResult {
         
     }
     
-    TagSpaceParseResult( Map<String, ? extends AbstractSlot> slots ) {
-        slotsByName = slots;
+    TagSpaceParseResult( List<? extends AbstractSlot> someSlots ) throws SemanticsErrorException {
+        slots = someSlots;
+        
+        Map<String, List<AbstractSlot>> slotMap = slots.stream().collect(Collectors.groupingBy(AbstractSlot::getName));
+            
+            // Validate that the there are no duplicate slot names
+            Set<String> duplicates = slotMap.values().stream()
+                    .filter( l -> l.size()>1 )
+                    .map( l -> l.get(0).getName() )
+                    .collect(Collectors.toSet());
+            
+            if ( duplicates.isEmpty() ) {
+                slotMap.values().stream()
+                        .map( l -> l.get(0) )
+                        .forEach( s -> slotsByName.put( s.getName(), s) );
+            } else {
+                duplicateSlotNames = duplicates;
+            }
     }
     
-    public Collection<? extends AbstractSlot> getSlots() {
-        return slotsByName.values();
+    public List<? extends AbstractSlot> getSlots() {
+        return slots;
     }
     
     public Optional<AbstractSlot> getSlot( String name ) {
@@ -68,9 +90,14 @@ public class TagSpaceParseResult {
      * create also all the sub-types references from the slot.
      * @param slotName the name of the slot we build the type from. Has to be a {@link CompoundSlot}.
      * @return A compound type instance based on the slot, or the empty Optional.
-     * @throws edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException if the slot is of the wrong type.
+     * @throws edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException if the slot is of the wrong type, or there are duplicate slot names..
      */
     public Optional<CompoundType> buildType( String slotName ) throws SemanticsErrorException  {
+        
+        if ( duplicateSlotNames != null ) {
+                throw new SemanticsErrorException( new CompilationUnitLocationReference(-1, -1), 
+                    "The following slots were defined more than once: " + duplicateSlotNames );
+        }
         
         AbstractSlot slot = slotsByName.get( slotName );
         if ( slot == null ) {

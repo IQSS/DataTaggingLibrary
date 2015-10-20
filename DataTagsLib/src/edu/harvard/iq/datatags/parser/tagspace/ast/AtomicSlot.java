@@ -1,7 +1,7 @@
 /*
  *  (C) Michael Bar-Sinai
  */
-package edu.harvard.iq.datatags.parser.definitions.ast;
+package edu.harvard.iq.datatags.parser.tagspace.ast;
 
 import java.util.List;
 

@@ -5,7 +5,7 @@
 package edu.harvard.iq.datatags.model.types;
 
 import edu.harvard.iq.datatags.model.values.TagValue;
-import edu.harvard.iq.datatags.parser.definitions.TagSpaceParser;
+import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;

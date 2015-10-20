@@ -10,12 +10,11 @@ import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
-import edu.harvard.iq.datatags.parser.definitions.TagSpaceParseResult;
-import edu.harvard.iq.datatags.parser.definitions.TagSpaceParser;
+import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParseResult;
+import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
@@ -244,10 +243,112 @@ public class DecisionGraphParseResultTest {
         expected.equals(actual);
         assertEquals( expected, actual );
         
-        System.out.println( start.getTags() );
-        System.out.println( tags );
-        
     }
+    
+    @Test
+    public void complexSetNodeTest() throws SyntaxErrorException, SemanticsErrorException, DataTagsParseException {
+        String tsCode = "top: consists of mid1, mid2. "
+                + "mid1: one of A, B, C, D. "
+                + "mid2: consists of bottom1, bottom2. "
+                + "bottom1: one of Q, W, E.\n"
+                + "bottom2: some of A,S,D,F.";
+        
+        CompoundType ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
+        
+        CompoundValue expected = ts.createInstance();
+        expected.set( ((AtomicType)ts.getTypeNamed("mid1")).valueOf("B") );
+        CompoundValue mid2 = ((CompoundType)ts.getTypeNamed("mid2")).createInstance();
+        mid2.set( ((AtomicType)mid2.getType().getTypeNamed("bottom1")).valueOf("W") );
+        final AggregateValue bottom2Value = ((AggregateType)mid2.getType().getTypeNamed("bottom2")).createInstance();
+        bottom2Value.add( bottom2Value.getType().getItemType().valueOf("S") );
+        bottom2Value.add( bottom2Value.getType().getItemType().valueOf("D") );
+        bottom2Value.add( bottom2Value.getType().getItemType().valueOf("F") );
+        mid2.set(bottom2Value);
+        expected.set(mid2);
+        
+        String dgCode = "[set: mid1=B; bottom1=W; bottom2+=S,D,F][end]";
+        DecisionGraph dg = new DecisionGraphParser().parse(dgCode).compile(ts);
+        
+        CompoundValue actual = ((SetNode)dg.getStart()).getTags();
+        
+        assertEquals( expected, actual );
+    }
+    
+    @Test
+    public void dualSecondLevelNodeTest() throws SyntaxErrorException, SemanticsErrorException, DataTagsParseException {
+        String tsCode = "top: consists of mid1, mid2. "
+                + "mid1: one of A, B, C, D. "
+                + "mid2: consists of bottom1, bottom2. "
+                + "bottom1: one of Q, W, E.\n"
+                + "bottom2: some of A,S,D,F.";
+        
+        CompoundType ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
+        
+        CompoundValue mid2 = ((CompoundType)ts.getTypeNamed("mid2")).createInstance();
+        mid2.set( ((AtomicType)mid2.getType().getTypeNamed("bottom1")).valueOf("W") );
+        final AggregateValue bottom2Value = ((AggregateType)mid2.getType().getTypeNamed("bottom2")).createInstance();
+        bottom2Value.add( bottom2Value.getType().getItemType().valueOf("S") );
+        bottom2Value.add( bottom2Value.getType().getItemType().valueOf("D") );
+        bottom2Value.add( bottom2Value.getType().getItemType().valueOf("F") );
+        mid2.set(bottom2Value);
+        
+        CompoundValue expected = ts.createInstance();
+        expected.set(mid2);
+        
+        String dgCode = "[set: bottom1=W; bottom2+=S,D,F][end]";
+        DecisionGraph dg = new DecisionGraphParser().parse(dgCode).compile(ts);
+        
+        CompoundValue actual = ((SetNode)dg.getStart()).getTags();
+        
+        assertEquals( expected, actual );
+    }
+    
+    @Test
+    public void multiLevelAtomicSetNodeTest() throws SyntaxErrorException, SemanticsErrorException, DataTagsParseException {
+        String tsCode = "top: consists of mid1, mid2. "
+                + "mid1: one of A, B, C, D. "
+                + "mid2: consists of bottom1, bottom2. "
+                + "bottom1: one of Q, W, E.\n"
+                + "bottom2: some of A,S,D,F.";
+        
+        CompoundType ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
+        
+        CompoundValue expected = ts.createInstance();
+        expected.set( ((AtomicType)ts.getTypeNamed("mid1")).valueOf("B") );
+        CompoundValue mid2 = ((CompoundType)ts.getTypeNamed("mid2")).createInstance();
+        mid2.set( ((AtomicType)mid2.getType().getTypeNamed("bottom1")).valueOf("W") );
+        expected.set(mid2);
+        
+        String dgCode = "[set: mid1=B; bottom1=W][end]";
+        DecisionGraph dg = new DecisionGraphParser().parse(dgCode).compile(ts);
+        
+        CompoundValue actual = ((SetNode)dg.getStart()).getTags();
+        
+        assertEquals( expected, actual );
+    } 
+    
+    @Test
+    public void singleSecondLevelAtomicSetNodeTest() throws SyntaxErrorException, SemanticsErrorException, DataTagsParseException {
+        String tsCode = "top: consists of mid1, mid2. "
+                + "mid1: one of A, B, C, D. "
+                + "mid2: consists of bottom1, bottom2. "
+                + "bottom1: one of Q, W, E.\n"
+                + "bottom2: some of A,S,D,F.";
+        
+        CompoundType ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
+        
+        CompoundValue expected = ts.createInstance();
+        CompoundValue mid2 = ((CompoundType)ts.getTypeNamed("mid2")).createInstance();
+        mid2.set( ((AtomicType)mid2.getType().getTypeNamed("bottom1")).valueOf("W") );
+        expected.set(mid2);
+        
+        String dgCode = "[set: bottom1=W][end]";
+        DecisionGraph dg = new DecisionGraphParser().parse(dgCode).compile(ts);
+        
+        CompoundValue actual = ((SetNode)dg.getStart()).getTags();
+        
+        assertEquals( expected, actual );
+    } 
     
     private DecisionGraph normalize( DecisionGraph dg ){
         dg.setId("normalizedId");

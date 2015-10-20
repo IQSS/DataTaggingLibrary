@@ -1,8 +1,8 @@
 package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.model.types.TagType;
-import edu.harvard.iq.datatags.parser.definitions.TagSpaceParseResult;
-import edu.harvard.iq.datatags.parser.definitions.TagSpaceParser;
+import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParseResult;
+import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDataStructureVisualizer;
 import java.io.IOException;

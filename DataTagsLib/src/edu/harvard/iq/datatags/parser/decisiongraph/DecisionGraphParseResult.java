@@ -421,7 +421,7 @@ public class DecisionGraphParseResult {
 
                 @Override
                 public void visitAggregateTypeImpl(AggregateType t) {
-                    throw new RuntimeException("Slot " + aa.getSlot() + " has an aggregate type, not atomic. Use ``+='' .");
+                    throw new RuntimeException("Slot " + aa.getSlot() + " is aggregate, not atomic. Use ``+='' .");
                 }
 
                 @Override
@@ -447,7 +447,7 @@ public class DecisionGraphParseResult {
             valueType.accept(new TagType.VoidVisitor() {
                 @Override
                 public void visitAtomicTypeImpl(AtomicType t) {
-                    throw new RuntimeException("Slot " + aa.getSlot() + " has an aggregate type, not atomic. Use ``+='' .");
+                    throw new RuntimeException("Slot " + aa.getSlot() + " is aggregate, not atomic. Use ``+='' .");
                 }
 
                 @Override
@@ -515,9 +515,11 @@ public class DecisionGraphParseResult {
 
                 @Override
                 public CompoundValue visitCompoundType(CompoundType t) {
-                    final CompoundValue newInstance = t.createInstance();
-                    cVal.set(newInstance);
-                    return newInstance;
+                    if ( cVal.get(t) == null ) {
+                        final CompoundValue newInstance = t.createInstance();
+                        cVal.set(newInstance);
+                    }
+                    return (CompoundValue) cVal.get(t);
                 }
             }));
         }

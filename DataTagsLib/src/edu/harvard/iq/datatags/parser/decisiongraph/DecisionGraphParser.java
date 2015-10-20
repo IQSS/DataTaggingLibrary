@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.parser.decisiongraph;
 
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
-import edu.harvard.iq.datatags.parser.definitions.ast.CompilationUnitLocationReference;
+import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import java.util.List;
 import org.codehaus.jparsec.Parser;
