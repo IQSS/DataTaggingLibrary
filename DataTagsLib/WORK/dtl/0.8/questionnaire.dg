@@ -30,8 +30,7 @@
         Privacy Statutes/State Constitutions (including the Right to Publicity),
         Privileged Communications, Social Security Numbers, Student Records, Tax Records,
         Telephone Services (including Telephone Solicitation and Caller ID),
-        Testing in Employment (including Urinalysis, Genetic and Blood Tests), Tracking Technologies,  Voter Records]
-        }
+        Testing in Employment (including Urinalysis, Genetic and Blood Tests), Tracking Technologies,  Voter Records]}
       {no:  [set: Code=blue; Identity=noPersonData] }
   }]
 	[call: dua]

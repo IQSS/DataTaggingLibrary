@@ -21,6 +21,7 @@ import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -301,7 +302,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
 	}
 
 	String nodeId( Node nd ) {
-		return nd.getId();
+		return Base64.getEncoder().withoutPadding().encodeToString(nd.getId().getBytes());
 	}
     
     public void setDecisionGraph( DecisionGraph aDecisionGraph ) {
