@@ -336,7 +336,7 @@ public class DecisionGraphParseResult {
      * @return A list of implied answers (might be empty, never {@code null}).
      */
     List<Answer> impliedAnswers( AskNode node ) {
-		Set<Answer> answers = node.getAnswers();
+		List<Answer> answers = node.getAnswers();
 		if ( answers.size() > 1 ) return Collections.emptyList();
 		if ( answers.isEmpty() ) return Arrays.asList( Answer.NO, Answer.YES ); // special case, where both YES and NO lead to the same options. 
 		Answer onlyAns = answers.iterator().next();

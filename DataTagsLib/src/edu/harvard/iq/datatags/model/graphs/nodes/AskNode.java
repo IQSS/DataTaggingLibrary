@@ -3,6 +3,8 @@ package edu.harvard.iq.datatags.model.graphs.nodes;
 import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -12,6 +14,9 @@ import java.util.Set;
  * @author michael
  */
 public class AskNode extends Node {
+    
+    /** Keeps an ordered list of the answers */
+    private final List<Answer> answers = new LinkedList<>();
 	private final Map<Answer, Node> nextNodeByAnswer = new HashMap<>();
 	private final Map<String, String> terms = new HashMap<>();
 	private String text;
@@ -34,12 +39,9 @@ public class AskNode extends Node {
 	 * @return {@code node}, for convenience, call chaining, etc.
 	 */
 	public <T extends Node> T setNodeFor( Answer answer, T node ) {
-		nextNodeByAnswer.put(answer, node);
+		answers.add( answer );
+        nextNodeByAnswer.put(answer, node);
 		return node;
-	}
-	
-	public Set<Answer> getAnswers() {
-		return nextNodeByAnswer.keySet();
 	}
 	
 	public Node getNodeFor( Answer answer ) {
@@ -65,6 +67,10 @@ public class AskNode extends Node {
 	public void addTerm( String termName, String termText ) {
 		terms.put( termName, termText );
 	}
+    
+    public List<Answer> getAnswers() {
+        return answers;
+    }
     
     @Override
     public String toString() {
