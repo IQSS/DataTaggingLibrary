@@ -29,9 +29,7 @@ public class FlowChartExecuteCli {
         System.out.println("Reading chart: " + chartFile );
         System.out.println(" (full:  " + chartFile.toAbsolutePath() + ")" );
         
-        String source = readAll(chartFile);
-        
-        DecisionGraph dg = fcsParser.parse(source).compile(definitions);
+        DecisionGraph dg = fcsParser.parse(chartFile).compile(definitions);
         
         CliRunner cliRunner = new CliRunner();
         cliRunner.setDecisionGraph(dg);

@@ -56,7 +56,6 @@ public class UnreachableNodeValidatorTest {
     
     @Test
     public void validateUnreachableNodesTest_reachableNodes() throws DataTagsParseException {
-        System.out.println("\n\nReachable");
         String code = "[>ask1< ask: {text: Will this work?}\n" +
                         "  {answers:\n" +
                         "    {yes: [call:shouldWork]}}]\n" +
@@ -83,8 +82,6 @@ public class UnreachableNodeValidatorTest {
         
         assertEquals( new HashSet<>(), actualLevels);
         assertEquals(expected, actualEntities);
-        
-        System.out.println("/Reachable\n\n");
     }
    
     @Test

@@ -10,7 +10,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
-import java.net.URL;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -27,7 +27,7 @@ public class DecisionGraph {
 
     private static final AtomicInteger INDEX = new AtomicInteger(0);
 
-    private URL source;
+    private URI source;
     private Node start;
     private CompoundType topLevelType = null;
     private final Map<String, Node> nodes = new HashMap<>();
@@ -43,11 +43,11 @@ public class DecisionGraph {
         id = anId;
     }
 
-    public URL getSource() {
+    public URI getSource() {
         return source;
     }
 
-    public void setSource(URL source) {
+    public void setSource(URI source) {
         this.source = source;
     }
 

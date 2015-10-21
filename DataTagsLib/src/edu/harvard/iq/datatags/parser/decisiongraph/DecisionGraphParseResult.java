@@ -28,6 +28,7 @@ import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,6 +59,8 @@ public class DecisionGraphParseResult {
     private DecisionGraph product;
     
     private final AstNodeIdProvider nodeIdProvider = new AstNodeIdProvider();
+    
+    private URI source;
 
     public DecisionGraphParseResult(List<? extends AstNode> someAstNodes) {
         astNodes = someAstNodes;
@@ -97,7 +100,7 @@ public class DecisionGraphParseResult {
         
         product.setStart( product.getNode(C.head(astNodes).getId()) );
         product.setTopLevelType(topLevelType);
-        
+        product.setSource(source);
         // TODO Graph-level validators go here.
         
         return product;
@@ -526,4 +529,12 @@ public class DecisionGraphParseResult {
 
     };
 
+    public URI getSource() {
+        return source;
+    }
+
+    public void setSource(URI source) {
+        this.source = source;
+    }
+    
 }

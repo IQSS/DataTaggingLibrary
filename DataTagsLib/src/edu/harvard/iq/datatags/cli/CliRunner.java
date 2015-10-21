@@ -17,32 +17,57 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * A command-line application that executes decision graphs.
  * @author michael
  */
 public class CliRunner {
-    
+
     private DecisionGraph decisionGraph;
     RuntimeEngine ngn;
     BufferedReader reader;
     private final StringMapFormat dtFormat = new StringMapFormat();
+    private final Map<String, CliCommand> commands = new HashMap<>();
+    private boolean printDebugMessages = false;
+    
+    private static final CliCommand COMMAND_NOT_FOUND = new CliCommand(){
+        @Override
+        public String command() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public String description() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void execute(CliRunner rnr) throws Exception {
+            rnr.printMsg("Command not found");
+        }
+    };
+
+    public CliRunner() {
+        Arrays.asList( new CurrentTagsCommand(), new AboutCommand(), new QuitCommand(), new ToggleDebugMessagesCommand() )
+                .forEach( c -> commands.put(c.command(), c) );
+    }
     
     public void go() throws IOException {
-        println( "Running questionnaire %s, (version %s)", decisionGraph.getSource() );
+        println("Running questionnaire %s", decisionGraph.getSource());
         ngn = new RuntimeEngine();
         ngn.setDecisionGraph(decisionGraph);
-        
+
         try {
-            if ( System.console() == null ) {
+            if (System.console() == null) {
                 reader = new BufferedReader(new InputStreamReader(System.in));
             }
 
-            ngn.setListener( new RuntimeEngine.Listener() {
+            ngn.setListener(new RuntimeEngine.Listener() {
 
                 @Override
                 public void runStarted(RuntimeEngine ngn) {
@@ -51,33 +76,32 @@ public class CliRunner {
 
                 @Override
                 public void processedNode(RuntimeEngine ngn, Node node) {
-                    printMsg("Visited node " + node );
-                    node.accept( new Node.VoidVisitor() {
+                    if ( printDebugMessages ) {
+                        printMsg("Visited node " + node);
+                    }
+                    node.accept(new Node.VoidVisitor() {
 
                         @Override
-                        public void visitImpl(AskNode nd) throws DataTagsRuntimeException {}
+                        public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
+                        }
 
                         @Override
                         public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
                             printMsg("Updating tags");
-                            for ( Map.Entry<String, String> e : dtFormat.format(nd.getTags()).entrySet() ) {
-                                printMsg("%s = %s", e.getKey(), e.getValue() );
-                            }
-                            
+                            dtFormat.format(nd.getTags()).entrySet().forEach(e
+                                    -> printMsg("%s = %s", e.getKey(), e.getValue())
+                            );
+
                         }
 
                         @Override
                         public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-                            printMsg("Sorry, we can't accept the dataset: " + nd.getReason());
+                            println("Sorry, we can't accept the dataset: " + nd.getReason());
                         }
 
                         @Override
                         public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
-                            try {
-                                printTitle("Section: " + nd.getCalleeNodeId() + "");
-                            } catch (IOException ex) {
-                                Logger.getLogger(CliRunner.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                            printTitle("Section: " + nd.getCalleeNodeId() + "");
                         }
 
                         @Override
@@ -86,97 +110,125 @@ public class CliRunner {
                         }
 
                         @Override
-                        public void visitImpl(EndNode nd) throws DataTagsRuntimeException {}
+                        public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
+                        }
                     });
                 }
 
                 @Override
                 public void runTerminated(RuntimeEngine ngn) {
-                    printMsg("Run Done");
+                    if ( printDebugMessages ) {
+                        printMsg("Run Done");
+                    }
                 }
-                
+
             });
 
-            if ( ngn.start() ) {
-                while ( ngn.consume( getAnswer() ) ) {}
+            if (ngn.start()) {
+                while (ngn.consume(getAnswer())) {
+                }
             }
-            
+
             printTitle("Final Tags:");
-            dumpTagValue( ngn.getCurrentTags() );
-            
+            dumpTagValue(ngn.getCurrentTags());
+
         } finally {
-            if ( reader != null ) {
+            if (reader != null) {
                 reader.close();
             }
         }
     }
-    
-    void dumpTagValue( TagValue val ) {
-        for ( Map.Entry<String, String> e : dtFormat.format(val).entrySet() ) {
-            printMsg("%s = %s", e.getKey(), e.getValue() );
-        }
+
+    void dumpTagValue(TagValue val) {
+        dtFormat.format(val).entrySet().forEach((e) -> {
+            print("%s = %s", e.getKey(), e.getValue());
+        });
     }
-    
+
     Answer getAnswer() throws IOException {
         AskNode ask = (AskNode) ngn.getCurrentNode();
-        println( ask.getText() );
-        if ( ! ask.getTermNames().isEmpty() ) {
+        if ( printDebugMessages ) {
+            printMsg( "Question id: " + ask.getId() );
+        }
+        println( ask.getText());
+        if (!ask.getTermNames().isEmpty()) {
             println(" Terms:");
-            for ( String termName : ask.getTermNames() ) {
-                print( " * " + termName + ":  " );
-                println( ask.getTermText(termName) );
+            for (String termName : ask.getTermNames()) {
+                print(" * " + termName + ":\n");
+                println("\t" + ask.getTermText(termName));
             }
         }
         println("Possible Answers:");
-        for ( Answer ans: ask.getAnswers() ) {
-            println( " - " + ans.getAnswerText() );
+        for (Answer ans : ask.getAnswers()) {
+            println(" - " + ans.getAnswerText());
         }
 
         String ansText;
-        while ( (ansText = readLine("answer: ")) != null ) {
+        while ((ansText = readLine("answer (? for help): ")) != null) {
             Answer ans = Answer.Answer(ansText);
-            if ( ask.getAnswers().contains(ans) ) {
+            if (ask.getAnswers().contains(ans)) {
                 return ans;
+            } else if (ansText.equals("?")) {
+                commands.entrySet().stream().sorted( (e1, e2) -> e1.getKey().compareTo(e2.getKey()) )
+                        .forEach( e -> println("\\%s:\t%s", e.getKey(), e.getValue().description()));
+            } else if ( ansText.startsWith("\\") ) {
+                try {
+                    commands.getOrDefault(ansText.substring(1), COMMAND_NOT_FOUND).execute(this);
+                } catch (Exception ex) {
+                    Logger.getLogger(CliRunner.class.getName()).log(Level.SEVERE, "Error executing command: " + ex.getMessage(), ex);
+                }
             } else {
                 printMsg("Sorry, '%s' is not a valid answer. Please try again.", ansText);
             }
         }
-        
+
         return null;
     }
-    
-    void print( String format, Object... args )  throws IOException {
-        if ( System.console() != null ) {
+
+    void print(String format, Object... args) {
+        if (System.console() != null) {
             System.console().printf(format, args);
         } else {
             System.out.print(String.format(format, args));
         }
     }
-    
-    void printMsg( String format, Object... args ) {
-        try {
-            println("# " + format, args );
-        } catch (IOException ex) {
-            Logger.getLogger(CliRunner.class.getName()).log(Level.SEVERE, null, ex);
+
+    void print(String format) {
+        if (System.console() != null) {
+            System.console().printf(format);
+        } else {
+            System.out.print(String.format(format));
         }
     }
-    
-    void println( String format, Object... args ) throws IOException {
-        if ( format.endsWith("\n") ) {
+
+    void printMsg(String format, Object... args) {
+        println("# " + format, args);
+    }
+
+    void println(String format, Object... args) {
+        if (format.endsWith("\n")) {
             print(format, args);
         } else {
-            print( format + "\n", args );
+            print(format + "\n", args);
         }
     }
-    
-    void printTitle( String format, Object... args ) throws IOException {
+
+    void println(String format) {
+        if (format.endsWith("\n")) {
+            print(format);
+        } else {
+            print(format + "\n");
+        }
+    }
+
+    void printTitle(String format, Object... args) {
         String msg = String.format(format, args);
-        println( msg );
+        println(msg);
         char[] deco = new char[msg.length()];
         Arrays.fill(deco, '-');
-        println( new String(deco) );
+        println(new String(deco));
     }
-    
+
     private String readLine(String format, Object... args) throws IOException {
         if (System.console() != null) {
             return System.console().readLine(format, args);
@@ -191,6 +243,18 @@ public class CliRunner {
 
     public void setDecisionGraph(DecisionGraph fcs) {
         this.decisionGraph = fcs;
+    }
+
+    public RuntimeEngine getEngine() {
+        return ngn;
+    }
+
+    public void setPrintDebugMessages(boolean debugMessages) {
+        printDebugMessages = debugMessages;
+    }
+    
+    public boolean getPrintDebugMessages() {
+        return printDebugMessages;
     }
     
 }
