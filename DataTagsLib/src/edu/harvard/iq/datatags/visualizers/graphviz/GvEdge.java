@@ -1,7 +1,8 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
 /**
- *
+ * An edge in GraphViz.
+ * 
  * @author michael
  */
 public class GvEdge extends GvObject<GvEdge> {

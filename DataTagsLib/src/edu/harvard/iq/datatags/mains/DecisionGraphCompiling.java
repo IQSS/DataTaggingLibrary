@@ -10,7 +10,7 @@ import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetClusteredVisualizer;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDataStructureVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpaceVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVizalizer;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- *
+ * Compiles and visualizes a tag space and a decision graph.
  * @author michael
  */
 public class DecisionGraphCompiling {
@@ -59,7 +59,7 @@ public class DecisionGraphCompiling {
         TagSpaceParser tagsParser = new TagSpaceParser();
         CompoundType baseType = tagsParser.parse(readAll(tagsFile)).buildType("DataTags").get();
         
-        GraphvizDataStructureVisualizer tagViz = new GraphvizDataStructureVisualizer(baseType);
+        GraphvizTagSpaceVisualizer tagViz = new GraphvizTagSpaceVisualizer(baseType);
         Path tagsOutPath = tagsFile.resolveSibling(tagsFile.getFileName().toString() + ".gv");
         System.out.println("Writing " + tagsOutPath );
 		tagViz.vizualize( tagsOutPath );

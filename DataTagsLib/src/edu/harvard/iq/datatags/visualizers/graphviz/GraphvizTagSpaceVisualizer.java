@@ -12,14 +12,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
+ * Visualizes a {@link TagType} as a tree.
  * @author michael
  */
-public class GraphvizDataStructureVisualizer extends GraphvizVisualizer {
+public class GraphvizTagSpaceVisualizer extends GraphvizVisualizer {
 	
 	private final TagType topLevel;
 
-	public GraphvizDataStructureVisualizer(TagType topLevel) {
+	public GraphvizTagSpaceVisualizer(TagType topLevel) {
 		this.topLevel = topLevel;
 	}
 
@@ -29,8 +29,6 @@ public class GraphvizDataStructureVisualizer extends GraphvizVisualizer {
 		out.write("graph [overlap=true ranksep=3]");
 		out.newLine();
 	}
-	
-	
 	
 	@Override
 	protected void printBody( BufferedWriter out ) throws IOException {

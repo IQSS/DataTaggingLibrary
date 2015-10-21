@@ -9,7 +9,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.Node.VoidVisitor;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
-import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.HashSet;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A class that checks that every node in the flow chart set
+ * Checks that every node in the flow chart set
  * is reachable. Returns a WARNING if there is an unreachable
  * node.
  * @author Naomi

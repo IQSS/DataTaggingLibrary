@@ -1,10 +1,11 @@
 package edu.harvard.iq.datatags.runtime.exceptions;
 
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 
 /**
  * Base class for exceptions that happen during the execution of
- * a {@link FlowChartSet}.
+ * a {@link DecisionGraph}.
  * @author michael
  */
 public class DataTagsRuntimeException extends RuntimeException {

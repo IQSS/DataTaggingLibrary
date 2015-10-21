@@ -1,8 +1,8 @@
 package edu.harvard.iq.datatags.parser.decisiongraph;
 
 /**
- * A class that creates unique node ids. Uniqueness is guaranteed only within
- * a single instance.
+ * A class that creates unique node ids. Uniqueness is guaranteed only 
+ * for ids created by the same instance.
  * 
  * @author michael
  */

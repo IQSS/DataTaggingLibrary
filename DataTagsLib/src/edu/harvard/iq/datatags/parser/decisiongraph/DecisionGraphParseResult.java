@@ -14,7 +14,7 @@ import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.ToDoType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
-import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
@@ -41,7 +41,8 @@ import java.util.Set;
 /**
  * The result of parsing a decision graph code. Can create an actual decision
  * graph, when provided with a tag space (i.e a @{link CompoundType} instance).
- *
+ * Also provides access to the AST, via {@link #getNodes()}.
+ * 
  * @author michael
  */
 public class DecisionGraphParseResult {
@@ -101,7 +102,7 @@ public class DecisionGraphParseResult {
         product.setStart( product.getNode(C.head(astNodes).getId()) );
         product.setTopLevelType(topLevelType);
         product.setSource(source);
-        // TODO Graph-level validators go here.
+        // TODO Graph-level validators may go here.
         
         return product;
     }
@@ -161,7 +162,7 @@ public class DecisionGraphParseResult {
      * @param astNodes The list of AST nodes to compile.
      * @param defaultNode The node to go to when a list of nodes does not end
      * with a terminating node.
-     * @return The starting node for the execution..
+     * @return The starting node for the execution.
      * @throws RuntimeException on errors in the code.
      */
     private Node buildNodes(List<? extends AstNode> astNodes, Node defaultNode)  {
@@ -180,7 +181,7 @@ public class DecisionGraphParseResult {
                     
                     Node syntacticallyNext = buildNodes(C.tail(astNodes), defaultNode );
                     
-                    astNode.getAnswers().forEach( ansSubNode -> res.setNodeFor(new Answer(ansSubNode.getAnswerText()), 
+                    astNode.getAnswers().forEach( ansSubNode -> res.setNodeFor( Answer.get(ansSubNode.getAnswerText()), 
                                                                                 buildNodes(ansSubNode.getSubGraph(), syntacticallyNext) ) );
                     
                     impliedAnswers(res).forEach( ans -> res.setNodeFor(ans, syntacticallyNext) ); 
@@ -249,8 +250,8 @@ public class DecisionGraphParseResult {
     }
 
     /**
-     * Registers all the types and their possible slot names. That is, if we
-     * have:
+     * Maps all unique slot suffixes to their fully qualified version.
+     * That is, if we have:
      *
      * <code><pre>
      *  top/mid/a
@@ -259,7 +260,7 @@ public class DecisionGraphParseResult {
      * </pre></code>
      *
      * We end up with:
-     * <pre>
+     * <code><pre>
      *  top/mid/a  => top/mid/a
      *  mid/a      => top/mid/a
      *  a          => top/mid/a
@@ -267,7 +268,7 @@ public class DecisionGraphParseResult {
      *  mid/b      => top/mid/b
      *  top/mid2/b => top/mid2/b
      *  mid2/b     => top/mid2/b
-     * </pre>
+     * </pre></code>
      *
      * @param topLevel the top level type to build from.
      */
@@ -332,9 +333,9 @@ public class DecisionGraphParseResult {
     }
 
     /**
-     * Nodes that has only a single "yes" of "no" answer, are considered to  
-     * implicitly have the reverse boolean answer. This methods detects this case
-     * and generates that answer.
+     * Nodes that have only a single "yes" of "no" answer, are considered to  
+     * implicitly have the reverse boolean answer as well. This method detects 
+     * that case and generates those answers.
      * @param node
      * @return A list of implied answers (might be empty, never {@code null}).
      */

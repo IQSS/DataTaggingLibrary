@@ -2,13 +2,14 @@ package edu.harvard.iq.datatags.runtime.listeners;
 
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A runtime engine listener that records the nodes the engine visited.
- * To allow stdout logging as well, this listener is built with the decorator pattern.
+ * To allow additional listening (e.g. for logging into {@code stdout}), this listener is built with the decorator pattern.
+ * Use an instance of {@link RuntimeEngineSilentListener} when no additional logging is needed.
  * 
  * @author michael
  */
@@ -30,11 +31,7 @@ public class RuntimeEngineTracingListener implements  RuntimeEngine.Listener {
 	}
 	
 	public List<String> getVisitedNodeIds() {
-		List<String> out = new ArrayList<>(visitedNodes.size());
-		for ( Node n : getVisitedNodes() ) {
-			out.add( n.getId() );
-		}
-		return out;
+        return visitedNodes.stream().map( n -> n.getId() ).collect( Collectors.toList() );
 	}
 	
 	@Override

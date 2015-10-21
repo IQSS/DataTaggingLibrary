@@ -15,12 +15,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Traverse the interview and gather all used tag values
+ * Traverse the questionnaire and gather all used tag values
  * (used in set nodes).
  *
  * @author Naomi
  */
-public class InterviewTagValues extends VoidVisitor {
+public class QuestionnaireTagValues extends VoidVisitor {
     private final Set<TagValue> usedTagValues = new HashSet<>();
     
     public Set<TagValue> gatherInterviewTagValues( DecisionGraph dg ) {

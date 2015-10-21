@@ -5,7 +5,7 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
 
 /**
- * A node that sets values in the data tags. Setting may be done by composing 
+ * A node that sets values in the data tags. Setting is done by composing 
  * the node's compound value with the engine's current tag value.
  * @author michael
  */

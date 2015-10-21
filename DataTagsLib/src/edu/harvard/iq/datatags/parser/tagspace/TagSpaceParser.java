@@ -4,6 +4,10 @@ import edu.harvard.iq.datatags.parser.tagspace.ast.AbstractSlot;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import org.codehaus.jparsec.Parser;
 
@@ -21,7 +25,7 @@ public class TagSpaceParser {
     /**
      * Parse Tag Space code into a result that can be used to create actual types.
      * @param tagSpaceCode
-     * @return
+     * @return the result of the parsing - to be used for AST level inspections and type construction.
      * @throws SyntaxErrorException
      * @throws SemanticsErrorException 
      */
@@ -37,24 +41,15 @@ public class TagSpaceParser {
 											pe);
         }
     }
-
-    /**
-     * Lists the slots defined in the code. A lower-level method, useful for tools inspecting 
-     * the code.
-     * 
-     * @param tagSpaceCode
-     * @return List of all defined slots.
-     * @throws SyntaxErrorException 
-     */
-    public List<? extends AbstractSlot> ParseSlots(String tagSpaceCode) throws SyntaxErrorException {
-        try {
-            List<? extends AbstractSlot> slots = parser.parse(tagSpaceCode);
-            return slots;
-        } catch ( org.codehaus.jparsec.error.ParserException pe ) {
-			throw new SyntaxErrorException( new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),
-											pe.getMessage(),
-											pe);
-        }
-    }
+    
+    public TagSpaceParseResult parse( Path file ) throws IOException, SyntaxErrorException, SemanticsErrorException { 
+        
+        String source = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+        final TagSpaceParseResult parseResult = parse(source);
+        parseResult.setSource( file.toUri() );
+        return parseResult;
+            
+	}
+    
     
 }

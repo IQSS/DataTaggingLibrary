@@ -47,7 +47,7 @@ public class UnusedTagsValidator {
      * @return A list of validation messages regarding the flow chart set.
      */
     public List<ValidationMessage> validateUnusedTags( DecisionGraph dg ) {
-        InterviewTagValues interviewValues = new InterviewTagValues();
+        QuestionnaireTagValues interviewValues = new QuestionnaireTagValues();
         Set<TagValue> usedValues = interviewValues.gatherInterviewTagValues(dg);
         
         AllTagValues allValues = new AllTagValues();

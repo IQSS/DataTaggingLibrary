@@ -5,7 +5,9 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
 
 /**
- * A node that terminates the run, if and when the execution gets to it.
+ * A node that pops the execution stack, if and when the execution gets to it.
+ * May terminate a run, if the stack becomes empty.
+ * 
  * @author michael
  */
 public class EndNode extends TerminalNode {

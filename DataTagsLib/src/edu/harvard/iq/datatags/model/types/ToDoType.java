@@ -3,7 +3,7 @@ package edu.harvard.iq.datatags.model.types;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 
 /**
- * A special tag type for tags under development.
+ * A placeholder tag.
  * @author michael
  */
 public class ToDoType extends TagType {

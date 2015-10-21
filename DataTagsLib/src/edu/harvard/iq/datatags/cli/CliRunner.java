@@ -9,7 +9,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
-import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -35,6 +35,9 @@ public class CliRunner {
     private final Map<String, CliCommand> commands = new HashMap<>();
     private boolean printDebugMessages = false;
     
+    /**
+     * A default command, in case a nonexistent command has been chosen.
+     */
     private static final CliCommand COMMAND_NOT_FOUND = new CliCommand(){
         @Override
         public String command() {
@@ -53,7 +56,8 @@ public class CliRunner {
     };
 
     public CliRunner() {
-        Arrays.asList( new CurrentTagsCommand(), new AboutCommand(), new QuitCommand(), new ToggleDebugMessagesCommand() )
+        Arrays.asList( new CurrentTagsCommand(), new AboutCommand(),
+                       new QuitCommand(), new ToggleDebugMessagesCommand() )
                 .forEach( c -> commands.put(c.command(), c) );
     }
     
@@ -125,7 +129,7 @@ public class CliRunner {
             });
 
             if (ngn.start()) {
-                while (ngn.consume(getAnswer())) {
+                while (ngn.consume(promptUserForAnswer())) {
                 }
             }
 
@@ -145,7 +149,7 @@ public class CliRunner {
         });
     }
 
-    Answer getAnswer() throws IOException {
+    Answer promptUserForAnswer() throws IOException {
         AskNode ask = (AskNode) ngn.getCurrentNode();
         if ( printDebugMessages ) {
             printMsg( "Question id: " + ask.getId() );
@@ -201,9 +205,6 @@ public class CliRunner {
         }
     }
 
-    void printMsg(String format, Object... args) {
-        println("# " + format, args);
-    }
 
     void println(String format, Object... args) {
         if (format.endsWith("\n")) {
@@ -221,11 +222,25 @@ public class CliRunner {
         }
     }
 
+    /**
+     * Prints to the console, formatted as a message.
+     * @param format
+     * @param args 
+     */
+    void printMsg(String format, Object... args) {
+        println("# " + format, args);
+    }
+    
+    /**
+     * Prints to the console, with underline.
+     * @param format
+     * @param args 
+     */
     void printTitle(String format, Object... args) {
         String msg = String.format(format, args);
         println(msg);
         char[] deco = new char[msg.length()];
-        Arrays.fill(deco, '-');
+        Arrays.fill(deco, '~');
         println(new String(deco));
     }
 

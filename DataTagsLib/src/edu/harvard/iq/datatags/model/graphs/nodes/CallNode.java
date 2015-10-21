@@ -4,7 +4,7 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
 
 /**
- * A node that calls another node.
+ * A node that calls another node in a new execution frame.
  * @author michael
  */
 public class CallNode extends ThroughNode {

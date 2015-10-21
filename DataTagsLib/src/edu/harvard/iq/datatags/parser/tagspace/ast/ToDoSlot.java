@@ -8,7 +8,7 @@ package edu.harvard.iq.datatags.parser.tagspace.ast;
  * Biggy: consists of SlotA, SlotB.
  * SlotA: one of AA, AB.
  * SlotB: TODO.
- * SlotC [We'll need to push this guy somewhere.... but where?]: TODO.
+ * SlotC [We'll need to implement this... but how?]: TODO.
  * 
  * }
  * @author michael

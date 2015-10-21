@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 
 /**
- * A listener that logging data to a print stream, such as System.out.
+ * A listener that logs data to a print stream, such as System.out.
  * @author michael
  */
 public class RuntimeEnginePrintStreamListener implements RuntimeEngine.Listener {

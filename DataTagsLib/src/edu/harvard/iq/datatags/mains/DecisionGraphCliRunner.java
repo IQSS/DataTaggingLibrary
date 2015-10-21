@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- *
+ * Main class for running decision graphs in the command line.
  * @author michael
  */
 public class DecisionGraphCliRunner {

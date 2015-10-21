@@ -9,8 +9,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.io.StringMapFormat;
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.*;
 import java.util.Arrays;
@@ -20,12 +19,12 @@ import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * The engine that executes {@link FlowChartSet}s.
+ * The engine that executes a {@link DecisionGraph}.
  * 
  * Intended usage pattern:
  * <code>
  *	if ( engine.start(node) ) {
- *		while ( engine.consume( getAns() ) ) {}
+ *		while ( engine.consume( getAnswerFromSomewhere() ) ) {}
  *  }
  * </code>
  * 

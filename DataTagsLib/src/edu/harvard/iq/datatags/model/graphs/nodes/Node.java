@@ -4,8 +4,8 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import org.codehaus.jparsec.internal.util.Objects;
 
 /**
- * An atomic part of the program - the equivalent of a line of code 
- * in a regular program.
+ * An atomic part of the program - the equivalent of a single instruction 
+ * in machine code.
  * 
  * @author michael
  */

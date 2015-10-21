@@ -25,13 +25,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
+ * Runs the following validations on a decision graph:
+ * <ul>
+ *  <li>Repeated Ids</li>
+ *  <li>Unreachable nodes</li>
+ *  <li>{@code call} nodes have valid references</li>
+ * </ul>
  * @author Naomi
  */
-public class ValidCallNodeValidation {
-    
-    public ValidCallNodeValidation() {
-    }
+public class DecisionGraphValidations {
     
     public static void main(String[] args) {
         try {

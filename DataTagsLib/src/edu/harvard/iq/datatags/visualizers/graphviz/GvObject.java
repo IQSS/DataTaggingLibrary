@@ -7,10 +7,11 @@ import java.util.regex.Pattern;
 /**
  * Base object for graphviz file construction.
  * @author michael
+ * @param <T> Actual type of the object (edge, node...)
  */
 public abstract class GvObject<T extends GvObject> {
     
-    private static final Pattern illegalIdChars = Pattern.compile("\\s|-");
+    private static final Pattern ILLEGAL_CHARS_IN_IDS = Pattern.compile("\\s|-");
     
     private String url;
     private final Map<String,String> atts = new HashMap<>();
@@ -60,7 +61,7 @@ public abstract class GvObject<T extends GvObject> {
     static String sanitizeId(String s) {
         if ( s == null ) return "null";
         if ( s.isEmpty() ) return s;
-        String candidate = illegalIdChars.matcher(s.trim()).replaceAll("_").replaceAll("\\.", "_").trim();
+        String candidate = ILLEGAL_CHARS_IN_IDS.matcher(s.trim()).replaceAll("_").replaceAll("\\.", "_").trim();
         candidate = candidate.replaceAll(Pattern.quote("$"), "_DLR_");
         candidate = candidate.replaceAll(Pattern.quote("#"), "_HSH_");
         char first = candidate.charAt(0);

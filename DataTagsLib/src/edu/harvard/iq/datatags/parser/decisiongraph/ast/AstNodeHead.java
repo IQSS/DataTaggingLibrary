@@ -3,7 +3,7 @@ package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 import java.util.Objects;
 
 /**
- * A node head that contains a String title (rather than a {@link NodeType} type).
+ * Head of an AST node. 
  * @author Michael Bar-Sinai
  */
 public class AstNodeHead {
@@ -45,7 +45,7 @@ public class AstNodeHead {
     
     @Override
     public String toString() {
-        return "[headref id:" + getId() + " title:" + getTitle() + "]";
+        return "[AstNodeHead id:" + getId() + " title:" + getTitle() + "]";
     }
     
 }

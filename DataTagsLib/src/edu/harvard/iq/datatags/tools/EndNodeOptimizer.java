@@ -9,7 +9,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
-import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Set;
 import java.util.TreeSet;
@@ -31,7 +31,7 @@ public class EndNodeOptimizer implements FlowChartOptimizer {
     public DecisionGraph optimize(final DecisionGraph fcs) {
         
         // create the end node
-        final EndNode end = new EndNode("$$" + fcs.getId() + "-end" );
+        final EndNode end = new EndNode("[#" + fcs.getId() + "-end]" );
         fcs.add( end );
         
         // now traverse the chart and replace all.
@@ -77,7 +77,7 @@ public class EndNodeOptimizer implements FlowChartOptimizer {
             }
             
             private boolean shouldReplace( Node n ) {
-                return ( (n.getId().charAt(0)=='$')
+                return ( (n.getId().startsWith("[#"))
                             && ( n instanceof EndNode ) );
             }
         };

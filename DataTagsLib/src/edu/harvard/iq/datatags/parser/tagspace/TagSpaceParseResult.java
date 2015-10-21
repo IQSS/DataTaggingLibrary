@@ -12,8 +12,7 @@ import edu.harvard.iq.datatags.parser.tagspace.ast.CompoundSlot;
 import edu.harvard.iq.datatags.parser.tagspace.ast.ToDoSlot;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
-import java.util.Collection;
-import java.util.HashMap;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,6 +32,7 @@ public class TagSpaceParseResult {
     private final List<? extends AbstractSlot> slots; 
     private final Map<String, AbstractSlot> slotsByName = new TreeMap<>();
     private Set<String> duplicateSlotNames;
+    private URI source;
     
     class MissingSlotException extends RuntimeException {
         private final String missingSlotName;
@@ -160,4 +160,13 @@ public class TagSpaceParseResult {
             return newType;
         }
     }
+
+    public URI getSource() {
+        return source;
+    }
+
+    public void setSource(URI source) {
+        this.source = source;
+    }
+    
 }

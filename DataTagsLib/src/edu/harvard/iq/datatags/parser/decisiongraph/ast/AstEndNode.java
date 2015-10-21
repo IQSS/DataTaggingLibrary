@@ -1,9 +1,5 @@
 package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
-/**
- * A reference to an {@code (end)} node in a chart.
- * @author Michael Bar-Sinai
- */
 public class AstEndNode extends AstNode {
 
     public AstEndNode(String id) {

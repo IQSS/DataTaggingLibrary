@@ -4,7 +4,7 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
 
 /**
- * A node that marks a section of the chart that will be implemented later.
+ * A node that marks a section of the decision graph that will be implemented later.
  * @author michael
  */
 public class TodoNode extends ThroughNode {

@@ -6,7 +6,7 @@ import java.util.Set;
 
 /**
  * Used for reporting which slot a value should go to, and
- * whether the value exists and it compatible with the slot.
+ * whether the value exists and is compatible with the slot.
  */
 public abstract class TagValueLookupResult {
     

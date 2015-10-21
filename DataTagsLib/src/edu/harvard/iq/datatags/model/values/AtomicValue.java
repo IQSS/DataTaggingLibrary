@@ -3,7 +3,7 @@ package edu.harvard.iq.datatags.model.values;
 import edu.harvard.iq.datatags.model.types.AtomicType;
 
 /**
- *
+ * A value of an {@link AtomicType}.
  * @author michael
  */
 public class AtomicValue extends TagValue implements Comparable<AtomicValue>{

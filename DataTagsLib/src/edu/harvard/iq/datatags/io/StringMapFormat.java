@@ -80,7 +80,7 @@ public class StringMapFormat {
     
     
     /**
-     * 
+     * Builds a {@link TagValue} from a map created by {@link #format}.
      * @param type The expected type of the resulting tag value.
      * @param serializedValue Tag of the expected type, serialized by this format.
      * @return The value, or {@code null} if {@code serializedValue} is empty.

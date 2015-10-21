@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- *
+ * A value that has multiple fields of different types.
  * @author michael
  */
 public class CompoundValue extends TagValue {

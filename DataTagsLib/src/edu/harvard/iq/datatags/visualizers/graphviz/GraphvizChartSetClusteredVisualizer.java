@@ -10,13 +10,13 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
-import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
-import edu.harvard.iq.datatags.util.ReachableNodesCollector;
+import edu.harvard.iq.datatags.tools.ReachableNodesCollector;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 import java.io.BufferedWriter;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Given a {@link FlowChartSet}, instances of this class create gravphviz files
+ * Given a {@link DecisionGraph}, instances of this class create gravphviz files
  * visualizing the decision graph flow.
  * 
  * @author michael

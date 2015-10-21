@@ -4,7 +4,7 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
 
 /**
- * When a computation gets to this node, it is set to "reject" mode, and halted.
+ * When a computation gets to {@code this} node, it is set to "reject" mode, and halted.
  * In effect, this means that the dataset cannot be accepted to the repository,
  * @author michael
  */

@@ -1,6 +1,3 @@
-/*
- *  (C) Michael Bar-Sinai
- */
 package edu.harvard.iq.datatags.parser.tagspace.ast;
 
 import java.util.List;

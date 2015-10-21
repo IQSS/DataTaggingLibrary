@@ -20,7 +20,7 @@ import org.codehaus.jparsec.Parsers;
 import org.codehaus.jparsec.Terminals;
 
 /**
- * Parses the terminals of a decision graph code into AST.
+ * Parses the terminals of a decision graph code into an AST.
  * This parsers in this class are <em>token level</em> parsers - they expect
  * a token stream input, rather than a String-based one.
  * 

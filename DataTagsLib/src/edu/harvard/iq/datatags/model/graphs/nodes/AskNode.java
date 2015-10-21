@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.model.graphs.nodes;
 
-import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * A node where the user has to decide on a yes/no question.
+ * A node where the user has to provide an answer to a question.
  * @author michael
  */
 public class AskNode extends Node {

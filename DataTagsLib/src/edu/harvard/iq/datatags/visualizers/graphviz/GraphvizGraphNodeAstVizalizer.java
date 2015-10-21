@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Visualizes the AST of a decision graph.
  * 
  * @author Michael Bar-Sinai
  */
@@ -44,8 +45,6 @@ public class GraphvizGraphNodeAstVizalizer extends GraphvizVisualizer {
         addIds(nodeList, new AstNodeIdProvider());
         initMap();
     }
-    
-    
     
     @Override
     protected void printBody(BufferedWriter out) throws IOException {

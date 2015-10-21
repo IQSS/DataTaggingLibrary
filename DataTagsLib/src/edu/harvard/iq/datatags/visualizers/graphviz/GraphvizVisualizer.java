@@ -1,7 +1,3 @@
-/*
- *  (C) Michael Bar-Sinai
- */
-
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
@@ -12,13 +8,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- *
+ * Base class for GraphViz visualizers. Contains mainly utility methods.
  * @author michael
  */
 public abstract class GraphvizVisualizer {

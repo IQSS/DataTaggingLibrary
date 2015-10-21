@@ -5,7 +5,7 @@ import java.util.Objects;
 
 /**
  * Base class for instruction nodes, which are the top-level
- * nodes on decision graphs.
+ * nodes in decision graphs.
  * 
  * @author Michael Bar-Sinai
  */

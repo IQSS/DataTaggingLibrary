@@ -8,7 +8,6 @@ import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.values.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URI;
 import java.util.HashMap;
@@ -18,7 +17,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A single decision graph that a users walks through. A compiled decision graph
+ * A single decision graph that can be traversed (e.g for execution). A compiled decision graph
  * file.
  *
  * @author michael

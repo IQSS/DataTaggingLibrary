@@ -11,7 +11,7 @@ import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
-import edu.harvard.iq.datatags.model.values.Answer;
+import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParseResult;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
@@ -149,9 +149,9 @@ public class DecisionGraphParseResultTest {
         
         AskNode start = new AskNode(nodeIdProvider.nextId());
         start.setText("why?");
-        start.setNodeFor(new Answer("dunno"), new EndNode("de"));
+        start.setNodeFor( Answer.get("dunno"), new EndNode("de"));
         final CallNode whyNotCallNode = new CallNode("wnc", "duh");
-        start.setNodeFor(new Answer("why not"),  whyNotCallNode );
+        start.setNodeFor( Answer.get("why not"),  whyNotCallNode );
         
         EndNode finalEndNode = new EndNode( nodeIdProvider.nextId() );
         whyNotCallNode.setNextNode(finalEndNode);
