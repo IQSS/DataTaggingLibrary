@@ -1,6 +1,0 @@
-DEFINITIONS := TypeDef*
-TypeDef := ShortForm | DetailedForm
-ShortForm := <name> <type-of-type> <item>(, <item>)*.
-type := <empty> --> Map
-        <one of> --> Simple
-        <some of> --> Set
