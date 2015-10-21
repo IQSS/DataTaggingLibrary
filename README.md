@@ -8,6 +8,6 @@ Part of a the [DataTags](http://datatags.org) project, this library contains too
 * Visualization tools
 * Validation tools
 * Command-line decision graph runner.
-* Sample code for [a tag space](WORK/dtl/0.8/definitions.ts) and [a questionnaire](WORK/dtl/0.8/questionnaire.dg).
+* Sample code for [a tag space](DataTagsLib/WORK/dtl/0.8/definitions.ts) and [a questionnaire](DataTagsLib/WORK/dtl/0.8/questionnaire.dg).
 
 The code in this repository is a [NetBeans](http://netbeans.org) project.
