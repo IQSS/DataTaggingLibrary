@@ -159,9 +159,7 @@ public class CliRunner {
             }
         }
         println("Possible Answers:");
-        for (Answer ans : ask.getAnswers()) {
-            println(" - " + ans.getAnswerText());
-        }
+        ask.getAnswers().forEach( ans -> println(" - " + ans.getAnswerText()) );
 
         String ansText;
         while ((ansText = readLine("answer (? for help): ")) != null) {
@@ -169,8 +167,10 @@ public class CliRunner {
             if (ask.getAnswers().contains(ans)) {
                 return ans;
             } else if (ansText.equals("?")) {
+                println("Type one of the answers listed above, or one of the following commands:?"
+                        + "");
                 commands.entrySet().stream().sorted( (e1, e2) -> e1.getKey().compareTo(e2.getKey()) )
-                        .forEach( e -> println("\\%s:\t%s", e.getKey(), e.getValue().description()));
+                        .forEach( e -> println("\\%s:\n\t%s", e.getKey(), e.getValue().description()));
             } else if ( ansText.startsWith("\\") ) {
                 try {
                     commands.getOrDefault(ansText.substring(1), COMMAND_NOT_FOUND).execute(this);

@@ -16,9 +16,15 @@ import java.nio.file.Paths;
  *
  * @author michael
  */
-public class FlowChartExecuteCli {
+public class DecisionGraphCliRunner {
     
     public static void main(String[] args) throws Exception {
+        
+        if ( args.length != 2 ) {
+            printUsage();
+            System.exit(1);
+        }
+        
         Path definitionFile = Paths.get(args[0]);
         Path chartFile = Paths.get(args[1]);
 
@@ -48,5 +54,9 @@ public class FlowChartExecuteCli {
     private static String readAll( Path p ) throws IOException {
         return new String(Files.readAllBytes(p), StandardCharsets.UTF_8);
     }
-
+    
+    private static void printUsage() {
+        System.out.println("Usage:");
+        System.out.println("DecisionGraphCliRunner <path to tagspace file> <path to decision graph file>");
+    }
 }
