@@ -1,27 +1,20 @@
 <*
  * This is a sample .ts file. "ts" stands for "Tag Space". This tag space is able to describe the policies required
  * by HIPAA, Part2, FERPA, PPRA and the Government Records.
- * - Authors: Latanya Sweeney, Alexandra Wood, David O'Brien, Michael Bar-Sinai
+ * - Authors: Latanya Sweeney, Alexandra Wood, David O'Brien, Michael Bar-Sinai, clinical students at Berkman Center.
  *>
 
-<* Near future version of TS will specify which compound tag is to top level tag.
- * For now, we go with a hard coded "DataTags".
- *>
 DataTags [This is the top level tag,
           used (by the tagging system) to describe the properties of the dataset]:
-					consists of Code, Handling, Legal, Assertions.
+					consists of Code, Handling, Legal, Assertions. <-- Near future version of TS will specify which compound tag is to top level tag.
+                                                         <--   For now, we go with a hard coded "DataTags".
 
 Legal: consists of EducationRecords, <*HIPAA and more*> MedicalRecords, GovernmentRecords, ContractOrPolicy.
 Assertions: consists of DataType, IP, Identity. <-- These are the assertions FXXXXA requires
-<* Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut aliquam veniam, labore delectus!
- * Porro molestias aliquid quaerat aut, ex cumque vero alias non possimus tenetur
- * voluptates nostrum minus, nobis repudiandae.
- *>
 
 IP: TODO.
-AnotherOne: TODO.
 
-Code [This guy is actually going away soon]: one of
+Code [This tag is actually going away soon, to become inferred by compliace sub-spaces (long story, read the paper when it's out)]: one of
 	blue    [Non-confidential information that can be stored and shared freely.],
 	green   [Potentially identifiable but not harmful personal information, shared with some access control.],
 	yellow  [Potentially harmful personal information, shared with loosely verified and/or approved recipients.],
@@ -32,9 +25,9 @@ Code [This guy is actually going away soon]: one of
 
 Handling [practical and applicable aspects of data handling]: consists of
  Storage, Transit, Authentication,
- auth, <-- unclear?
+ auth,
  DUA, Acceptance,
- Approval <-- we approve! Yes, we do!
+ Approval
  .
 
 Storage: one of
