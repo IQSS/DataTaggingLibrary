@@ -10,7 +10,7 @@ DataTags [This is the top level tag,
                                                          <--   For now, we go with a hard coded "DataTags".
 
 Legal: consists of EducationRecords, <*HIPAA and more*> MedicalRecords, GovernmentRecords, ContractOrPolicy.
-Assertions: consists of DataType, IP, Identity. <-- These are the assertions FXXXXA requires
+Assertions: consists of DataType, IP, Identity.
 
 IP: TODO.
 
