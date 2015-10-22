@@ -30,12 +30,12 @@ Handling [practical and applicable aspects of data handling]: consists of
  Approval
  .
 
-Storage: one of
-	clear [Not encrypted at all],
-	serverEncrypt [Encryption on the server, "at rest". Attacker cannot use the data by getting the files from the file system],
-	clientEncrypt [Encryption on the client side. Data obtained from the server (e.g. buy data breach or subpeona)
-	               cannot be used unless the depositor provides the password],
-	doubleEncrypt [Encryption on the client, and then on the server. Both passwords are required in order to make use of the data].
+ Storage [The way data are stored on the server.]: one of
+   clear [Not encrypted at all],
+   serverEncrypt [Encryption on the server, "at rest". Attacker cannot use the data by getting the files from the file system],
+   clientEncrypt [Encryption on the client side. Data obtained from the server (e.g. buy data breach or subpeona)
+                  cannot be used unless the depositor provides the password],
+   doubleEncrypt [Encryption on the client, and then on the server. Both passwords are required in order to make use of the data].
 
 Transit [How the dataset should be transmitted]: one of
 	clear         [ No encryption involved.],
