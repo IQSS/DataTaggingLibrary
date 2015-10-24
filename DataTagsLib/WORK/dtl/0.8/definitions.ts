@@ -12,7 +12,7 @@ DataTags [This is the top level tag,
 Legal: consists of EducationRecords, <*HIPAA and more*> MedicalRecords, GovernmentRecords, ContractOrPolicy.
 Assertions: consists of DataType, IP, Identity.
 
-IP: TODO.
+IP [Assertions pretaining to intellectual property]: TODO.
 
 Code [This tag is actually going away soon, to become inferred by compliace sub-spaces (long story, read the paper when it's out)]: one of
 	blue    [Non-confidential information that can be stored and shared freely.],

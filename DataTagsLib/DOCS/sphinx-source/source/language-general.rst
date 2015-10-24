@@ -47,16 +47,25 @@ Top-Down Support
 
 As developing a full questionnaire may benefit from a top-down approach, it is possible to add placeholders for unimplemented parts. This allows questionnaire developers to reference those parts now, and implement them later. Creating placeholders is done using the ``TODO`` keyword (in tag spaces) and the ``[todo]`` node in decision graphs.
 
-In the below example, ``Policy`` already contains ``Sharing``, although is it not implemented yet ::
+In the below example of a tag space definition, ``Policy`` already contains ``Sharing``, although is it not implemented yet ::
 
   Policy: consists of Security, Sharing.
   Sharing: TODO.
   Security: consists of ...
 
-.. todo:: show an example in the decision graph.
+In the below decision graph snippet, the ``EU-Compliance`` section is referenced from other nodes. At runtime, the engine will pass through it (so that it appears in the run logs). Yet, it's just a placeholder, to be replaced later with a full questionnaire::
+
+  [ask:
+    {text: Was some of the data collected in the EU?}
+    {answers:
+      {yes: [call: EU-Compliance]}}]
+  <* More code here *>
+
+  [>EU-Compliance< todo: This section will ensure compliance with the EU regulations.]
+
 
 
 Language Name
 -------------
-Used to be "datatags", but as there are now more efforts for creating DataTags, we don't want to hog the name.
+Used to be "datatags", but as there are now more efforts for creating DataTags implementation, we don't want to hog the name.
 So we're working on it... suggestions welcome!

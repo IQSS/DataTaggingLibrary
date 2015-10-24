@@ -13,12 +13,17 @@ and an imperative approach based on *decision graphs* to decide on a policy.
 
 A decision graph is a graph (in the mathematical sense) with different type of nodes. When the
 user goes through the interview, a *Decision Graph Engine* traverses the graph. When the engine
-reaches a node, it performs an instruction associated with it. For example, such
-instruction can be ``ask`` (ask the user a question) or ``set``.
+reaches a node, it performs an instruction associated with it, such
+as ``ask`` (ask the user a question) or ``set``.
 
 Tag spaces are also described by a domain specific language.
 
 This site documents those two langauges, and some language-related tools.
+
+.. note:: The code for this project is open source, and available at a `GitHub Repository`. It was developed by the `Institute for Quantitative Social Science at Harvard University`_.
+
+.. _Institute for Quantitative Social Science at Harvard University: http://iq.harvard.edu
+.. _GitHub Repository: https://github.com/IQSS/DataTaggingLibrary
 
 Contents:
 
