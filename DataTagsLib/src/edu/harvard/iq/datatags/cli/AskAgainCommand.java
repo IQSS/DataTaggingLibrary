@@ -3,24 +3,24 @@ package edu.harvard.iq.datatags.cli;
 import java.util.List;
 
 /**
- * Quits The command line runner.
+ * Prints the current question again.
  * @author michael
  */
-public class QuitCommand implements CliCommand {
+public class AskAgainCommand implements CliCommand {
 
     @Override
     public String command() {
-        return "quit";
+        return "ask";
     }
 
     @Override
     public String description() {
-        return "Terminates the interview.";
+        return "Prints the current question again.";
     }
 
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception {
-        System.exit(0);
+        rnr.printCurrentAskNode();
     }
     
 }

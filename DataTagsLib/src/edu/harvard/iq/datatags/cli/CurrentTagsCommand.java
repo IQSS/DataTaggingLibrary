@@ -1,5 +1,7 @@
 package edu.harvard.iq.datatags.cli;
 
+import java.util.List;
+
 /**
  * Prints the current tags to the console.
  * @author michael
@@ -17,7 +19,7 @@ public class CurrentTagsCommand implements CliCommand {
     }
 
     @Override
-    public void execute(CliRunner rnr) throws Exception {
+    public void execute(CliRunner rnr, List<String> args) throws Exception {
         rnr.dumpTagValue( rnr.getEngine().getCurrentTags() );
         rnr.println("");
     }

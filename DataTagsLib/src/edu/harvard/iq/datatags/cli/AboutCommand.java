@@ -1,5 +1,7 @@
 package edu.harvard.iq.datatags.cli;
 
+import java.util.List;
+
 /**
  *
  * @author michael
@@ -17,7 +19,7 @@ public class AboutCommand implements CliCommand {
     }
 
     @Override
-    public void execute(CliRunner rnr) throws Exception {
+    public void execute(CliRunner rnr, List<String> args) throws Exception {
         rnr.println("");
         rnr.printTitle("About DataTags CliRunner");
         rnr.println("This application runs DataTags decision graphs from the a command line.");

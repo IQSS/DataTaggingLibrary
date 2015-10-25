@@ -127,6 +127,19 @@ public class RuntimeEngine {
 		return processNode( getDecisionGraph().getStart() );
 	}
 	
+    /**
+     * Terminates current run, clears the state and goes back to node 1.
+     */
+    public void restart() {
+        status = RuntimeEngineStatus.Restarting;
+        if ( listener!=null ) listener.runTerminated(this);
+        stack.clear();
+        setCurrentTags( getDecisionGraph().getTopLevelType().createInstance() );
+        
+        start();
+        
+    }
+    
 	protected boolean processNode( Node n ) throws DataTagsRuntimeException {
 		Node next = n;
 		do {

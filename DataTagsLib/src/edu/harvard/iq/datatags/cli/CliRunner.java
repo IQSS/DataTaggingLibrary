@@ -16,8 +16,10 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,12 +30,12 @@ import java.util.logging.Logger;
  */
 public class CliRunner {
 
-    private DecisionGraph decisionGraph;
-    RuntimeEngine ngn;
+    RuntimeEngine ngn = new RuntimeEngine();;
     BufferedReader reader;
     private final StringMapFormat dtFormat = new StringMapFormat();
     private final Map<String, CliCommand> commands = new HashMap<>();
     private boolean printDebugMessages = false;
+    private Path decisionGraphPath, tagSpacePath;
     
     /**
      * A default command, in case a nonexistent command has been chosen.
@@ -41,31 +43,30 @@ public class CliRunner {
     private static final CliCommand COMMAND_NOT_FOUND = new CliCommand(){
         @Override
         public String command() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported."); 
         }
 
         @Override
         public String description() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            throw new UnsupportedOperationException("Not supported."); 
         }
 
         @Override
-        public void execute(CliRunner rnr) throws Exception {
+        public void execute(CliRunner rnr, List<String> args) throws Exception {
             rnr.printMsg("Command not found");
         }
     };
 
     public CliRunner() {
+        // Register commands here
         Arrays.asList( new CurrentTagsCommand(), new AboutCommand(),
-                       new QuitCommand(), new ToggleDebugMessagesCommand() )
+                       new QuitCommand(), new ToggleDebugMessagesCommand(), new ShowNodeCommand(),
+                       new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
+                       new AskAgainCommand())
                 .forEach( c -> commands.put(c.command(), c) );
     }
     
     public void go() throws IOException {
-        println("Running questionnaire %s", decisionGraph.getSource());
-        ngn = new RuntimeEngine();
-        ngn.setDecisionGraph(decisionGraph);
-
         try {
             if (System.console() == null) {
                 reader = new BufferedReader(new InputStreamReader(System.in));
@@ -95,7 +96,6 @@ public class CliRunner {
                             dtFormat.format(nd.getTags()).entrySet().forEach(e
                                     -> printMsg("%s = %s", e.getKey(), e.getValue())
                             );
-
                         }
 
                         @Override
@@ -142,14 +142,49 @@ public class CliRunner {
             }
         }
     }
-
+    
+    void restart() {
+        ngn.restart();
+    }
+    
     void dumpTagValue(TagValue val) {
         dtFormat.format(val).entrySet().forEach((e) -> {
-            print("%s = %s", e.getKey(), e.getValue());
+            println("%s = %s", e.getKey(), e.getValue());
         });
     }
 
     Answer promptUserForAnswer() throws IOException {
+        
+        printCurrentAskNode();
+                
+        String ansText;
+        while ((ansText = readLine("answer (? for help): ")) != null) {
+            Answer ans = Answer.Answer(ansText);
+            if (((AskNode) ngn.getCurrentNode()).getAnswers().contains(ans)) {
+                return ans;
+            } else if (ansText.equals("?")) {
+                println("Type one of the answers listed above, or one of the following commands:?"
+                        + "");
+                commands.entrySet().stream().sorted( (e1, e2) -> e1.getKey().compareTo(e2.getKey()) )
+                        .forEach( e -> println("\\%s:\n\t%s", e.getKey(), e.getValue().description()));
+            } else if ( ansText.startsWith("\\") ) {
+                try {
+                    List<String> args = Arrays.asList(ansText.split("\\s",-1));
+                    commands.getOrDefault(args.get(0).substring(1), COMMAND_NOT_FOUND).execute(this, args);
+                    println("");
+                    
+                } catch (Exception ex) {
+                    Logger.getLogger(CliRunner.class.getName()).log(Level.SEVERE, "Error executing command: " + ex.getMessage(), ex);
+                }
+            } else {
+                printMsg("Sorry, '%s' is not a valid answer. Please try again.", ansText);
+            }
+        }
+
+        return null;
+    }
+
+    public void printCurrentAskNode() {
         AskNode ask = (AskNode) ngn.getCurrentNode();
         if ( printDebugMessages ) {
             printMsg( "Question id: " + ask.getId() );
@@ -164,29 +199,6 @@ public class CliRunner {
         }
         println("Possible Answers:");
         ask.getAnswers().forEach( ans -> println(" - " + ans.getAnswerText()) );
-
-        String ansText;
-        while ((ansText = readLine("answer (? for help): ")) != null) {
-            Answer ans = Answer.Answer(ansText);
-            if (ask.getAnswers().contains(ans)) {
-                return ans;
-            } else if (ansText.equals("?")) {
-                println("Type one of the answers listed above, or one of the following commands:?"
-                        + "");
-                commands.entrySet().stream().sorted( (e1, e2) -> e1.getKey().compareTo(e2.getKey()) )
-                        .forEach( e -> println("\\%s:\n\t%s", e.getKey(), e.getValue().description()));
-            } else if ( ansText.startsWith("\\") ) {
-                try {
-                    commands.getOrDefault(ansText.substring(1), COMMAND_NOT_FOUND).execute(this);
-                } catch (Exception ex) {
-                    Logger.getLogger(CliRunner.class.getName()).log(Level.SEVERE, "Error executing command: " + ex.getMessage(), ex);
-                }
-            } else {
-                printMsg("Sorry, '%s' is not a valid answer. Please try again.", ansText);
-            }
-        }
-
-        return null;
     }
 
     void print(String format, Object... args) {
@@ -232,6 +244,23 @@ public class CliRunner {
     }
     
     /**
+     * Prints to the console, formatted as a warning.
+     * @param format
+     * @param args 
+     */
+    void printWarning(String format, Object... args) {
+        println("# /!\\ " + format, args);
+    }
+    
+    /**
+     * Prints to the console, formatted as a warning.
+     * @param format
+     */
+    void printWarning(String format) {
+        println("# /!\\ " + format);
+    }
+    
+    /**
      * Prints to the console, with underline.
      * @param format
      * @param args 
@@ -253,11 +282,11 @@ public class CliRunner {
     }
 
     public DecisionGraph getDecisionGraph() {
-        return decisionGraph;
+        return ngn.getDecisionGraph();
     }
 
-    public void setDecisionGraph(DecisionGraph fcs) {
-        this.decisionGraph = fcs;
+    public void setDecisionGraph(DecisionGraph  aDecisionGraph ) {
+        ngn.setDecisionGraph( aDecisionGraph );
     }
 
     public RuntimeEngine getEngine() {
@@ -270,6 +299,22 @@ public class CliRunner {
     
     public boolean getPrintDebugMessages() {
         return printDebugMessages;
+    }
+
+    public Path getDecisionGraphPath() {
+        return decisionGraphPath;
+    }
+
+    public void setDecisionGraphPath(Path decisionGraphPath) {
+        this.decisionGraphPath = decisionGraphPath;
+    }
+
+    public Path getTagSpacePath() {
+        return tagSpacePath;
+    }
+
+    public void setTagSpacePath(Path tagSpacePath) {
+        this.tagSpacePath = tagSpacePath;
     }
     
 }
