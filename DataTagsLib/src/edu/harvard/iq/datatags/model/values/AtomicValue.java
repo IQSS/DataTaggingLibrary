@@ -14,7 +14,7 @@ public class AtomicValue extends TagValue implements Comparable<AtomicValue>{
 
 	/**
 	 * Creates a new simple value - Note that the preferred way of creating a 
-	 * value is by using one of the {@ code type.make()} methods.
+	 * value is by using one of the {@code type.make()} methods.
 	 * @param ordinal ordinal of the value
 	 * @param aName name of the value
 	 * @param type the type of the value

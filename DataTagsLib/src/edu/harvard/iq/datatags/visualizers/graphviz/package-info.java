@@ -1,4 +1,4 @@
 /**
- * Visualizers that generate input for GraphViz. See {@linkplain http://www.graphviz.org/}
+ * Visualizers that generate input for GraphViz. See <a href="http://www.graphviz.org/">GraphViz site</a>.
  */
 package edu.harvard.iq.datatags.visualizers.graphviz;

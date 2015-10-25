@@ -16,13 +16,16 @@ user goes through the interview, a *Decision Graph Engine* traverses the graph. 
 reaches a node, it performs an instruction associated with it, such
 as ``ask`` (ask the user a question) or ``set``.
 
+.. tip:: Want to take this langauge for a spin? :doc:`Here's how<take-for-spin>`.
+
 Tag spaces are also described by a domain specific language.
 
 This site documents those two langauges, and some language-related tools.
 
-.. note:: The code for this project is open source, and available at a `GitHub Repository`_. It was developed by the `Institute for Quantitative Social Science at Harvard University`_.
+.. note:: The code for this project is open source, and available at a `GitHub Repository`_. It was developed by Michael Bar-Sinai, through an affiliation with the `Institute for Quantitative Social Science`_ and the `Data Privacy Lab`_ at Harvard University.
 
-.. _Institute for Quantitative Social Science at Harvard University: http://iq.harvard.edu
+.. _Institute for Quantitative Social Science: http://iq.harvard.edu
+.. _Data Privacy Lab: http://dataprivacylab.org
 .. _GitHub Repository: https://github.com/IQSS/DataTaggingLibrary
 
 Contents:
@@ -33,6 +36,7 @@ Contents:
    :maxdepth: 5
 
    language-general
+   take-for-spin
    decision-graphs/index
    tag-spaces/index
    terms

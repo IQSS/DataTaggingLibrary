@@ -36,7 +36,7 @@ A block comment is contained between ``<*`` and ``*>``, like so::
 Files
 -----
 
-Files are assumed to be encoded in Unicode. by convension, files describing tags spaces have a ``.ts`` suffix, while files describing decision graphs have a ``.dg`` one.
+Files are assumed to be encoded in Unicode. By convension, files describing tags spaces have a ``.ts`` suffix, while files describing decision graphs have a ``.dg`` one.
 
 .. index:: Top-Down Support
 
@@ -68,4 +68,4 @@ In the below decision graph snippet, the ``EU-Compliance`` section is referenced
 Language Name
 -------------
 Used to be "datatags", but as there are now more efforts for creating DataTags implementation, we don't want to hog the name.
-So we're working on it... suggestions welcome!
+We're currently leaning towards *Tags*, but other suggestions are welcome!

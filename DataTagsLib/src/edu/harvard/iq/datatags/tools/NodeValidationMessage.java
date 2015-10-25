@@ -46,7 +46,7 @@ public class NodeValidationMessage extends ValidationMessage {
     }
     
     /**
-     * Tests equality on the models involved ({@link ChartEntitiy}s and {@link #Level}. Ignores the
+     * Tests equality on the models involved ({@link Node}s and {@link #getLevel()}. Ignores the
      * text in the message.
      * @param other the other validation message
      * @return {@code true} iff the entities and the level are the same.
