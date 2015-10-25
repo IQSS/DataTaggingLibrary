@@ -20,7 +20,7 @@ Tag spaces are also described by a domain specific language.
 
 This site documents those two langauges, and some language-related tools.
 
-.. note:: The code for this project is open source, and available at a `GitHub Repository`. It was developed by the `Institute for Quantitative Social Science at Harvard University`_.
+.. note:: The code for this project is open source, and available at a `GitHub Repository`_. It was developed by the `Institute for Quantitative Social Science at Harvard University`_.
 
 .. _Institute for Quantitative Social Science at Harvard University: http://iq.harvard.edu
 .. _GitHub Repository: https://github.com/IQSS/DataTaggingLibrary
