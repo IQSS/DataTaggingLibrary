@@ -1,4 +1,4 @@
-    package edu.harvard.iq.datatags.mains;
+package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
@@ -25,20 +25,23 @@ public class DecisionGraphCliRunner {
             System.exit(1);
         }
         
-        Path definitionFile = Paths.get(args[0]);
-        Path chartFile = Paths.get(args[1]);
+        Path definitionPath = Paths.get(args[0]);
+        Path decisionGraphPath = Paths.get(args[1]);
 
-        CompoundType definitions = parseDefinitions(definitionFile);
+        CompoundType definitions = parseDefinitions(definitionPath);
         
         DecisionGraphParser fcsParser = new DecisionGraphParser();
         
-        System.out.println("Reading chart: " + chartFile );
-        System.out.println(" (full:  " + chartFile.toAbsolutePath() + ")" );
+        System.out.println("Reading decision graph: " + decisionGraphPath );
+        System.out.println(" (full:  " + decisionGraphPath.toAbsolutePath() + ")" );
         
-        DecisionGraph dg = fcsParser.parse(chartFile).compile(definitions);
+        DecisionGraph dg = fcsParser.parse(decisionGraphPath).compile(definitions);
         
         CliRunner cliRunner = new CliRunner();
         cliRunner.setDecisionGraph(dg);
+        cliRunner.setTagSpacePath(definitionPath);
+        cliRunner.setDecisionGraphPath(decisionGraphPath);
+        
         cliRunner.go();
         
     }

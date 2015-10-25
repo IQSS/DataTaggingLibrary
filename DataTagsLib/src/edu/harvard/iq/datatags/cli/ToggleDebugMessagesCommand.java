@@ -1,5 +1,7 @@
 package edu.harvard.iq.datatags.cli;
 
+import java.util.List;
+
 /**
  *
  * @author michael
@@ -17,8 +19,8 @@ public class ToggleDebugMessagesCommand implements CliCommand {
     }
 
     @Override
-    public void execute(CliRunner rnr) throws Exception {
-        rnr.setPrintDebugMessages( ! rnr.getPrintDebugMessages() );
+    public void execute(CliRunner rnr, List<String> args) throws Exception {
+        rnr.setPrintDebugMessages(! rnr.getPrintDebugMessages() );
         rnr.printMsg("Debug messages %s", (rnr.getPrintDebugMessages() ? "On" : "Off"));
     }
     

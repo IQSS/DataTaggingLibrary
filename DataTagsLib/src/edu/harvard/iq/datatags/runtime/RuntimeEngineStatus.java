@@ -5,7 +5,7 @@ package edu.harvard.iq.datatags.runtime;
  * @author michael
  */
 public enum RuntimeEngineStatus {
-    /** The engine has not run yet */
+    /** The engine has not run yet *//** The engine has not run yet */
     Idle,
     
     /** Engine is currently processing. */ 
@@ -18,5 +18,8 @@ public enum RuntimeEngineStatus {
     Accept,
     
     /** An error has occurred. Please ignore the status of the engine. */
-    Error
+    Error,
+    
+    /** Engine is restarting, e.g because of a user request */
+    Restarting
 }
