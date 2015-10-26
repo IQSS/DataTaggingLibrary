@@ -21,3 +21,24 @@ In order to work with Tags, take these steps:
 .. _NetBeans IDE: http://www.netbeans.org
 .. _edu.harvard.iq.datatags.mains: https://github.com/IQSS/DataTaggingLibrary/tree/master/DataTagsLib/src/edu/harvard/iq/datatags/mains
 .. _Privacy Tools for Sharing Research Data: http://http://privacytools.seas.harvard.edu
+
+
+The CliRunner
+-----------------------
+
+.. image:: /img/CliRunner.png
+   :align: center
+
+The DataTaggingLibrary comes with a command line tool for developing questionnaires. It allows for:
+
+* Performing an interview.
+* Inspecting nodes and slots.
+* *Visualizatoins* (requires `graphviz`_)
+* Run inspections - trace, stack status, tag status
+
+.. _graphviz: http://www.graphviz.org
+
+While developoing the questionnaire, it is useful to keep a CliRunner open. The user can reload the
+questionnaire by typing ``\reload`` on the console when needed.
+
+Main class for CliRunner is ``edu.harvard.iq.datatags.mains.DecisionGraphCliRunner.java``. The class takes two parameters - path to the definitions file, and a path to the decision graph file.

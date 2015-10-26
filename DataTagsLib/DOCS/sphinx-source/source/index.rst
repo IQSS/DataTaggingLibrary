@@ -2,6 +2,9 @@
 DataTaggingLibrary
 ===================
 
+.. image:: /img/datatags-logo-large.png
+   :align: center
+
 The `DataTags`_ project aims to allow researchers to create proper dataset handling and sharing policies,
 even if they lack the required legal and technological expertise. This is done by means of a firendly interview.
 The project is part of a the `Privacy Tools for Sharing Research Data`_ project. There are a few
