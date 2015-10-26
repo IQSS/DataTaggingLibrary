@@ -1,3 +1,4 @@
+
 /*
  *  (C) Michael Bar-Sinai
  */
@@ -7,6 +8,8 @@ package edu.harvard.iq.datatags.model.types;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
@@ -52,5 +55,11 @@ public class TypeHelperTest {
         assertEquals( red, TypeHelper.safeGet(dataTagsType, "color", "red") );
     }
     
+    
+    @Test
+    public void testPathFormat() {
+        List<String> sample = Arrays.asList("Hello","World","What's","Up");
+        assertEquals( "Hello/World/What's/Up", TypeHelper.formatTypePath(sample));
+    }
     
 }

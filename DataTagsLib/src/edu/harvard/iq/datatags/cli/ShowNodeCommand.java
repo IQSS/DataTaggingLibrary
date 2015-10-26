@@ -23,7 +23,7 @@ public class ShowNodeCommand implements CliCommand {
 
     @Override
     public String description() {
-        return "Prints a description of the node whose ID is given.";
+        return "Prints a node to the console";
     }
 
     @Override

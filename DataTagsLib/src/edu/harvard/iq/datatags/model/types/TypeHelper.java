@@ -2,6 +2,7 @@ package edu.harvard.iq.datatags.model.types;
 
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
+import java.util.List;
 
 /**
  * Common methods for usage with types.
@@ -44,5 +45,17 @@ public class TypeHelper {
                 ? tt.valueOf( valueName )
                 : tt.registerValue(valueName, note);
             
+    }
+    
+    static public String formatTypePath( Iterable<String> path ) {
+        StringBuilder sb = new StringBuilder();
+        path.forEach( c -> { 
+            sb.append(c);
+            sb.append("/");
+        });
+        if ( sb.length() > 0 ) {
+            sb.setLength( sb.length()-1 );
+        }
+        return sb.toString();
     }
 }

@@ -62,7 +62,7 @@ public class CliRunner {
         Arrays.asList( new CurrentTagsCommand(), new AboutCommand(),
                        new QuitCommand(), new ToggleDebugMessagesCommand(), new ShowNodeCommand(),
                        new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
-                       new AskAgainCommand())
+                       new AskAgainCommand(), new ShowSlotCommand())
                 .forEach( c -> commands.put(c.command(), c) );
     }
     
