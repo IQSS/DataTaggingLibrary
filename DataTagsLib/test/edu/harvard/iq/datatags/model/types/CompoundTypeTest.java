@@ -1,7 +1,3 @@
-/*
- *  (C) Michael Bar-Sinai
- */
-
 package edu.harvard.iq.datatags.model.types;
 
 import edu.harvard.iq.datatags.model.values.AggregateValue;

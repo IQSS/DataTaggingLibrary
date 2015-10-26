@@ -77,8 +77,8 @@ public class ShowSlotCommand implements CliCommand {
                     rnr.println("Possible values:");
                     t.values().forEach( val -> {
                         rnr.println("* %s", val.getName());
-                        if ( val.getInfo() != null ) {
-                            rnr.println("  \t%s", val.getInfo() );
+                        if ( val.getNote() != null ) {
+                            rnr.println("  \t%s", val.getNote() );
                         }
                     });
                 } else {
@@ -94,8 +94,8 @@ public class ShowSlotCommand implements CliCommand {
                     rnr.println("Possible values:");
                     t.getItemType().values().forEach( val -> {
                         rnr.println("* %s", val.getName());
-                        if ( val.getInfo() != null ) {
-                            rnr.println("  \t%s", val.getInfo() );
+                        if ( val.getNote() != null ) {
+                            rnr.println("  \t%s", val.getNote() );
                         }
                     });
                 } else {
