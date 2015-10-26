@@ -19,7 +19,8 @@ public class VisualizeTagSpaceCommand extends DotCommand {
 
     @Override
     public String description() {
-        return "Creates a visualization of th tag space, as a tree. Users can provide additional parameter for the output file.\n Requires graphviz (www.graphviz.org).";
+        return "Creates a visualization of th tag space, as a tree. Users can provide additional parameter for the output file.\n"
+                + "Requires graphviz (www.graphviz.org).";
     }
     
     @Override

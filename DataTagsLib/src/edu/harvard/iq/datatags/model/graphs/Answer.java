@@ -1,11 +1,12 @@
 package edu.harvard.iq.datatags.model.graphs;
 
+import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A single answer, given to a {@link DecisionTreeNode} by the user. In order to 
+ * A single answer, given to a {@link AskNode} by the user. In order to 
  * allow object reuse (there are typically a lot of similar answers in a questionnaire)
  * instances may be pooled, which the class constructor is private. 
  * 

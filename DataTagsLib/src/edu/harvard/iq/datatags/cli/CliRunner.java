@@ -13,6 +13,7 @@ import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import edu.harvard.iq.datatags.runtime.listeners.RuntimeEngineTracingListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -52,6 +53,7 @@ public class CliRunner {
     private final Map<String, CliCommand> commands = new HashMap<>();
     private boolean printDebugMessages = false;
     private Path decisionGraphPath, tagSpacePath;
+    private RuntimeEngineTracingListener tracer;
     
     /**
      * A default command, in case a nonexistent command has been chosen.
@@ -79,7 +81,7 @@ public class CliRunner {
                        new QuitCommand(), new ToggleDebugMessagesCommand(), new ShowNodeCommand(),
                        new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
                        new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
-                       new VisualizeTagSpaceCommand())
+                       new VisualizeTagSpaceCommand(), new PrintRunTraceCommand())
                 .forEach( c -> commands.put(c.command(), c) );
     }
     
@@ -88,68 +90,16 @@ public class CliRunner {
             if (System.console() == null) {
                 reader = new BufferedReader(new InputStreamReader(System.in));
             }
-
-            ngn.setListener(new RuntimeEngine.Listener() {
-
-                @Override
-                public void runStarted(RuntimeEngine ngn) {
-                    printMsg("Run Started");
-                }
-
-                @Override
-                public void processedNode(RuntimeEngine ngn, Node node) {
-                    if ( printDebugMessages ) {
-                        printMsg("Visited node " + node);
-                    }
-                    node.accept(new Node.VoidVisitor() {
-
-                        @Override
-                        public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
-                        }
-
-                        @Override
-                        public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
-                            printMsg("Updating tags");
-                            dtFormat.format(nd.getTags()).entrySet().forEach(e
-                                    -> printMsg("%s = %s", e.getKey(), e.getValue())
-                            );
-                        }
-
-                        @Override
-                        public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-                            println("Sorry, we can't accept the dataset: " + nd.getReason());
-                        }
-
-                        @Override
-                        public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
-                            printTitle("Section: " + nd.getCalleeNodeId() + "");
-                        }
-
-                        @Override
-                        public void visitImpl(TodoNode nd) throws DataTagsRuntimeException {
-                            printMsg("TODO: " + nd.getTodoText());
-                        }
-
-                        @Override
-                        public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
-                        }
-                    });
-                }
-
-                @Override
-                public void runTerminated(RuntimeEngine ngn) {
-                    if ( printDebugMessages ) {
-                        printMsg("Run Done");
-                    }
-                }
-
-            });
+            
+            tracer = new RuntimeEngineTracingListener(new CliEngineListener());
+            ngn.setListener(tracer);
             
             print( LOGO );
             println("");
 
             if (ngn.start()) {
                 while (ngn.consume(promptUserForAnswer())) {
+                    println("");
                 }
             }
 
@@ -183,7 +133,7 @@ public class CliRunner {
             if (((AskNode) ngn.getCurrentNode()).getAnswers().contains(ans)) {
                 return ans;
             } else if (ansText.equals("?")) {
-                println("Type one of the answers listed above, or one of the following commands:?"
+                println("Type one of the answers listed above, or one of the following commands:"
                         + "");
                 commands.entrySet().stream().sorted( (e1, e2) -> e1.getKey().compareTo(e2.getKey()) )
                         .forEach( e -> println("\\%s:\n%s", e.getKey(), indent(e.getValue().description())));
@@ -204,10 +154,6 @@ public class CliRunner {
         return null;
     }
 
-    private String indent( String lines ) {
-        return Stream.of(lines.split("\\n")).map( s -> "\t"+s ).collect( Collectors.joining() );
-    }
-    
     public void printCurrentAskNode() {
         AskNode ask = (AskNode) ngn.getCurrentNode();
         if ( printDebugMessages ) {
@@ -238,6 +184,14 @@ public class CliRunner {
             System.console().printf(format);
         } else {
             System.out.print(String.format(format));
+        }
+    }
+    
+    void println() {
+        if (System.console() != null) {
+            System.console().printf("\n");
+        } else {
+            System.out.println();
         }
     }
 
@@ -308,7 +262,19 @@ public class CliRunner {
         System.out.print(String.format(format, args));
         return reader.readLine();
     }
+        
+    public String indent( String lines ) {
+        return Stream.of(lines.split("\\n")).map( s -> "\t"+s ).collect( Collectors.joining("\n"));
+    }
 
+    public String truncateAt( String src, int width ) {
+        if ( src.length() > width ) {
+            return src.substring(0,width-3) + "...";
+        } else {
+            return src;
+        }
+    }
+    
     public DecisionGraph getDecisionGraph() {
         return ngn.getDecisionGraph();
     }
@@ -343,6 +309,68 @@ public class CliRunner {
 
     public void setTagSpacePath(Path tagSpacePath) {
         this.tagSpacePath = tagSpacePath;
+    }
+    
+    public List<Node> getTrace() { 
+        return tracer.getVisitedNodes();
+    }
+    
+    private class CliEngineListener implements RuntimeEngine.Listener {
+
+        public CliEngineListener() {
+        }
+
+        @Override
+        public void runStarted(RuntimeEngine ngn) {
+            printMsg("Run Started");
+        }
+
+        @Override
+        public void processedNode(RuntimeEngine ngn, Node node) {
+            if ( printDebugMessages ) {
+                printMsg("Visited node " + node);
+            }
+            node.accept(new Node.VoidVisitor() {
+                
+                @Override
+                public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
+                }
+                
+                @Override
+                public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
+                    printMsg("Updating tags");
+                    dtFormat.format(nd.getTags()).entrySet().forEach(e
+                            -> printMsg("%s = %s", e.getKey(), e.getValue())
+                    );
+                }
+                
+                @Override
+                public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
+                    println("Sorry, we can't accept the dataset: " + nd.getReason());
+                }
+                
+                @Override
+                public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
+                    printTitle("Section: " + nd.getCalleeNodeId() + "");
+                }
+                
+                @Override
+                public void visitImpl(TodoNode nd) throws DataTagsRuntimeException {
+                    printMsg("TODO: " + nd.getTodoText());
+                }
+                
+                @Override
+                public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
+                }
+            });
+        }
+
+        @Override
+        public void runTerminated(RuntimeEngine ngn) {
+            if ( printDebugMessages ) {
+                printMsg("Run Done");
+            }
+        }
     }
     
 }

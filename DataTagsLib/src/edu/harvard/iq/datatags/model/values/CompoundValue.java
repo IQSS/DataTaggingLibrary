@@ -117,7 +117,7 @@ public class CompoundValue extends TagValue {
      *  </li>
      * </ul>
      *
-     * Note: if {@code other} is {@code null}, this method behaves as {@link #makeCopy()}.
+     * Note: if {@code other} is {@code null}, this method behaves as {@link #getOwnableInstance()}.
      * @param other
      * @return A new DataTags object, composed from {@code this} and {@code other}.
      */
