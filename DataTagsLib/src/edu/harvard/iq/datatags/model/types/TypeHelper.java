@@ -2,7 +2,6 @@ package edu.harvard.iq.datatags.model.types;
 
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
-import java.util.List;
 
 /**
  * Common methods for usage with types.

@@ -35,57 +35,10 @@ public class ShowNodeCommand implements CliCommand {
         if ( soughtNode == null ) {
             rnr.printWarning("Node >%s< not found.", args.get(1));
         } else {
-            soughtNode.accept( new Node.VoidVisitor() {
-                @Override
-                public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
-                    rnr.printTitle("Node >%s<: [ask]", nd.getId());
-                    rnr.println( nd.getText() );
-                    if ( !nd.getTermNames().isEmpty() ) {
-                        rnr.println("Terms:");
-                        nd.getTermNames().forEach( (term) -> {
-                            rnr.println( term + ":" );
-                            rnr.println( "\t" + nd.getTermText(term));
-                        });
-                    }
-                    rnr.println( "Answers: " );
-                    nd.getAnswers().forEach( a -> {
-                        rnr.print( a.getAnswerText() );
-                        rnr.println( " -> >%s<", nd.getNodeFor(a).getId() );
-                    });
-
-                }
-
-                @Override
-                public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
-                    rnr.printTitle("Node >%s<: [set]", nd.getId());
-                    rnr.dumpTagValue(nd.getTags());
-                }
-
-                @Override
-                public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-                    rnr.printTitle("Node >%s<: [reject]", nd.getId());
-                    rnr.print( nd.getReason() );
-                }
-
-                @Override
-                public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
-                    rnr.printTitle("Node >%s<: [call]", nd.getId());
-                    rnr.print( "Calls node >%s<.", nd.getCalleeNodeId() );
-                }
-
-                @Override
-                public void visitImpl(TodoNode nd) throws DataTagsRuntimeException {
-                    rnr.printTitle("Node >%s<: [todo]", nd.getId());
-                    rnr.print( nd.getTodoText() );
-                }
-
-                @Override
-                public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
-                    rnr.printTitle("Node >%s<: [end]", nd.getId());
-                }
-            });
+            soughtNode.accept(new VerboseNodePrinter(rnr));
         }
         
     }
+
     
 }

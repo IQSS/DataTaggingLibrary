@@ -10,7 +10,7 @@ public class AtomicValue extends TagValue implements Comparable<AtomicValue>{
 	
 	private final int ordinal;
     private final String name;
-    private final String info;
+    private final String note;
 
 	/**
 	 * Creates a new simple value - Note that the preferred way of creating a 
@@ -24,7 +24,7 @@ public class AtomicValue extends TagValue implements Comparable<AtomicValue>{
 		super(type);
 		this.ordinal = ordinal;
         name = aName;
-        info = someInfo;
+        note = someInfo;
 	}
 	
     @Override
@@ -70,8 +70,8 @@ public class AtomicValue extends TagValue implements Comparable<AtomicValue>{
         return name;
     }
 
-    public String getInfo() {
-        return info;
+    public String getNote() {
+        return note;
     }
 
     @Override

@@ -1,9 +1,5 @@
-/*
- *  (C) Michael Bar-Sinai
- */
 package edu.harvard.iq.datatags.parser.decisiongraph;
 
-import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
