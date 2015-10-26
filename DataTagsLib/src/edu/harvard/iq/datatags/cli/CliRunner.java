@@ -23,13 +23,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A command-line application that executes decision graphs.
  * @author michael
  */
 public class CliRunner {
-
+    
+    static final String LOGO = 
+            "   +-------------\n" +
+            "  +|             \\\n" +
+            " +||             o)\n" +
+            "+|||             /\n" +
+            "|||+-------------\n" +
+            "||+-------------\n" +
+            "|+------------- ____        _        _____\n" +
+            "+------------- |  _ \\  __ _| |_  __ |_   _|_ _  __ _  ___\n" +
+            "               | | | |/ _` | __|/ _` || |/ _` |/ _` |/ __|\n" +
+            "               | |_| | (_| | |_ |(_| || | (_| | (_| |\\__ \\\n" +
+            "               |____/ \\__,_|\\__|\\__,_||_|\\__,_|\\__, ||___/\n" +
+            "                                   datatags.org|___/";
+    
     RuntimeEngine ngn = new RuntimeEngine();;
     BufferedReader reader;
     private final StringMapFormat dtFormat = new StringMapFormat();
@@ -62,7 +78,8 @@ public class CliRunner {
         Arrays.asList( new CurrentTagsCommand(), new AboutCommand(),
                        new QuitCommand(), new ToggleDebugMessagesCommand(), new ShowNodeCommand(),
                        new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
-                       new AskAgainCommand())
+                       new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
+                       new VisualizeTagSpaceCommand())
                 .forEach( c -> commands.put(c.command(), c) );
     }
     
@@ -127,6 +144,9 @@ public class CliRunner {
                 }
 
             });
+            
+            print( LOGO );
+            println("");
 
             if (ngn.start()) {
                 while (ngn.consume(promptUserForAnswer())) {
@@ -166,7 +186,7 @@ public class CliRunner {
                 println("Type one of the answers listed above, or one of the following commands:?"
                         + "");
                 commands.entrySet().stream().sorted( (e1, e2) -> e1.getKey().compareTo(e2.getKey()) )
-                        .forEach( e -> println("\\%s:\n\t%s", e.getKey(), e.getValue().description()));
+                        .forEach( e -> println("\\%s:\n%s", e.getKey(), indent(e.getValue().description())));
             } else if ( ansText.startsWith("\\") ) {
                 try {
                     List<String> args = Arrays.asList(ansText.split("\\s",-1));
@@ -184,6 +204,10 @@ public class CliRunner {
         return null;
     }
 
+    private String indent( String lines ) {
+        return Stream.of(lines.split("\\n")).map( s -> "\t"+s ).collect( Collectors.joining() );
+    }
+    
     public void printCurrentAskNode() {
         AskNode ask = (AskNode) ngn.getCurrentNode();
         if ( printDebugMessages ) {
@@ -267,13 +291,17 @@ public class CliRunner {
      */
     void printTitle(String format, Object... args) {
         String msg = String.format(format, args);
-        println(msg);
+        
         char[] deco = new char[msg.length()];
         Arrays.fill(deco, '~');
+        
+        println("");
+        println(new String(deco));
+        println(msg);
         println(new String(deco));
     }
 
-    private String readLine(String format, Object... args) throws IOException {
+    public String readLine(String format, Object... args) throws IOException {
         if (System.console() != null) {
             return System.console().readLine(format, args);
         }

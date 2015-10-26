@@ -49,5 +49,7 @@ public class CompoundType extends TagType {
 	public <T> T accept(Visitor<T> v) {
 		return v.visitCompoundType(this);
 	}
-
+    
+    
+    
 }
