@@ -20,15 +20,15 @@ public class DecisionGraphCliRunner {
     
     public static void main(String[] args) throws Exception {
         
-        if ( args.length != 2 ) {
+        if ( args.length < 2 ) {
             printUsage();
             System.exit(1);
         }
         
-        Path definitionPath = Paths.get(args[0]);
-        Path decisionGraphPath = Paths.get(args[1]);
+        Path tagSpace = Paths.get(args[args.length-2]);
+        Path decisionGraphPath = Paths.get(args[args.length-1]);
 
-        CompoundType definitions = parseDefinitions(definitionPath);
+        CompoundType definitions = parseDefinitions(tagSpace);
         
         DecisionGraphParser fcsParser = new DecisionGraphParser();
         
@@ -39,7 +39,7 @@ public class DecisionGraphCliRunner {
         
         CliRunner cliRunner = new CliRunner();
         cliRunner.setDecisionGraph(dg);
-        cliRunner.setTagSpacePath(definitionPath);
+        cliRunner.setTagSpacePath(tagSpace);
         cliRunner.setDecisionGraphPath(decisionGraphPath);
         
         cliRunner.go();
