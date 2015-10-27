@@ -5,6 +5,9 @@ DataTags Language Tools
 
 Part of a the [DataTags](http://datatags.org) project, this library contains tools for the DataTags Decision Graph language, used to create questionnaires and tag spaces. Here you can find:
 
+[![Documentation Status](http://readthedocs.org/projects/datatagginglibrary/badge/?version=latest)](http://datatagginglibrary.readthedocs.org/en/latest/?badge=latest)
+[![Build Status](https://travis-ci.org/IQSS/DataTaggingLibrary.svg?branch=develop)](https://travis-ci.org/IQSS/DataTaggingLibrary)
+
 * [Language Parsers](DataTagsLib/src/edu/harvard/iq/datatags/parser)
 * [Embeddable runtime engine](DataTagsLib/src/edu/harvard/iq/datatags/runtime/RuntimeEngine.java)
 * [Visualization tools](DataTagsLib/src/edu/harvard/iq/datatags/visualizers/graphviz)
@@ -15,4 +18,3 @@ Part of a the [DataTags](http://datatags.org) project, this library contains too
 DataTags is part of the [Privacy Tools for Sharing Research Data](http://privacytools.seas.harvard.edu) project. The code in this repository is a [NetBeans](http://netbeans.org) project.
 
 
-<!-- [![Documentation Status](http://readthedocs.org/projects/datatagginglibrary/badge/?version=latest)](http://datatagginglibrary.readthedocs.org/en/latest/?badge=latest) -->
