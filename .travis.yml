@@ -1,6 +1,6 @@
 sudo: false
 language: java
 jdk:
-  - openjdk8
+  - oraclejdk8
 before_script: cd DataTagsLib
 script: ant jar test

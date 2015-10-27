@@ -13,6 +13,8 @@ import edu.harvard.iq.datatags.parser.tagspace.ast.ToDoSlot;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,7 +57,8 @@ public class TagSpaceParseResult {
     TagSpaceParseResult( List<? extends AbstractSlot> someSlots ) throws SemanticsErrorException {
         slots = someSlots;
         
-        Map<String, List<AbstractSlot>> slotMap = slots.stream().collect(Collectors.groupingBy(s -> s.getName()));
+        Map<String, List<AbstractSlot>> slotMap = new HashMap<>();
+        slots.forEach( s -> slotMap.computeIfAbsent(s.getName(), n -> new LinkedList<>()).add(s));
             
             // Validate that the there are no duplicate slot names
             Set<String> duplicates = slotMap.values().stream()
