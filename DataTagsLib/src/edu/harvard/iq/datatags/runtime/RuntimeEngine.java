@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -31,12 +32,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author michael
  */
 public class RuntimeEngine {
-	
-	
+
 	public interface Listener {
 		void runStarted( RuntimeEngine ngn );
 		void processedNode( RuntimeEngine ngn, Node node );
 		void runTerminated( RuntimeEngine ngn );
+		void statusChanged( RuntimeEngine ngn );
 	}
 	
 	/** Used to give instances meaningful names. */
@@ -49,7 +50,7 @@ public class RuntimeEngine {
 	private final Deque<CallNode> stack = new LinkedList<>();
 	private Node currentNode;
 	private RuntimeEngineStatus status = RuntimeEngineStatus.Idle;
-	private Listener listener;
+	private Optional<Listener> listener = Optional.empty();
 	
 	private final Node.Visitor<Node> processNodeVisitor = new Node.Visitor<Node>() {
 		
@@ -77,7 +78,7 @@ public class RuntimeEngine {
 
         @Override
         public Node visit(RejectNode nd) throws DataTagsRuntimeException {
-            status = RuntimeEngineStatus.Reject;
+            setStatus(RuntimeEngineStatus.Reject);
             return null;
         }
 
@@ -87,7 +88,7 @@ public class RuntimeEngine {
 			// Dynamic linking to the destination node.
 			Node calleeNode = decisionGraph.getNode(nd.getCalleeNodeId());
 			if ( calleeNode == null ) {
-				status = RuntimeEngineStatus.Error;
+				setStatus(RuntimeEngineStatus.Error);
 				throw new MissingNodeException(RuntimeEngine.this, nd);
 			}
 			
@@ -98,7 +99,7 @@ public class RuntimeEngine {
 		@Override
 		public Node visit( EndNode nd ) throws DataTagsRuntimeException {
 			if ( stack.isEmpty() ) {
-				status = RuntimeEngineStatus.Accept;
+				setStatus(RuntimeEngineStatus.Accept);
 				return null;
 			} else {
 				return stack.pop().getNextNode();
@@ -122,8 +123,8 @@ public class RuntimeEngine {
 		if ( getCurrentTags() == null ) {
 			setCurrentTags( getDecisionGraph().getTopLevelType().createInstance() );
 		}
-		status = RuntimeEngineStatus.Running;
-		if ( listener!=null ) listener.runStarted(this);
+		setStatus(RuntimeEngineStatus.Running);
+		listener.ifPresent( l -> l.runStarted(this) );
 		return processNode( getDecisionGraph().getStart() );
 	}
 	
@@ -131,8 +132,8 @@ public class RuntimeEngine {
      * Terminates current run, clears the state and goes back to node 1.
      */
     public void restart() {
-        status = RuntimeEngineStatus.Restarting;
-        if ( listener!=null ) listener.runTerminated(this);
+        listener.ifPresent( l -> l.runTerminated(this) );
+        setStatus(RuntimeEngineStatus.Restarting);
         stack.clear();
         setCurrentTags( getDecisionGraph().getTopLevelType().createInstance() );
         
@@ -145,7 +146,7 @@ public class RuntimeEngine {
 		do {
 			currentNode = next; // advance program counter
 			next = currentNode.accept(processNodeVisitor);
-			if ( listener != null ) listener.processedNode(this, getCurrentNode());
+			listener.ifPresent( l-> l.processedNode(this, getCurrentNode()) );
 		} while ( next != null );
 
 		return getStatus() == RuntimeEngineStatus.Running;
@@ -181,7 +182,7 @@ public class RuntimeEngine {
         if ( snapshot == null ) {
             throw new IllegalArgumentException("Snapshot cannot be null");
         }
-        status = snapshot.getStatus();
+        setStatus(snapshot.getStatus());
         currentTags = (CompoundValue) new StringMapFormat().parse(
                                                             (decisionGraph.getTopLevelType()),
                                                             snapshot.getSerializedTagValue());
@@ -244,7 +245,7 @@ public class RuntimeEngine {
 	}
 	
 	public Listener getListener() {
-		return listener;
+		return listener.orElse(null);
 	}
 
 	/**
@@ -254,7 +255,7 @@ public class RuntimeEngine {
 	 * @return The listener, to allow setting and assignment in the same expression
 	 */
 	public <T extends Listener> T setListener( T listener) {
-		this.listener = listener;
+		this.listener = Optional.ofNullable(listener);
 		return listener;
 	}
 	
@@ -274,5 +275,12 @@ public class RuntimeEngine {
 	public RuntimeEngineStatus getStatus() {
 		return status;
 	}
-	
+    
+    /**
+     * @param status the status to set
+     */
+    protected void setStatus(RuntimeEngineStatus status) {
+        this.status = status;
+        listener.ifPresent( l -> l.statusChanged(this) );
+    }
 }

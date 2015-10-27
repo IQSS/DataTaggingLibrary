@@ -41,8 +41,6 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
             viz.visualize(outputToGraphviz);
         }
         
-        
-        
         ProcessOutputDumper dump = new ProcessOutputDumper( gv.getInputStream(), outputPath);
         dump.start();
         

@@ -18,4 +18,6 @@ public class RuntimeEngineSilentListener implements RuntimeEngine.Listener {
 	@Override
 	public void runTerminated(RuntimeEngine ngn) {}
 
+    @Override
+    public void statusChanged(RuntimeEngine ngn) {}
 }

@@ -55,7 +55,7 @@ public class TagSpaceParseResult {
     TagSpaceParseResult( List<? extends AbstractSlot> someSlots ) throws SemanticsErrorException {
         slots = someSlots;
         
-        Map<String, List<AbstractSlot>> slotMap = slots.stream().collect(Collectors.groupingBy(AbstractSlot::getName));
+        Map<String, List<AbstractSlot>> slotMap = slots.stream().collect(Collectors.groupingBy(s -> s.getName()));
             
             // Validate that the there are no duplicate slot names
             Set<String> duplicates = slotMap.values().stream()

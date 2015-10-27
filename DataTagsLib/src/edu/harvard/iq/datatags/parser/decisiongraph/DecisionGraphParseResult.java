@@ -83,7 +83,7 @@ public class DecisionGraphParseResult {
         
         // stage 2: Break nodes to componsnets, and
         // stage 3: Compile and link direct nodes.
-        EndNode endAll = new EndNode(null);
+        EndNode endAll = new EndNode("[SYN-END]");
         try {
             breakAstNodeList(astNodes).forEach((segment) -> buildNodes(segment, endAll) );
         } catch ( RuntimeException re ) {

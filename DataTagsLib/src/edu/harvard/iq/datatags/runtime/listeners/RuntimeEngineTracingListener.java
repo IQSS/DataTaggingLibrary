@@ -51,4 +51,8 @@ public class RuntimeEngineTracingListener implements  RuntimeEngine.Listener {
 		decorated.runTerminated(ngn);
 	}
 	
+    @Override
+    public void statusChanged(RuntimeEngine ngn) {
+        decorated.statusChanged(ngn);
+    }
 }

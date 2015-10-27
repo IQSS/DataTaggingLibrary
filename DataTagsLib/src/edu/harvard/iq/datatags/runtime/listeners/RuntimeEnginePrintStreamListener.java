@@ -49,4 +49,7 @@ public class RuntimeEnginePrintStreamListener implements RuntimeEngine.Listener 
 		Arrays.fill(arr, 0, d, '>');
 		return new String(arr);
 	}
+
+    @Override
+    public void statusChanged(RuntimeEngine ngn) {}
 }

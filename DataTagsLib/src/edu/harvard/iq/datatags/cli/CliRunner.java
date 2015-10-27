@@ -12,6 +12,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
+import edu.harvard.iq.datatags.runtime.RuntimeEngineStatus;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.runtime.listeners.RuntimeEngineTracingListener;
 import java.io.BufferedReader;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -81,7 +83,7 @@ public class CliRunner {
                        new QuitCommand(), new ToggleDebugMessagesCommand(), new ShowNodeCommand(),
                        new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
                        new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
-                       new VisualizeTagSpaceCommand(), new PrintRunTraceCommand())
+                       new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand())
                 .forEach( c -> commands.put(c.command(), c) );
     }
     
@@ -98,13 +100,11 @@ public class CliRunner {
             println("");
 
             if (ngn.start()) {
-                while (ngn.consume(promptUserForAnswer())) {
+                while (ngn.getStatus() == RuntimeEngineStatus.Running 
+                        && ngn.consume(promptUserForAnswer())) {
                     println("");
                 }
             }
-
-            printTitle("Final Tags:");
-            dumpTagValue(ngn.getCurrentTags());
 
         } finally {
             if (reader != null) {
@@ -130,13 +130,16 @@ public class CliRunner {
         String ansText;
         while ((ansText = readLine("answer (? for help): ")) != null) {
             Answer ans = Answer.Answer(ansText);
-            if (((AskNode) ngn.getCurrentNode()).getAnswers().contains(ans)) {
+            if ( (ngn.getCurrentNode() instanceof AskNode)
+                   && (((AskNode) ngn.getCurrentNode()).getAnswers().contains(ans)) ) {
                 return ans;
+                
             } else if (ansText.equals("?")) {
                 println("Type one of the answers listed above, or one of the following commands:"
                         + "");
                 commands.entrySet().stream().sorted( (e1, e2) -> e1.getKey().compareTo(e2.getKey()) )
                         .forEach( e -> println("\\%s:\n%s", e.getKey(), indent(e.getValue().description())));
+                
             } else if ( ansText.startsWith("\\") ) {
                 try {
                     List<String> args = Arrays.asList(ansText.split("\\s",-1));
@@ -146,6 +149,7 @@ public class CliRunner {
                 } catch (Exception ex) {
                     Logger.getLogger(CliRunner.class.getName()).log(Level.SEVERE, "Error executing command: " + ex.getMessage(), ex);
                 }
+                
             } else {
                 printMsg("Sorry, '%s' is not a valid answer. Please try again.", ansText);
             }
@@ -262,7 +266,12 @@ public class CliRunner {
         System.out.print(String.format(format, args));
         return reader.readLine();
     }
-        
+    
+    public String readLineWithDefault(String format, String defaultValue, Object... args) throws IOException {
+        String userInput = readLine( format + "["+ defaultValue + "] ", args );
+        return userInput.trim().isEmpty() ? defaultValue : userInput.trim();
+    }
+    
     public String indent( String lines ) {
         return Stream.of(lines.split("\\n")).map( s -> "\t"+s ).collect( Collectors.joining("\n"));
     }
@@ -365,6 +374,20 @@ public class CliRunner {
             });
         }
 
+        @Override
+        public void statusChanged(RuntimeEngine ngn) {
+            if ( printDebugMessages ) {
+                printMsg("Status changed: %s", ngn.getStatus());
+            }
+            
+            if ( ngn.getStatus() == RuntimeEngineStatus.Accept )  {
+                printTitle("Final Tags");
+                dumpTagValue( ngn.getCurrentTags() );
+            } else if ( ngn.getStatus() == RuntimeEngineStatus.Error ) {
+                printWarning("Runtime engine in ERROR mode: %s");
+            }
+        }
+        
         @Override
         public void runTerminated(RuntimeEngine ngn) {
             if ( printDebugMessages ) {
