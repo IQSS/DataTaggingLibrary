@@ -37,7 +37,7 @@ Now that we have a tag space, we can create a process to decide on a specific ta
 
 This graph contains two ``set`` nodes, each one setting the value of a different slot. Note that since ``Subject`` contains a collection of values, the Tags language uses ``+=`` rather than ``=``. If ``Subject`` contained other values, these values will not change when going through the ``set`` node.
 
-``Greeting`` is a different story. Being an atomic slot, it can only conatain a single value. Thus, if is had any value in it, the ``set`` node in line 1 may remove is and put ``hello`` instead. There are cases when this ``set`` instruction will be ignored; we'll get to this later.
+``Greeting`` is a different story. Being an atomic slot, it can only contain a single value. Thus, if is had any value in it, the ``set`` node in line 1 may remove is and put ``hello`` instead. There are cases when this ``set`` instruction will be ignored; we'll get to this later.
 
 ---------
 Runtime!

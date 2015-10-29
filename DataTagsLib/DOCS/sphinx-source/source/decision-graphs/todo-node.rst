@@ -3,7 +3,7 @@
 To-Do Node
 ==========
 
-A placeholder node, to be later replaced with real a decision graph. Can be referenced from :doc:`Call nodes<call-node>`, so that when the node is replaced with the decision graph that implements it, the referring code does not neet to change.
+A placeholder node, to be later replaced with real a decision graph. Can be referenced from :doc:`Call nodes<call-node>`, so that when the node is replaced with the decision graph that implements it, the referring code does not need to change.
 
 ::
 

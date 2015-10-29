@@ -3,8 +3,8 @@
 Call Node
 =========
 
-Makes the engine traverse another part of the decition graph before moving on to the syntactically next node.
-The equivaluent of a procedure call in other programming langauges.
+Makes the engine traverse another part of the decision graph before moving on to the syntactically next node.
+The equivaluent of a procedure call in other programming languages.
 
 Consider the following graph::
 

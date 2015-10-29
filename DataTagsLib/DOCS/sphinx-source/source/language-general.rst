@@ -1,7 +1,7 @@
 :doc:`Home <index>`
 
 
-General Langauge Notes
+General Language Notes
 =======================
 
 .. index:: Comments
@@ -36,7 +36,7 @@ A block comment is contained between ``<*`` and ``*>``, like so::
 Files
 -----
 
-Files are assumed to be encoded in Unicode. By convension, files describing tags spaces have a ``.ts`` suffix, while files describing decision graphs have a ``.dg`` one.
+Files are assumed to be encoded in Unicode. By convention, files describing tags spaces have a ``.ts`` suffix, while files describing decision graphs have a ``.dg`` one.
 
 .. index:: Top-Down Support
 

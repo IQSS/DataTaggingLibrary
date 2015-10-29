@@ -6,9 +6,9 @@ DataTaggingLibrary
    :align: center
 
 The `DataTags`_ project aims to allow researchers to create proper dataset handling and sharing policies,
-even if they lack the required legal and technological expertise. This is done by means of a firendly interview.
+even if they lack the required legal and technological expertise. This is done by means of a friendly interview.
 The project is part of a the `Privacy Tools for Sharing Research Data`_ project. There are a few
-approaches for developing such system. Tthis site uses tag spaces to describe data handling policies,
+approaches for developing such system. This site uses tag spaces to describe data handling policies,
 and an imperative approach based on *decision graphs* to decide on a policy.
 
 .. _DataTags: http://datatags.org
@@ -19,11 +19,11 @@ user goes through the interview, a *Decision Graph Engine* traverses the graph. 
 reaches a node, it performs an instruction associated with it, such
 as ``ask`` (ask the user a question) or ``set``.
 
-.. tip:: Want to take this langauge for a spin? :doc:`Here's how<take-for-spin>`.
+.. tip:: Want to take this language for a spin? :doc:`Here's how<take-for-spin>`.
 
 Tag spaces are also described by a domain specific language.
 
-This site documents those two langauges, and some language-related tools.
+This site documents those two languages, and some language-related tools.
 
 .. note:: The code for this project is open source, and available at a `GitHub Repository`_. It was developed by Michael Bar-Sinai, through an affiliation with the `Institute for Quantitative Social Science`_ and the `Data Privacy Lab`_ at Harvard University.
 
