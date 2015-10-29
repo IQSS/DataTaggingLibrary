@@ -13,7 +13,7 @@ Let's start with a simple "hello, world!" questionnaire. A questionnaire consist
 Tag Space
 ---------
 
-This being a "hello world" program, we need tags to allow us to greet the world (file: *hello-world.ts*):
+This being a "hello world" program, we need tags to allow us to greet the world (:download:`hello-world.ts <code/hello-world/hello-world.ts>`):
 
 .. code::
 
@@ -24,13 +24,13 @@ This being a "hello world" program, we need tags to allow us to greet the world 
 
 Line 1 defines the ``DataTags`` :doc:`/tag-spaces/compound-slot`. Currently, the top-level slot must be called *DataTags*. As defined in *hello-world.ts*, ``DataTags`` has two sub-slots: ``Greeting`` and ``Subject``.
 ``Greeting`` is an :doc:`/tag-spaces/atomic-slot` - it is defined using ``one of``. It can be empty, or contain ``ignore``, ``hi``, ``hello``, or ``congratulations``. The order in which those terms are defined is important; we'll get to this later.
-``Subject`` is what we greet. Since we're not limited to one - it makes sesne to say "hello" to the world AND the moon - ``Subject`` is an :doc:`/tag-spaces/aggregate-slot`, defined using ``some of``.
+``Subject`` is what we greet. Since we're not limited to one - it makes sense to say "hello" to the world AND the moon - ``Subject`` is an :doc:`/tag-spaces/aggregate-slot`, defined using ``some of``.
 
 ----------------
 Decision Graph
 ----------------
 
-Now that we have a tag space, we can create a process to decide on a specific tag within that space - that's what the Decision Graph file is for. Our mission is clear: we need to final tags to have ``hello`` in ``Greeting``, and ``world`` in ``Subject``. Here is the graph (file: *hello-world.dg*)::
+Now that we have a tag space, we can create a process to decide on a specific tag within that space - that's what the Decision Graph file is for. Our mission is clear: we need to final tags to have ``hello`` in ``Greeting``, and ``world`` in ``Subject``. Here is the graph (:download:`hello-world.dg <code/hello-world/hello-world.dg>`)::
 
 [set: Greeting=hello]
 [set: Subject+=world]
@@ -106,4 +106,11 @@ Some people find it easier to reason about decison graphs when they are displaye
   The result of ``visualize-ts``.
 
 
-Congratulations! You've finished your first Tags program, looked at its trace and its nodes, and visualized it. When you're ready, you can take the next tutorials, starting with :doc:`hello-world-revisited`.
+Congratulations! You've finished your first questionnaire! To achive this, you have:
+
+  * Created a tag space out of three types of slots: :doc:`/tag-spaces/compound-slot`, :doc:`/tag-spaces/aggregate-slot` and :doc:`/tag-spaces/atomic-slot`,
+  * Created a decision graph with :doc:`set nodes </decision-graphs/set-node>`,
+  * Looked at its trace and its nodes, and
+  * Visualized the decision graph and the tag space.
+
+When you're ready, you can take the next tutorials, starting with :doc:`hello-world-revisited`.

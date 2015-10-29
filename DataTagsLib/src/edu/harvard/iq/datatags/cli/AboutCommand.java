@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.cli;
 
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import java.util.List;
 
 /**
@@ -20,6 +21,7 @@ public class AboutCommand implements CliCommand {
 
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception {
+        rnr.println( CliRunner.LOGO );
         rnr.println("");
         rnr.printTitle("About DataTags CliRunner");
         rnr.println("This application runs DataTags decision graphs from the a command line.");
@@ -29,6 +31,16 @@ public class AboutCommand implements CliCommand {
         rnr.println("");
         rnr.println("For more info: http://datatags.org");
         rnr.println("");
+        
+        DecisionGraph dg = rnr.getEngine().getDecisionGraph();
+        if ( dg != null ) {
+            rnr.printTitle("Current Questionnaire");
+            rnr.println("Decision Graph: %s (%s)", dg.getTitle(), dg.getId() );
+            rnr.println("Path: %s", rnr.getDecisionGraphPath() );
+            rnr.println("Tag Space: %s", rnr.getTagSpacePath());
+        }
+        rnr.println("Engine status: %s", rnr.getEngine().getStatus());
+        
     }
     
 }
