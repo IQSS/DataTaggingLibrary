@@ -5,7 +5,7 @@
 Atomic Slot
 =============
 
-A slot that contains a single, atomic value (i.e. a value does not have any sub-values). Values have total ordering, based on their order in the slot definition. Atomic slots are defined usind the ``one of`` keyword. Slots and values may have descriptions.
+A slot that contains a single, atomic value (i.e. a value does not have any sub-values). Values have total ordering, based on their order in the slot definition. Atomic slots are defined using the ``one of`` keyword. Slots and values may have descriptions.
 
 The following atomic slot definition creates a slot named ``Storage``, which can hold at most one of the values ``clear``, ``serverEncrypt``. ``clientEncrypt``, ``doubleEncrypt``. The values are ordered with ``clear`` being the least: ``clear < serverEncrypt < clientEncrypt < doubleEncrypt`` ::
 

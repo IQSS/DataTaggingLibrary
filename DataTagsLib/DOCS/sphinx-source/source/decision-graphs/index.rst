@@ -3,7 +3,7 @@
 Decision Graphs
 ===============
 
-The decision graph part of a questionnaire is composed of nodes. During the interview, the tagging engine is traversing the nodes of the decision graph. There are a few types of nodes, most of them are assiciated with an instruction to the engine. Nodes can have IDs. Currently, node ids are useful for referncing them from other nodes. In the future, the ids will also be used for localization.
+The decision graph part of a questionnaire is composed of nodes. During the interview, the tagging engine is traversing the nodes of the decision graph. There are a few types of nodes, most of them are associated with an instruction to the engine. Nodes can have IDs. Currently, node ids are useful for referencing them from other nodes. In the future, the ids will also be used for localization.
 
 Node Structure
 --------------
@@ -40,7 +40,7 @@ Node types can be divided to three groups:
 
 .. index:: Tags Value
 
-Throughout the execution, the engine keeps a single value of the top-level type (currently, this type is called ``DataTags``), referred to as *Tags Value*. This value can be altered by :doc:`set nodes<set-node>`. At the end of the interview, this value holds the final tagging result. Additionally, the engine maintains a call stack of nodes. Pushing onto the stack is done by :doc:`call nodes<call-node>`. Poping is done by :doc:`end nodes<end-node>`.
+Throughout the execution, the engine keeps a single value of the top-level type (currently, this type is called ``DataTags``), referred to as *Tags Value*. This value can be altered by :doc:`set nodes<set-node>`. At the end of the interview, this value holds the final tagging result. Additionally, the engine maintains a call stack of nodes. Pushing onto the stack is done by :doc:`call nodes<call-node>`. Popping is done by :doc:`end nodes<end-node>`.
 
 
 .. toctree::

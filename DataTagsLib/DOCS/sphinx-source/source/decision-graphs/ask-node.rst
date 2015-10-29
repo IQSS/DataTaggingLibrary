@@ -21,13 +21,13 @@ As legal and technological questions can be daunting, it is possible to clarify 
       {{ersonally identifying information: This means the name, address, fingerprints...}
       {HIPAA: Health Insurance Portability and Accountability Act}}]
 
-In the above example, the user will be asked the first question. If she choese *yes*, the ``livingPersons`` slot will contain the value ``yes``, and the interview
+In the above example, the user will be asked the first question. If she chooese *yes*, the ``livingPersons`` slot will contain the value ``yes``, and the interview
 will proceed to a node with ID ``privacySection``. If she chooses *no*, the interview will proceed to the node with id ``nonHuman``. In both cases, after the return
 from the ``[call]`` node, the user will be asked the second question.
 
 Special Case: Yes/No Questions
 ------------------------------
-A common pattern in questionnaires is to have a yes/no question, where one answer leads to a series of questions before continuing, and the opposite just moves to the next question. For example, the questionnare may ask the user whether a dataset contains health data before calling the health data section. In effect, this translates to an ``[ask]`` node that has a sub-graph for one answer only.
+A common pattern in questionnaires is to have a yes/no question, where one answer leads to a series of questions before continuing, and the opposite just moves to the next question. For example, the questionnaire may ask the user whether a dataset contains health data before calling the health data section. In effect, this translates to an ``[ask]`` node that has a sub-graph for one answer only.
 
 In order to support this, if a node contains only a single "yes" or "no" answer, the other answer is assumed to be implicit - it is added automatically, and points to the node after said ``[ask]`` node.::
 
@@ -39,4 +39,4 @@ In order to support this, if a node contains only a single "yes" or "no" answer,
     {text: Do the data contain criminal records?}
     ...
 
-When the engine arrives at node ``q1``, the user will have a choice of both *yes* and *no*, even though only *yes* is specified. When choosing *no*, the user will be transfered to ``q2``.
+When the engine arrives at node ``q1``, the user will have a choice of both *yes* and *no*, even though only *yes* is specified. When choosing *no*, the user will be transferred to ``q2``.

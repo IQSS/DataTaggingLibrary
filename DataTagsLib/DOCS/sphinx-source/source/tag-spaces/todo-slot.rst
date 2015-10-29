@@ -5,7 +5,7 @@
 To-do Slot
 =============
 
-A placeholder slot. Can be referenced by a :doc:`compound-slot`, but does not contain any values. The floowing snippet defines a to-do slot names `IntellecualProperty`::
+A placeholder slot. Can be referenced by a :doc:`compound-slot`, but does not contain any values. The following snippet defines a to-do slot names `IntellecualProperty`::
 
     IntellecualProperty: TODO.
 

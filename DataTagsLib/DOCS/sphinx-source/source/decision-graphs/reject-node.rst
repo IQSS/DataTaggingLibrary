@@ -3,7 +3,7 @@
 Reject Node
 ===========
 
-Terminates the interview, and marks the dataset as *unacceptable*. This is an exreme mean, that should be kept for extreme cases, such as when the data was obtained illegally, or when maintaining them would breach some law.
+Terminates the interview, and marks the dataset as *unacceptable*. This is an extreme mean, that should be kept for extreme cases, such as when the data was obtained illegally, or when maintaining them would breach some law.
 
 ::
 
@@ -11,6 +11,3 @@ Terminates the interview, and marks the dataset as *unacceptable*. This is an ex
     {answers:
       {yes: [Reject: Cannot deposit data obtained by breaching the law.]}}]
   ...
-
-
-  

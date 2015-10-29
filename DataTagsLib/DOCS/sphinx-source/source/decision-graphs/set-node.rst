@@ -24,7 +24,7 @@ Adding the values ``b2b`` and ``b2c`` to the aggregate slot ``DataTags/Mid2/Bott
 
   [set: DataTags/Mid2/Bottom2+={b2b, b2c}]
 
-Combining these operatios in the same node::
+Combining these operations in the same node::
 
   [set: DataTags/Mid1/Bottom1=b1a; DataTags/Mid2/Bottom2+={b2b, b2c}]
 
