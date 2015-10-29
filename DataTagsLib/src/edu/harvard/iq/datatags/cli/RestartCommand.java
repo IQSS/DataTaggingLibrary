@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.cli;
 
+import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.RuntimeEngineStatus;
 import java.util.List;
 
@@ -21,9 +22,14 @@ public class RestartCommand implements CliCommand {
 
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception {
-        rnr.restart();
-        if ( rnr.getEngine().getStatus() == RuntimeEngineStatus.Running ) {
-            rnr.printCurrentAskNode();
+        final RuntimeEngine engine = rnr.getEngine();
+        if ( engine.getStatus() == RuntimeEngineStatus.Running ) {
+            rnr.restart();
+            if ( engine.getStatus() == RuntimeEngineStatus.Running ) {
+                rnr.printCurrentAskNode();
+            }
+        } else {
+            engine.setIdle();
         }
     }
     

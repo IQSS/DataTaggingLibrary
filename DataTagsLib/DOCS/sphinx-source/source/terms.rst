@@ -18,7 +18,7 @@ Terms Their Meaning
     The act of a user answering a questionnaire. The questionnaire equivalent of a program running.
 
   Questionnaire
-    A pair of matching decision graph and tag space.
+    A pair of matching decision graph and tag space. They have to match, since the decision graph's :doc:`set nodes</decision-graphs/set-node>` mention slots and values, which have to exist in the tag space.
 
   Tag space
     A multi-dimensional space defined by tags, which are descrete dimensions.

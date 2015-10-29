@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
+import edu.harvard.iq.datatags.cli.LoadQuestionnaireCommand;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
@@ -11,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 /**
  * Main class for running decision graphs in the command line.
@@ -20,28 +22,29 @@ public class DecisionGraphCliRunner {
     
     public static void main(String[] args) throws Exception {
         
-        if ( args.length < 2 ) {
-            printUsage();
-            System.exit(1);
-        }
-        
-        Path tagSpace = Paths.get(args[args.length-2]);
-        Path decisionGraphPath = Paths.get(args[args.length-1]);
-
-        CompoundType definitions = parseDefinitions(tagSpace);
-        
-        DecisionGraphParser fcsParser = new DecisionGraphParser();
-        
-        System.out.println("Reading decision graph: " + decisionGraphPath );
-        System.out.println(" (full:  " + decisionGraphPath.toAbsolutePath() + ")" );
-        
-        DecisionGraph dg = fcsParser.parse(decisionGraphPath).compile(definitions);
-        
         CliRunner cliRunner = new CliRunner();
-        cliRunner.setDecisionGraph(dg);
-        cliRunner.setTagSpacePath(tagSpace);
-        cliRunner.setDecisionGraphPath(decisionGraphPath);
+        cliRunner.printSplashScreen();
         
+        if ( args.length < 2 ) {
+            new LoadQuestionnaireCommand().execute(cliRunner, Collections.emptyList());
+            
+        } else {
+            Path tagSpace = Paths.get(args[args.length-2]);
+            Path decisionGraphPath = Paths.get(args[args.length-1]);
+
+            CompoundType definitions = parseDefinitions(tagSpace);
+
+            DecisionGraphParser fcsParser = new DecisionGraphParser();
+
+            System.out.println("Reading decision graph: " + decisionGraphPath );
+            System.out.println(" (full:  " + decisionGraphPath.toAbsolutePath() + ")" );
+
+            DecisionGraph dg = fcsParser.parse(decisionGraphPath).compile(definitions);
+
+            cliRunner.setDecisionGraph(dg);
+            cliRunner.setTagSpacePath(tagSpace);
+            cliRunner.setDecisionGraphPath(decisionGraphPath);
+        }
         cliRunner.go();
         
     }
@@ -59,7 +62,6 @@ public class DecisionGraphCliRunner {
     }
     
     private static void printUsage() {
-        System.out.println("Usage:");
-        System.out.println("DecisionGraphCliRunner <path to tagspace file> <path to decision graph file>");
+        System.out.println("Please provide paths to the tag space and decision grpah files.");
     }
 }

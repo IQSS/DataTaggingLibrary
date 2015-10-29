@@ -59,14 +59,14 @@ public abstract class DotCommand implements CliCommand {
         return ( ! dotStr.isEmpty() ) ? Optional.of( Paths.get(dotStr) ) : Optional.empty();
     }
 
-    protected Path getOuputFilePath(CliRunner rnr, List<String> args, Path basePath) throws IOException {
+    protected Path getOuputFilePath(CliRunner rnr, List<String> args, Path basePath, String extension) throws IOException {
         Path outputPath;
         if (args.size() < 2) {
             // try to suggest a file name
             String dgFileName = basePath.getFileName().toString();
             int extensionStart = dgFileName.lastIndexOf(".");
             if (extensionStart > 0) {
-                dgFileName = dgFileName.substring(0, extensionStart);
+                dgFileName = dgFileName.substring(0, extensionStart) + extension;
             }
             Path defaultOutput = basePath.resolveSibling(dgFileName + ".pdf");
             String outputPathFromUser = rnr.readLine("Enter output file name [%s]: ", defaultOutput);

@@ -23,52 +23,56 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.codehaus.jparsec.Parser;
+import org.codehaus.jparsec.Scanners;
 
 /**
  * A command-line application that executes decision graphs.
+ *
  * @author michael
  */
 public class CliRunner {
-    
-    static final String LOGO = 
-            "   +-------------\n" +
-            "  +|             \\\n" +
-            " +||             o)\n" +
-            "+|||             /\n" +
-            "|||+-------------\n" +
-            "||+-------------\n" +
-            "|+------------- ____        _        _____\n" +
-            "+------------- |  _ \\  __ _| |_  __ |_   _|_ _  __ _  ___\n" +
-            "               | | | |/ _` | __|/ _` || |/ _` |/ _` |/ __|\n" +
-            "               | |_| | (_| | |_ |(_| || | (_| | (_| |\\__ \\\n" +
-            "               |____/ \\__,_|\\__|\\__,_||_|\\__,_|\\__, ||___/\n" +
-            "                                   datatags.org|___/";
-    
-    RuntimeEngine ngn = new RuntimeEngine();;
+
+    static final String LOGO
+            = "   +-------------\n"
+            + "  +|             \\\n"
+            + " +||             o)\n"
+            + "+|||             /\n"
+            + "|||+-------------\n"
+            + "||+-------------\n"
+            + "|+------------- ____        _        _____\n"
+            + "+------------- |  _ \\  __ _| |_  __ |_   _|_ _  __ _  ___\n"
+            + "               | | | |/ _` | __|/ _` || |/ _` |/ _` |/ __|\n"
+            + "               | |_| | (_| | |_ |(_| || | (_| | (_| |\\__ \\\n"
+            + "               |____/ \\__,_|\\__|\\__,_||_|\\__,_|\\__, ||___/\n"
+            + "                                   datatags.org|___/\n";
+
+    RuntimeEngine ngn = new RuntimeEngine();
+    ;
     BufferedReader reader;
     private final StringMapFormat dtFormat = new StringMapFormat();
     private final Map<String, CliCommand> commands = new HashMap<>();
     private boolean printDebugMessages = false;
     private Path decisionGraphPath, tagSpacePath;
     private RuntimeEngineTracingListener tracer;
-    
+    private final Parser<List<String>> cmdScanner = Scanners.many( c -> !Character.isWhitespace(c) ).source().sepBy( Scanners.WHITESPACES );
+
     /**
      * A default command, in case a nonexistent command has been chosen.
      */
-    private static final CliCommand COMMAND_NOT_FOUND = new CliCommand(){
+    private static final CliCommand COMMAND_NOT_FOUND = new CliCommand() {
         @Override
         public String command() {
-            throw new UnsupportedOperationException("Not supported."); 
+            throw new UnsupportedOperationException("Not supported.");
         }
 
         @Override
         public String description() {
-            throw new UnsupportedOperationException("Not supported."); 
+            throw new UnsupportedOperationException("Not supported.");
         }
 
         @Override
@@ -79,31 +83,32 @@ public class CliRunner {
 
     public CliRunner() {
         // Register commands here
-        Arrays.asList( new CurrentTagsCommand(), new AboutCommand(),
-                       new QuitCommand(), new ToggleDebugMessagesCommand(), new ShowNodeCommand(),
-                       new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
-                       new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
-                       new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand())
-                .forEach( c -> commands.put(c.command(), c) );
+        Arrays.asList(new CurrentTagsCommand(), new AboutCommand(),
+                new QuitCommand(), new ToggleDebugMessagesCommand(), new ShowNodeCommand(),
+                new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
+                new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
+                new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand())
+                .forEach(c -> commands.put(c.command(), c));
     }
-    
+
     public void go() throws IOException {
+
         try {
             if (System.console() == null) {
                 reader = new BufferedReader(new InputStreamReader(System.in));
             }
-            
+
             tracer = new RuntimeEngineTracingListener(new CliEngineListener());
             ngn.setListener(tracer);
-            
-            print( LOGO );
-            println("");
 
-            if (ngn.start()) {
-                while (ngn.getStatus() == RuntimeEngineStatus.Running 
-                        && ngn.consume(promptUserForAnswer())) {
-                    println("");
+            while (true) {
+                if (ngn.getStatus() == RuntimeEngineStatus.Idle && ngn.start()) {
+                    while (ngn.getStatus() == RuntimeEngineStatus.Running
+                            && ngn.consume(promptUserForAnswer())) {
+                        println("");
+                    }
                 }
+                promptForCommand();
             }
 
         } finally {
@@ -112,11 +117,16 @@ public class CliRunner {
             }
         }
     }
-    
+
+    public void printSplashScreen() {
+        print(LOGO);
+        println("");
+    }
+
     void restart() {
         ngn.restart();
     }
-    
+
     void dumpTagValue(TagValue val) {
         dtFormat.format(val).entrySet().forEach((e) -> {
             println("%s = %s", e.getKey(), e.getValue());
@@ -124,32 +134,32 @@ public class CliRunner {
     }
 
     Answer promptUserForAnswer() throws IOException {
-        
+
         printCurrentAskNode();
-                
+
         String ansText;
         while ((ansText = readLine("answer (? for help): ")) != null) {
             Answer ans = Answer.Answer(ansText);
-            if ( (ngn.getCurrentNode() instanceof AskNode)
-                   && (((AskNode) ngn.getCurrentNode()).getAnswers().contains(ans)) ) {
+            if ((ngn.getCurrentNode() instanceof AskNode)
+                    && (((AskNode) ngn.getCurrentNode()).getAnswers().contains(ans))) {
                 return ans;
-                
+
             } else if (ansText.equals("?")) {
                 println("Type one of the answers listed above, or one of the following commands:"
                         + "");
-                commands.entrySet().stream().sorted( (e1, e2) -> e1.getKey().compareTo(e2.getKey()) )
-                        .forEach( e -> println("\\%s:\n%s", e.getKey(), indent(e.getValue().description())));
-                
-            } else if ( ansText.startsWith("\\") ) {
+                commands.entrySet().stream().sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+                        .forEach(e -> println("\\%s:\n%s", e.getKey(), indent(e.getValue().description())));
+
+            } else if (ansText.startsWith("\\")) {
                 try {
-                    List<String> args = Arrays.asList(ansText.split("\\s",-1));
+                    List<String> args = cmdScanner.parse( ansText );
                     commands.getOrDefault(args.get(0).substring(1), COMMAND_NOT_FOUND).execute(this, args);
                     println("");
-                    
+
                 } catch (Exception ex) {
                     Logger.getLogger(CliRunner.class.getName()).log(Level.SEVERE, "Error executing command: " + ex.getMessage(), ex);
                 }
-                
+
             } else {
                 printMsg("Sorry, '%s' is not a valid answer. Please try again.", ansText);
             }
@@ -158,12 +168,47 @@ public class CliRunner {
         return null;
     }
 
+    /**
+     * Prompts the user for a command, and then executes it. If the command
+     * entails restarting the engine, it is conveyed by it changing the engine
+     * state to {@link RuntimeEngineStatus#Idle}
+     */
+    void promptForCommand() throws IOException {
+        String userChoice = readLine("Command (? for help): ");
+        if ( userChoice == null ) return;
+        userChoice = userChoice.trim();
+        
+        if ( userChoice.equals("?")) {
+            println("Please type one of the following commands:"
+                    + "");
+            commands.entrySet().stream().sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+                    .forEach(e -> println("\\%s:\n%s", e.getKey(), indent(e.getValue().description())));
+
+        } else {
+            if ( userChoice.startsWith("\\")) {
+                userChoice = userChoice.substring(1);
+            }
+            try {
+                List<String> args = cmdScanner.parse(userChoice);
+                commands.getOrDefault(args.get(0), COMMAND_NOT_FOUND).execute(this, args);
+                println("");
+
+            } catch (Exception ex) {
+                printWarning("Error executing the command: " + ex.getMessage());
+                if ( printDebugMessages ) {
+                    Logger.getLogger(CliRunner.class.getName()).log(Level.SEVERE, "Java stack trace:", ex);
+                }
+            }
+
+        } 
+    }
+
     public void printCurrentAskNode() {
         AskNode ask = (AskNode) ngn.getCurrentNode();
-        if ( printDebugMessages ) {
-            printMsg( "Question id: " + ask.getId() );
+        if (printDebugMessages) {
+            printMsg("Question id: " + ask.getId());
         }
-        println( ask.getText());
+        println(ask.getText());
         if (!ask.getTermNames().isEmpty()) {
             println(" Terms:");
             for (String termName : ask.getTermNames()) {
@@ -172,7 +217,7 @@ public class CliRunner {
             }
         }
         println("Possible Answers:");
-        ask.getAnswers().forEach( ans -> println(" - " + ans.getAnswerText()) );
+        ask.getAnswers().forEach(ans -> println(" - " + ans.getAnswerText()));
     }
 
     void print(String format, Object... args) {
@@ -190,7 +235,7 @@ public class CliRunner {
             System.out.print(String.format(format));
         }
     }
-    
+
     void println() {
         if (System.console() != null) {
             System.console().printf("\n");
@@ -198,7 +243,6 @@ public class CliRunner {
             System.out.println();
         }
     }
-
 
     void println(String format, Object... args) {
         if (format.endsWith("\n")) {
@@ -218,41 +262,45 @@ public class CliRunner {
 
     /**
      * Prints to the console, formatted as a message.
+     *
      * @param format
-     * @param args 
+     * @param args
      */
     void printMsg(String format, Object... args) {
         println("# " + format, args);
     }
-    
+
     /**
      * Prints to the console, formatted as a warning.
+     *
      * @param format
-     * @param args 
+     * @param args
      */
     void printWarning(String format, Object... args) {
         println("# /!\\ " + format, args);
     }
-    
+
     /**
      * Prints to the console, formatted as a warning.
+     *
      * @param format
      */
     void printWarning(String format) {
         println("# /!\\ " + format);
     }
-    
+
     /**
      * Prints to the console, with underline.
+     *
      * @param format
-     * @param args 
+     * @param args
      */
     void printTitle(String format, Object... args) {
         String msg = String.format(format, args);
-        
+
         char[] deco = new char[msg.length()];
         Arrays.fill(deco, '~');
-        
+
         println("");
         println(new String(deco));
         println(msg);
@@ -266,30 +314,30 @@ public class CliRunner {
         System.out.print(String.format(format, args));
         return reader.readLine();
     }
-    
+
     public String readLineWithDefault(String format, String defaultValue, Object... args) throws IOException {
-        String userInput = readLine( format + "["+ defaultValue + "] ", args );
+        String userInput = readLine(format + "[" + defaultValue + "] ", args);
         return userInput.trim().isEmpty() ? defaultValue : userInput.trim();
     }
-    
-    public String indent( String lines ) {
-        return Stream.of(lines.split("\\n")).map( s -> "\t"+s ).collect( Collectors.joining("\n"));
+
+    public String indent(String lines) {
+        return Stream.of(lines.split("\\n")).map(s -> "\t" + s).collect(Collectors.joining("\n"));
     }
 
-    public String truncateAt( String src, int width ) {
-        if ( src.length() > width ) {
-            return src.substring(0,width-3) + "...";
+    public String truncateAt(String src, int width) {
+        if (src.length() > width) {
+            return src.substring(0, width - 3) + "...";
         } else {
             return src;
         }
     }
-    
+
     public DecisionGraph getDecisionGraph() {
         return ngn.getDecisionGraph();
     }
 
-    public void setDecisionGraph(DecisionGraph  aDecisionGraph ) {
-        ngn.setDecisionGraph( aDecisionGraph );
+    public void setDecisionGraph(DecisionGraph aDecisionGraph) {
+        ngn.setDecisionGraph(aDecisionGraph);
     }
 
     public RuntimeEngine getEngine() {
@@ -299,7 +347,7 @@ public class CliRunner {
     public void setPrintDebugMessages(boolean debugMessages) {
         printDebugMessages = debugMessages;
     }
-    
+
     public boolean getPrintDebugMessages() {
         return printDebugMessages;
     }
@@ -319,11 +367,11 @@ public class CliRunner {
     public void setTagSpacePath(Path tagSpacePath) {
         this.tagSpacePath = tagSpacePath;
     }
-    
-    public List<Node> getTrace() { 
+
+    public List<Node> getTrace() {
         return tracer.getVisitedNodes();
     }
-    
+
     private class CliEngineListener implements RuntimeEngine.Listener {
 
         public CliEngineListener() {
@@ -336,15 +384,15 @@ public class CliRunner {
 
         @Override
         public void processedNode(RuntimeEngine ngn, Node node) {
-            if ( printDebugMessages ) {
+            if (printDebugMessages) {
                 printMsg("Visited node " + node);
             }
             node.accept(new Node.VoidVisitor() {
-                
+
                 @Override
                 public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
                 }
-                
+
                 @Override
                 public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
                     printMsg("Updating tags");
@@ -352,22 +400,22 @@ public class CliRunner {
                             -> printMsg("%s = %s", e.getKey(), e.getValue())
                     );
                 }
-                
+
                 @Override
                 public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
                     println("Sorry, we can't accept the dataset: " + nd.getReason());
                 }
-                
+
                 @Override
                 public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
                     printTitle("Section: " + nd.getCalleeNodeId() + "");
                 }
-                
+
                 @Override
                 public void visitImpl(TodoNode nd) throws DataTagsRuntimeException {
                     printMsg("TODO: " + nd.getTodoText());
                 }
-                
+
                 @Override
                 public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
                 }
@@ -376,24 +424,24 @@ public class CliRunner {
 
         @Override
         public void statusChanged(RuntimeEngine ngn) {
-            if ( printDebugMessages ) {
+            if (printDebugMessages) {
                 printMsg("Status changed: %s", ngn.getStatus());
             }
-            
-            if ( ngn.getStatus() == RuntimeEngineStatus.Accept )  {
+
+            if (ngn.getStatus() == RuntimeEngineStatus.Accept) {
                 printTitle("Final Tags");
-                dumpTagValue( ngn.getCurrentTags() );
-            } else if ( ngn.getStatus() == RuntimeEngineStatus.Error ) {
+                dumpTagValue(ngn.getCurrentTags());
+            } else if (ngn.getStatus() == RuntimeEngineStatus.Error) {
                 printWarning("Runtime engine in ERROR mode: %s");
             }
         }
-        
+
         @Override
         public void runTerminated(RuntimeEngine ngn) {
-            if ( printDebugMessages ) {
+            if (printDebugMessages) {
                 printMsg("Run Done");
             }
         }
     }
-    
+
 }

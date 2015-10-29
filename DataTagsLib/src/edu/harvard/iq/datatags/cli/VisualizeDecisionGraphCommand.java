@@ -34,7 +34,7 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
         viz.setDecisionGraph(rnr.getDecisionGraph());
         
         Path outputPath;
-        outputPath = getOuputFilePath(rnr, args, rnr.getDecisionGraphPath());
+        outputPath = getOuputFilePath(rnr, args, rnr.getDecisionGraphPath(), "");
         
         Process gv = pb.start();
         try (OutputStreamWriter outputToGraphviz = new OutputStreamWriter(gv.getOutputStream())) {

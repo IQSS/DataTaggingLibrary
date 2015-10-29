@@ -40,6 +40,7 @@ Contents:
 
    language-general
    take-for-spin
+   tutorial/index
    decision-graphs/index
    tag-spaces/index
    terms
