@@ -1,0 +1,2 @@
+[set: Greeting=hello]
+[set: Subject+=world]

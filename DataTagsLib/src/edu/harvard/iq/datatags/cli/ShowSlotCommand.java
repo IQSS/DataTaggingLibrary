@@ -49,7 +49,7 @@ public class ShowSlotCommand implements CliCommand {
                 if (pathLeft.isEmpty()) {
                     rnr.println("%s: compound slot (consists of)", typePath);
                     printNote(t);
-                    rnr.println("Possible values:");
+                    rnr.println("Sub slots:");
                     t.getFieldTypes().forEach( val -> {
                         rnr.println("* %s", val.getName());
                         if ( val.getNote() != null ) {
