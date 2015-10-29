@@ -75,7 +75,7 @@ public abstract class GraphvizVisualizer {
 	}
 
 	protected String humanTitle(DecisionGraph ent) {
-		return (ent.getTitle() != null) ? String.format("%s: %s", ent.getId(), ent.getTitle()) : ent.getId();
+		return (ent.getTitle() != null) ? ent.getTitle() : ent.getId();
 	}
 
 	String sanitizeTitle(String s) {

@@ -7,13 +7,12 @@ import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
+import edu.harvard.iq.datatags.runtime.RuntimeEngineStatus;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Loads a questionnaire to the CliRunner.
@@ -40,7 +39,7 @@ public class LoadQuestionnaireCommand implements CliCommand {
 
         // get the files
         do {
-            inputString = rnr.readLine("Please enter path to the definitions (tagspace) file: ");
+            inputString = rnr.readLine("Please enter path to the definitions (tagspace) file: ").trim();
             tsPath = Paths.get(inputString);
             if (!Files.exists(tsPath)) {
                 rnr.printWarning(inputString + " does not exist.");
@@ -53,7 +52,7 @@ public class LoadQuestionnaireCommand implements CliCommand {
         }
 
         do {
-            inputString = rnr.readLineWithDefault("Please enter path to decision graph ", inputString, args);
+            inputString = rnr.readLineWithDefault("Please enter path to decision graph ", inputString, args).trim();
             dgPath = Paths.get(inputString);
             if (!Files.exists(dgPath)) {
                 rnr.printWarning(inputString + " does not exist.");
@@ -74,7 +73,12 @@ public class LoadQuestionnaireCommand implements CliCommand {
             rnr.setDecisionGraph(dg);
             rnr.setDecisionGraphPath(dgPath);
             rnr.setTagSpacePath(tsPath);
-            rnr.restart();
+            
+            if ( rnr.getEngine().getStatus() == RuntimeEngineStatus.Running ) {
+                rnr.restart();
+            } else {
+                rnr.getEngine().setIdle();
+            }
             
         } catch (IOException ex) {
             rnr.printWarning("Error reading file: %s", ex.getMessage());

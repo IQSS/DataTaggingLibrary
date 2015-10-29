@@ -29,7 +29,7 @@ public class VisualizeTagSpaceCommand extends DotCommand {
         GraphvizTagSpaceVisualizer viz = new GraphvizTagSpaceVisualizer(rnr.getDecisionGraph().getTopLevelType());
         
         Path outputPath;
-        outputPath = getOuputFilePath(rnr, args, rnr.getTagSpacePath());
+        outputPath = getOuputFilePath(rnr, args, rnr.getTagSpacePath(), "-ts");
         
         Process gv = pb.start();
         try (OutputStreamWriter outputToGraphviz = new OutputStreamWriter(gv.getOutputStream())) {

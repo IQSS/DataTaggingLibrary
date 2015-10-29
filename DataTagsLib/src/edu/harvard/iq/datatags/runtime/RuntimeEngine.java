@@ -141,6 +141,16 @@ public class RuntimeEngine {
         
     }
     
+    /**
+     * Sets the status to idle, removes all state related to runtime.
+     */
+    public void setIdle() {
+        setStatus( RuntimeEngineStatus.Idle );
+        stack.clear();
+        currentNode = null;
+        currentTags = null;
+    }
+    
 	protected boolean processNode( Node n ) throws DataTagsRuntimeException {
 		Node next = n;
 		do {
