@@ -1,0 +1,29 @@
+[ask:
+  {text: How friendly do you feel today?}
+  {answers:
+    {Not at all: [set: Greeting=ignore] }
+    {Somewhat: [set: Greeting=hi] }
+    {Quite so: [set: Greeting=hello] }
+    {Borderline overly : [set: Greeting=_hug_] }
+  }
+]
+[set: Subject += world]
+[ask:
+  {text: You are greeting the world. Would you like to greet other objects? }
+  {answers:
+    {yes:
+      [ask:
+        {text: How about the moon?}
+        {answers:
+          {yes: [set: Subject += moon]}}]
+      [ask:
+        {text: Greet a planet?}
+        {answers:
+          {yes: [set: Subject += planet]}}]
+      [ask:
+        {text: Do you need to recognize what you greet?}
+        {answers:
+          {no: [set: Subject += unrecognizedOrbitingObject]}}]
+    }
+  }
+]

@@ -87,7 +87,7 @@ public class DecisionGraphRuleParser {
             nodeStructurePart(":"),
             textbodyUpTo("}"),
             nodeStructurePart("}"),
-            (_s, name, _c, text, _e) -> new AstTermSubNode(name, text)
+            (_s, name, _c, text, _e) -> new AstTermSubNode(name.trim(), text.trim())
     );
     
     final static Parser<List<AstTermSubNode>> TERMS_SUBNODE = Parsers.sequence(
@@ -106,7 +106,7 @@ public class DecisionGraphRuleParser {
             nodeStructurePart(":"),
             bodyParser,
             nodeStructurePart("}"),
-            (_s, name, _c, body, _e) -> new AstAnswerSubNode(name, body));
+            (_s, name, _c, body, _e) -> new AstAnswerSubNode(name.trim(), body));
     }
     
     final static Parser<List<AstAnswerSubNode>> answersSubNode( Parser<List<? extends AstNode>> bodyParser ) {

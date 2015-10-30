@@ -20,7 +20,7 @@ is equivalent to this one:
    :code:
 
 
-Try this: run the questionnaire you've made in the previsou tutorial. Now, merge the set nodes. At the prompt, type ``\reload``.
+Try this: run the questionnaire you've made in the previous tutorial. Now, merge the set nodes. At the prompt, type ``\reload``.
 
 The runtime reloads the questionnaire, and executes it. If you look at the trace (that's ``\trace``, remember?) you'll see only a single ``set`` node was used.
 

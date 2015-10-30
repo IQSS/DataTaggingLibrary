@@ -50,10 +50,13 @@ public class ReloadQuestionnaireCommand implements CliCommand {
             DecisionGraph dg = new DecisionGraphParser().parse(dgPath).compile(ts);
             rnr.println("");
             rnr.setDecisionGraph(dg);
-            rnr.restart();
             if ( rnr.getEngine().getStatus() == RuntimeEngineStatus.Running ) {
+                rnr.restart();
                 rnr.printCurrentAskNode();
+            } else {
+                rnr.getEngine().setIdle();
             }
+            
         } catch (IOException ex) {
             rnr.printWarning("Error reading files: " + ex.getMessage());
         } catch (SyntaxErrorException ex) {

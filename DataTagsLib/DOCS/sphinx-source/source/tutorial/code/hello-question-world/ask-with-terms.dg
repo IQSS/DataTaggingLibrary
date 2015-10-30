@@ -1,0 +1,16 @@
+[ask:
+  {text: How friendly do you feel today?}
+  {terms:
+    {you: The person taking this interview. }
+    {today: The day this interview is taking place.
+            If you started this interview yesterday,
+            please provide answers that reflect your mood
+            at the time the interview started. }
+  }
+  {answers:
+    {Not at all: [set: Greeting=ignore] }
+    {Somewhat: [set: Greeting=hi] }
+    {Quite so: [set: Greeting=hello] }
+    {Borderline overly : [set: Greeting=_hug_] }
+  }
+]
