@@ -1,0 +1,10 @@
+[ask:
+  {text: How friendly do you feel today?}
+  {answers:
+    {Not at all: [set: Greeting=ignore] }
+    {Somewhat: [set: Greeting=hi] }
+    {Quite so: [set: Greeting=hello] }
+    {Borderline overly : [set: Greeting=_hug_] }
+  }
+]
+[set: Subject += world]

@@ -276,7 +276,7 @@ public class CliRunner {
      * @param format
      * @param args
      */
-    void printWarning(String format, Object... args) {
+    public void printWarning(String format, Object... args) {
         println("# /!\\ " + format, args);
     }
 
@@ -285,7 +285,7 @@ public class CliRunner {
      *
      * @param format
      */
-    void printWarning(String format) {
+    public void printWarning(String format) {
         println("# /!\\ " + format);
     }
 

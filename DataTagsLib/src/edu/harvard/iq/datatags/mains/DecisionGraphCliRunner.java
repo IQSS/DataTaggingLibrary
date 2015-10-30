@@ -30,7 +30,16 @@ public class DecisionGraphCliRunner {
             
         } else {
             Path tagSpace = Paths.get(args[args.length-2]);
+            if ( ! Files.exists(tagSpace) ) {
+                cliRunner.printWarning("File %s not found", tagSpace.toString());
+                System.exit(1);
+            }
+            
             Path decisionGraphPath = Paths.get(args[args.length-1]);
+            if ( ! Files.exists(decisionGraphPath) ) {
+               cliRunner.printWarning("File %s not found", tagSpace.toString());
+               System.exit(2);
+            }
 
             CompoundType definitions = parseDefinitions(tagSpace);
 
