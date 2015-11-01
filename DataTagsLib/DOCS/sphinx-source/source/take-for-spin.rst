@@ -33,7 +33,7 @@ The DataTaggingLibrary comes with a command line tool for developing questionnai
 
 * Performing an interview.
 * Inspecting nodes and slots.
-* *Visualizatoins* (requires `graphviz`_)
+* *Visualizations* (requires `graphviz`_)
 * Run inspections - trace, stack status, tag status
 
 .. _graphviz: http://www.graphviz.org
