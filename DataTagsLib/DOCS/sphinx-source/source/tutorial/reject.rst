@@ -4,7 +4,7 @@
 The ``Reject`` Node
 ====================
 
-A DataTags tagging system matches a data handling policy to a dataset. Theoretically, every dataset should have a matching policy. The reality is a bit more complex: there is a special case. Datasets that were obtained by violating laws or regulations cannot be automatically accepted to repositories (if at all). Thus, Tags has a ``reject`` node. When the runtime gets to a ``reject`` node, the interview stops, and the rejection reason is shown to the user.
+A DataTags tagging system matches a data handling policy to a dataset. Theoretically, every dataset should have a matching policy. The reality is a bit more complex: there is a special case. Datasets that were obtained by violating laws or regulations cannot be automatically accepted to repositories (if at all). For these cases, Tags has a ``reject`` node. When the runtime gets to a ``reject`` node, the interview stops, and the rejection reason is shown to the user.
 
 
 ---------------------
@@ -44,4 +44,4 @@ In the following questionnaire (files: :download:`tag space<code/reject/educatio
   Rejection message from the DataTaggingServer, due to a likely PPRA violation.
 
 
-In the :doc:``todo-node<next tutorial>``, we'll see how to create placeholder nodes.
+In the :doc:`next tutorial<todo-node>`, we'll see how to create placeholder nodes.

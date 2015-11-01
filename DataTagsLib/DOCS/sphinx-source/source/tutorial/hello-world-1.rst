@@ -7,7 +7,7 @@ Hello, World! v1.0
 Let's start with a simple "hello, world!" questionnaire. A questionnaire consists of two components:
 
 * Tag Space: Defines the tags the questionnaire can assign, and their possible values. The tag space is defined in a separate file, normally with a ``.ts`` suffix.
-* Decision Graph: Describes a decision graph. Nodes carry instruction to a runtime engine, that traverse the graph along its edges.
+* Decision Graph: Describes a decision graph. Nodes carry instruction to a runtime engine, that traverse the graph along its edges. Decision graph files often have a ``.dg`` suffix.
 
 ---------
 Tag Space
@@ -26,6 +26,7 @@ Line 1 defines the ``DataTags`` :doc:`/tag-spaces/compound-slot`. Currently, the
 ``Greeting`` is an :doc:`/tag-spaces/atomic-slot` - it is defined using ``one of``. It can be empty, or contain ``ignore``, ``hi``, ``hello``, or ``congratulations``. The order in which those terms are defined is important; we'll get to this later.
 ``Subject`` is what we greet. Since we're not limited to one - it makes sense to say "hello" to the world AND the moon - ``Subject`` is an :doc:`/tag-spaces/aggregate-slot`, defined using ``some of``.
 
+
 ----------------
 Decision Graph
 ----------------
@@ -37,7 +38,7 @@ Now that we have a tag space, we can create a process to decide on a specific ta
 
 This graph contains two ``set`` nodes, each one setting the value of a different slot. Note that since ``Subject`` contains a collection of values, the Tags language uses ``+=`` rather than ``=``. If ``Subject`` contained other values, these values will not change when going through the ``set`` node.
 
-``Greeting`` is a different story. Being an atomic slot, it can only contain a single value. Thus, if is had any value in it, the ``set`` node in line 1 may remove is and put ``hello`` instead. There are cases when this ``set`` instruction will be ignored; we'll get to this later.
+``Greeting`` is a different story. Being an atomic slot, it can only contain a single value. Thus, if is had any value in it, the ``set`` node in line 1 may remove is and put ``hello`` instead. There are cases when this ``set`` instruction will be ignored; we'll get to this :doc:`later <value-order>`.
 
 ---------
 Runtime!
@@ -53,7 +54,7 @@ or just::
 
 and pass the parameters to the CliRunner when it prompts you.
 
-.. tip:: On most systems, dragging a file to the console's window will type its absolute path in the prompt.
+.. tip:: On most systems, dragging a file to the terminal's window will type its absolute path in the prompt.
 
 The system traverses the graph and setting the slot values like so:
 
