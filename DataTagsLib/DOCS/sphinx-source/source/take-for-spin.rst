@@ -43,4 +43,4 @@ questionnaire by typing ``\reload`` on the console when needed.
 
 Main class for CliRunner is ``edu.harvard.iq.datatags.mains.DecisionGraphCliRunner``. The class takes two parameters - path to the definitions file, and a path to the decision graph file. It is also the main class for the .jar file, so it is also available for invocation via ``java -jat DataTagsLib.jar``.
 
-.. tip :: For a more sturtured introduction, see the :doc:`tutorial/index`
+.. tip :: For a more structured introduction, see the :doc:`tutorial/index`
