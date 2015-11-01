@@ -1,0 +1,11 @@
+[call: consent]
+[call: dua]
+[ask:
+  {text: Will the data repository be subject to audits?}
+  {answers:
+    {yes:[call: auditing]}}]
+[end]
+
+[>consent< todo: Did the researcher get consent?][end]
+[>dua< todo: Check for special DUAs][end]
+[>auditing< todo: Make sure we can support audits, if necessary][end]

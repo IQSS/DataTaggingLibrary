@@ -16,5 +16,8 @@ This tutorial uses ``CliRunner``, Tags' command line execution environmnet. It c
   hello-world-revisited
   hello-question-world
   call-and-end
+  reject
+  todo-node
+  value-order
 
 .. todo:: Atomic value definition order matters.

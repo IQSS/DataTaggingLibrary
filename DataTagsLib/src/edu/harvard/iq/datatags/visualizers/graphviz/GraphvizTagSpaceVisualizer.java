@@ -75,7 +75,7 @@ public class GraphvizTagSpaceVisualizer extends GraphvizVisualizer {
 
 			@Override
 			public Void visitTodoType(ToDoType t) {
-				nodes.add( sanitizeId(t.getName()) + "[label=\""+t.getName()+" (todo)\" shape=\"plaintext\" peripheries=\"2\"]");
+				nodes.add( sanitizeId(t.getName()) + "[label=\""+t.getName()+" (todo)\" shape=\"note\" fillcolor=\"#AAFFAA\"]");
 				return null;
 			}
 		};
