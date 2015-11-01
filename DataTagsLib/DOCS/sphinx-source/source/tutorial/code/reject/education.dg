@@ -1,0 +1,14 @@
+[call: ensureLegality]
+[ask:
+  {text: Do the data contains personally identifiable info?}
+  {answers:
+    {yes: [set: Storage=encrypt; Transfer=encrypt]}
+    {no: [set: Storage=clear; Transfer=clear]}}]
+[end]
+
+[>ensureLegality< ask:
+  {text: Did you get parental consent?}
+  {answers:
+    {no: [reject: Must get parental consent before
+                  collecting data from subjects under 18.]}}]
+[end]

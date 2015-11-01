@@ -102,13 +102,20 @@ public class CliRunner {
             ngn.setListener(tracer);
 
             while (true) {
-                if (ngn.getStatus() == RuntimeEngineStatus.Idle && ngn.start()) {
-                    while (ngn.getStatus() == RuntimeEngineStatus.Running
-                            && ngn.consume(promptUserForAnswer())) {
-                        println("");
+                try {
+                    if (ngn.getStatus() == RuntimeEngineStatus.Idle && ngn.start()) {
+                        while (ngn.getStatus() == RuntimeEngineStatus.Running
+                                && ngn.consume(promptUserForAnswer())) {
+                            println("");
+                        }
+                    }
+                    promptForCommand();
+                } catch ( DataTagsRuntimeException dtre ) {
+                    printWarning("Engine runtime error: %s", dtre.getMessage());
+                    if ( printDebugMessages ) {
+                        dtre.printStackTrace( System.out );
                     }
                 }
-                promptForCommand();
             }
 
         } finally {
@@ -139,6 +146,9 @@ public class CliRunner {
 
         String ansText;
         while ((ansText = readLine("answer (? for help): ")) != null) {
+            ansText = ansText.trim();
+            if ( ansText.isEmpty() ) continue;
+            
             Answer ans = Answer.Answer(ansText);
             if ((ngn.getCurrentNode() instanceof AskNode)
                     && (((AskNode) ngn.getCurrentNode()).getAnswers().contains(ans))) {
@@ -177,7 +187,8 @@ public class CliRunner {
         String userChoice = readLine("Command (? for help): ");
         if ( userChoice == null ) return;
         userChoice = userChoice.trim();
-        
+        if ( userChoice.isEmpty() ) return;
+            
         if ( userChoice.equals("?")) {
             println("Please type one of the following commands:"
                     + "");
@@ -432,7 +443,7 @@ public class CliRunner {
                 printTitle("Final Tags");
                 dumpTagValue(ngn.getCurrentTags());
             } else if (ngn.getStatus() == RuntimeEngineStatus.Error) {
-                printWarning("Runtime engine in ERROR mode: %s");
+                printWarning("Runtime engine in ERROR mode");
             }
         }
 

@@ -24,7 +24,9 @@ Try this: run the questionnaire you've made in the previous tutorial. Now, merge
 
 The runtime reloads the questionnaire, and executes it. If you look at the trace (that's ``\trace``, remember?) you'll see only a single ``set`` node was used.
 
-.. tip:: While developing a questionnaire, it is handy to keep a CliRunner running and performing a ``reload`` once in a while. This allows for early detection of structural and syntactic errors.
+
+.. tip:: While developing a questionnaire, it is handy to keep a CliRunner running and performing a ``\reload`` once in a while. This allows for early detection of structural and syntactic errors.
+
 
 In order to assign multiple values to an aggregate slot, separate the slots using a comma (``,``)::
 
