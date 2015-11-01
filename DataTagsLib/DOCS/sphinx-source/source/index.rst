@@ -6,13 +6,23 @@ DataTaggingLibrary
    :align: center
 
 The `DataTags`_ project aims to allow researchers to create proper dataset handling and sharing policies,
-even if they lack the required legal and technological expertise. This is done by means of a friendly interview.
+even if they lack the required legal and technological expertise.
 The project is part of a the `Privacy Tools for Sharing Research Data`_ project. There are a few
 approaches for developing such system. This site uses tag spaces to describe data handling policies,
 and an imperative approach based on *decision graphs* to decide on a policy.
 
 .. _DataTags: http://datatags.org
 .. _Privacy Tools for Sharing Research Data: http://http://privacytools.seas.harvard.edu
+
+
+.. admonition :: Academic Reference
+
+   The DataTags concept, as well as a previous version of the code described here,
+   was presented in the paper: Sharing Sensitive Data with Confidence: The Datatags System.
+
+   Sweeney L, Crosas M, Bar-Sinai M. Sharing Sensitive Data with Confidence: The
+   Datatags System. *Technology Science.* 2015101601. October 16, 2015. http://techscience.org/a/2015101601
+
 
 A decision graph is a graph (in the mathematical sense) with different type of nodes. When the
 user goes through the interview, a *Decision Graph Engine* traverses the graph. When the engine

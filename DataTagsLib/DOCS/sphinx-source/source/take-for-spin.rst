@@ -33,7 +33,7 @@ The DataTaggingLibrary comes with a command line tool for developing questionnai
 
 * Performing an interview.
 * Inspecting nodes and slots.
-* *Visualizatoins* (requires `graphviz`_)
+* *Visualizations* (requires `graphviz`_)
 * Run inspections - trace, stack status, tag status
 
 .. _graphviz: http://www.graphviz.org
@@ -41,4 +41,6 @@ The DataTaggingLibrary comes with a command line tool for developing questionnai
 While developing the questionnaire, it is useful to keep a CliRunner open. The user can reload the
 questionnaire by typing ``\reload`` on the console when needed.
 
-Main class for CliRunner is ``edu.harvard.iq.datatags.mains.DecisionGraphCliRunner.java``. The class takes two parameters - path to the definitions file, and a path to the decision graph file.
+Main class for CliRunner is ``edu.harvard.iq.datatags.mains.DecisionGraphCliRunner``. The class takes two parameters - path to the definitions file, and a path to the decision graph file. It is also the main class for the .jar file, so it is also available for invocation via ``java -jat DataTagsLib.jar``.
+
+.. tip :: For a more sturtured introduction, see the :doc:`tutorial/index`
