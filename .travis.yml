@@ -3,4 +3,4 @@ language: java
 jdk:
   - oraclejdk8
 before_script: cd DataTagsLib
-script: ant jar test
+script: ant 

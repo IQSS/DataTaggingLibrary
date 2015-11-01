@@ -51,11 +51,11 @@ public class DecisionGraphRuleParserTest {
 
     @Test
     public void nodeHeadNoId() {
-        Parser<AstNodeHead> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.nodeHead("end") );
-        assertEquals(new AstNodeHead(null, "end"), sut.parse("end") );
-        assertEquals(new AstNodeHead(null, "end"), sut.parse(" end") );
-        assertEquals(new AstNodeHead(null, "end"), sut.parse("end ") );
-        assertEquals(new AstNodeHead(null, "end"), sut.parse(" end ") );
+        Parser<AstNodeHead> joe = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.nodeHead("end") );
+        assertEquals(new AstNodeHead(null, "end"), joe.parse("end") );
+        assertEquals(new AstNodeHead(null, "end"), joe.parse(" end") );
+        assertEquals(new AstNodeHead(null, "end"), joe.parse("end ") );
+        assertEquals(new AstNodeHead(null, "end"), joe.parse(" end <-- sut ") );
     }
     
     @Test
