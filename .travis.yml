@@ -3,4 +3,5 @@ language: java
 jdk:
   - oraclejdk8
 before_script: cd DataTagsLib
-script: ant 
+script: mvn package
+after_success: mvn jacoco:report coveralls:report 
