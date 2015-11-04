@@ -7,16 +7,18 @@
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
-            <groupId>org.jparsec</groupId>
-            <artifactId>jparsec</artifactId>
-            <version>2.3-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.10</version>
             <scope>test</scope>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jparsec</groupId>
+            <artifactId>jparsec</artifactId>
+            <version>2.3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/jparsec-2.3-SNAPSHOT.jar</systemPath>
         </dependency>
     </dependencies>
     <build>
