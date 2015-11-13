@@ -4,7 +4,7 @@
  For more info, go to http://datatags.org.
  Created by:
  * The Data Privacy Lab @ Harvard (Latanya Sweeney, Sean Hooley)
- * Berkman Ctr. for Interner and Society (Alexandra Wood, David O'Brien, clinical students)
+ * Berkman Ctr. for Internet and Society (Alexandra Wood, David O'Brien, clinical students)
  * IQSS (Mercè Crosas, Michael Bar-Sinai)
 
 *>
@@ -266,7 +266,7 @@
     [>ppra3< ask:
       {text:Was the survey or assessment funded, in whole or in part, by the US Department of Education?}
       {terms:
-        {Funded by the US Department of Education: This means the survey or assessment received funds for any purpose from the US Department of Education. It includes any funds provided by grant, cooperative agreement, contract, subgrant, or subcontract to the program or institution that conducted the data collection.}}
+        {Funded by the US Department of Education: This means the survey or assessment received funds for any purpose from the US Department of Education. It includes any funds provided by grant, cooperative agreement, contract, sub-grant, or subcontract to the program or institution that conducted the data collection.}}
       {answers:
         {yes:
           [>ppra4< ask:
@@ -308,7 +308,7 @@
 [>ppra6< ask:
   {text: Does the school in which the information was collected receive any funds from the US Department of Education?}
   {terms:
-    {Funds from the US Department of Education: This means funds provided for any purpose by the US Department of Education to the elementary or secondary school in which the data were collected. It includes any funds provided by grant, cooperative agreement, contract, subgrant, or subcontract to the institution. The funds, alternatively, may have been provided to students attending the institution. For instance, the funds may have been paid to the institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program. Note that all public schools receive such funds, though most private and parochial schools at the elementary and secondary levels do not receive such funding.}}
+    {Funds from the US Department of Education: This means funds provided for any purpose by the US Department of Education to the elementary or secondary school in which the data were collected. It includes any funds provided by grant, cooperative agreement, contract, sub-grant, or subcontract to the institution. The funds, alternatively, may have been provided to students attending the institution. For instance, the funds may have been paid to the institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program. Note that all public schools receive such funds, though most private and parochial schools at the elementary and secondary levels do not receive such funding.}}
   {answers:
     {yes:
       [>ppra7< ask:
@@ -325,7 +325,7 @@
     {Educational agency or institution:
       An educational agency or institution is a public or private agency or institution that provides educational services or instruction, or both, to students. This includes, but is not limited to, a primary or secondary school, college or university, school district, or state department of education.}
     {Funds from the US Department of Education:
-       This means funds provided for any purpose, research or otherwise, by the US Department of Education to the educational agency or institution. It includes funds provided by grant, cooperative agreement, contract, subgrant, or subcontract; or funds provided to students attending the agency or institution. The funds may be paid to the institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program. This includes all public schools and a majority of private institutions, though most private and parochial schools at the elementary and secondary levels do not receive such funding.}}
+       This means funds provided for any purpose, research or otherwise, by the US Department of Education to the educational agency or institution. It includes funds provided by grant, cooperative agreement, contract, sub-grant, or subcontract; or funds provided to students attending the agency or institution. The funds may be paid to the institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program. This includes all public schools and a majority of private institutions, though most private and parochial schools at the elementary and secondary levels do not receive such funding.}}
   {answers:
     {no: [end]}
 }]
