@@ -87,7 +87,8 @@ public class CliRunner {
                 new QuitCommand(), new ToggleDebugMessagesCommand(), new ShowNodeCommand(),
                 new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
                 new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
-                new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand())
+                new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand(), 
+                new RunValidationsCommand())
                 .forEach(c -> commands.put(c.command(), c));
     }
 

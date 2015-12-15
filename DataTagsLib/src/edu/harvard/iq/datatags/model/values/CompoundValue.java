@@ -154,7 +154,7 @@ public class CompoundValue extends TagValue {
 class Resolver implements TagValue.Visitor<TagValue.Function> {
 
 	@Override
-	public TagValue.Function visitSimpleValue( final AtomicValue op1 ) {
+	public TagValue.Function visitAtomicValue( final AtomicValue op1 ) {
 		return (TagValue v) -> {
             if ( v==null ) return op1.getOwnableInstance();
             AtomicValue op2 = (AtomicValue) v;

@@ -22,7 +22,7 @@ public abstract class TagType {
 		T visitTodoType( ToDoType t );
 	}
 	
-    public abstract static class VoidVisitor implements Visitor<Void> {
+    public abstract static class VoidVisitor implements TagType.Visitor<Void> {
         @Override
         public Void visitSimpleType( AtomicType t ) {
             visitAtomicTypeImpl(t);
@@ -73,7 +73,7 @@ public abstract class TagType {
 		return name;
 	}
 
-	public abstract <T> T accept( Visitor<T> v );
+	public abstract <T> T accept( TagType.Visitor<T> v );
 	
     public TagValueLookupResult lookupValue( final String slotName, final String valueName ) {
         return accept(new TagType.Visitor<TagValueLookupResult>() {
