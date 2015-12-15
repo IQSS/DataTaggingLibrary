@@ -36,8 +36,9 @@ public class RunValidationsCommand implements CliCommand {
             rnr.println(" [ok]");
         } else {
             rnr.println(" [error]");
-            rnr.print("Invalid call nodes found:");
-            nvms.forEach( w -> rnr.println(" - %s", w.getEntities()) );
+            rnr.println("Invalid call nodes found:");
+            // The validation messages will only have a single node - the invalid call node.
+            nvms.forEach( w -> rnr.println(" - %s", w.getEntities().iterator().next()) );
         }
         
         rnr.print("Checking for unreachable nodes");

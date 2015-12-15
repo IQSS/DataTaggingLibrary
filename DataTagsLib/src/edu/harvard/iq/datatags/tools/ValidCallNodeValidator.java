@@ -38,7 +38,7 @@ public class ValidCallNodeValidator extends VoidVisitor {
     @Override
     public void visitImpl (CallNode cn) throws DataTagsRuntimeException {
         if ( chart.getNode(cn.getCalleeNodeId()) == null) {
-            validationMessages.add(new NodeValidationMessage(Level.ERROR, "Call node \"" + cn + "\" calls nonexistent node."));
+            validationMessages.add(new NodeValidationMessage(Level.ERROR, "Call node \"" + cn + "\" calls nonexistent node.", cn));
         }
     }
     
