@@ -1,12 +1,14 @@
 package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
+import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -91,6 +93,13 @@ public class UnusedTagsValidator {
     }
     
     private String describe( TagValue tv ) {
-        return tv.getType().getName() + ": " + tv.accept(TAG_VALUE_PRINTER);
+        TagType tt = tv.getType();
+        LinkedList<String> typePath = new LinkedList<>();
+        while ( tt != null ){
+            typePath.addFirst(tt.getName());
+            tt = tt.getParent();
+        }
+        typePath.remove(0);
+        return String.join("/", typePath ) + ": " + tv.accept(TAG_VALUE_PRINTER);
     }
 }

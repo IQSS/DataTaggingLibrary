@@ -60,6 +60,7 @@ public class RunValidationsCommand implements CliCommand {
         } else {
             rnr.println(" [warning]");
             rnr.println("Unused tags found:");
+            vms.sort( (vm1, vm2) -> vm1.getMessage().compareTo(vm2.getMessage()) );
             vms.forEach( w -> rnr.println(" - %s", w.getMessage()) );
         }
         

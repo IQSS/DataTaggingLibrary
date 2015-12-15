@@ -55,6 +55,7 @@ public abstract class TagType {
     
 	private final String name;
 	private String note;
+    private TagType parent;
 
 	public TagType(String name, String note) {
 		this.name = name;
@@ -72,6 +73,14 @@ public abstract class TagType {
 	public String getName() {
 		return name;
 	}
+    
+    public TagType getParent() {
+        return parent;
+    }
+    
+    protected void setParent( TagType aParent ) {
+        parent = aParent;
+    }
 
 	public abstract <T> T accept( TagType.Visitor<T> v );
 	
