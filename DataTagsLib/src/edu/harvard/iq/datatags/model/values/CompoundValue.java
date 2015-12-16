@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 
 /**
  * A value that has multiple fields of different types.
@@ -119,7 +120,7 @@ public class CompoundValue extends TagValue {
      *
      * Note: if {@code other} is {@code null}, this method behaves as {@link #getOwnableInstance()}.
      * @param other
-     * @return A new DataTags object, composed from {@code this} and {@code other}.
+     * @return A new CompoundValue object, composed from {@code this} and {@code other}.
      */
     public CompoundValue composeWith(CompoundValue other) {
         if (other == null) {
@@ -147,6 +148,33 @@ public class CompoundValue extends TagValue {
             }
         }
         return result;
+    }
+    
+    /**
+     * Checks whether:
+     * <ul>
+     * <li>{@code this} instance agrees on all the values defined in {@code other}, and</li>
+     * <li>{@code other} has no fields missing from {@code this}.</li>
+     * </ul>
+     * @param other
+     * @return {@code true} iff {@code this} is a superset of {@code other}, as defined above.
+     */
+    public boolean isSupersetOf( CompoundValue other ) {
+        if ( !(getTypesWithNonNullValues().containsAll(other.getTypesWithNonNullValues())) ) {
+            // condition 2 unsatisfied - other has more defined fields than this
+            return false;
+        }
+        
+        for( TagType type : getTypesWithNonNullValues() ){
+            TagValue ourValue = get( type );
+            TagValue otherValue = other.get(type);
+            if ( otherValue != null ) {
+                if ( ! ourValue.accept(new SubsetComparator()).test(otherValue) ) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 }
@@ -183,17 +211,40 @@ class Resolver implements TagValue.Visitor<TagValue.Function> {
 
 	@Override
 	public TagValue.Function visitCompoundValue( final CompoundValue cv ) {
-		return new TagValue.Function() {
-			@Override public TagValue apply(TagValue v) {
+		return (TagValue v) -> {
 				CompoundValue res = cv.getOwnableInstance();
 				if ( v==null ) return res;
 				CompoundValue cv2 = (CompoundValue) v;
-				for ( TagType tt : C.unionSet(cv2.getTypesWithNonNullValues(), cv.getTypesWithNonNullValues())) {
-					res.set(
-							(res.get(tt)==null) ? cv2.get(tt)
-									: ((TagValue.Function)cv.get(tt).accept(Resolver.this)).apply(cv2.get(tt)));
-				}
+                C.unionSet(cv2.getTypesWithNonNullValues(), cv.getTypesWithNonNullValues()).stream().forEach((tt) -> {
+                    res.set(
+                            (res.get(tt)==null) ? cv2.get(tt)
+                                    : ((TagValue.Function)cv.get(tt).accept(Resolver.this)).apply(cv2.get(tt)));
+            });
 				return res;
-		}};
+		};
 	}
+}
+
+class SubsetComparator implements TagValue.Visitor<Predicate<TagValue>> {
+
+    @Override
+    public Predicate<TagValue> visitToDoValue(ToDoValue thisValue) {
+        return (TagValue t) -> thisValue.equals(t);
+    }
+
+    @Override
+    public Predicate<TagValue> visitAtomicValue(AtomicValue thisValue) {
+        return (TagValue t) -> thisValue.equals(t);
+    }
+
+    @Override
+    public Predicate<TagValue> visitAggregateValue(AggregateValue thisValue) {
+        return (TagValue other)->thisValue.getValues().containsAll( ((AggregateValue)other).getValues() );
+    }
+
+    @Override
+    public Predicate<TagValue> visitCompoundValue(CompoundValue thisValue) {
+        return (TagValue other)->thisValue.isSupersetOf((CompoundValue)other);
+    }
+
 }

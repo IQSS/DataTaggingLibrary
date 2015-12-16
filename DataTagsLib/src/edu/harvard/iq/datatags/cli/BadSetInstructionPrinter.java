@@ -24,9 +24,9 @@ public class BadSetInstructionPrinter extends TagValueLookupResult.VoidVisitor {
     @Override
     protected void visitImpl(TagValueLookupResult.Ambiguity amb) {
         System.out.println("Possible results are");
-        for (TagValueLookupResult poss : amb.getPossibilities()) {
+        amb.getPossibilities().forEach((poss) -> {
             System.out.println("  " + poss);
-        }
+        });
     }
 
     @Override
