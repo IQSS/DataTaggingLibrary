@@ -14,19 +14,20 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 /**
  * Gets a decision graph and a {@link CompoundValue}, and returns all the runs
  * that result in this value, or in a value that is a superset of this value.
+ * 
+ * The "Dgq" in the class name stand for "Decision Graph Query". We'll have more of those.
  * @author michael
  */
-public class RunResultQuery {
+public class FindSupertypeResultsDgq {
     private final DecisionGraph subject;
     private final CompoundValue value;
     
-    public RunResultQuery( DecisionGraph aDecisionGraph, CompoundValue aValue ) {
+    public FindSupertypeResultsDgq( DecisionGraph aDecisionGraph, CompoundValue aValue ) {
         subject = aDecisionGraph;
         value = aValue;
     }
