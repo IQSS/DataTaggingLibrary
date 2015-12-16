@@ -27,23 +27,30 @@ public class FindSupertypeResultsDgq {
     private final DecisionGraph subject;
     private final CompoundValue value;
     
+    private Set<RunTrace> result;
+    
     public FindSupertypeResultsDgq( DecisionGraph aDecisionGraph, CompoundValue aValue ) {
         subject = aDecisionGraph;
         value = aValue;
     }
     
     public Set<RunTrace> get() {
-        Set<RunTrace> traces = new HashSet<>();
+        result = new HashSet<>();
         subject.getStart().accept( new GraphTraverser() );
         
-        return traces;
+        return result;
     }
     
     class GraphTraverser extends Node.VoidVisitor {
         
+        
         LinkedList<Node> currentTrace = new LinkedList<>();
         LinkedList<Answer> currentAnswers = new LinkedList<>();
         Deque<CompoundValue> valueStack = new LinkedList<>();
+        
+        public GraphTraverser() {
+            valueStack.push( subject.getTopLevelType().createInstance() );
+        }
         
         @Override
         public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
@@ -51,6 +58,8 @@ public class FindSupertypeResultsDgq {
             nd.getAnswers().forEach( ans -> {
                 currentAnswers.addLast(ans);
                 // process answer nodes
+                nd.getNodeFor(ans).accept(this);
+                
                 currentAnswers.removeLast();
             });
             currentTrace.removeLast();
@@ -87,6 +96,10 @@ public class FindSupertypeResultsDgq {
             // either pop the call stack, or end the run and compare the result.
             currentTrace.addLast( nd );
             // compare, possibly store trace
+            if ( valueStack.peek().isSupersetOf(value) ) {
+                // found!
+                result.add(new RunTrace(currentTrace, currentAnswers, valueStack.peek()));
+            }
             
             currentTrace.removeLast();        
         }

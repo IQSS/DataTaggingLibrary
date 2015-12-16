@@ -1,12 +1,21 @@
 package edu.harvard.iq.datatags.cli;
 
+import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
+import edu.harvard.iq.datatags.tools.queries.FindSupertypeResultsDgq;
+import edu.harvard.iq.datatags.tools.queries.RunTrace;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -32,7 +41,20 @@ public class MatchResultToSequenceCommand implements CliCommand {
             DecisionGraph dg = new DecisionGraphParser().parse(tagValueExpression).compile(rnr.getDecisionGraph().getTopLevelType());
             SetNode sn = (SetNode) dg.getNode("x");
 
-            rnr.println( sn.toString() );
+            FindSupertypeResultsDgq query = new FindSupertypeResultsDgq(rnr.getDecisionGraph(), sn.getTags());
+            
+            Set<RunTrace> traces = query.get();
+            if ( traces.isEmpty() ) {
+                rnr.println("No matching runs found.");
+            } else {
+                rnr.println("%d Runs found", traces.size());
+                AtomicInteger ser = new AtomicInteger();
+                traces.forEach( t -> {
+                    rnr.println("Run %d:", ser.incrementAndGet());
+                    printRunTrace(rnr, t) ;
+                    rnr.println();
+                });
+            }
             
             
         } catch ( BadSetInstructionException bse ) {
@@ -65,5 +87,23 @@ public class MatchResultToSequenceCommand implements CliCommand {
         }
         
     }
+
+    private void printRunTrace(CliRunner rnr, RunTrace t) {
+        Iterator<Node> nodes = t.getNodes().iterator();
+        Iterator<Answer> answers = t.getAnswers().iterator();
+        BriefNodePrinter nodePrinter = new BriefNodePrinter(rnr);
+        
+        while ( nodes.hasNext() ) {
+            Node nd = nodes.next();
+            nd.accept(nodePrinter);
+            if ( nd instanceof AskNode ) {
+                rnr.println(" -%s->", answers.next().getAnswerText());
+            }
+        }
+        
+        rnr.println("Final Tags:");
+        rnr.println( Objects.toString(t.getValue(), "(no final tags)"));
+    }
+    
     
 }
