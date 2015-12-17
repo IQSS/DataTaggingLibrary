@@ -20,6 +20,11 @@ public class BadSetInstructionPrinter extends TagValueLookupResult.VoidVisitor {
     protected void visitImpl(TagValueLookupResult.ValueNotFound vnf) {
         System.out.println("Can't find value " + vnf.getValueName() + " in type " + vnf.getTagType().getName());
     }
+    
+    @Override
+    protected void visitImpl(TagValueLookupResult.SyntaxError serr) {
+        System.out.println("Syntax error: " + serr.getExpression() + " " + serr.getHint());
+    }
 
     @Override
     protected void visitImpl(TagValueLookupResult.Ambiguity amb) {

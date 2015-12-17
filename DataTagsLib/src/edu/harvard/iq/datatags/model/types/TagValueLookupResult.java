@@ -11,10 +11,12 @@ import java.util.Set;
 public abstract class TagValueLookupResult {
     
     public interface Visitor<R> {
+        R visit(Success scss);
+        
         R visit(SlotNotFound snf);
         R visit(ValueNotFound vnf);
         R visit(Ambiguity amb);
-        R visit(Success scss);
+        R visit(SyntaxError serr);
     }
     
     /**
@@ -41,6 +43,12 @@ public abstract class TagValueLookupResult {
         }
 
         @Override
+        public Void visit(SyntaxError serr) {
+            visitImpl( serr );
+            return null;
+        }
+        
+        @Override
         public Void visit(Success scss) {
             visitImpl( scss );
             return null;
@@ -49,6 +57,7 @@ public abstract class TagValueLookupResult {
         protected abstract void visitImpl(SlotNotFound snf);
         protected abstract void visitImpl(ValueNotFound vnf);
         protected abstract void visitImpl(Ambiguity amb);
+        protected abstract void visitImpl(SyntaxError serr);
         protected abstract void visitImpl(Success scss);
     }
     
@@ -99,6 +108,34 @@ public abstract class TagValueLookupResult {
         @Override
         public String toString() {
             return "[ValueNotFound valueName=" + getValueName() + " tagType=" + getTagType() + "]";
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> v) {
+            return v.visit(this);
+        }
+    }
+    
+    public static class SyntaxError extends TagValueLookupResult {
+        private final String expression;
+        private final String hint;
+
+        public SyntaxError(String anExpression, String aHint) {
+            expression = anExpression;
+            hint = aHint;
+        }
+
+        public String getHint() {
+            return hint;
+        }
+
+        public String getExpression() {
+            return expression;
+        }
+        
+        @Override
+        public String toString() {
+            return "[SyntaxError expression=" + getExpression()+ " hint=" + getHint() +"]";
         }
 
         @Override
@@ -169,6 +206,10 @@ public abstract class TagValueLookupResult {
         return new ValueNotFound(tt, valueName);
     }
 
+    static public SyntaxError SyntaxError(String expression, String hint) {
+        return new SyntaxError(expression, hint);
+    }
+    
     static public Success Success(TagValue val) {
         return new Success(val);
     }

@@ -8,14 +8,13 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
+import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.tools.queries.DecisionGraphQuery;
 import edu.harvard.iq.datatags.tools.queries.FindSupertypeResultsDgq;
 import edu.harvard.iq.datatags.tools.queries.RunTrace;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -67,7 +66,7 @@ public class MatchResultToSequenceCommand implements CliCommand {
 
                 @Override
                 public void done(DecisionGraphQuery dgq) {
-                    rnr.println("Found %,d matches in %,d possible runs.", foundCount, missCount);
+                    rnr.println("Found %,d matches in %,d possible runs.", foundCount, missCount+foundCount);
                 }
             });
             
@@ -99,7 +98,14 @@ public class MatchResultToSequenceCommand implements CliCommand {
                     System.out.println("Should not have gotten here");
                     throw new RuntimeException("Set success is not a failure.");
                 }
+
+                @Override
+                protected void visitImpl(TagValueLookupResult.SyntaxError serr) {
+                   rnr.printWarning("Syntax Error: %s\n  %s", serr.getExpression(), serr.getHint());
+                }
             });
+        } catch ( DataTagsParseException dpe ) {
+            rnr.printWarning( dpe.getMessage() );
         }
         
     }

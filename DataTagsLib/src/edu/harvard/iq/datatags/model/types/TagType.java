@@ -140,6 +140,9 @@ public abstract class TagType {
                     protected void visitImpl(TagValueLookupResult.Success scss) {
                         matches.add( scss );
                     }
+
+                    @Override
+                    protected void visitImpl(TagValueLookupResult.SyntaxError serr) {}
                 };
                 
                 // group results by status.

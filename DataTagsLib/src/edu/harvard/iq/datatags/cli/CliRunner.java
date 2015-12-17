@@ -97,6 +97,7 @@ public class CliRunner {
         shortcuts.put("i", "about" );
         shortcuts.put("r", "restart" );
         shortcuts.put("rr","reload" );
+        shortcuts.put("a", "ask" );
         
     }
 
