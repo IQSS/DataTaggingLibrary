@@ -14,6 +14,7 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -23,32 +24,39 @@ import java.util.Set;
  * The "Dgq" in the class name stand for "Decision Graph Query". We'll have more of those.
  * @author michael
  */
-public class FindSupertypeResultsDgq {
+public class FindSupertypeResultsDgq implements DecisionGraphQuery {
     private final DecisionGraph subject;
     private final CompoundValue value;
+    private GraphTraverser graphTraverser;
     
-    private Set<RunTrace> result;
-    
-    public FindSupertypeResultsDgq( DecisionGraph aDecisionGraph, CompoundValue aValue ) {
+    public FindSupertypeResultsDgq( DecisionGraph aDecisionGraph, CompoundValue aValue) {
         subject = aDecisionGraph;
         value = aValue;
     }
     
-    public Set<RunTrace> get() {
-        result = new HashSet<>();
-        subject.getStart().accept( new GraphTraverser() );
-        
-        return result;
+    public void get( DecisionGraphQuery.Listener aListener ) {
+        graphTraverser = new GraphTraverser(aListener);
+        aListener.started(this);
+        subject.getStart().accept(graphTraverser);
+        aListener.done(this);
+    }
+
+    @Override
+    public RunTrace getCurrentTrace() {
+        return new RunTrace(graphTraverser.currentTrace, graphTraverser.currentAnswers, graphTraverser.valueStack.peek());
     }
     
     class GraphTraverser extends Node.VoidVisitor {
         
+        final DecisionGraphQuery.Listener listener;
         
         LinkedList<Node> currentTrace = new LinkedList<>();
+        LinkedList<CallNode> nodeStack = new LinkedList<>();
         LinkedList<Answer> currentAnswers = new LinkedList<>();
         Deque<CompoundValue> valueStack = new LinkedList<>();
         
-        public GraphTraverser() {
+        public GraphTraverser( DecisionGraphQuery.Listener aListener ) {
+            listener = aListener;
             valueStack.push( subject.getTopLevelType().createInstance() );
         }
         
@@ -81,7 +89,11 @@ public class FindSupertypeResultsDgq {
 
         @Override
         public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            currentTrace.addLast(nd);
+            nodeStack.push(nd);
+            subject.getNode(nd.getCalleeNodeId()).accept(this);
+            nodeStack.pop();
+            currentTrace.removeLast();
         }
 
         @Override
@@ -95,12 +107,21 @@ public class FindSupertypeResultsDgq {
         public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
             // either pop the call stack, or end the run and compare the result.
             currentTrace.addLast( nd );
-            // compare, possibly store trace
-            if ( valueStack.peek().isSupersetOf(value) ) {
-                // found!
-                result.add(new RunTrace(currentTrace, currentAnswers, valueStack.peek()));
-            }
             
+            if ( nodeStack.isEmpty() ) {
+                // compare, possibly store trace
+                if ( valueStack.peek().isSupersetOf(value) ) {
+                    // found!
+                    listener.matchFound(FindSupertypeResultsDgq.this);
+                } else {
+                    listener.nonMatchFound(FindSupertypeResultsDgq.this);
+                }
+            } else {
+                CallNode lastCall = nodeStack.pop();
+                lastCall.getNextNode().accept(this);
+                nodeStack.push(lastCall);
+                
+            }
             currentTrace.removeLast();        
         }
         

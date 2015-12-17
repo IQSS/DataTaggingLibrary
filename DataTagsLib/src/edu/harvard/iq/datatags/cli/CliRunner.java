@@ -331,6 +331,21 @@ public class CliRunner {
         println(new String(deco));
     }
 
+    void debugPrint(String format, Object... args) {
+        if ( printDebugMessages ) {
+            String msg = String.format(format, args);
+
+            char[] deco = new char[msg.length()];
+            Arrays.fill(deco, '~');
+
+            println("");
+            println(new String(deco));
+            println(msg);
+            println(new String(deco));
+        }
+    }
+
+    
     public String readLine(String format, Object... args) throws IOException {
         if (System.console() != null) {
             return System.console().readLine(format, args);
