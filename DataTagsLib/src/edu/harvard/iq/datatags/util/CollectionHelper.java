@@ -87,10 +87,16 @@ public class CollectionHelper {
     public <T> List<T> immutableList( Collection<T> ct ) {
         return Collections.unmodifiableList( list(ct) );
     }
-    
+
 	public <T> Set<T> unionSet( Collection<T> c1, Collection<T> c2 ) {
 		Set<T> out = new HashSet<>( c1 );
 		out.addAll( c2 );
+		return out;
+	}
+
+	public <T> Set<T> intersectSet( Collection<T> c1, Collection<T> c2 ) {
+		Set<T> out = new HashSet<>( c1 );
+		out.retainAll( c2 );
 		return out;
 	}
 	
