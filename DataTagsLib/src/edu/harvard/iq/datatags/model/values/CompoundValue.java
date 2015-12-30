@@ -121,33 +121,67 @@ public class CompoundValue extends TagValue {
      * @param other
      * @return A new DataTags object, composed from {@code this} and {@code other}.
      */
-    public CompoundValue composeWith(CompoundValue other) {
-        if (other == null) {
-            return getOwnableInstance();
-        }
-        if ( ! getType().equals(other.getType()) ) {
-            throw new RuntimeException("Cannot compose values of different types (" + getType() + " and " + other.getType() + ")");
-        }
-        
-        CompoundValue result = getType().createInstance();
-        // Composing. Note that for each type in types, at least one object has a non-null value
-        for (TagType tp : C.unionSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
-            TagValue ours = get(tp);
-            TagValue its = other.get(tp);
-            if (ours == null) {
-                if (its == null) {
-                    throw new IllegalStateException("Both [this] and [other] had null tag value for a tag type");
-                } else {
-                    result.set(its);
-                }
-            } else if (its == null) {
-                result.set(ours);
-            } else {
-                result.set(ours.accept(RESOLVER).apply(its));
-            }
-        }
-        return result;
-    }
+	public CompoundValue composeWith(CompoundValue other) {
+		if (other == null) {
+			return getOwnableInstance();
+		}
+		if ( ! getType().equals(other.getType()) ) {
+			throw new RuntimeException("Cannot compose values of different types (" + getType() + " and " + other.getType() + ")");
+		}
+
+		CompoundValue result = getType().createInstance();
+		// Composing. Note that for each type in types, at least one object has a non-null value
+		for (TagType tp : C.unionSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
+			TagValue ours = get(tp);
+			TagValue its = other.get(tp);
+			if (ours == null) {
+				if (its == null) {
+					throw new IllegalStateException("Both [this] and [other] had null tag value for a tag type");
+				} else {
+					result.set(its);
+				}
+			} else if (its == null) {
+				result.set(ours);
+			} else {
+				result.set(ours.accept(RESOLVER).apply(its));
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Returns a copy with only values shared by {@code this} and {@code other}.
+	 * For each value type T, the intersection will occur <b>only</b> if both values are equal.
+	 *
+	 * Note: if {@code other} is {@code null}, this method behaves as {@link #getOwnableInstance()}.
+	 * @param other
+	 * @return A new DataTags object, composed from {@code this} and {@code other}.
+     */
+	public CompoundValue intersectWith(CompoundValue other) {
+		if (other == null) {
+			return getOwnableInstance();
+		}
+		if ( ! getType().equals(other.getType()) ) {
+			throw new RuntimeException("Cannot compose values of different types (" + getType() + " and " + other.getType() + ")");
+		}
+
+		CompoundValue result = getType().createInstance();
+
+		// Composing. Note that for each type in types, at least one object has a non-null value
+		for (TagType tp : C.intersectSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
+			TagValue ours = get(tp);
+			TagValue its = other.get(tp);
+
+			/* if both tags were found */
+			if ((ours != null) && (its != null)) {
+				if (ours.equals(its)) {
+					result.set(ours.getOwnableInstance());
+				}
+			}
+
+		}
+		return result;
+	}
 
 }
 
