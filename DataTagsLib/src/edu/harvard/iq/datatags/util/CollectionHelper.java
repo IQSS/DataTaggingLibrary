@@ -99,7 +99,13 @@ public class CollectionHelper {
 		out.retainAll( c2 );
 		return out;
 	}
-	
+
+	public <T> Set<T> substractSet( Collection<T> c1, Collection<T> c2 ) {
+		Set<T> out = new HashSet<>( c1 );
+		out.removeAll( c2 );
+		return out;
+	}
+
 	public <T> T first(Iterable<T> itr ) {
 		return ( itr == null ) ? null
 							   : itr.iterator().next();
