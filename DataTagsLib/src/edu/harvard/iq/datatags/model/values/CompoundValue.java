@@ -156,7 +156,7 @@ public class CompoundValue extends TagValue {
 	 * Note: if {@code other} is {@code null}, this method behaves as {@link #getOwnableInstance()}.
 	 * @param other
 	 * @return A new DataTags object, composed from {@code this} and {@code other}.
-     */
+	 */
 	public CompoundValue intersectWith(CompoundValue other) {
 		if (other == null) {
 			return getOwnableInstance();
@@ -180,6 +180,40 @@ public class CompoundValue extends TagValue {
 			}
 
 		}
+		return result;
+	}
+
+	/**
+	 * Returns a copy with only values types that {@code this} had and {@code other} does not.
+	 *
+	 * Note: if {@code other} is {@code null}, this method behaves as {@link #getOwnableInstance()}.
+	 * @param other
+	 * @return A new DataTags object, composed from {@code this} and {@code other}.
+	 */
+	public CompoundValue substractKeys(CompoundValue other) {
+		if (other == null) {
+			return null;
+		}
+
+		if ( ! getType().equals(other.getType()) ) {
+			throw new RuntimeException("Cannot substract values of different types (" + getType() + " and " + other.getType() + ")");
+		}
+
+		CompoundValue result = getType().createInstance();
+
+		Set<TagType> substractedSet = C.substractSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues());
+
+		/* Check if any key left */
+		if (substractedSet.isEmpty()) {
+			return null;
+		}
+
+		// Composing. Note that for each type in types, at least one object has a non-null value
+		for (TagType tp : substractedSet) {
+			TagValue ours = get(tp);
+			result.set(ours.getOwnableInstance());
+		}
+
 		return result;
 	}
 
