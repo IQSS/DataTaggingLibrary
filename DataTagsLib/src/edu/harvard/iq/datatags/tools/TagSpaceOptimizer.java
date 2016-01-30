@@ -49,7 +49,7 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
             public Conclusion visitImpl(AskNode nd) throws DataTagsRuntimeException {
                 List<Conclusion> conclusions = new ArrayList<Conclusion>();
 
-                System.out.println(">> AskNode: " + nd.getId());
+                System.out.println("AskNode: " + nd.getId());
 
                 /* 1. Collect conclusions from children */
                 for ( Answer a : nd.getAnswers() ) {
@@ -65,48 +65,43 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
                 }
 
                 /* 2. Values must be added */
-                List<CompoundValue> mustValuesList = new ArrayList<CompoundValue>();
                 List<CompoundValue> allValuesList = new ArrayList<CompoundValue>();
 
                 /* Collect values to lists */
                 for (Conclusion c : conclusions) {
-                    if (c.mustAdd != null) {
-                        mustValuesList.add(c.mustAdd);
-                        allValuesList.add(c.mustAdd);
+                    CompoundValue union = null;
+
+                    if (c.values != null && c.mustAdd != null) {
+                        // TODO: Smart compose is needed
+
+                        union = c.values.composeWith(c.mustAdd);
                     }
+
                     if (c.values != null) {
-                        allValuesList.add(c.values);
+                        union = c.values;
                     }
+
+                    if (c.mustAdd != null) {
+                        union = c.mustAdd;
+                    }
+
+                    allValuesList.add(union);
                 }
 
                 /* Evaluate values for different cases */
                 CompoundValue sharedValues = intersectValues(allValuesList);
 
-                /**
-                 * Clean 'Shared Values' from 'Must Values
-                 * e.g. remove all values that can populate more from the ones that must be inserted now
-                 **/
+                System.out.println("\n************************************************");
+                System.out.println("* {ask} " + nd.getId() + " MustAdd: " + sharedValues);
+                System.out.println("* {ask} " + nd.getId() + " Allvalues: " + allValuesList);
+                System.out.println("************************************************\n");
 
-                System.out.println("\n\nShared values: ");
-                System.out.println(sharedValues);
+
 
                 /**
                  * 1. Calculate All Shared values (including must values)
                  * 2. Must values minus <All Shared Values> should be added to the apropriate place
                  */
-                for (Conclusion c : conclusions) {
-                    if (c.mustAdd == null) {
-                        continue;
-                    }
-
-                    /* Substract populate values */
-                    CompoundValue newValue = c.mustAdd.substractKeys(sharedValues);
-
-                    SetNode setNode = new SetNode("[#" + getNewId() + "-optimizer]", newValue);
-                    setNode.setNextNode(nd.getNodeFor(c.relatedAnswer));
-                    nd.setNodeFor(c.relatedAnswer, setNode);
-                }
-
 //                /* Handle 'insert' cases */
 //                /* For each Answer (e.g. conclusion) */
 //                for (Conclusion c : conclusions) {
@@ -122,41 +117,63 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
 //                    nd.setNodeFor(c.relatedAnswer, setNode);
 //                }
 //
-//                /* Remove Key-Values(shared values) from direct children of values that will be populated up as 'must' */
-//                for (Conclusion c : conclusions) {
-//                    System.out.println("%%%%% Looking at answer: " + c.relatedAnswer.getAnswerText());
-//
-//                    Node answerNode = nd.getNodeFor(c.relatedAnswer);
-//
-//                    /* Seek for 'set values' */
-//                    if (!(answerNode instanceof SetNode)) {
-//                        continue;
-//                    }
-//
-//                    SetNode answerSetNode = (SetNode) answerNode;
-//
-////                    CompoundValue newAnswerValues = answerSetNode.getTags().substractKeys(sharedValues).getOwnableInstance();
-//                    CompoundValue newAnswerValues = answerSetNode.getTags().getOwnableInstance();
-//                    System.out.println(">>>>>> " + newAnswerValues);
-//                    newAnswerValues = newAnswerValues.substractKeys(sharedValues);
-//                    System.out.println(">>>>>> " + newAnswerValues);
-//
-//                    /* If new SetNode should be empty */
-//                    if (null == newAnswerValues) {
-//                        /* Just remove the node */
-//                        nd.setNodeFor(c.relatedAnswer, answerSetNode.getNextNode());
-//                        fcs.remove(answerSetNode);
-//                    }
-//                    else {
-//                        /* Create new node */
-//                        SetNode newAnswerSetNode = new SetNode("[#" + getNewId() + "-Zoptimizer]", newAnswerValues);
-//                        newAnswerSetNode.setNextNode(answerSetNode.getNextNode());
-//
-//                        /* Replace old node */
-//                        nd.setNodeFor(c.relatedAnswer, newAnswerSetNode);
-//                        fcs.remove(answerSetNode);
-//                    }
-//                }
+                /* Remove Key-Values(shared values) from direct children of values that will be populated up as 'must' */
+                for (Conclusion c : conclusions) {
+                    System.out.println("%%%%% Looking at answer: " + c.relatedAnswer.getAnswerText());
+                    Node answerNode = nd.getNodeFor(c.relatedAnswer);
+
+                    /* answer is SetNode */
+                    if (answerNode instanceof SetNode) {
+                        SetNode answerSetNode = (SetNode) answerNode;
+
+                        CompoundValue newAnswerValues = answerSetNode.getTags().getOwnableInstance();
+                        System.out.println("[" + c.relatedAnswer.getAnswerText() + "] TAGS: " + newAnswerValues);
+                        newAnswerValues = newAnswerValues.substractKeys(sharedValues);
+                        System.out.println("[" + c.relatedAnswer.getAnswerText() + "] BUGS: " + newAnswerValues);
+
+                        /* If new SetNode should be empty */
+                        if (null == newAnswerValues) {
+                            System.out.println("[" + c.relatedAnswer.getAnswerText() + "] Removing node");
+                            /* Just remove the node */
+                            nd.setNodeFor(c.relatedAnswer, answerSetNode.getNextNode());
+                            fcs.remove(answerSetNode);
+                        }
+
+                        else {
+                            /* Create new node */
+                            SetNode newAnswerSetNode = new SetNode("[#" + getNewId() + "-Zoptimizer]", newAnswerValues);
+                            newAnswerSetNode.setNextNode(answerSetNode.getNextNode());
+
+                            /* Replace old node */
+                            nd.setNodeFor(c.relatedAnswer, newAnswerSetNode);
+                            fcs.remove(answerSetNode);
+                        }
+                    }
+
+                    else {
+
+                        // See if there are values to be added
+                        if (c.mustAdd == null) {
+                            continue;
+                        }
+
+                        // If so - make sure we are not populating them to the parent
+                        CompoundValue valuesToBeAdded = c.mustAdd.substractKeys(sharedValues);
+                        if (valuesToBeAdded == null) {
+                            continue;
+                        }
+                        System.out.println("** Values to be added : " + valuesToBeAdded.toString());
+                        // Create new node
+                        SetNode newAnswerSetNode = new SetNode("[#" + getNewId() + "-Zoptimizer]", valuesToBeAdded);
+                        newAnswerSetNode.setNextNode(answerNode);
+
+                        /* Replace old node */
+                        nd.setNodeFor(c.relatedAnswer, newAnswerSetNode);
+                        fcs.remove(answerNode);
+
+                    }
+
+                }
 
                 Conclusion conclusion = new Conclusion(nd.getId(), null, sharedValues, null);
                 return conclusion;
@@ -240,7 +257,7 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
 
                 // TODO: Visit nd.getNextNode()
 //                visitThroughNode(nd);
-                Conclusion conclusion = new Conclusion(nd.getId(), nd.getTags(), null, null);
+                Conclusion conclusion = new Conclusion(nd.getId(), nd.getTags(), retvalMust, null);
                 return conclusion;
             }
 
