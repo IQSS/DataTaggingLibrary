@@ -158,6 +158,7 @@ public class CompoundValue extends TagValue {
 	 * @return A new DataTags object, composed from {@code this} and {@code other}.
 	 */
 	public CompoundValue intersectWith(CompoundValue other) {
+		int count = 0;
 		if (other == null) {
 			return getOwnableInstance();
 		}
@@ -176,9 +177,12 @@ public class CompoundValue extends TagValue {
 			if ((ours != null) && (its != null)) {
 				if (ours.equals(its)) {
 					result.set(ours.getOwnableInstance());
+					count++;
 				}
 			}
-
+		}
+		if (count == 0) {
+			return null;
 		}
 		return result;
 	}
