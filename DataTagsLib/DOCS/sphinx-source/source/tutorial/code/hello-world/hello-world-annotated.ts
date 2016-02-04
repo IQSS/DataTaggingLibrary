@@ -3,7 +3,7 @@ DataTags [Top level slot - will contain the tagging result.]:
 
 Subject [Who will be greeted]: some of
   world [Planet Earth],
-  planet [Any planet.],
+  planet [Any other planet.],
   moon,
   unrecognizedOrbitingObject [Hopefully they're friendly].
 
