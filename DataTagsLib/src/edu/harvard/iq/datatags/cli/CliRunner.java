@@ -89,7 +89,7 @@ public class CliRunner {
                 new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
                 new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
                 new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand(), 
-                new RunValidationsCommand(), new MatchResultToSequenceCommand())
+                new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand())
                 .forEach(c -> commands.put(c.command(), c));
         
         // shortcuts
@@ -99,15 +99,17 @@ public class CliRunner {
         shortcuts.put("rr","reload" );
         shortcuts.put("a", "ask" );
         
+        if (System.console() == null) {
+            reader = new BufferedReader(new InputStreamReader(System.in));
+        } else {
+            reader = new BufferedReader( System.console().reader() );
+        }
+        
     }
 
     public void go() throws IOException {
 
         try {
-            if (System.console() == null) {
-                reader = new BufferedReader(new InputStreamReader(System.in));
-            }
-
             tracer = new RuntimeEngineTracingListener(new CliEngineListener());
             ngn.setListener(tracer);
 

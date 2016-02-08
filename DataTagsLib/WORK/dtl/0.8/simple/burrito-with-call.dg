@@ -1,4 +1,11 @@
-[ask:
+<*
+** Same as make-burrito, but with calls.
+*>
+[call: select-main]
+[call: select-sides]
+[end]
+
+[>select-main< ask:
   {text: Are you a vegeterian?}
   {answers:
     {yes: [set: Main=tofu] }
@@ -11,7 +18,9 @@
   }
 ]
 [>default-main< set: Main=chicken] <-- default
-[>sides< ask:
+[end]
+
+[>select-sides< ask:
   {text: Which Offer?}
   {answers:
     {the works:
@@ -26,13 +35,4 @@
     }
   }
 ]
-<*
-[>extras< ask:
-  {text: How 'bout some extras? }
-  {answers:
-    {ask: [set: Extras=ask]}
-    {set: [set: Extras=set]}
-    {get: [set: Extras=get]}
-  }
-]
-*>
+[end]

@@ -10,6 +10,10 @@
     ]}
   }
 ]
+
+ERROR ERROR ERROR
+ERROR ERROR BOOM!
+*>
 [>default-main< set: Main=chicken] <-- default
 [>sides< ask:
   {text: Which Offer?}
