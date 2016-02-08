@@ -11,7 +11,6 @@ import org.codehaus.jparsec.Tokens.Tag;
 import org.codehaus.jparsec.misc.Mapper;
 import org.codehaus.jparsec.pattern.Patterns;
 import static org.codehaus.jparsec.Scanners.notAmong;
-import static org.codehaus.jparsec.Scanners.string;
 
 /**
  * Terminal parser for the decision graph language.
@@ -47,9 +46,6 @@ public class DecisionGraphTerminalParser {
     static final Parser<Tokens.Fragment> NODE_TEXT = notAmong(NODE_TEXT_TERMINATORS).many1()
                                                         .source().map(s -> Tokens.fragment(s, Tags.TEXT_BODY));
         
-    static final Parser<Tokens.Fragment> KEYWORDS = Parsers.or( string("ask"), string("set"), string("end"), string("reject"), string("call"), string("todo") )
-                                                             .source().map( s -> Tokens.fragment(s, Tags.KEYWORD) ); 
-    
     static final Parser<Tokens.Fragment> NODE_ID = Parsers.between(
             Scanners.among(">"),
             Patterns.among(".,/~?!()@#$%^&*_+-").or(Patterns.range('a', 'z'))

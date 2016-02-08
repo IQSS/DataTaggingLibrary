@@ -1,8 +1,14 @@
 package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.values.AggregateValue;
+import edu.harvard.iq.datatags.model.values.AtomicValue;
+import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.values.ToDoValue;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
+import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +23,29 @@ import java.util.stream.Collectors;
  * @author Naomi
  */
 public class UnusedTagsValidator {
+    
+    private static final TagValue.Visitor<String> TAG_VALUE_PRINTER = new TagValue.Visitor<String>() {
+        @Override
+        public String visitToDoValue(ToDoValue v) {
+            return "TODO";
+        }
+
+        @Override
+        public String visitAtomicValue(AtomicValue v) {
+            return v.getName();
+        }
+
+        @Override
+        public String visitAggregateValue(AggregateValue v) {
+            throw new UnsupportedOperationException("Aggregate values should not be here");
+        }
+
+        @Override
+        public String visitCompoundValue(CompoundValue aThis) {
+            throw new UnsupportedOperationException("Compound values should not be here");
+        }
+    };
+    
     private final List<ValidationMessage> validationMessages = new LinkedList<>();
 
     /** 
@@ -56,10 +85,21 @@ public class UnusedTagsValidator {
         definedValues.removeAll(usedValues);
         
         validationMessages.addAll( 
-                definedValues.stream().map(
-                        unused -> new ValidationMessage(Level.WARNING, unused.toString())).collect(Collectors.toList()));
+                definedValues.stream()
+                        .map(unused -> new ValidationMessage(Level.WARNING, describe(unused)))
+                        .collect(Collectors.toList()));
         
         return validationMessages;
     }
     
+    private String describe( TagValue tv ) {
+        TagType tt = tv.getType();
+        LinkedList<String> typePath = new LinkedList<>();
+        while ( tt != null ){
+            typePath.addFirst(tt.getName());
+            tt = tt.getParent();
+        }
+        typePath.remove(0);
+        return String.join("/", typePath ) + ": " + tv.accept(TAG_VALUE_PRINTER);
+    }
 }

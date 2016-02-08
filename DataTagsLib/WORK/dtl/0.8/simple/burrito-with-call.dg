@@ -1,0 +1,38 @@
+<*
+** Same as make-burrito, but with calls.
+*>
+[call: select-main]
+[call: select-sides]
+[end]
+
+[>select-main< ask:
+  {text: Are you a vegeterian?}
+  {answers:
+    {yes: [set: Main=tofu] }
+    {no: [>ft< ask:
+      {text: Beef?}
+      {answers:
+        {yes: [set: Main=beef]}
+      }
+    ]}
+  }
+]
+[>default-main< set: Main=chicken] <-- default
+[end]
+
+[>select-sides< ask:
+  {text: Which Offer?}
+  {answers:
+    {the works:
+      [set: Wrap=wheat; Side+=rice,corn,guacamole,cream,cheese ]
+      [set: Bag=paper]
+    }
+    {minimal:
+      [set: Wrap=full_grain; Side+=rice]
+    }
+    {health nut:
+      [set: Wrap=full_grain; Side+=rice,corn]
+    }
+  }
+]
+[end]

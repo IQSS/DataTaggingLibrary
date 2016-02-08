@@ -44,7 +44,7 @@ public class AtomicValue extends TagValue implements Comparable<AtomicValue>{
 	
 	@Override
 	public <R> R accept(Visitor<R> tv) {
-		return tv.visitSimpleValue(this);
+		return tv.visitAtomicValue(this);
 	}
 
 	@Override

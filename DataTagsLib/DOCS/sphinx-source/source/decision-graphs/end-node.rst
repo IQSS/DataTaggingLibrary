@@ -3,7 +3,7 @@
 End Node
 ========
 
-Terminates the current decision graph traversal. If the engine call stack is not empty, the top :doc:`call-node` is removed from the stack, and the engine continues to that node's successor. If the call stack is empty, the interview is stops.
+Terminates the current decision graph traversal. If the engine call stack is not empty, the top :doc:`call-node` is removed from the stack, and the engine continues to that node's successor. If the call stack is empty, the interview is terminates.
 
 ::
 

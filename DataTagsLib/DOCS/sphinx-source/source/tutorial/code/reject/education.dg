@@ -1,14 +1,20 @@
+<*
+Sample toy interview
+*>
 [call: ensureLegality]
 [ask:
-  {text: Do the data contains personally identifiable info?}
+  {text: Do the data contains personally identifiable information?}
+  {terms:
+    {Personally identifiable information: Any information about an individual... }
+  }
   {answers:
     {yes: [set: Storage=encrypt; Transfer=encrypt]}
     {no: [set: Storage=clear; Transfer=clear]}}]
+[todo: Test for additional ...] <-- Issue #42 follows
 [end]
 
 [>ensureLegality< ask:
   {text: Did you get parental consent?}
   {answers:
-    {no: [reject: Must get parental consent before
-                  collecting data from subjects under 18.]}}]
+    {no: [reject: Must get parental consent before collecting data from subjects under 18.]}}]
 [end]

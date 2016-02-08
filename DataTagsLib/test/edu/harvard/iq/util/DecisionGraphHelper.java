@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Helps building decision graphs for tests.
- * 
  * @author michael
  */
 public class DecisionGraphHelper {

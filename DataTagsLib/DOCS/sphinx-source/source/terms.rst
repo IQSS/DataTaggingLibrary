@@ -24,4 +24,4 @@ Terms Their Meaning
     A multi-dimensional space defined by tags, which are discrete dimensions.
 
   Tags Value
-    The tags being set by the interview engine. An instance of the top-level compound value. A point in the tag space of the questionnaire.
+    The tags being set by the interview engine. An instance of the top-level compound type. Like all such instances, defines a point in the tag space of the questionnaire.
