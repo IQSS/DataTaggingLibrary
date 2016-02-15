@@ -1,5 +1,8 @@
 package edu.harvard.iq.datatags.cli;
 
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.tools.EndNodeOptimizer;
+import edu.harvard.iq.datatags.tools.TagSpaceOptimizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetClusteredVisualizer;
 import java.awt.Desktop;
 import java.io.OutputStreamWriter;
@@ -27,11 +30,16 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
 
     @Override
     public void executeWithDot(Path pathToDot, CliRunner rnr, List<String> args) throws Exception {
-        
-        
+
+        DecisionGraph fcs;
         ProcessBuilder pb = new ProcessBuilder(pathToDot.toString(), "-Tpdf");
         GraphvizChartSetClusteredVisualizer viz = new GraphvizChartSetClusteredVisualizer();
-        viz.setDecisionGraph(rnr.getDecisionGraph());
+
+        // Optimize graph
+        fcs = rnr.getDecisionGraph();
+        TagSpaceOptimizer tagSpaceOptimizer = new TagSpaceOptimizer();
+        fcs = tagSpaceOptimizer.optimize(fcs);
+        viz.setDecisionGraph(fcs);
         
         Path outputPath;
         outputPath = getOuputFilePath(rnr, args, rnr.getDecisionGraphPath(), "");

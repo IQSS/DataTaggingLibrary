@@ -34,14 +34,6 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
     @Override
     public DecisionGraph optimize(final DecisionGraph fcs) {
 
-        int counter = 1;
-
-        System.out.println("My Tag space optimizer");
-
-//        // create the end node
-//        final EndNode end = new EndNode("[#" + fcs.getId() + "-end]" );
-//        fcs.add( end );
-
         // now traverse the chart and replace all.
         TagSpaceOptimizer.ConclusionVisitor traversor = new TagSpaceOptimizer.ConclusionVisitor() {
 
@@ -222,12 +214,6 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
                 return null;
             }
         };
-
-        // We need to hold the node list to avoid concurrent modification errors.
-        Set<String> nodeIds = new TreeSet<>();
-
-        System.out.println(">> Start node id: " + fcs.getStart().getId());
-        System.out.println(">> Start node: " + fcs.getStart().toString());
 
         Node startNode = fcs.getStart();
 
