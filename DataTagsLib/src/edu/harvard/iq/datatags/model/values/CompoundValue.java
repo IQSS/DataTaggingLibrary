@@ -196,7 +196,7 @@ public class CompoundValue extends TagValue {
 	 */
 	public CompoundValue substractKeys(CompoundValue other) {
 		if (other == null) {
-			return null;
+			return this;
 		}
 
 		if ( ! getType().equals(other.getType()) ) {
