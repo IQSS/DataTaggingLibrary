@@ -10,13 +10,18 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
+import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
+import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 
 /**
  * An optimizer that makes the chart use a single end node, instead
@@ -36,6 +41,43 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
 
         // now traverse the chart and replace all.
         TagSpaceOptimizer.ConclusionVisitor traversor = new TagSpaceOptimizer.ConclusionVisitor() {
+
+            private CompoundValue smartComposeWith(CompoundValue current, CompoundValue other) {
+                if (other == null) {
+                    return current.getOwnableInstance();
+                }
+                if ( ! current.getType().equals(other.getType()) ) {
+                    throw new RuntimeException("Cannot compose values of different types (" + current.getType() + " and " + other.getType() + ")");
+                }
+
+                CompoundValue result = current.getType().createInstance();
+
+                // Composing. Note that for each type in types, at least one object has a non-null value
+                for (TagType tp : C.unionSet(current.getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
+                    TagValue ours = current.get(tp);
+                    TagValue its = other.get(tp);
+                    if (ours == null) {
+                        if (its == null) {
+                            throw new IllegalStateException("Both [this] and [other] had null tag value for a tag type");
+                        } else {
+                            result.set(its);
+                        }
+                    } else if (its == null) {
+                        result.set(ours);
+                    } else {
+
+                        if (ours instanceof AtomicValue) {
+                            // Get other value as it is the newer
+                            result.set(its);
+                        }
+                        else {
+                            // TODO: Not Implemented
+                        }
+
+                    }
+                }
+                return result;
+            }
 
             @Override
             public Conclusion visitImpl(AskNode nd) throws DataTagsRuntimeException {
@@ -60,7 +102,9 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
                     CompoundValue union = null;
 
                     if (c.values != null && c.mustAdd != null) {
-                        union = c.values.composeWith(c.mustAdd);
+                        union = smartComposeWith(c.values, c.mustAdd);
+                        allValuesList.add(union);
+                        continue;
                     }
 
                     if (c.values != null) {
@@ -188,10 +232,6 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
                 /* If next node is SetNode - remove it and make sure values will be merge */
                 if (nextNode instanceof SetNode) {
                     SetNode nextSetNode = (SetNode) nextNode;
-                    System.out.println(">> [setNode] Current: " + nd);
-                    System.out.println(">> [setNode]    Next: " + nextSetNode);
-
-                    System.out.println(">> [setNode]  RetvalMust: " + retvalMust);
                     if (retvalMust == null) {
                         retvalMust = nextSetNode.getTags();
                     }
