@@ -87,6 +87,10 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
                         SetNode answerSetNode = (SetNode) answerNode;
 
                         CompoundValue newAnswerValues = answerSetNode.getTags().getOwnableInstance();
+
+                        newAnswerValues = newAnswerValues.composeWith(c.mustAdd);
+
+                        System.out.println(">> [" + c.relatedAnswer.toString() + "] " + sharedValues);
                         newAnswerValues = newAnswerValues.substractKeys(sharedValues);
 
                         /* If new SetNode should be empty */
@@ -180,6 +184,24 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
                 if (childConclusion != null) {
                     retvalMust = childConclusion.mustAdd;
                 }
+
+//                /* If next node is SetNode - remove it and make sure values will be merge */
+//                if (nextNode instanceof SetNode) {
+//                    SetNode nextSetNode = (SetNode) nextNode;
+//                    System.out.println(">> [setNode] Current: " + nd);
+//                    System.out.println(">> [setNode]    Next: " + nextSetNode);
+//
+//                    System.out.println(">> [setNode]  RetvalMust: " + retvalMust);
+//                    if (retvalMust == null) {
+//                        retvalMust = nextSetNode.getTags();
+//                    }
+//                    else {
+//                        retvalMust.composeWith(nextSetNode.getTags());
+//                    }
+//
+//                    nd.setNextNode(nextSetNode.getNextNode());
+//                    fcs.remove(nextSetNode);
+//                }
 
                 Conclusion conclusion = new Conclusion(nd.getId(), nd.getTags(), retvalMust, null);
                 return conclusion;
