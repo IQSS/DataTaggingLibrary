@@ -35,10 +35,7 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
         ProcessBuilder pb = new ProcessBuilder(pathToDot.toString(), "-Tpdf");
         GraphvizChartSetClusteredVisualizer viz = new GraphvizChartSetClusteredVisualizer();
 
-        // Optimize graph
         fcs = rnr.getDecisionGraph();
-        TagSpaceOptimizer tagSpaceOptimizer = new TagSpaceOptimizer();
-        fcs = tagSpaceOptimizer.optimize(fcs);
         viz.setDecisionGraph(fcs);
         
         Path outputPath;
