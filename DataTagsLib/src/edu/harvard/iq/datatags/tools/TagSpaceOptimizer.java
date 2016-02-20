@@ -185,23 +185,23 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
                     retvalMust = childConclusion.mustAdd;
                 }
 
-//                /* If next node is SetNode - remove it and make sure values will be merge */
-//                if (nextNode instanceof SetNode) {
-//                    SetNode nextSetNode = (SetNode) nextNode;
-//                    System.out.println(">> [setNode] Current: " + nd);
-//                    System.out.println(">> [setNode]    Next: " + nextSetNode);
-//
-//                    System.out.println(">> [setNode]  RetvalMust: " + retvalMust);
-//                    if (retvalMust == null) {
-//                        retvalMust = nextSetNode.getTags();
-//                    }
-//                    else {
-//                        retvalMust.composeWith(nextSetNode.getTags());
-//                    }
-//
-//                    nd.setNextNode(nextSetNode.getNextNode());
-//                    fcs.remove(nextSetNode);
-//                }
+                /* If next node is SetNode - remove it and make sure values will be merge */
+                if (nextNode instanceof SetNode) {
+                    SetNode nextSetNode = (SetNode) nextNode;
+                    System.out.println(">> [setNode] Current: " + nd);
+                    System.out.println(">> [setNode]    Next: " + nextSetNode);
+
+                    System.out.println(">> [setNode]  RetvalMust: " + retvalMust);
+                    if (retvalMust == null) {
+                        retvalMust = nextSetNode.getTags();
+                    }
+                    else {
+                        retvalMust = retvalMust.composeWith(nextSetNode.getTags());
+                    }
+
+                    nd.setNextNode(nextSetNode.getNextNode());
+                    fcs.remove(nextSetNode);
+                }
 
                 Conclusion conclusion = new Conclusion(nd.getId(), nd.getTags(), retvalMust, null);
                 return conclusion;
