@@ -134,7 +134,6 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
 
                         newAnswerValues = newAnswerValues.composeWith(c.mustAdd);
 
-                        System.out.println(">> [" + c.relatedAnswer.toString() + "] " + sharedValues);
                         newAnswerValues = newAnswerValues.substractKeys(sharedValues);
 
                         /* If new SetNode should be empty */
