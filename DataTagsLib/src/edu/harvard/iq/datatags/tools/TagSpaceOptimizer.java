@@ -146,6 +146,10 @@ public class TagSpaceOptimizer implements FlowChartOptimizer {
                     }
 
                     result = result.intersectWith(v);
+
+                    // If empty intersection
+                    if (result == null)
+                        break;
                 }
 
                 return result;
