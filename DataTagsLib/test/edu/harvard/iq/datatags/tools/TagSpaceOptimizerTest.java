@@ -20,10 +20,17 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class TagSpaceOptimizerTest {
     private DecisionGraphParser dgp;
     private AstNodeIdProvider nodeIdProvider;
+    private final String tsCode = "DataTags: consists of A, B, X, Y." +
+                                  "A: one of AA, BB, CC, DD, EE, FF." +
+                                  "B: one of AA, BB, CC, DD, EE, FF." +
+                                  "X: one of AA, BB, CC, DD, EE, FF." +
+                                  "Y: one of AA, BB, CC, DD, EE, FF.";
 
     @BeforeClass
     public static void setUpClass() {
@@ -45,14 +52,7 @@ public class TagSpaceOptimizerTest {
 
 
     @Test
-    public void doesNothingTest() throws DataTagsParseException {
-        String tsCode = "DataTags: consists of A, B, X, Y." +
-                        "A: one of AA, BB, CC, DD, EE, FF." +
-                        "B: one of AA, BB, CC, DD, EE, FF." +
-                        "X: one of AA, BB, CC, DD, EE, FF." +
-                        "Y: one of AA, BB, CC, DD, EE, FF.";
-
-        CompoundType ts = new TagSpaceParser().parse(tsCode).buildType("DataTags").get();
+    public void startNodeOptimizationTest() throws DataTagsParseException {
 
         String dgCodeOriginal = "[ask:" +
                 "  {text: Choose path one or two?}" +
@@ -85,30 +85,256 @@ public class TagSpaceOptimizerTest {
                 "    }" +
                 "  }" +
                 "]";
+
+        compareAndTest(dgCodeOriginal, dgCodeOpt);
+    }
+
+    private void compareAndTest(String dgCodeOriginal, String dgCodeOpt) throws DataTagsParseException {
+        CompoundType ts = new TagSpaceParser().parse(tsCode).buildType("DataTags").get();
+
         DecisionGraph dgOriginal = new DecisionGraphParser().parse(dgCodeOriginal).compile(ts);
         DecisionGraph dgOptimized = new DecisionGraphParser().parse(dgCodeOpt).compile(ts);
 
-        /* Hack since .equals is not a good comparison function (unlike other equals - it compares 'id') */
-        dgOptimized.setId(dgOriginal.getId());
-//        assertNotEquals(dgOriginal, dgOptimized);
+        assertFalse(compareDgs(dgOriginal.getStart(), dgOptimized.getStart()));
 
         /* Optimize and compare */
         TagSpaceOptimizer tagSpaceOptimizer = new TagSpaceOptimizer();
         dgOriginal = tagSpaceOptimizer.optimize(dgOriginal);
 
-        dgOptimized.setId(dgOriginal.getId());
-        assertEquals(compareDgs(dgOriginal.getStart(), dgOptimized.getStart()), true);
+        assertTrue(compareDgs(dgOriginal.getStart(), dgOptimized.getStart()));
+    }
 
+    @Test
+    public void internalOptimizationTest() throws DataTagsParseException {
+        String dgCodeOriginal = "[ask:" +
+                "  {text: Choose path one or two?}" +
+                "  {answers:" +
+                "    {One: " +
+                "       [set: A=AA; B=BB]" +
+                "    }" +
+                "    {Two:" +
+                "       [set: X=AA; Y=FF; A=AA; B=FF]" +
+                "    }" +
+                "    {Three:" +
+                "" +
+                "      [ask:" +
+                "        {text: Blip or Blop?}" +
+                "        {answers: " +
+                "          {Blip: " +
+                "            [set: X=FF]" +
+                "          }" +
+                "          {Blop:" +
+                "            [set: X=FF]" +
+                "          }" +
+                "        }" +
+                "      ]" +
+                "    }" +
+                "  }" +
+                "]";
+
+
+        String dgCodeOpt = "[ask:" +
+                "  {text: Choose path one or two?}" +
+                "  {answers:" +
+                "    {One: " +
+                "       [set: A=AA; B=BB]" +
+                "    }" +
+                "    {Two:" +
+                "       [set: X=AA; Y=FF; A=AA; B=FF]" +
+                "    }" +
+                "    {Three:" +
+                "      [set: X=FF]" +
+                "      [ask:" +
+                "        {text: Blip or Blop?}" +
+                "        {answers: " +
+                "          {Blip:            " +
+                "          }" +
+                "          {Blop:" +
+                "          }" +
+                "        }" +
+                "      ]" +
+                "    }" +
+                "  }" +
+                "]";
+
+        compareAndTest(dgCodeOriginal, dgCodeOpt);
+    }
+
+    @Test
+    public void combinedOptimizationTest() throws DataTagsParseException {
+        String dgCodeOriginal = "[ask:" +
+                "  {text: Choose path one or two?}" +
+                "  {answers:" +
+                "    {One: " +
+                "       [set: A=AA; B=BB]" +
+                "    }" +
+                "    {Two:" +
+                "       [set: X=AA; Y=FF; A=AA; B=FF]" +
+                "    }" +
+                "    {Three:" +
+                "" +
+                "      [ask:" +
+                "        {text: Blip or Blop?}" +
+                "        {answers: " +
+                "          {Blip: " +
+                "            [set: X=FF; A=AA]" +
+                "          }" +
+                "          {Blop:" +
+                "            [set: X=FF; A=AA]" +
+                "          }" +
+                "        }" +
+                "      ]" +
+                "    }" +
+                "  }" +
+                "]";
+
+
+        String dgCodeOpt = "[set: A=AA]" +
+                "[ask:" +
+                "  {text: Choose path one or two?}" +
+                "  {answers:" +
+                "    {One: " +
+                "       [set: B=BB]" +
+                "    }" +
+                "    {Two:" +
+                "       [set: X=AA; Y=FF; B=FF]" +
+                "    }" +
+                "    {Three:" +
+                "      [set: X=FF]" +
+                "      [ask:" +
+                "        {text: Blip or Blop?}" +
+                "        {answers: " +
+                "          {Blip: " +
+                "          }" +
+                "          {Blop:" +
+                "          }" +
+                "        }" +
+                "      ]" +
+                "    }" +
+                "  }" +
+                "]";
+
+        compareAndTest(dgCodeOriginal, dgCodeOpt);
+    }
+
+    @Test
+    public void askInSetOptimizationTest() throws DataTagsParseException {
+        String dgCodeOriginal = "[ask:" +
+                "  {text: Choose path one or two?}" +
+                "  {answers:" +
+                "    {One: " +
+                "       [set: Y=EE; A=AA]" +
+                "    }" +
+                "    {Two:" +
+                "      [set: Y=FF]" +
+                "      [ask:" +
+                "        {text: Blip or Blop?}" +
+                "        {answers: " +
+                "          {Blip: " +
+                "            [set: X=BB; A=AA]" +
+                "          }" +
+                "          {Blop:" +
+                "            [set: X=FF; A=AA]" +
+                "          }" +
+                "        }" +
+                "      ]" +
+                "    }" +
+                "  }" +
+                "]";
+
+
+        String dgCodeOpt = "[set: A=AA]" +
+                "[ask:" +
+                "  {text: Choose path one or two?}" +
+                "  {answers:" +
+                "    {One: " +
+                "       [set: Y=EE]" +
+                "    }" +
+                "    {Two:" +
+                "      [set: Y=FF]" +
+                "      [ask:" +
+                "        {text: Blip or Blop?}" +
+                "        {answers: " +
+                "          {Blip: " +
+                "            [set: X=BB]" +
+                "          }" +
+                "          {Blop:" +
+                "            [set: X=FF]" +
+                "          }" +
+                "        }" +
+                "      ]" +
+                "    }" +
+                "  }" +
+                "]";
+
+        compareAndTest(dgCodeOriginal, dgCodeOpt);
+    }
+
+    /*
+    * This function tests a unique optimization -
+    * it removes 'set' that you know that will be set to a different values in the sub-tree,
+    * (hence it is has no meaning)
+    * */
+    @Test
+    public void removeUnusedSetOptimizationTest() throws DataTagsParseException {
+        String dgCodeOriginal = "[ask:" +
+                "  {text: Choose path one or two?}" +
+                "  {answers:" +
+                "    {One: " +
+                "       [set: Y=EE; A=AA]" +
+                "    }" +
+                "    {Two:" +
+                "      [set: A=FF]" +
+                "      [ask:" +
+                "        {text: Blip or Blop?}" +
+                "        {answers: " +
+                "          {Blip: " +
+                "            [set: X=BB; A=AA]" +
+                "          }" +
+                "          {Blop:" +
+                "            [set: X=FF; A=AA]" +
+                "          }" +
+                "        }" +
+                "      ]" +
+                "    }" +
+                "  }" +
+                "]";
+
+
+        String dgCodeOpt = "[set: A=AA]" +
+                "[ask:" +
+                "  {text: Choose path one or two?}" +
+                "  {answers:" +
+                "    {One: " +
+                "       [set: Y=EE]" +
+                "    }" +
+                "    {Two:" +
+                "      [ask:" +
+                "        {text: Blip or Blop?}" +
+                "        {answers: " +
+                "          {Blip: " +
+                "            [set: X=BB]" +
+                "          }" +
+                "          {Blop:" +
+                "            [set: X=FF]" +
+                "          }" +
+                "        }" +
+                "      ]" +
+                "    }" +
+                "  }" +
+                "]";
+
+        compareAndTest(dgCodeOriginal, dgCodeOpt);
     }
 
     private boolean compareDgs(Node node1, Node node2) {
-        System.out.println("  Node1: " + node1);
-        System.out.println("  Node2: " + node2);
+//        System.out.println("  Node1: " + node1);
+//        System.out.println("  Node2: " + node2);
 
         if (node1 instanceof EndNode) {
-            System.out.println("    [node1=EndNode]");
+//            System.out.println("    [node1=EndNode]");
             if (!(node2 instanceof EndNode)) {
-                System.out.println("    [node1=other]");
+//                System.out.println("    [node1=other]");
                 return false;
             }
 
