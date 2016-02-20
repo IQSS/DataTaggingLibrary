@@ -389,9 +389,7 @@ public class TagSpaceOptimizerTest {
 
     private boolean compareDgs(Node node1, Node node2) {
         if (node1 instanceof EndNode) {
-//            System.out.println("    [node1=EndNode]");
             if (!(node2 instanceof EndNode)) {
-//                System.out.println("    [node1=other]");
                 return false;
             }
 
@@ -399,9 +397,7 @@ public class TagSpaceOptimizerTest {
         }
 
         if (node1 instanceof RejectNode) {
-//            System.out.println("    [node1=RejectNode]");
             if (!(node2 instanceof RejectNode)) {
-//                System.out.println("    [node1=other]");
                 return false;
             }
 
@@ -409,9 +405,7 @@ public class TagSpaceOptimizerTest {
         }
 
         if (node1 instanceof TodoNode) {
-//            System.out.println("    [node1=TodoNode]");
             if (!(node2 instanceof TodoNode)) {
-//                System.out.println("    [node1=other]");
                 return false;
             }
 
@@ -428,18 +422,14 @@ public class TagSpaceOptimizerTest {
         }
 
         if (node1 instanceof CallNode) {
-//            System.out.println("    [node1=CallNode]");
             if (!(node2 instanceof CallNode)) {
-//                System.out.println("    [node1=other]");
                 return false;
             }
 
         }
 
         if (node1 instanceof SetNode) {
-//            System.out.println("    [node1=SetNode]");
             if (!(node2 instanceof SetNode)) {
-//                System.out.println("    [node1=other]");
                 return false;
             }
 
@@ -459,9 +449,7 @@ public class TagSpaceOptimizerTest {
         }
 
         if (node1 instanceof AskNode) {
-//            System.out.println("    [node1=AskNode]");
             if (!(node2 instanceof AskNode)) {
-//                System.out.println("    [node1=other]");
                 return false;
             }
 
@@ -469,14 +457,10 @@ public class TagSpaceOptimizerTest {
             AskNode n2 = (AskNode) node2;
 
             // Compare question
-//            System.out.println(" ### " + n1.getText());
             if (!(n1.getText().equals(n2.getText())))
                 return false;
 
             // Compare answers
-//            System.out.println(" ### [1] " + n1.getAnswers());
-//            System.out.println(" ### [2] " + n2.getAnswers());
-//            System.out.println(" ### [=] " + n1.getAnswers().equals(n2.getAnswers()));
             if (!(n1.getAnswers().equals(n2.getAnswers()))) {
                 return false;
             }
