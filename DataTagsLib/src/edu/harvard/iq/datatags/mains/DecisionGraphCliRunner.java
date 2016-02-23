@@ -7,6 +7,7 @@ import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
+import edu.harvard.iq.datatags.prettyPrinter.PrettyPrinterForDG;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -53,6 +54,8 @@ public class DecisionGraphCliRunner {
             cliRunner.setDecisionGraph(dg);
             cliRunner.setTagSpacePath(tagSpace);
             cliRunner.setDecisionGraphPath(decisionGraphPath);
+            PrettyPrinterForDG pp = new PrettyPrinterForDG(decisionGraphPath);
+            pp.dgToPrint();
         }
         cliRunner.go();
         
