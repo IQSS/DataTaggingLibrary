@@ -1,0 +1,384 @@
+digraph DecisionGraph {
+fontname="Courier"
+edge [fontname="Helvetica" fontsize="10"]
+node [fillcolor="lightgray" style="filled" fontname="Helvetica" fontsize="10"]
+start[ fillcolor="transparent" shape="none" fontcolor="#008800" fontsize="16" ]
+subgraph cluster_DecisionGraph_171 {
+
+label="DecisionGraph-1"
+subgraph cluster_dua {
+label="dua"; color="#AABBDD"; labeljust="l"
+_18_0991_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ContractOrPolicy:no]\n" ]
+_18_0984_19[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[DUA:[TimeLimit:none]]\n" ]
+dua[ fillcolor="#AAFFAA" shape="note" label="dua\ntodo\nData use agreements" ]
+_18_0989_19[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[DUA:[TimeLimit:_1yr]]\n" ]
+duaAdditional[ shape="oval" label="duaAdditional\nask\nDid the data have any restrictions on\nsharing, e.g. stated in an agreement or\npolicy statement?" ]
+_18_0988_19[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[DUA:[TimeLimit:_5yr]]\n" ]
+_18_0987_19[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[DUA:[TimeLimit:_50yr]]\n" ]
+duaTimeLimit[ shape="oval" label="duaTimeLimit\nask\nIs there any reason why we cannot store\nthe data indefinitely?\n	       Limiting the time a dataset\ncould be held interferes with good\nscien..." ]
+_18_0990_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[ContractOrPolicy:yes]\n" ]
+_18_0986_19[ fillcolor="#AADDAA" shape="rect" label="Set\nHandling=[DUA:[TimeLimit:none]]\n" ]
+_18_0985_19[ shape="oval" label="ask\nFor how long should we keep the data?" ]
+_18_0992_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+
+}
+subgraph cluster_ppraCompliance {
+label="ppraCompliance"; color="#AABBDD"; labeljust="l"
+_18_0930_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[EducationRecords:[PPRA:{protected}]]\nAssertions=[DataType:[Harm:civil Effort:identifiable]]\nHandling=[Transit:encrypt Storage:serverEncrypt]\nCode=orange\n" ]
+_18_0935_19[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPlease ask the party that collected the\ndata whether written consent from the\nparents was obtained. Dataset cannot be\naccepted without clarifying this issue." ]
+_18_0936_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[EducationRecords:[PPRA:{marketing}]]\n" ]
+_18_0933_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0932_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[EducationRecords:[PPRA:{consent}]]\n" ]
+ppraCompliance[ shape="oval" label="ppraCompliance\nask\nDo the data contain any information\ncollected from students in an elementary\nor secondary school?" ]
+_18_0934_19[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible PPRA violation due to failure\nto obtain written consent for collection\nof information protected under the PPRA" ]
+ppra6[ shape="oval" label="ppra6\nask\nDoes the school in which the information\nwas collected receive any funds from the\nUS Department of Education?" ]
+ppra7[ shape="oval" label="ppra7\nask\nWere parents provided with notice and an\nopportunity to opt out of the collection\nand disclosure of the information?" ]
+ppra4[ shape="oval" label="ppra4\nask\nWas written consent obtained from the\nparents of the students who participated\nin the survey or assessment, or from the\nstudents themselves ..." ]
+ppra5[ shape="oval" label="ppra5\nask\nWas any of the personal information in\nthe data collected from students for the\npurpose of marketing or sale?" ]
+ppra2[ shape="oval" label="ppra2\nask\nDo the data contain information\ncollected from students in a survey or\nassessment concerning any of the\nfollowing eight categories?\n       ..." ]
+ppra3[ shape="oval" label="ppra3\nask\nWas the survey or assessment funded, in\nwhole or in part, by the US Department\nof Education?" ]
+_18_0931_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[EducationRecords:[PPRA:{protectedDeidentified}]]\nAssertions=[DataType:[Harm:minimal Effort:deidentified]]\nHandling=[Transit:clear Storage:clear]\nCode=green\n" ]
+ppra2a[ shape="oval" label="ppra2a\nask\nDo the data from the survey or\nassessment contain any personally\nidentifiable information about a\nstudent? Personally identifiable\ninformati..." ]
+_18_0939_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0929_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0937_19[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible PPRA violation due to school’s\nfailure to provide parents with the\nopportunity to opt out of the data\ncollection" ]
+_18_0938_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[EducationRecords:[PPRA:{optOutProvided}]]\n" ]
+
+}
+subgraph cluster_ferpaCompliance {
+label="ferpaCompliance"; color="#AABBDD"; labeljust="l"
+ferpa15[ shape="oval" label="ferpa15\nask\nAre the data being disclosed for the\npurpose of conducting an audit or\nevaluation of a federal- or\nstate-supported education program?" ]
+_18_0948_19[ fillcolor="#AAFFAA" shape="note" label="todo\nConsent sub-routine" ]
+ferpa14[ shape="oval" label="ferpa14\nask\nAre the data being disclosed for the\npurpose of conducting a study for, or on\nbehalf of, the educational agency or\ninstitution in order to d..." ]
+ferpa13[ shape="oval" label="ferpa13\nask\nAre the data being disclosed to a school\nofficial or contractor with a legitimate\neducational interest?" ]
+ferpaCompliance[ shape="oval" label="ferpaCompliance\nask\nDo the data contain any information\nderived from records maintained by an\neducational agency or institution, or by\na person or entity acting..." ]
+ferpa12[ shape="oval" label="ferpa12\nask\nDid the parents or guardians of the\nstudents, or the students themselves if\nthey were adults or emancipated minors\nat the time of the data c..." ]
+ferpa11[ shape="oval" label="ferpa11\nask\nDid the educational agency or\ninstitution designate all of the\npersonally identifiable information in\nthe data as directory information?\nThe..." ]
+ferpa10[ shape="oval" label="ferpa10\nask\nDo the data include personally\nidentifiable information about a\nstudent? Personally identifiable\ninformation about a student includes,\nbut i..." ]
+_18_0943_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0955_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0947_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[EducationRecords:[FERPA:{consent}]]\nAssertions=[DataType:[Harm:shame Effort:identifiable]]\nHandling=[Transit:encrypt]\nCode=yellow\n" ]
+ferpa11a[ shape="oval" label="ferpa11a\nask\nDid any of the students in the data, or\ntheir parents, if the students are under\n18, request to opt out of the release of\ntheir information ..." ]
+_18_0941_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+ferpa9[ shape="oval" label="ferpa9\nask\nDo the data contain any information\nderived from institutional records\ndirectly related to a student?\n         This refers to records\nmaint..." ]
+_18_0951_19[ fillcolor="#AAFFAA" shape="note" label="todo\nDUA subroutine" ]
+_18_0953_19[ fillcolor="#AAFFAA" shape="note" label="todo\nDUA subroutine" ]
+_18_0944_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[EducationRecords:[FERPA:{directoryOptOut}]]\nAssertions=[DataType:[Harm:shame Effort:identifiable]]\nHandling=[Transit:encrypt Storage:serverEncrypt]\nCode=yellow\n" ]
+_18_0950_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[EducationRecords:[FERPA:{study}]]\nAssertions=[DataType:[Harm:shame Effort:identifiable]]\nHandling=[Transit:encrypt]\nCode=yellow\n" ]
+_18_0946_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0952_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[EducationRecords:[FERPA:{audit}]]\nAssertions=[DataType:[Harm:shame Effort:identifiable]]\nHandling=[Transit:encrypt]\nCode=yellow\n" ]
+_18_0940_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0945_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[EducationRecords:[FERPA:{directoryInfo}]]\nAssertions=[DataType:[Harm:minimal Effort:identifiable]]\nCode=green\n" ]
+_18_0954_19[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nAn educational agency or institution is\nlikely breaching its FERPA duties\nbecause it is disclosing, or a third\nparty is re-disclosing, non-directory\nPII without parental consent where no\nobvious FERPA exception applies." ]
+_18_0942_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[EducationRecords:[FERPA:{deidentified}]]\nAssertions=[DataType:[Harm:minimal Effort:deidentified]]\nHandling=[Transit:clear Storage:clear]\nCode=green\n" ]
+_18_0949_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[EducationRecords:[FERPA:{schoolOfficial}]]\nAssertions=[DataType:[Harm:shame Effort:identifiable]]\nHandling=[Transit:encrypt]\nCode=yellow\n" ]
+
+}
+subgraph cluster_govRecsCompliance {
+label="govRecsCompliance"; color="#AABBDD"; labeljust="l"
+_18_0957_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0956_19[ fillcolor="#BBBBFF" shape="cds" label="DPPA1" ]
+govRecsCompliance[ fillcolor="#BBBBFF" shape="cds" label="govRecsCompliance\nGov1" ]
+
+}
+subgraph cluster_medicalRecordsCompliance {
+label="medicalRecordsCompliance"; color="#AABBDD"; labeljust="l"
+_18_0911_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+MR11[ shape="oval" label="MR11\nask\nDo the data contain health information\nfrom patients who have provided written\nauthorization for their information to\nbe disclosed to or use..." ]
+MR12[ shape="oval" label="MR12\nask\nHas an oversight body such as an\nInstitutional Review Board [IRB] or\nPrivacy Board reviewed how the data will\nbe used or disclosed and appro..." ]
+MR13[ shape="oval" label="MR13\nask\nWere the data disclosed pursuant to a\nHIPAA business associate contract?" ]
+medicalRecordsCompliance[ shape="oval" label="medicalRecordsCompliance\nask\nDo the data contain health or medical\ninformation?" ]
+_18_0914_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[MedicalRecords:[Part2:veteransMedicalData]]\nAssertions=[DataType:[Harm:civil Effort:identifiable]]\nHandling=[Transit:encrypt]\nCode=orange\n" ]
+_18_0915_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[MedicalRecords:[Part2:consent]]\nAssertions=[DataType:[Harm:civil Effort:identifiable]]\nHandling=[Transit:encrypt Storage:serverEncrypt]\nCode=orange\n" ]
+_18_0923_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[MedicalRecords:[HIPAA:{limitedDataset}]]\nAssertions=[DataType:[Harm:minimal Effort:deidentified]]\nHandling=[Transit:clear Storage:clear]\nCode=green\n" ]
+MR10[ shape="oval" label="MR10\nask\nDo the data contain protected health\ninformation from medical records? In\nother words, do the data contain any\nhealth information that can b..." ]
+MR8a[ shape="oval" label="MR8a\nask\nHas an expert in statistical or\nscientific principles and methods for\ndeidentification certified that the data\nhave been deidentified?" ]
+MR3[ shape="oval" label="MR3\nask\nDo any of the substance abuse records\ncontain patient identifying information,\nor information that would identify a\npatient as an alcohol or..." ]
+MR2[ shape="oval" label="MR2\nask\nDo the data contain information related\nto substance abuse diagnosis, referral,\nor treatment?" ]
+MR5[ shape="oval" label="MR5\nask\nDid the individuals provide written\nconsent for the disclosure of their\ninformation?" ]
+MR4[ shape="oval" label="MR4\nask\nWere the data maintained in connection\nwith the US Department of Veterans\nAffairs or US Armed Services?" ]
+MR7[ shape="oval" label="MR7\nask\nDo the data contain information from a\ncovered entity or business associate of\na covered entity?" ]
+MR6[ shape="oval" label="MR6\nask\nWere the data shared by the substance\nabuse program for scientific research\npurposes?" ]
+MR9[ shape="oval" label="MR9\nask\nDo the data constitute a limited data\nset under the HIPAA Privacy Rule?" ]
+MR8[ shape="oval" label="MR8\nask\nHave all direct identifiers been removed\nfrom the data?" ]
+_18_0927_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[MedicalRecords:[HIPAA:{businessAssociateContract}]]\nAssertions=[DataType:[Harm:civil Effort:identifiable]]\nHandling=[Transit:encrypt Storage:serverEncrypt]\nCode=orange\n" ]
+_18_0917_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+MR4a[ shape="oval" label="MR4a\nask\nWere the data maintained by the\nDepartment of Veterans Affairs either\nshared with the patients’ consent for\nthe purposes of scientific resea..." ]
+MR2a[ shape="oval" label="MR2a\nask\nWere the data obtained from a federally\nassisted drug abuse program after March\n20, 1972, or a federally assisted\nalcohol abuse program afte..." ]
+_18_0924_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0919_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[MedicalRecords:[HIPAA:{safeHarborDeidentified}]]\nAssertions=[DataType:[Harm:minimal Effort:deidentified]]\nHandling=[Transit:clear Storage:clear]\nCode=green\n" ]
+_18_0913_19[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nreject data and flag for review;\npossible violation of 38 U.S.C. 4132 due\nto the release of VA medical records\nwithout a valid exception." ]
+_18_0920_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0922_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0926_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[MedicalRecords:[HIPAA:{waiver}]]\nAssertions=[DataType:[Harm:civil Effort:identifiable]]\nHandling=[Transit:encrypt Storage:serverEncrypt]\nCode=orange\n" ]
+_18_0912_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[MedicalRecords:[Part2:deidentified]]\nAssertions=[DataType:[Effort:deidentified]]\nHandling=[Transit:clear Storage:clear]\nCode=green\n" ]
+_18_0925_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[MedicalRecords:[HIPAA:{authorization}]]\nAssertions=[DataType:[Harm:civil Effort:identifiable]]\nHandling=[Transit:encrypt Storage:serverEncrypt]\nCode=orange\n" ]
+_18_0916_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[MedicalRecords:[Part2:scientificResearch]]\nAssertions=[DataType:[Harm:civil Effort:identifiable]]\nHandling=[Transit:encrypt Storage:serverEncrypt]\nCode=orange\n" ]
+_18_0928_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0918_19[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nFor additional guidance on determining\nwhether an individual or organization is\na covered entity, please review the\ncharts provided by the Centers for\nMedicare & Medicaid Services at\n \n							http://www.cms.gov/Regulations-an\nd-Guidance/HIPAA-Administrative-Simplifi\ncation/HIPAAGenInfo/Downloads/CoveredEnt\nitycharts.pdf" ]
+_18_0921_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[MedicalRecords:[HIPAA:{expertDetermination}]]\nAssertions=[DataType:[Harm:minimal Effort:deidentified]]\nHandling=[Transit:clear Storage:clear]\nCode=green\n" ]
+
+}
+subgraph cluster_Gov1 {
+label="Gov1"; color="#AABBDD"; labeljust="l"
+_18_0963_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[ESRA:{public}]]\nAssertions=[DataType:[Harm:minimal]]\nHandling=[Transit:clear Storage:clear]\nCode=green\n" ]
+PA1[ shape="oval" label="PA1\nask\nAre the data maintained by the agency in\na system of records?" ]
+_18_0969_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[PrivacyAct:{deidentified}]]\n" ]
+PA2[ shape="oval" label="PA2\nask\nDo the data contain personally\nidentifiable information?" ]
+_18_0968_19[ fillcolor="#AAFFAA" shape="note" label="todo\nPrivacy Act DUA" ]
+Gov2[ shape="oval" label="Gov2\nask\nAre you an employee or an agent, such as\na contractor, consultant, researcher, or\nemployee of a private organization,\noperating under a cont..." ]
+Census3[ shape="oval" label="Census3\nask\nHas a Census Bureau Disclosure Review\nBoard issued an approval memorandum\ngranting formal permission for the data\nto be published?" ]
+Gov1[ shape="oval" label="Gov1\nask\nWere the data collected by a federal\nagency or a researcher under contract\nwith or with funds from a federal\nagency?" ]
+Census2[ shape="oval" label="Census2\nask\nWere the data published by the Census\nBureau?" ]
+Census1[ shape="oval" label="Census1\nask\nWere the data collected by the US Census\nBureau?" ]
+_18_0961_19[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible violation of ESRA due to\nfailure to obtain authorization to\ndisclose the data from the Institute of\nEducation Sciences" ]
+CIPSEA1[ shape="oval" label="CIPSEA1\nask\nWere the data collected directly from\nrespondents for exclusively statistical\npurposes under a pledge of\nconfidentiality?" ]
+_18_0962_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[ESRA:{restricted}]]\nAssertions=[DataType:[Harm:shame]]\nHandling=[Transit:encrypt Storage:serverEncrypt]\nCode=yellow\n" ]
+_18_0958_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[Census:{CensusPublished}]]\nAssertions=[DataType:[Harm:minimal Effort:deidentified]]\nHandling=[Transit:clear Storage:clear]\nCode=green\n" ]
+CIPSEA3[ shape="oval" label="CIPSEA3\nask\nAre the data being shared in\nidentifiable form?" ]
+CIPSEA2[ shape="oval" label="CIPSEA2\nask\nIs the agency that collected the data a\nstatistical agency or unit from this\nlist: USDA Economic Research Service,\nNational Agricultural Sta..." ]
+_18_0960_19[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible violation of Title 13 due to\nfailure to obtain permission from the\nCensus Bureau to publish the Census\ndata." ]
+_18_0965_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[CIPSEA:{identifiable}]]\n" ]
+ESRA1[ shape="oval" label="ESRA1\nask\nDo the data contain information from an\neducation research project that receives\nfunding from the Institute of Education\nSciences? Examples ..." ]
+_18_0967_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[PrivacyAct:{identifiable}]]\n" ]
+ESRA3[ shape="oval" label="ESRA3\nask\nHas the IES Data Security Office limited\naccess to the data to individuals\nauthorized by an IES license agreement\nor individuals who have ex..." ]
+_18_0964_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[CIPSEA:{deidentified}]]\n" ]
+_18_0959_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[Census:{CensusPublished}]]\nAssertions=[DataType:[Harm:minimal Effort:deidentified]]\nHandling=[Transit:clear Storage:clear]\nCode=green\n" ]
+ESRA2[ shape="oval" label="ESRA2\nask\nHave the data been published previously,\nor did you submit a copy of the data to\nthe Institute of Education Sciences\n(IES) Data Security Off..." ]
+_18_0970_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0966_19[ fillcolor="#AAFFAA" shape="note" label="todo\nCIPSEA DUA" ]
+
+}
+subgraph cluster_DPPA1 {
+label="DPPA1"; color="#AABBDD"; labeljust="l"
+_18_0977_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[DPPA:{stateConsentBroad}]]\n" ]
+DPPA8[ shape="oval" label="DPPA8\nask\nWas the personal information obtained\nunder one of the other fourteen\npermissible uses for the disclosure of\ndrivers' records, including:\n ..." ]
+DPPA7[ shape="oval" label="DPPA7\nask\nWere the data obtained for use in\nresearch activities?" ]
+DPPA6[ shape="oval" label="DPPA6\nask\nWas consent obtained from the\nindividuals whose information is\ncontained in the data by the requester\nof the records?" ]
+DPPA2a[ shape="oval" label="DPPA2a\nask\nHas express consent been obtained from\neach person whose photograph, Social\nSecurity number, or medical or\ndisability information appears in..." ]
+DPPA5a[ shape="oval" label="DPPA5a\nask\nWas the obtained consent limited in any\nway, such as purpose, duration, parties\nthat may receive the data?" ]
+_18_0983_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_0978_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[DPPA:{requesterConsentLimited}]]\n" ]
+_18_0973_19[ fillcolor="#AADDAA" shape="rect" label="Set\nAssertions=[DataType:[Harm:shame Effort:identifiable]]\nHandling=[Transit:encrypt Storage:serverEncrypt]\nCode=yellow\n" ]
+_18_0972_19[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible violation of the DPPA due to\ndisclosure of highly restricted personal\ninformation without the consent of the\nindividuals in the data" ]
+_18_0971_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[DPPA:{highlyRestricted}]]\nAssertions=[DataType:[Harm:civil Effort:identifiable]]\nHandling=[Transit:encrypt Storage:serverEncrypt]\nCode=orange\n" ]
+_18_0974_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[DPPA:{required}]]\n" ]
+_18_0975_19[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\nPossible violation of state law on\ndisclosure of drivers' records" ]
+_18_0981_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[DPPA:{exception}]]\n" ]
+_18_0982_19[ fillcolor="#FFAAAA" shape="hexagon" label="REJECT\npossible violation of the DPPA because\nthe depositor has not cited one of the\nrequired or permissible uses for\ndisclosure." ]
+_18_0980_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[DPPA:{research}]]\n" ]
+DPPA1[ shape="oval" label="DPPA1\nask\nDo the data contain personal information\nobtained from a state department of\nmotor vehicles?" ]
+DPPA6a[ shape="oval" label="DPPA6a\nask\nWas the obtained consent limited in any\nway, such as purpose, duration, parties\nthat may receive the data?" ]
+_18_0979_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[DPPA:{requesterConsentBroad}]]\n" ]
+DPPA5[ shape="oval" label="DPPA5\nask\nWas consent obtained from the person\nabout whom the information pertains by\nthe State DMV in response to a request\nfor an individual record?" ]
+_18_0976_19[ fillcolor="#AADDAA" shape="rect" label="Set\nLegal=[GovernmentRecords:[DPPA:{stateConsentLimited}]]\n" ]
+DPPA4[ shape="oval" label="DPPA4\nask\nIs the disclosure of these records made\nin accordance with the driver's license\nrecord disclosure law of the state from\nwhich the records we..." ]
+DPPA3[ shape="oval" label="DPPA3\nask\nIs disclosure of the personal\ninformation required by the Driver's\nPrivacy Protection Act? Disclosure is\nrequired, among other reasons, in c..." ]
+DPPA2[ shape="oval" label="DPPA2\nask\nDo the department of motor vehicles\nrecords contain an individual's\nphotograph or image, Social Security\nnumber, or medical or disability in..." ]
+
+}
+subgraph cluster__18_091_19 {
+label="[#1]"; color="#AABBDD"; labeljust="l"
+_18_094_19[ fillcolor="#BBBBFF" shape="cds" label="ppraCompliance" ]
+_18_091_19[ shape="oval" label="ask\nDo the data concern living persons?" ]
+_18_099_19[ fillcolor="#BBBBFF" shape="cds" label="dua" ]
+_18_0910_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_093_19[ fillcolor="#BBBBFF" shape="cds" label="medicalRecordsCompliance" ]
+_18_095_19[ fillcolor="#BBBBFF" shape="cds" label="ferpaCompliance" ]
+_18_096_19[ fillcolor="#BBBBFF" shape="cds" label="govRecsCompliance" ]
+_18_098_19[ fillcolor="#AADDAA" shape="rect" label="Set\nAssertions=[Identity:noPersonData]\nCode=blue\n" ]
+_18_097_19[ fillcolor="#AAFFAA" shape="note" label="todo\nArrest and Conviction Records, Bank and\nFinancial Records,\n        Cable Television, Computer\nCrime,\n        Credit reporting and\nInvestigations (including 'Credit\nRepair', 'Credit Clinics', Check-Cashing\nand Credit Cards),\n        Criminal Justice Information\nSystems, Electronic Surveillance\n(including Wiretapping, Telephone\nMonitoring, and Video Cameras),\n        Employment Records, Government\nInformation on Individuals, Identity\nTheft,\n        Insurance Records (including\nuse of Genetic Information), Library\nRecords,\n        Mailing Lists (including Video\nrentals and Spam),\n        Special Medical Records\n(including HIV Testing),\n        Non-Electronic Visual\nSurveillance. Breast-Feeding,\nPolygraphing in Employment,\n        Privacy Statutes/State\nConstitutions (including the Right to\nPublicity),\n        Privileged Communications,\nSocial Security Numbers, Student\nRecords, Tax Records,\n        Telephone Services (including\nTelephone Solicitation and Caller ID),\n        Testing in Employment\n(including Urinalysis, Genetic and Blood\nTests), Tracking Technologies,  Voter\nRecords" ]
+_18_092_19[ fillcolor="#AADDAA" shape="rect" label="Set\nCode=green\n" ]
+
+}
+_18_0991_19 -> _18_0992_19
+_18_0984_19 -> duaAdditional
+dua -> duaTimeLimit
+_18_0989_19 -> duaAdditional
+duaAdditional -> _18_0990_19[ taillabel="yes" ]
+duaAdditional -> _18_0991_19[ taillabel="no" ]
+_18_0988_19 -> duaAdditional
+_18_0987_19 -> duaAdditional
+duaTimeLimit -> _18_0984_19[ taillabel="no" ]
+duaTimeLimit -> _18_0985_19[ taillabel="yes" ]
+_18_0990_19 -> _18_0992_19
+_18_0986_19 -> duaAdditional
+_18_0985_19 -> _18_0986_19[ taillabel="indefinitely" ]
+_18_0985_19 -> _18_0987_19[ taillabel="50 years" ]
+_18_0985_19 -> _18_0988_19[ taillabel="5 years" ]
+_18_0985_19 -> _18_0989_19[ taillabel="1 year" ]
+_18_0930_19 -> ppra3
+_18_0936_19 -> ppra6
+_18_0932_19 -> _18_0933_19
+ppraCompliance -> _18_0929_19[ taillabel="no" ]
+ppraCompliance -> ppra2[ taillabel="yes" ]
+ppra6 -> ppra7[ taillabel="yes" ]
+ppra6 -> _18_0939_19[ taillabel="no" ]
+ppra7 -> _18_0937_19[ taillabel="no" ]
+ppra7 -> _18_0938_19[ taillabel="yes" ]
+ppra4 -> _18_0932_19[ taillabel="yes" ]
+ppra4 -> _18_0934_19[ taillabel="no" ]
+ppra4 -> _18_0935_19[ taillabel="Not Sure" ]
+ppra5 -> _18_0936_19[ taillabel="yes" ]
+ppra5 -> ppra6[ taillabel="no" ]
+ppra2 -> ppra2a[ taillabel="yes" ]
+ppra2 -> ppra5[ taillabel="no" ]
+ppra3 -> ppra4[ taillabel="yes" ]
+ppra3 -> ppra5[ taillabel="no" ]
+_18_0931_19 -> ppra3
+ppra2a -> _18_0930_19[ taillabel="yes" ]
+ppra2a -> _18_0931_19[ taillabel="no" ]
+_18_0938_19 -> _18_0939_19
+ferpa15 -> _18_0952_19[ taillabel="yes" ]
+ferpa15 -> _18_0954_19[ taillabel="no" ]
+_18_0948_19 -> _18_0955_19
+ferpa14 -> _18_0950_19[ taillabel="yes" ]
+ferpa14 -> ferpa15[ taillabel="no" ]
+ferpa13 -> _18_0949_19[ taillabel="yes" ]
+ferpa13 -> ferpa14[ taillabel="no" ]
+ferpaCompliance -> _18_0940_19[ taillabel="no" ]
+ferpaCompliance -> ferpa9[ taillabel="yes" ]
+ferpa12 -> _18_0947_19[ taillabel="yes" ]
+ferpa12 -> ferpa13[ taillabel="no" ]
+ferpa11 -> ferpa11a[ taillabel="yes" ]
+ferpa11 -> ferpa12[ taillabel="no" ]
+ferpa10 -> _18_0942_19[ taillabel="no" ]
+ferpa10 -> ferpa11[ taillabel="yes" ]
+_18_0947_19 -> _18_0948_19
+ferpa11a -> _18_0944_19[ taillabel="yes" ]
+ferpa11a -> _18_0945_19[ taillabel="no" ]
+ferpa9 -> _18_0941_19[ taillabel="no" ]
+ferpa9 -> ferpa10[ taillabel="yes" ]
+_18_0951_19 -> ferpa15
+_18_0953_19 -> _18_0955_19
+_18_0944_19 -> _18_0946_19
+_18_0950_19 -> _18_0951_19
+_18_0952_19 -> _18_0953_19
+_18_0945_19 -> _18_0946_19
+_18_0942_19 -> _18_0943_19
+_18_0949_19 -> ferpa14
+_18_0956_19 -> _18_0957_19
+govRecsCompliance -> _18_0956_19
+MR11 -> _18_0925_19[ taillabel="yes" ]
+MR11 -> MR12[ taillabel="no" ]
+MR12 -> _18_0926_19[ taillabel="yes" ]
+MR12 -> MR13[ taillabel="no" ]
+MR13 -> _18_0927_19[ taillabel="yes" ]
+MR13 -> _18_0928_19[ taillabel="no" ]
+medicalRecordsCompliance -> _18_0911_19[ taillabel="no" ]
+medicalRecordsCompliance -> MR2[ taillabel="yes" ]
+_18_0914_19 -> MR7
+_18_0915_19 -> MR7
+_18_0923_19 -> _18_0924_19
+MR10 -> MR11[ taillabel="yes" ]
+MR10 -> _18_0928_19[ taillabel="no" ]
+MR8a -> _18_0921_19[ taillabel="yes" ]
+MR8a -> MR9[ taillabel="no" ]
+MR3 -> _18_0912_19[ taillabel="no" ]
+MR3 -> MR4[ taillabel="yes" ]
+MR2 -> MR2a[ taillabel="yes" ]
+MR2 -> MR7[ taillabel="no" ]
+MR5 -> _18_0915_19[ taillabel="yes" ]
+MR5 -> MR6[ taillabel="no" ]
+MR4 -> MR4a[ taillabel="yes" ]
+MR4 -> MR5[ taillabel="no" ]
+MR7 -> _18_0917_19[ taillabel="no" ]
+MR7 -> _18_0918_19[ taillabel="Not Sure" ]
+MR7 -> MR8[ taillabel="yes" ]
+MR6 -> _18_0916_19[ taillabel="yes" ]
+MR6 -> MR7[ taillabel="no" ]
+MR9 -> _18_0923_19[ taillabel="yes" ]
+MR9 -> MR10[ taillabel="no" ]
+MR8 -> _18_0919_19[ taillabel="yes" ]
+MR8 -> MR8a[ taillabel="no" ]
+_18_0927_19 -> _18_0928_19
+MR4a -> _18_0913_19[ taillabel="no" ]
+MR4a -> _18_0914_19[ taillabel="yes" ]
+MR2a -> MR3[ taillabel="yes" ]
+MR2a -> MR7[ taillabel="no" ]
+_18_0919_19 -> _18_0920_19
+_18_0926_19 -> _18_0928_19
+_18_0912_19 -> MR7
+_18_0925_19 -> _18_0928_19
+_18_0916_19 -> MR7
+_18_0921_19 -> _18_0922_19
+_18_0963_19 -> CIPSEA1
+PA1 -> PA2[ taillabel="yes" ]
+PA1 -> _18_0970_19[ taillabel="no" ]
+_18_0969_19 -> _18_0970_19
+PA2 -> _18_0967_19[ taillabel="yes" ]
+PA2 -> _18_0969_19[ taillabel="no" ]
+_18_0968_19 -> _18_0970_19
+Gov2 -> Census1[ taillabel="yes" ]
+Gov2 -> ESRA1[ taillabel="no" ]
+Census3 -> _18_0959_19[ taillabel="yes" ]
+Census3 -> _18_0960_19[ taillabel="no" ]
+Gov1 -> Gov2[ taillabel="yes" ]
+Gov1 -> _18_0970_19[ taillabel="no" ]
+Census2 -> _18_0958_19[ taillabel="yes" ]
+Census2 -> Census3[ taillabel="no" ]
+Census1 -> Census2[ taillabel="yes" ]
+Census1 -> ESRA1[ taillabel="no" ]
+CIPSEA1 -> CIPSEA2[ taillabel="yes" ]
+CIPSEA1 -> PA1[ taillabel="no" ]
+_18_0962_19 -> CIPSEA1
+_18_0958_19 -> ESRA1
+CIPSEA3 -> _18_0964_19[ taillabel="no" ]
+CIPSEA3 -> _18_0965_19[ taillabel="yes" ]
+CIPSEA2 -> CIPSEA3[ taillabel="yes" ]
+CIPSEA2 -> PA1[ taillabel="no" ]
+_18_0965_19 -> _18_0966_19
+ESRA1 -> ESRA2[ taillabel="yes" ]
+ESRA1 -> CIPSEA1[ taillabel="no" ]
+_18_0967_19 -> _18_0968_19
+ESRA3 -> _18_0962_19[ taillabel="yes" ]
+ESRA3 -> _18_0963_19[ taillabel="no" ]
+_18_0964_19 -> PA1
+_18_0959_19 -> ESRA1
+ESRA2 -> _18_0961_19[ taillabel="no" ]
+ESRA2 -> ESRA3[ taillabel="yes" ]
+_18_0966_19 -> PA1
+_18_0977_19 -> _18_0983_19
+DPPA8 -> _18_0981_19[ taillabel="yes" ]
+DPPA8 -> _18_0982_19[ taillabel="no" ]
+DPPA7 -> _18_0980_19[ taillabel="yes" ]
+DPPA7 -> DPPA8[ taillabel="no" ]
+DPPA6 -> DPPA6a[ taillabel="yes" ]
+DPPA6 -> DPPA7[ taillabel="no" ]
+DPPA2a -> _18_0971_19[ taillabel="yes" ]
+DPPA2a -> _18_0972_19[ taillabel="no" ]
+DPPA5a -> _18_0976_19[ taillabel="yes" ]
+DPPA5a -> _18_0977_19[ taillabel="no" ]
+_18_0978_19 -> _18_0983_19
+_18_0973_19 -> DPPA3
+_18_0971_19 -> _18_0983_19
+_18_0974_19 -> _18_0983_19
+_18_0981_19 -> _18_0983_19
+_18_0980_19 -> _18_0983_19
+DPPA1 -> DPPA2[ taillabel="yes" ]
+DPPA1 -> _18_0983_19[ taillabel="no" ]
+DPPA6a -> _18_0978_19[ taillabel="yes" ]
+DPPA6a -> _18_0979_19[ taillabel="no" ]
+_18_0979_19 -> _18_0983_19
+DPPA5 -> DPPA5a[ taillabel="yes" ]
+DPPA5 -> DPPA6[ taillabel="no" ]
+_18_0976_19 -> _18_0983_19
+DPPA4 -> _18_0975_19[ taillabel="no" ]
+DPPA4 -> DPPA5[ taillabel="yes" ]
+DPPA3 -> _18_0974_19[ taillabel="yes" ]
+DPPA3 -> DPPA4[ taillabel="no" ]
+DPPA2 -> DPPA2a[ taillabel="yes" ]
+DPPA2 -> _18_0973_19[ taillabel="no" ]
+_18_094_19 -> _18_095_19
+_18_091_19 -> _18_092_19[ taillabel="yes" ]
+_18_091_19 -> _18_098_19[ taillabel="no" ]
+_18_099_19 -> _18_0910_19
+_18_093_19 -> _18_094_19
+_18_095_19 -> _18_096_19
+_18_096_19 -> _18_097_19
+_18_098_19 -> _18_099_19
+_18_097_19 -> _18_099_19
+_18_092_19 -> _18_093_19
+}
+start -> _18_091_19[ penwidth="4.0" color="#008800" ]{rank=source; start}
+}
