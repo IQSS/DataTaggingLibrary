@@ -42,7 +42,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
         }
 
         @Override
-        public String visitAtomicValue(AtomicValue v) {
+        public String visitSimpleValue(AtomicValue v) {
             return v.getName();
         }
 

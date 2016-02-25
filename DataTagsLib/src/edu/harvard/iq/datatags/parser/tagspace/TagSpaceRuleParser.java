@@ -7,6 +7,7 @@ import edu.harvard.iq.datatags.parser.tagspace.ast.CompoundSlot;
 import edu.harvard.iq.datatags.parser.tagspace.ast.ToDoSlot;
 import edu.harvard.iq.datatags.parser.tagspace.ast.ValueDefinition;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
 import org.codehaus.jparsec.Terminals;
@@ -61,9 +62,18 @@ public class TagSpaceRuleParser {
             slotTypeParser("consists"),
             Terminals.Identifier.PARSER.sepBy( TagSpaceTerminalParser.keyword(",") ),
             TagSpaceTerminalParser.keyword("."), 
-            ( String name, String desc, Object _slotType, List<String> defs, Object _d ) -> new CompoundSlot(name, cleanDescription(desc), defs)
+            ( String name, String desc, Object _slotType, List<String> defs, Object _d ) -> new CompoundSlot(name, cleanDescription(desc), 
+                    defs.stream().map(n-> getPrefix(n,name)/*todo: more logic*/).collect(Collectors.toList()))
     );
     
+    public static String getPrefix (String name,String fatherName)
+    {
+        if (name.startsWith("/"))
+        {
+            return name; 
+        }
+        return fatherName+"/"+name;
+    }
     final static Parser<ToDoSlot> TODO_RULE = Parsers.sequence(Terminals.Identifier.PARSER,
             Terminals.fragment("description").optional(),
             TagSpaceTerminalParser.keyword(":"),
@@ -72,8 +82,8 @@ public class TagSpaceRuleParser {
             ( String name, String description, Object _a, Object _b, Object _c) -> new ToDoSlot( name, cleanDescription(description) )
     );
     
-    final static Parser<? extends AbstractSlot> RULE = Parsers.or( TODO_RULE, COMPOUND_SLOT_RULE, AGGREGATE_SLOT_RULE, ATOMIC_SLOT_RULE);
-    final static Parser<List<? extends AbstractSlot>> RULES = RULE.many().cast();
+    final static Parser<AbstractSlot> RULE = Parsers.or( TODO_RULE, COMPOUND_SLOT_RULE, AGGREGATE_SLOT_RULE, ATOMIC_SLOT_RULE);
+    final static Parser<List <AbstractSlot>> RULES = RULE.many().cast();
     
     /**
      * Cleans the description coming from the parser (e.g removes the brackets).

@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.parser.exceptions;
 
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 
 /**
@@ -15,13 +16,15 @@ public class BadSetInstructionException extends DataTagsParseException {
     private final TagValueLookupResult badResult;
     
     public BadSetInstructionException(String msg, AstSetNode anOffendingNode) {
-        super( anOffendingNode, msg );
+        super( (AstNode)null, msg );
+        setOffendingNode(anOffendingNode);
         badResult = null;
     }
     
     public BadSetInstructionException(TagValueLookupResult res, AstSetNode anOffendingNode) {
-        super(anOffendingNode, "Bad set instruction: " + res );
+        super((AstNode)null, "Bad set instruction: " + res );
         badResult = res;
+        setOffendingNode(anOffendingNode);
     }
 
     public TagValueLookupResult getBadResult() {

@@ -22,7 +22,6 @@ public class CompoundType extends TagType {
 	
 	public void addFieldType( TagType tt ) {
 		fieldTypes.add( tt );
-        tt.setParent(this);
 	}
 	
 	public Set<TagType> getFieldTypes() {

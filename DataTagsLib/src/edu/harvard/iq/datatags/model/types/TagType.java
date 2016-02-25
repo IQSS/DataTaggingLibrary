@@ -22,7 +22,7 @@ public abstract class TagType {
 		T visitTodoType( ToDoType t );
 	}
 	
-    public abstract static class VoidVisitor implements TagType.Visitor<Void> {
+    public abstract static class VoidVisitor implements Visitor<Void> {
         @Override
         public Void visitSimpleType( AtomicType t ) {
             visitAtomicTypeImpl(t);
@@ -55,7 +55,6 @@ public abstract class TagType {
     
 	private final String name;
 	private String note;
-    private TagType parent;
 
 	public TagType(String name, String note) {
 		this.name = name;
@@ -73,16 +72,8 @@ public abstract class TagType {
 	public String getName() {
 		return name;
 	}
-    
-    public TagType getParent() {
-        return parent;
-    }
-    
-    protected void setParent( TagType aParent ) {
-        parent = aParent;
-    }
 
-	public abstract <T> T accept( TagType.Visitor<T> v );
+	public abstract <T> T accept( Visitor<T> v );
 	
     public TagValueLookupResult lookupValue( final String slotName, final String valueName ) {
         return accept(new TagType.Visitor<TagValueLookupResult>() {
@@ -140,9 +131,6 @@ public abstract class TagType {
                     protected void visitImpl(TagValueLookupResult.Success scss) {
                         matches.add( scss );
                     }
-
-                    @Override
-                    protected void visitImpl(TagValueLookupResult.SyntaxError serr) {}
                 };
                 
                 // group results by status.

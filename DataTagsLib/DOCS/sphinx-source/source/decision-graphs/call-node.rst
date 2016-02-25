@@ -4,7 +4,7 @@ Call Node
 =========
 
 Makes the engine traverse another part of the decision graph before moving on to the syntactically next node.
-The equivalent of a procedure call in other programming languages.
+The equivaluent of a procedure call in other programming languages.
 
 Consider the following graph::
 

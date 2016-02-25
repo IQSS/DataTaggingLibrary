@@ -41,7 +41,7 @@ public class AllTagValues extends VoidVisitor {
 
     @Override
     public void visitTodoTypeImpl(ToDoType t) {
-        definedTagValues.add( t.getValue() );
+        definedTagValues.add(t.getValue());
     }
     
 }

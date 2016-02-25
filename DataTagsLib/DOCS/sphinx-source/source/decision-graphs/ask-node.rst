@@ -3,7 +3,7 @@
 Ask Node
 ========
 
-When the engine arrives at an ``[ask]`` node, it presents a question to the user. Ask nodes define a set of possible answers. Each possible answer has its own decision sub-graph, executed by the engine when that answer is selected.
+When the engine arrives at an ``[ask]`` node, it presents a question to the user. Ask nodes defines a set of possible answers. Each possible answer has its own decision sub-graph, executed by the engine when that answer is selected.
 When the engine completes the execution of the selected sub-graph, it moved on to the node that's syntactically after the ``[ask]`` node.
 
 As legal and technological questions can be daunting, it is possible to clarify terms that appear in the question. This is done by using the optional ``{terms: ...}`` node.
@@ -18,7 +18,7 @@ As legal and technological questions can be daunting, it is possible to clarify 
   [ask:
     {text: Do the data contain personally identifying information, as defined under HIPAA?}
     {terms:
-      {Personally identifying information: This means the name, address, fingerprints...}
+      {{ersonally identifying information: This means the name, address, fingerprints...}
       {HIPAA: Health Insurance Portability and Accountability Act}}]
 
 In the above example, the user will be asked the first question. If she chooese *yes*, the ``livingPersons`` slot will contain the value ``yes``, and the interview

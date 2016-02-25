@@ -20,7 +20,7 @@ import org.codehaus.jparsec.Parser;
  */
 public class TagSpaceParser {
    
-    private final Parser<List<? extends AbstractSlot>> parser = TagSpaceTerminalParser.buildParser( TagSpaceRuleParser.RULES );
+    private final Parser<List<AbstractSlot>> parser = TagSpaceTerminalParser.buildParser( TagSpaceRuleParser.RULES );
     
     /**
      * Parse Tag Space code into a result that can be used to create actual types.
@@ -40,6 +40,28 @@ public class TagSpaceParser {
 											pe.getMessage(),
 											pe);
         }
+    }
+  
+    
+       public TagSpaceParseResult MultiParse( String dataTags,String [] allStrings ) throws SyntaxErrorException, SemanticsErrorException 
+           {
+        try {
+            // Parse the first string (the definition string) and then parse the rest of the string and concatenate them to the first.
+             TagSpaceParseResult allParsed=new TagSpaceParseResult( parser.parse(dataTags) );
+             for (int i = 0;i<=allStrings.length;i++)
+             {
+                List <AbstractSlot> temp = parser.parse(allStrings[i]);
+                // adding the new parsed list to the big list
+                allParsed.getSlots().addAll(temp);
+             }
+             return allParsed;
+        } 
+        catch ( org.codehaus.jparsec.error.ParserException pe ) {
+			throw new SyntaxErrorException( new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),
+											pe.getMessage(),
+											pe);
+        }
+        
     }
     
     public TagSpaceParseResult parse( Path file ) throws IOException, SyntaxErrorException, SemanticsErrorException { 

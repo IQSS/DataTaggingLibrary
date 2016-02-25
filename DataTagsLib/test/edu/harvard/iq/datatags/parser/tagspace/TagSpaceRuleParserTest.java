@@ -124,7 +124,7 @@ public class TagSpaceRuleParserTest {
     
     @Test
     public void testRules() {
-        Parser<List<? extends AbstractSlot>> sut = TagSpaceTerminalParser.buildParser( TagSpaceRuleParser.RULES );
+        Parser<List<AbstractSlot>> sut = TagSpaceTerminalParser.buildParser( TagSpaceRuleParser.RULES );
         
         List<? extends AbstractSlot> expected = Arrays.asList(new ToDoSlot("ATodoNode",""),
                 new AtomicSlot("AnAtomicSlot","one value", Arrays.asList(vDef("I"), vDef("II"), vDef("III","one two three")) ),
