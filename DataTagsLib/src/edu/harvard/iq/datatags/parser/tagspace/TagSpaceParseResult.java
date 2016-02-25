@@ -31,10 +31,14 @@ import java.util.stream.Collectors;
  */
 public class TagSpaceParseResult {
     
-    private final List<? extends AbstractSlot> slots; 
+    private final List<AbstractSlot> slots; 
     private final Map<String, AbstractSlot> slotsByName = new TreeMap<>();
     private Set<String> duplicateSlotNames;
     private URI source;
+
+    void add(Object get) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     class MissingSlotException extends RuntimeException {
         private final String missingSlotName;
@@ -54,7 +58,7 @@ public class TagSpaceParseResult {
         
     }
     
-    TagSpaceParseResult( List<? extends AbstractSlot> someSlots ) throws SemanticsErrorException {
+    TagSpaceParseResult( List<AbstractSlot> someSlots ) throws SemanticsErrorException {
         slots = someSlots;
         
         Map<String, List<AbstractSlot>> slotMap = new HashMap<>();
@@ -75,7 +79,7 @@ public class TagSpaceParseResult {
             }
     }
     
-    public List<? extends AbstractSlot> getSlots() {
+    public List<AbstractSlot> getSlots() {
         return slots;
     }
     

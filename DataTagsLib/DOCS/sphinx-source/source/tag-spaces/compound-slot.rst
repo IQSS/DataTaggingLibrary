@@ -5,7 +5,7 @@
 Compound Slot
 =============
 
-A compound slot, defined using the ``consists of`` keyword, consists of other slots, referred to as *sub-slots*. These slots can be of any type. Compound slots do not define tag space dimensions directly. Rather, they are are used to logically group other slots. Below is a compound slot defining the handling part of a dataset policy::
+A compound slot, defined using the ``consists of`` keyword, consists of other slots, referred to as *sub-slots*. These slots can be :doc:`atomic <atomic-slot>`, :doc:`aggregate <aggregate-slot>` or compound. Aggregate slots do not define tag space dimensions directly. Rather, they are are used to logically group other slots. Below is a compound slot defining the handling part of a dataset policy::
 
   Handling: consists of Storage, Transit, Authentication.
 

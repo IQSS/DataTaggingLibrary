@@ -15,7 +15,6 @@ import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.types.ToDoType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
-import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
@@ -87,8 +86,17 @@ public class DecisionGraphParseResult {
         EndNode endAll = new EndNode("[SYN-END]");
         try {
             breakAstNodeList(astNodes).forEach((segment) -> buildNodes(segment, endAll) );
-        } catch ( RuntimeDataTagsParseException rdpe ) {
-            throw rdpe.getCause();
+        } catch ( RuntimeException re ) {
+            Throwable cause = re.getCause();
+            if ((cause != null) && (cause instanceof DataTagsParseException)) {
+                DataTagsParseException pe = (DataTagsParseException) cause;
+                if ( pe.getOffendingNode() == null ) {
+                    pe.setOffendingNode( C.head(astNodes) );
+                }
+                throw pe;
+            } else {
+                throw re;
+            }
         }
         
         product.setStart( product.getNode(C.head(astNodes).getId()) );
@@ -199,9 +207,8 @@ public class DecisionGraphParseResult {
                     SetNodeValueBuilder valueBuilder = new SetNodeValueBuilder(topValue);
                     try {
                         astNode.getAssignments().forEach(asnmnt -> asnmnt.accept(valueBuilder) );
-                    } catch (RuntimeDataTagsParseException re) {
-                        ((BadSetInstructionException)re.getCause()).setOffendingNode(astNode);
-                        throw re;
+                    } catch (RuntimeException re) {
+                        throw new RuntimeException(new BadSetInstructionException(re.getMessage() + " (at node " + astNode + ")", astNode));
                     }
                     
                     final SetNode setNode = new SetNode(astNode.getId(), topValue);
@@ -228,12 +235,17 @@ public class DecisionGraphParseResult {
 
             });
 
-        } catch (RuntimeDataTagsParseException rdpe) {
-            DataTagsParseException dpe = rdpe.getCause();
-            if ( dpe.getOffendingNode() == null ) {
-                dpe.setOffendingNode( C.head(astNodes) );
+        } catch (RuntimeException re) {
+            Throwable cause = re.getCause();
+            if ((cause != null) && (cause instanceof DataTagsParseException)) {
+                DataTagsParseException pe = (DataTagsParseException) cause;
+                if ( pe.getOffendingNode() == null ) {
+                    pe.setOffendingNode( C.head(astNodes) );
+                }
+                throw new RuntimeException( re.getMessage() + " (in node " + C.head(astNodes) + ")", pe );
+            } else {
+                throw re;
             }
-            throw rdpe;
         }
     }
 
@@ -399,79 +411,51 @@ public class DecisionGraphParseResult {
 
         @Override
         public void visit(AstSetNode.AtomicAssignment aa) {
-            List<String> additionSlot = fullyQualifiedSlotName.get(aa.getSlot());
-            if ( additionSlot == null ) {
-                throw new RuntimeDataTagsParseException(
-                        new BadSetInstructionException(TagValueLookupResult.SlotNotFound(String.join("/", aa.getSlot())), null));
-            }
-            final CompoundValue additionPoint = descend(C.tail(additionSlot) , topValue);
+            final CompoundValue additionPoint = descend(C.tail(fullyQualifiedSlotName.get(aa.getSlot())) , topValue);
             TagType valueType = additionPoint.getType().getTypeNamed(C.last(aa.getSlot()));
             if (valueType == null) {
-                throw new RuntimeDataTagsParseException(
-                    new BadSetInstructionException(TagValueLookupResult.SlotNotFound(C.last(aa.getSlot())), null));
+                throw new RuntimeException("Type '" + additionPoint.getType().getName()
+                        + "' does not have a field of type '" + C.last(aa.getSlot()) + "'");
             }
             valueType.accept(new TagType.VoidVisitor() {
                 @Override
                 public void visitAtomicTypeImpl(AtomicType t) {
                     AtomicValue value = t.valueOf(aa.getValue());
                     if (value == null) {
-                        throw new RuntimeDataTagsParseException(
-                                new BadSetInstructionException( TagValueLookupResult.ValueNotFound(t, aa.getValue()), null)
-                        );
+                        throw new RuntimeException("Field " + aa.getSlot() + " does not have a value " + aa.getValue());
                     }
                     additionPoint.set(value);
                 }
 
                 @Override
                 public void visitAggregateTypeImpl(AggregateType t) {
-                    throw new RuntimeDataTagsParseException(
-                        new BadSetInstructionException(
-                                TagValueLookupResult.SyntaxError(C.last(aa.getSlot()),
-                                    "Slot " + aa.getSlot() + " is aggregate, not atomic. Use ``+='' ."),
-                                null));
+                    throw new RuntimeException("Slot " + aa.getSlot() + " is aggregate, not atomic. Use ``+='' .");
                 }
 
                 @Override
                 public void visitCompoundTypeImpl(CompoundType t) {
-                     throw new RuntimeDataTagsParseException(
-                        new BadSetInstructionException(
-                                TagValueLookupResult.SyntaxError(C.last(aa.getSlot()),
-                                    "Slot " + aa.getSlot() + " is compound, not atomic. Can't assign values here."),
-                                null));
+                    throw new RuntimeException("Slot " + aa.getSlot() + " is compound, not atomic. Can't assign values here.");
                 }
 
                 @Override
                 public void visitTodoTypeImpl(ToDoType t) {
-                    throw new RuntimeDataTagsParseException(
-                        new BadSetInstructionException(
-                                TagValueLookupResult.SyntaxError(C.last(aa.getSlot()),
-                                    "Slot " + aa.getSlot() + " is a placeholder (TODO). Can't assign values here."),
-                                null));
+                    throw new RuntimeException("Slot " + aa.getSlot() + " is a placeholder. Can't assign values here.");
                 }
             });
         }
 
         @Override
         public void visit(AstSetNode.AggregateAssignment aa) {
-            List<String> additionSlot = fullyQualifiedSlotName.get(aa.getSlot());
-            if ( additionSlot == null ) {
-                throw new RuntimeDataTagsParseException(
-                        new BadSetInstructionException(TagValueLookupResult.SlotNotFound(String.join("/", aa.getSlot())), null));
-            }
-            final CompoundValue additionPoint = descend(C.tail(additionSlot), topValue);
+            final CompoundValue additionPoint = descend(C.tail(fullyQualifiedSlotName.get(aa.getSlot())), topValue);
             TagType valueType = additionPoint.getType().getTypeNamed(C.last(aa.getSlot()));
             if (valueType == null) {
-                throw new RuntimeDataTagsParseException(
-                    new BadSetInstructionException(TagValueLookupResult.SlotNotFound(C.last(aa.getSlot())), null));
+                throw new RuntimeException("Type '" + additionPoint.getType().getName()
+                        + "' does not have a field of type '" + C.last(aa.getSlot()));
             }
             valueType.accept(new TagType.VoidVisitor() {
                 @Override
                 public void visitAtomicTypeImpl(AtomicType t) {
-                    throw new RuntimeDataTagsParseException(
-                        new BadSetInstructionException(
-                                TagValueLookupResult.SyntaxError(C.last(aa.getSlot()),
-                                    "Slot " + aa.getSlot() + " is atomic, not aggregate. Use ``='' ."),
-                                null));
+                    throw new RuntimeException("Slot " + aa.getSlot() + " is aggregate, not atomic. Use ``+='' .");
                 }
 
                 @Override
@@ -482,31 +466,18 @@ public class DecisionGraphParseResult {
                         additionPoint.set(value);
                     }
                     for (String val : aa.getValue()) {
-                        AtomicValue item = t.getItemType().valueOf(val);
-                        if ( item == null ) {
-                            throw new RuntimeDataTagsParseException(
-                                new BadSetInstructionException(TagValueLookupResult.ValueNotFound(t.getItemType(), val), null));
-                        }
-                        value.add(item);
+                        value.add(t.getItemType().valueOf(val));
                     }
                 }
 
                 @Override
                 public void visitCompoundTypeImpl(CompoundType t) {
-                     throw new RuntimeDataTagsParseException(
-                        new BadSetInstructionException(
-                                TagValueLookupResult.SyntaxError(C.last(aa.getSlot()),
-                                    "Slot " + aa.getSlot() + " is compound, not atomic. Can't assign values here."),
-                                null));
+                    throw new RuntimeException("Slot " + aa.getSlot() + " is compound, not atomic. Can't assign values here.");
                 }
 
                 @Override
                 public void visitTodoTypeImpl(ToDoType t) {
-                     throw new RuntimeDataTagsParseException(
-                        new BadSetInstructionException(
-                                TagValueLookupResult.SyntaxError(C.last(aa.getSlot()),
-                                    "Slot " + aa.getSlot() + " is a placeholder (TODO). Can't assign values here."),
-                                null));
+                    throw new RuntimeException("Slot " + aa.getSlot() + " is a placeholder. Can't assign values here.");
                 }
             });
         }
@@ -528,34 +499,26 @@ public class DecisionGraphParseResult {
             CompoundType cType = cVal.getType();
             TagType nextTagType = cType.getTypeNamed(C.head(pathRemainder));
             if (nextTagType == null) {
-                 throw new RuntimeDataTagsParseException(
-                        new BadSetInstructionException(
-                                TagValueLookupResult.SlotNotFound(C.head(pathRemainder)), null));
+                throw new RuntimeException("Type '" + cType.getName()
+                        + "' does not have a field of type '" + C.head(pathRemainder));
             }
             
             return descend(C.tail(pathRemainder), nextTagType.accept(new TagType.Visitor<CompoundValue>() {
                 @Override
                 public CompoundValue visitSimpleType(AtomicType t) {
-                    throw new RuntimeDataTagsParseException(
-                        new BadSetInstructionException(
-                                TagValueLookupResult.ValueNotFound(t, C.head(C.tail(pathRemainder))),
-                                null));
+                    throw new RuntimeException("Type '" + t.getName()
+                            + "' is not a compound type");
                 }
 
                 @Override
                 public CompoundValue visitAggregateType(AggregateType t) {
-                    throw new RuntimeDataTagsParseException(
-                        new BadSetInstructionException(
-                                TagValueLookupResult.ValueNotFound(t, C.head(C.tail(pathRemainder))),
-                                null));
+                    throw new RuntimeException("Type '" + t.getName()
+                            + "' is not a compound type");
                 }
 
                 @Override
                 public CompoundValue visitTodoType(ToDoType t) {
-                    throw new RuntimeDataTagsParseException(
-                        new BadSetInstructionException(
-                                TagValueLookupResult.ValueNotFound(t, C.head(C.tail(pathRemainder))),
-                                null));
+                    throw new RuntimeException("Type '" + t.getName() + "' is not a compound type");
                 }
 
                 @Override

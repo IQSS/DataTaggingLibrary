@@ -56,7 +56,6 @@ public class CliRunner {
     BufferedReader reader;
     private final StringMapFormat dtFormat = new StringMapFormat();
     private final Map<String, CliCommand> commands = new HashMap<>();
-    private final Map<String, String> shortcuts = new HashMap<>();
     private boolean printDebugMessages = false;
     private Path decisionGraphPath, tagSpacePath;
     private RuntimeEngineTracingListener tracer;
@@ -88,28 +87,17 @@ public class CliRunner {
                 new QuitCommand(), new ToggleDebugMessagesCommand(), new ShowNodeCommand(),
                 new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
                 new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
-                new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand(), 
-                new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand())
+                new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand())
                 .forEach(c -> commands.put(c.command(), c));
-        
-        // shortcuts
-        shortcuts.put("q", "quit" );
-        shortcuts.put("i", "about" );
-        shortcuts.put("r", "restart" );
-        shortcuts.put("rr","reload" );
-        shortcuts.put("a", "ask" );
-        
-        if (System.console() == null) {
-            reader = new BufferedReader(new InputStreamReader(System.in));
-        } else {
-            reader = new BufferedReader( System.console().reader() );
-        }
-        
     }
 
     public void go() throws IOException {
 
         try {
+            if (System.console() == null) {
+                reader = new BufferedReader(new InputStreamReader(System.in));
+            }
+
             tracer = new RuntimeEngineTracingListener(new CliEngineListener());
             ngn.setListener(tracer);
 
@@ -167,14 +155,15 @@ public class CliRunner {
                 return ans;
 
             } else if (ansText.equals("?")) {
-                printHelp();
+                println("Type one of the answers listed above, or one of the following commands:"
+                        + "");
+                commands.entrySet().stream().sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+                        .forEach(e -> println("\\%s:\n%s", e.getKey(), indent(e.getValue().description())));
 
             } else if (ansText.startsWith("\\")) {
                 try {
                     List<String> args = cmdScanner.parse( ansText );
-                    String commandString = args.get(0).substring(1);
-                    commandString = shortcuts.getOrDefault(commandString, commandString);
-                    commands.getOrDefault(commandString, COMMAND_NOT_FOUND).execute(this, args);
+                    commands.getOrDefault(args.get(0).substring(1), COMMAND_NOT_FOUND).execute(this, args);
                     println("");
 
                 } catch (Exception ex) {
@@ -188,7 +177,7 @@ public class CliRunner {
 
         return null;
     }
-    
+
     /**
      * Prompts the user for a command, and then executes it. If the command
      * entails restarting the engine, it is conveyed by it changing the engine
@@ -201,12 +190,14 @@ public class CliRunner {
         if ( userChoice.isEmpty() ) return;
             
         if ( userChoice.equals("?")) {
-            printHelp();
+            println("Please type one of the following commands:"
+                    + "");
+            commands.entrySet().stream().sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+                    .forEach(e -> println("\\%s:\n%s", e.getKey(), indent(e.getValue().description())));
 
         } else {
             if ( userChoice.startsWith("\\")) {
                 userChoice = userChoice.substring(1);
-                userChoice = shortcuts.getOrDefault(userChoice, userChoice);
             }
             try {
                 List<String> args = cmdScanner.parse(userChoice);
@@ -221,13 +212,6 @@ public class CliRunner {
             }
 
         } 
-    }
-
-    private void printHelp() {
-        println("Please type one of the following commands:"
-                + "");
-        commands.entrySet().stream().sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
-                .forEach(e -> println("\\%s: %s\n%s", e.getKey(), findShortcut(e.getKey()), indent(e.getValue().description())));
     }
 
     public void printCurrentAskNode() {
@@ -334,21 +318,6 @@ public class CliRunner {
         println(new String(deco));
     }
 
-    void debugPrint(String format, Object... args) {
-        if ( printDebugMessages ) {
-            String msg = String.format(format, args);
-
-            char[] deco = new char[msg.length()];
-            Arrays.fill(deco, '~');
-
-            println("");
-            println(new String(deco));
-            println(msg);
-            println(new String(deco));
-        }
-    }
-
-    
     public String readLine(String format, Object... args) throws IOException {
         if (System.console() != null) {
             return System.console().readLine(format, args);
@@ -414,17 +383,6 @@ public class CliRunner {
         return tracer.getVisitedNodes();
     }
 
-    private String findShortcut( String fullCommand ) {
-        if ( shortcuts.containsValue(fullCommand) ) {
-            return "(\\" + shortcuts.entrySet().stream()
-                    .filter( e->e.getValue().equals(fullCommand) )
-                    .map( Map.Entry::getKey )
-                    .collect(Collectors.toList()).get(0) + ")";
-        } else {
-            return "";
-        }
-    } 
-    
     private class CliEngineListener implements RuntimeEngine.Listener {
 
         public CliEngineListener() {

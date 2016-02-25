@@ -54,7 +54,6 @@ Contents:
    tutorial/index
    decision-graphs/index
    tag-spaces/index
-   cli-manual
    terms
 
 

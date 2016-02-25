@@ -11,12 +11,20 @@ import org.codehaus.jparsec.internal.util.Objects;
 public class CompoundSlot extends AbstractSlot {
     
     private final List<String> subSlotNames;
+   // private String prefix;
 
     public CompoundSlot(String aName, String aNote, List<String> someSubSlotNames) {
         super(aName, aNote);
         subSlotNames = someSubSlotNames;
+        //prefix=pre;
     }
 
+   /*
+    public String prefix()
+    {
+        return prefix;
+    }
+*/
     public List<String> getSubSlotNames() {
         return subSlotNames;
     }

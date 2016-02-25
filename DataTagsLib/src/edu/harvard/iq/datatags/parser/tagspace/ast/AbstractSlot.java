@@ -24,6 +24,12 @@ public abstract class AbstractSlot {
         name = aName;
         note = aNote;
     }
+    
+    public AbstractSlot (AbstractSlot other)
+    {
+        this.name=other.name;
+        this.note=other.note;
+    }
 
     public String getName() {
         return name;

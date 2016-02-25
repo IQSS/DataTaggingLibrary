@@ -13,7 +13,6 @@ public class AggregateType extends TagType {
 	public AggregateType(String name, String info, AtomicType itemType) {
 		super(name, info);
 		this.itemType = itemType;
-        itemType.setParent(this);
 	}
 
 	public AtomicType getItemType() {

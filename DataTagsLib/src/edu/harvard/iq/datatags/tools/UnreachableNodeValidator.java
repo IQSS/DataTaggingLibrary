@@ -16,17 +16,16 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Checks that every node in the flow chart set
  * is reachable. Returns a WARNING if there is an unreachable
  * node.
  * @author Naomi
- * @author Michael
  */
 public class UnreachableNodeValidator extends VoidVisitor {
     
+    private final List<NodeValidationMessage> validationMessages = new LinkedList<>();
     private final Set<String> reachedNodeIds = new HashSet<>();
     private DecisionGraph flowChart = new DecisionGraph();
     
@@ -37,18 +36,22 @@ public class UnreachableNodeValidator extends VoidVisitor {
      * @return WARNING messages showing the unreachable nodes.
      */
     public List<NodeValidationMessage> validateUnreachableNodes( DecisionGraph dg ) {
-        final List<NodeValidationMessage> validationMessages = new LinkedList<>();
         Set<String> flowChartNodeIds = new HashSet<>();
         flowChartNodeIds.addAll( dg.nodeIds() );
 
         flowChart = dg;
         dg.getStart().accept(this);
         flowChartNodeIds.removeAll(reachedNodeIds);
+
+        if (!flowChartNodeIds.isEmpty()) {
+            for (String nodeId : flowChartNodeIds) {
+                validationMessages.add(new NodeValidationMessage(Level.WARNING,
+                                                "Node \"" + nodeId + "\" is unreachable.",
+                                                dg.getNode(nodeId)));
+            }
+        }
         
-        return flowChartNodeIds.stream()
-                .map( nodeId -> new NodeValidationMessage(Level.WARNING,
-                                "Node \"" + nodeId + "\" is unreachable.", dg.getNode(nodeId)) )
-                .collect(Collectors.toList());
+        return validationMessages;
     }
     
     

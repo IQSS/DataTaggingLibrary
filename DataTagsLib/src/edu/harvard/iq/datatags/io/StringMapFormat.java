@@ -40,7 +40,7 @@ public class StringMapFormat {
             }
 
             @Override
-            public Void visitAtomicValue(AtomicValue v) {
+            public Void visitSimpleValue(AtomicValue v) {
                 res.put(pathAsString() + v.getType().getName(), v.getName() );
                 return null;
             }
