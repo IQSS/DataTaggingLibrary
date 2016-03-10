@@ -5,8 +5,8 @@
         <group/>
         <group name="Everyday"/>
         <group name="DataTags">
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/WORK/dtl/0.8/simple/definitions.ts</file>
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/WORK/dtl/0.8/simple/make-burrito.dg</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/tagspace/TagSpaceParser.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/tagspace/TagSpaceParseResult.java</file>
         </group>
     </open-files>
 </project-private>
