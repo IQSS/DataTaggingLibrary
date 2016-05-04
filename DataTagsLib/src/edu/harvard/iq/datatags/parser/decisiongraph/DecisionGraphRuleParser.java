@@ -13,11 +13,13 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTextSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
 import org.codehaus.jparsec.Terminals;
+import org.codehaus.jparsec.internal.util.Strings;
 
 /**
  * Parses the terminals of a decision graph code into an AST.
@@ -49,8 +51,22 @@ public class DecisionGraphRuleParser {
         return Parsers.or( nodeHeadWithId(keyword), nodeHeadNoId(keyword));
     }
     
+    final static Parser<String> IDENTIFIER_WITH_KEYWORDS;
+    
+    static {
+        List<Parser<?>> parsers = new ArrayList<>();
+        parsers.addAll( DecisionGraphTerminalParser.NODE_STRUCTURE_TOKENS.stream()
+                        .filter( t -> t.toLowerCase().matches("^[a-z][a-z0-9]*$") )
+                        .map( t -> nodeStructurePart(t) ) 
+                            .collect( toList() ) );
+        IDENTIFIER_WITH_KEYWORDS =  Parsers.sequence(
+                Parsers.or(parsers).many(),
+                Terminals.identifier().many()
+                ).source().map( String::trim );
+    }
+    
     final static Parser<String> textbodyUpTo( String terminatingNodePart ) {
-        List<Parser<?>> parsers = new LinkedList<>();
+        List<Parser<?>> parsers = new ArrayList<>();
         parsers.add( Terminals.fragment(Tags.TEXT_BODY ) );
         parsers.add( Terminals.identifier() );
         DecisionGraphTerminalParser.NODE_STRUCTURE_TOKENS.stream()
@@ -60,15 +76,17 @@ public class DecisionGraphRuleParser {
         return Parsers.or(parsers).many().source();
     }
     
-    final static Parser<AstSetNode.AtomicAssignment> ATOMIC_ASSIGNMENT_SLOT = Parsers.sequence(Terminals.identifier().sepBy(nodeStructurePart("/")),
+    final static Parser<AstSetNode.AtomicAssignment> ATOMIC_ASSIGNMENT_SLOT = Parsers.sequence(
+            IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
             nodeStructurePart("="),
-            Terminals.identifier(),
+            IDENTIFIER_WITH_KEYWORDS,
             (path, _eq, value) -> new AstSetNode.AtomicAssignment(path, value.trim())
         );
     
-    final static Parser<AstSetNode.AggregateAssignment> AGGREGATE_ASSIGNMENT_SLOT = Parsers.sequence(Terminals.identifier().sepBy(nodeStructurePart("/")),
+    final static Parser<AstSetNode.AggregateAssignment> AGGREGATE_ASSIGNMENT_SLOT = Parsers.sequence(
+            IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
             nodeStructurePart("+="),
-            Terminals.identifier().sepBy( nodeStructurePart(",") ),
+            IDENTIFIER_WITH_KEYWORDS.sepBy( nodeStructurePart(",") ),
             (path, _eq, value) -> new AstSetNode.AggregateAssignment(path, value)
         );
     
@@ -187,4 +205,6 @@ public class DecisionGraphRuleParser {
         
         return nodeSequence;
     }
+    
+  
 }
