@@ -89,7 +89,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
         for ( Node n : fc.nodes() ) {
             if ( candidates.contains(n) ) {
                 n.accept( new Node.VoidVisitor(){
-
+                    
                     @Override
                     public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
                         for ( Answer n : nd.getAnswers() ) {
@@ -260,7 +260,6 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
 		wrt.write( "subgraph cluster_" + sanitizeId(fc.getId()) + " {");
 		wrt.newLine();
 		wrt.newLine();
-
 		wrt.write( String.format("label=\"%s\"", humanTitle(fc)) );
 		wrt.newLine();
 		

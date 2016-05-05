@@ -89,8 +89,9 @@ public class CliRunner {
                 new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
                 new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
                 new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand(), 
-                new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand())
-                .forEach(c -> commands.put(c.command(), c));
+                new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand(),
+                new toJsonCommand()
+        ).forEach(c -> commands.put(c.command(), c));
         
         // shortcuts
         shortcuts.put("q", "quit" );
