@@ -29,7 +29,7 @@ public class EndNodeOptimizer implements FlowChartOptimizer {
 
     @Override
     public DecisionGraph optimize(final DecisionGraph fcs) {
-        
+
         // create the end node
         final EndNode end = new EndNode("[#" + fcs.getId() + "-end]" );
         fcs.add( end );

@@ -38,13 +38,18 @@ public class AskNode extends Node {
 	 * @param node the node
 	 * @return {@code node}, for convenience, call chaining, etc.
 	 */
-	public <T extends Node> T setNodeFor( Answer answer, T node ) {
-		answers.add( answer );
+    public <T extends Node> T setNodeFor( Answer answer, T node ) {
+        /* If answer is not already exists - add it */
+        if (!answers.contains(answer)) {
+            answers.add(answer);
+        }
+
+        /* Update (or create) dictionary */
         nextNodeByAnswer.put(answer, node);
-		return node;
-	}
-	
-	public Node getNodeFor( Answer answer ) {
+        return node;
+    }
+
+    public Node getNodeFor( Answer answer ) {
 		return nextNodeByAnswer.get(answer);
 	}
 
