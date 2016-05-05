@@ -23,7 +23,7 @@ import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 /**
  * An optimizer that makes [set] calls as early as possible.
  *
- * @author @eyalben
+ * @author eyalben
  */
 public class EagerSetCallsOptimizer implements FlowChartOptimizer {
 
