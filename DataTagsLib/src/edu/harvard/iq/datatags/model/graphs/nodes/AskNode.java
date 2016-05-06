@@ -46,6 +46,11 @@ public class AskNode extends Node {
         nextNodeByAnswer.put(answer, node);
         return node;
     }
+    
+    public void removeAnswer( Answer ans ) {
+        answers.remove(ans);
+        nextNodeByAnswer.remove(ans);
+    }
 
     public Node getNodeFor(Answer answer) {
         return nextNodeByAnswer.get(answer);

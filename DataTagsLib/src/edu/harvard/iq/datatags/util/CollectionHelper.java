@@ -100,8 +100,7 @@ public class CollectionHelper {
 		return out;
 	}
 
-	
-    public <T> Set<T> subtractSet( Collection<T> c1, Collection<T> c2 ) {
+	public <T> Set<T> subtractSet( Collection<T> c1, Collection<T> c2 ) {
 		Set<T> out = new HashSet<>( c1 );
 		out.removeAll( c2 );
 		return out;

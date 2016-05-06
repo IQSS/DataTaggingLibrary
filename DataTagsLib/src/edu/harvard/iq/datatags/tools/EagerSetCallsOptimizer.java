@@ -136,6 +136,7 @@ public class EagerSetCallsOptimizer implements FlowChartOptimizer {
                         /* If new SetNode should be empty */
                         if (null == newAnswerValues) {
                             /* Just remove the node */
+                            nd.removeAnswer(c.relatedAnswer);
                             nd.setNodeFor(c.relatedAnswer, answerSetNode.getNextNode());
                             fcs.remove(answerSetNode);
                         }
@@ -146,6 +147,7 @@ public class EagerSetCallsOptimizer implements FlowChartOptimizer {
                             newAnswerSetNode.setNextNode(answerSetNode.getNextNode());
 
                             /* Replace old node */
+                            nd.removeAnswer(c.relatedAnswer);
                             nd.setNodeFor(c.relatedAnswer, newAnswerSetNode);
                             fcs.remove(answerSetNode);
                         }
@@ -168,6 +170,7 @@ public class EagerSetCallsOptimizer implements FlowChartOptimizer {
                         newAnswerSetNode.setNextNode(answerNode);
 
                         /* Replace old node */
+                        nd.removeAnswer(c.relatedAnswer);
                         nd.setNodeFor(c.relatedAnswer, newAnswerSetNode);
                         fcs.remove(answerNode);
 
