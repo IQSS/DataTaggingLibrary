@@ -55,7 +55,7 @@ public class CallNode extends ThroughNode {
         if (!Objects.equals(this.calleeNodeId, other.calleeNodeId)) {
             return false;
         }
-        return equalsAsNode(other);
+        return Objects.equals(getId(), other.getId());
     }
 
     @Override

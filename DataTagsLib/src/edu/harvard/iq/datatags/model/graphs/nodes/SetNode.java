@@ -25,7 +25,7 @@ public class SetNode extends ThroughNode {
 	public <R> R accept(Visitor<R> vr) throws DataTagsRuntimeException {
 		return vr.visit( this );
 	}
-
+	
 	public CompoundValue getTags() {
 		return tags;
 	}
@@ -52,7 +52,7 @@ public class SetNode extends ThroughNode {
             return false;
         }
         final SetNode other = (SetNode) obj;
-
+        
         return Objects.equals(this.tags, other.tags) && equalsAsNode(other);
     }
     

@@ -2,6 +2,7 @@ package edu.harvard.iq.datatags.cli;
 
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
@@ -21,7 +22,11 @@ class BriefNodePrinter extends Node.VoidVisitor {
     public BriefNodePrinter(CliRunner rnr) {
         this.rnr = rnr;
     }
-
+    
+    @Override
+    public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
+        rnr.println("[>%s< consider: ]", nd.getId());
+    }
     @Override
     public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
         rnr.println("[>%s< ask: %s]", nd.getId(), rnr.truncateAt(nd.getText(), WIDTH-nd.getId().length()));

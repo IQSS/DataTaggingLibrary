@@ -4,12 +4,14 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
 
 /**
- * When a computation gets to {@code this} node, it is set to "reject" mode, and halted.
- * In effect, this means that the dataset cannot be accepted to the repository,
+ * When a computation gets to {@code this} node, it is set to "reject" mode, and
+ * halted. In effect, this means that the dataset cannot be accepted to the
+ * repository,
+ *
  * @author michael
  */
 public class RejectNode extends TerminalNode {
-    
+
     private final String reason;
 
     public RejectNode(String id, String reason) {
@@ -26,6 +28,8 @@ public class RejectNode extends TerminalNode {
         return vr.visit(this);
     }
 
+    
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -38,7 +42,7 @@ public class RejectNode extends TerminalNode {
         if (obj == null) {
             return false;
         }
-        if ( ! (obj instanceof RejectNode) ) {
+        if (!(obj instanceof RejectNode)) {
             return false;
         }
         final RejectNode other = (RejectNode) obj;
@@ -49,5 +53,5 @@ public class RejectNode extends TerminalNode {
     public String toStringExtras() {
         return "reason:" + reason;
     }
-    
+
 }

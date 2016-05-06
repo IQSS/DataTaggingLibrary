@@ -2,6 +2,7 @@ package edu.harvard.iq.datatags.model.graphs;
 
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
@@ -81,6 +82,16 @@ public class DecisionGraph {
     public <T extends Node> T add(T n) {
         n.accept(new Node.VoidVisitor() {
 
+            
+            @Override
+            public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
+                nodes.put(nd.getId(), nd);
+                for (ConsiderAnswer ans : nd.getAnswers()) {
+                    if (nd.getNodeFor(ans) != null) {
+                        nd.getNodeFor(ans).accept(this);
+                    }
+                }
+            }
             @Override
             public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
                 nodes.put(nd.getId(), nd);
