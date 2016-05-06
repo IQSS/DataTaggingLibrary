@@ -37,27 +37,22 @@ public class DecisionGraphCliRunner {
             
             Path decisionGraphPath = Paths.get(args[args.length-1]);
             if ( ! Files.exists(decisionGraphPath) ) {
-               cliRunner.printWarning("File %s not found", decisionGraphPath.toString());
+               cliRunner.printWarning("File %s not found", tagSpace.toString());
                System.exit(2);
             }
-            
-            try {
-                CompoundType definitions = parseDefinitions(tagSpace);
 
-                DecisionGraphParser fcsParser = new DecisionGraphParser();
+            CompoundType definitions = parseDefinitions(tagSpace);
 
-                System.out.println("Reading decision graph: " + decisionGraphPath );
-                System.out.println(" (full:  " + decisionGraphPath.toAbsolutePath() + ")" );
+            DecisionGraphParser fcsParser = new DecisionGraphParser();
 
-                DecisionGraph dg = fcsParser.parse(decisionGraphPath).compile(definitions);
+            System.out.println("Reading decision graph: " + decisionGraphPath );
+            System.out.println(" (full:  " + decisionGraphPath.toAbsolutePath() + ")" );
 
-                cliRunner.setDecisionGraph(dg);
-                cliRunner.setTagSpacePath(tagSpace);
-                cliRunner.setDecisionGraphPath(decisionGraphPath);
-                
-            } catch ( DataTagsParseException dtpe ) {
-                System.out.println("Error parsing Tags code: " + dtpe.getMessage() );
-            }
+            DecisionGraph dg = fcsParser.parse(decisionGraphPath).compile(definitions);
+
+            cliRunner.setDecisionGraph(dg);
+            cliRunner.setTagSpacePath(tagSpace);
+            cliRunner.setDecisionGraphPath(decisionGraphPath);
         }
         cliRunner.go();
         

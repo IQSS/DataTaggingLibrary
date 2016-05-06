@@ -1,0 +1,17 @@
+[set: Subject+=planet]
+
+[when: 
+        {Subject+=planet:[set: X+=a] }
+        {Subject+=moon: [set: X+=b] }
+        {else:[set: X+=e]}
+]
+[consider: 
+    {slot:Subject}
+    {options:
+        {world:[set: X+=c] }
+        {moon: [set: X+=d] }
+    }
+   {else: [set: X+=f]} <---------optional
+]
+
+[end]

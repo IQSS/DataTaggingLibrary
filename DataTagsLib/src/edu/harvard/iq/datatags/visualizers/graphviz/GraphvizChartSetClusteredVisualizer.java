@@ -11,6 +11,8 @@ import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
+import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
+import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
@@ -98,7 +100,18 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
                             answerNode.accept(this);
                         }
                     }
-
+                    
+                    @Override
+                    public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
+                        for (ConsiderAnswer n : nd.getAnswers()) {
+                            Node answerNode = nd.getNodeFor(n);
+                            candidates.remove(answerNode);
+                            answerNode.accept(this);
+                        }
+                        candidates.remove(nd.getElseNode());
+                        nd.getElseNode().accept(this);
+                    }
+                    
                     @Override
                     public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
                         candidates.remove(nd.getNextNode());
@@ -138,6 +151,29 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
 			nodes.clear();
 			edges.clear();
 		}
+        
+        @Override
+        public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
+
+            nodes.add(node(nodeId(nd))
+                    .shape(GvNode.Shape.oval)
+                    .label(idLabel(nd) + "consider\n")
+                    .gv());
+            for (ConsiderAnswer ans : nd.getAnswers()) {
+                StringBuilder label = new StringBuilder();
+                for (TagType tt : ans.getAnswer().getTypesWithNonNullValues()) {
+                    label.append(tt.getName())
+                            .append("=")
+                            .append(ans.getAnswer().get(tt).accept(valueNamer))
+                            .append("\n");
+                }
+
+                edges.add(edge(nodeId(nd), nodeId(nd.getNodeFor(ans))).tailLabel(label.toString()).gv());
+                targets.add(nd.getNodeFor(ans));
+            }
+            edges.add(edge(nodeId(nd), nodeId(nd.getElseNode())).tailLabel("else").gv());
+            targets.add(nd.getElseNode());
+        }
 		
 		@Override
 		public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
@@ -313,3 +349,4 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
         return theGraph;
     }
 }
+ 

@@ -2,6 +2,7 @@ package edu.harvard.iq.datatags.cli;
 
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
@@ -20,7 +21,18 @@ class VerboseNodePrinter extends Node.VoidVisitor {
     public VerboseNodePrinter(CliRunner rnr) {
         this.rnr = rnr;
     }
-
+    @Override
+    public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
+        rnr.printTitle("Node >%s<: [consider:]", nd.getId());
+       
+       
+        rnr.println("ans: ");
+        nd.getAnswers().forEach((a) -> {
+            rnr.print(a.getAnswerText());
+            rnr.println(" -> >%s<", nd.getNodeFor(a).getId());
+        });
+        rnr.println();
+    }
     @Override
     public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
         rnr.printTitle("Node >%s<: [ask]", nd.getId());

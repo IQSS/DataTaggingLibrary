@@ -14,7 +14,7 @@ public class AstSetNode extends AstNode {
     
     public abstract static class Assignment {
         
-            public interface Visitor {
+        public interface Visitor {
             void visit( AtomicAssignment aa );
             void visit( AggregateAssignment aa );
         }
@@ -73,7 +73,8 @@ public class AstSetNode extends AstNode {
             }
             final AtomicAssignment other = (AtomicAssignment) obj;
             return Objects.equals(this.value, other.value) && Objects.equals(getSlot(), other.getSlot());
-        }   
+        }
+        
     }
     
     public static class AggregateAssignment extends Assignment {

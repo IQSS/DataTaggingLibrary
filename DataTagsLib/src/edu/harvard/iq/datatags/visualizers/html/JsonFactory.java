@@ -19,7 +19,9 @@ import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
+import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -318,6 +320,40 @@ public class JsonFactory {
             }
             
             @Override
+            public void visitImpl(ConsiderNode node) throws DataTagsRuntimeException {
+                
+                if (!visited(node))
+                {
+                    JSONObject obj   = new  JSONObject();
+                    JSONArray  answers = new JSONArray();
+                    
+                    // parse answers and sub-graphs to a JSON array
+                    for (ConsiderAnswer answer: node.getAnswers()){
+                        JSONObject answerObj= new JSONObject();
+                        Node answerNode = node.getNodeFor(answer);
+                        sanitizedPut(answerObj,"text", answer.getAnswerText(),false);
+                        answerObj.put("answer_sub_graph_id", answerNode.getId());
+                        answers.add(answerObj);
+                        createEdge(node, answerNode);
+                    }
+                    if ( node.getElseNode()!=null ) {
+                        JSONObject answerObj= new JSONObject();
+                        Node elseNode = node.getElseNode();
+                        sanitizedPut(answerObj,"text", "else",false);
+                        answerObj.put("answer_sub_graph_id", elseNode.getId());
+                        answers.add(answerObj);
+                        createEdge(node, elseNode);
+                    }
+                    
+                    obj.put("type", "AskNode");
+                    sanitizedPut(obj,"id", node.getId(), false);
+                    obj.put("answers", answers);
+                    nodes.add(obj);
+                    
+                }
+            }
+            
+            @Override
             public void visitImpl(CallNode node) throws DataTagsRuntimeException {
                 
                 if (!visited(node))
@@ -492,6 +528,20 @@ public class JsonFactory {
                             Node answerNode = nd.getNodeFor(n);
                             candidates.remove(answerNode);
                             answerNode.accept(this);
+                        }
+                    }
+                    
+                    @Override
+                    public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
+                        for ( ConsiderAnswer n : nd.getAnswers() ) {
+                            Node answerNode = nd.getNodeFor(n);
+                            candidates.remove(answerNode);
+                            answerNode.accept(this);
+                        }
+                        if ( nd.getElseNode() != null ) {
+                            Node elseNode = nd.getElseNode();
+                            candidates.remove(elseNode);
+                            elseNode.accept(this);
                         }
                     }
 

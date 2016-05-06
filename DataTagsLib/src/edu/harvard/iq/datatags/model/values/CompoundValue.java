@@ -238,7 +238,7 @@ public class CompoundValue extends TagValue {
      * @return A new DataTags object, composed from {@code this} and
      * {@code other}.
      */
-    public CompoundValue substractKeys(CompoundValue other) {
+    public CompoundValue subtractKeys(CompoundValue other) {
         if (other == null) {
             return this;
         }
@@ -249,7 +249,7 @@ public class CompoundValue extends TagValue {
 
         CompoundValue result = getType().createInstance();
 
-        Set<TagType> substractedSet = C.substractSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues());
+        Set<TagType> substractedSet = C.subtractSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues());
 
         /* Check if any key left */
         if (substractedSet.isEmpty()) {

@@ -99,10 +99,6 @@ public class MatchResultToSequenceCommand implements CliCommand {
                     throw new RuntimeException("Set success is not a failure.");
                 }
 
-                @Override
-                protected void visitImpl(TagValueLookupResult.SyntaxError serr) {
-                   rnr.printWarning("Syntax Error: %s\n  %s", serr.getExpression(), serr.getHint());
-                }
             });
         } catch ( DataTagsParseException dpe ) {
             rnr.printWarning( dpe.getMessage() );

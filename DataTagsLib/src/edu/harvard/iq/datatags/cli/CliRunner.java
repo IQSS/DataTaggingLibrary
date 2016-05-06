@@ -10,6 +10,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
+import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.RuntimeEngineStatus;
@@ -473,6 +474,9 @@ public class CliRunner {
                 @Override
                 public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
                 }
+                
+                @Override
+                public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {}
             });
         }
 

@@ -15,39 +15,7 @@ public abstract class TagValue {
 		R visitAggregateValue(AggregateValue v);
 		R visitCompoundValue(CompoundValue aThis);
 	}
-    
-    public static abstract class VoidVisitor implements Visitor<Void>{
 
-        @Override
-        public Void visitToDoValue(ToDoValue v) {
-            visitTodoValueImpl(v);
-            return null;
-        }
-
-        @Override
-        public Void visitAtomicValue(AtomicValue v) {
-            visitAtomicValueImpl(v);
-            return null;
-        }
-
-        @Override
-        public Void visitAggregateValue(AggregateValue v) {
-            visitAggregateValueImpl(v);
-            return null;
-        }
-
-        @Override
-        public Void visitCompoundValue(CompoundValue aThis) {
-            visitCompoundValueImpl(aThis);
-            return null;
-        }
-
-        protected abstract void visitTodoValueImpl(ToDoValue v);
-        protected abstract void visitAtomicValueImpl(AtomicValue v);
-        protected abstract void visitAggregateValueImpl(AggregateValue v);
-        protected abstract void visitCompoundValueImpl(CompoundValue v);
-    }
-    
 	public interface Function {
 		public TagValue apply(TagValue v);
 	}

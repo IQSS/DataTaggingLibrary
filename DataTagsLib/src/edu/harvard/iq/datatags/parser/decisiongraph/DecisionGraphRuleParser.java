@@ -5,6 +5,8 @@ import static edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphTerminal
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNodeHead;
@@ -19,7 +21,6 @@ import static java.util.stream.Collectors.toList;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
 import org.codehaus.jparsec.Terminals;
-import org.codehaus.jparsec.internal.util.Strings;
 
 /**
  * Parses the terminals of a decision graph code into an AST.
@@ -137,6 +138,57 @@ public class DecisionGraphRuleParser {
             (_s, _name, _c, answers, _e) -> answers );
     }
     
+    final static Parser<List<String>> SLOT_SUBNODE = Parsers.sequence(
+            nodeStructurePart("{"),
+            nodeStructurePart("slot"),
+            nodeStructurePart(":"),
+            Terminals.identifier().sepBy(nodeStructurePart("/")),
+            nodeStructurePart("}"),
+            (_s, _t, _c, slot, _e) -> slot
+    );
+
+    final static Parser<List<? extends AstNode>> ELSE_SUBGRAPH(Parser<List<? extends AstNode>> bodyParser) {
+        return Parsers.sequence(
+                nodeStructurePart("{"),
+                nodeStructurePart("else"),
+                nodeStructurePart(":"),
+                bodyParser,
+                nodeStructurePart("}"),
+                (_s, _t, _c, elseNode, _e) -> elseNode
+        );
+    }
+     final static Parser<AstConsiderAnswerSubNode> considerAnswerSubNode(Parser<List<? extends AstNode>> bodyParser) {
+        return Parsers.sequence(
+                nodeStructurePart("{"),
+                Terminals.identifier().sepBy(nodeStructurePart(",")),
+                nodeStructurePart(":"),
+                bodyParser,
+                nodeStructurePart("}"),
+                (_s, answer, _c, body, _e) -> new AstConsiderAnswerSubNode(answer, body));
+
+    }
+
+    final static Parser<List<AstConsiderAnswerSubNode>> considerAnswersSubNode(Parser<List<? extends AstNode>> bodyParser) {
+        return Parsers.sequence(
+                nodeStructurePart("{"),
+                nodeStructurePart("options"),
+                nodeStructurePart(":"),
+                considerAnswerSubNode(bodyParser).many1(),
+                nodeStructurePart("}"),
+                (_s, _name, _c, answers, _e) -> answers);
+    }
+
+    final static Parser<AstConsiderAnswerSubNode> WhenAnswerSubNode(Parser<List<? extends AstNode>> bodyParser) {
+        return Parsers.sequence(
+                nodeStructurePart("{"),
+                Parsers.or(ATOMIC_ASSIGNMENT_SLOT, AGGREGATE_ASSIGNMENT_SLOT).sepBy(nodeStructurePart(";")),
+                nodeStructurePart(":"),
+                bodyParser,
+                nodeStructurePart("}"),
+                (_s, answer, _c, body, _e) -> new AstConsiderAnswerSubNode(answer, body));
+
+    }
+    
     // -------------------------------
     // Top-level (instruction) nodes.
     // -------------------------------
@@ -192,19 +244,44 @@ public class DecisionGraphRuleParser {
                 ( head, text, terms, answers, _e) -> new AstAskNode( head.getId(), text, terms, answers ));
     }       
     
-    
+    final static Parser<AstConsiderNode> considerNode(Parser<List<? extends AstNode>> bodyParser
+    ) {
+        return Parsers.sequence(Parsers.sequence(
+                nodeStructurePart("["),
+                nodeHead("consider"),
+                nodeStructurePart(":"),
+                (_s, h, _c) -> h),
+                SLOT_SUBNODE,
+                considerAnswersSubNode(bodyParser),
+                ELSE_SUBGRAPH(bodyParser).optional(),
+                nodeStructurePart("]"),
+                (head, slot, answers, elseNode, _e) -> new AstConsiderNode(head.getId(), slot, answers, elseNode));
+    }
+
+    final static Parser<AstConsiderNode> whenNode(Parser<List<? extends AstNode>> bodyParser
+    ) {
+        return Parsers.sequence(
+                Parsers.sequence(
+                        nodeStructurePart("["),
+                        nodeHead("when"),
+                        nodeStructurePart(":"),
+                        (_s, h, _c) -> h),
+                WhenAnswerSubNode(bodyParser).until(Parsers.or(ELSE_SUBGRAPH(bodyParser),nodeStructurePart("]"))),
+                ELSE_SUBGRAPH(bodyParser).optional(),
+                nodeStructurePart("]"),
+                (head, answers, elseNode, _e) -> new AstConsiderNode(head.getId(), null, answers, elseNode));
+    }
+
     // -------------------------------
     // Program-level parsers.
     // -------------------------------
-    
     final static Parser<List<? extends AstNode>> graphParser() {
         Parser.Reference<List<? extends AstNode>> nodeListParserRef = Parser.newReference();
-        Parser<? extends AstNode> singleAstNode = Parsers.or( END_NODE, CALL_NODE, TODO_NODE, REJECT_NODE, SET_NODE, askNode(nodeListParserRef.lazy()));
+        Parser<? extends AstNode> singleAstNode = Parsers.or(END_NODE, CALL_NODE, TODO_NODE, REJECT_NODE, SET_NODE,
+                askNode(nodeListParserRef.lazy()), considerNode(nodeListParserRef.lazy()), whenNode(nodeListParserRef.lazy()));
         Parser<List<? extends AstNode>> nodeSequence = singleAstNode.many().cast();
-        nodeListParserRef.set( nodeSequence );
-        
+        nodeListParserRef.set(nodeSequence);
+
         return nodeSequence;
     }
-    
-  
 }

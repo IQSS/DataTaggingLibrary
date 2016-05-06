@@ -3,6 +3,8 @@ package edu.harvard.iq.datatags.parser.decisiongraph;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNodeHead;
@@ -339,6 +341,48 @@ public class DecisionGraphRuleParserTest {
                                     + "}"));
     }
     
+    @Test
+    public void testConsiderNode() {
+        String program = "[>44< consider:\n"
+                + "  {slot:Greeting } \n"
+                + "  {options: \n"
+                + "  	{hello:[set: Subject+= world] \n}}"
+                + "  {else:  [set:Subject+=planet] }]\n"
+                + "[end]";
+        List<? extends AstNode> expected = asList(
+                new AstConsiderNode("44", asList("Greeting"),
+                        asList(new AstConsiderAnswerSubNode(
+                                asList("hello"),
+                                asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("world"))))))),
+                        asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("planet")))))),
+                new AstEndNode(null)
+        );
+
+        Parser<List<? extends AstNode>> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.graphParser());
+
+        assertEquals(expected, sut.parse(program));
+    }
+
+    @Test
+    public void testWhenNode() {
+        String program = "[>44< when:\n"
+                + "  	{Greeting=hello:[set: Subject+= world] \n}"
+                + "  {else:  [set:Subject+=planet] }]\n"
+                + "[end]";
+        List<? extends AstNode> expected = asList(
+                new AstConsiderNode("44", null,
+                        asList(new AstConsiderAnswerSubNode(
+                                asList(new AstSetNode.AtomicAssignment(asList("Greeting"), "hello")),
+                                asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("world"))))))),
+                        asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("planet")))))),
+                new AstEndNode(null)
+        );
+
+        Parser<List<? extends AstNode>> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.graphParser());
+
+        assertEquals(expected, sut.parse(program));
+    }
+
     @Test
     public void askNodeTest() {
         Parser<List<? extends AstNode>> bodyParser = 
