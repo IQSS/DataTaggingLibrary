@@ -30,7 +30,7 @@ public class EndNode extends TerminalNode {
     public boolean equals( Object o ) {
         if ( o == null ) return false;
         if ( o instanceof EndNode ) {
-            return Objects.equals(getId(), ((Node)o).getId() );
+            return equalsAsNode((Node)o);
         } else {
             return false;
         }

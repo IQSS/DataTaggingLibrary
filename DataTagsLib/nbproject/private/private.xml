@@ -15,6 +15,7 @@
         </group>
 >>>>>>> 3e85a56f4c480fd33c660bb30999ba6bf4a8e64b
         <group name="DataTags">
+<<<<<<< HEAD
             <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/test/edu/harvard/iq/datatags/parser/decisiongraph/DecisionGraphRuleParserTest.java</file>
             <file>jar:file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/lib/jparsec-2.3-SNAPSHOT-sources.jar!/org/codehaus/jparsec/Scanners.java</file>
             <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/decisiongraph/DecisionGraphTerminalParser.java</file>
@@ -24,6 +25,10 @@
             <file>file:/C:/Users/yonatan/Dropbox/school/dataTags/DataTaggingLibrary/DataTagsLib/test/edu/harvard/iq/datatags/visualizers/html/TagSpaceToJSONTest.java</file>
             <file>file:/C:/Users/yonatan/Dropbox/school/dataTags/DataTaggingLibrary/DataTagsLib/test/edu/harvard/iq/datatags/visualizers/html/DesicionGraphToJSONTest.java</file>
             <file>file:/C:/Users/yonatan/Dropbox/school/dataTags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/visualizers/html/JsonFactory.java</file>
+=======
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/tagspace/TagSpaceParser.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/tagspace/TagSpaceParseResult.java</file>
+>>>>>>> master
         </group>
     </open-files>
 </project-private>

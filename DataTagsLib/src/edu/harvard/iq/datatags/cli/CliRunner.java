@@ -90,6 +90,7 @@ public class CliRunner {
                 new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
                 new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand(), 
                 new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand(),
+                new OptimizeDecisionGraphCommand(),
                 new toJsonCommand()
         ).forEach(c -> commands.put(c.command(), c));
         
@@ -220,7 +221,6 @@ public class CliRunner {
                     Logger.getLogger(CliRunner.class.getName()).log(Level.SEVERE, "Java stack trace:", ex);
                 }
             }
-
         } 
     }
 
@@ -239,10 +239,10 @@ public class CliRunner {
         println(ask.getText());
         if (!ask.getTermNames().isEmpty()) {
             println(" Terms:");
-            for (String termName : ask.getTermNames()) {
+            ask.getTermNames().forEach( termName -> {
                 print(" * " + termName + ":\n");
                 println("\t" + ask.getTermText(termName));
-            }
+            });
         }
         println("Possible Answers:");
         ask.getAnswers().forEach(ans -> println(" - " + ans.getAnswerText()));
