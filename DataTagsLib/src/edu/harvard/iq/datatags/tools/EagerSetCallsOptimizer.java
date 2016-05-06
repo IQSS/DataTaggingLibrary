@@ -9,6 +9,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
+import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
@@ -130,7 +131,7 @@ public class EagerSetCallsOptimizer implements FlowChartOptimizer {
 
                         newAnswerValues = newAnswerValues.composeWith(c.mustAdd);
 
-                        newAnswerValues = newAnswerValues.substractKeys(sharedValues);
+                        newAnswerValues = newAnswerValues.subtractKeys(sharedValues);
 
                         /* If new SetNode should be empty */
                         if (null == newAnswerValues) {
@@ -158,7 +159,7 @@ public class EagerSetCallsOptimizer implements FlowChartOptimizer {
                         }
 
                         // If so - make sure we are not populating them to the parent
-                        CompoundValue valuesToBeAdded = c.mustAdd.substractKeys(sharedValues);
+                        CompoundValue valuesToBeAdded = c.mustAdd.subtractKeys(sharedValues);
                         if (valuesToBeAdded == null) {
                             continue;
                         }
@@ -247,6 +248,8 @@ public class EagerSetCallsOptimizer implements FlowChartOptimizer {
             public Conclusion visitImpl(CallNode nd) throws DataTagsRuntimeException {
                 return null;
             }
+            
+            
 
             @Override
             public Conclusion visitImpl(TodoNode nd) throws DataTagsRuntimeException {
@@ -261,6 +264,12 @@ public class EagerSetCallsOptimizer implements FlowChartOptimizer {
             @Override
             public Conclusion visitImpl(EndNode nd) throws DataTagsRuntimeException {
                 return null;
+            }
+
+            @Override
+            public Conclusion visit(ConsiderNode nd) throws DataTagsRuntimeException {
+                System.out.println("IN CONSIDER NODE");
+                return null; // TODO support this as well. Should be pretty close to [ask].
             }
         };
 
@@ -296,7 +305,7 @@ public class EagerSetCallsOptimizer implements FlowChartOptimizer {
     /**
      * Recursive Information Struct
      */
-    private static class Conclusion {
+    public static class Conclusion {
         public String nodeId;
         public CompoundValue values;
         public CompoundValue mustAdd;

@@ -1,9 +1,11 @@
 package edu.harvard.iq.datatags.tools.queries;
 
 import edu.harvard.iq.datatags.model.graphs.Answer;
+import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
@@ -12,10 +14,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Deque;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * Gets a decision graph and a {@link CompoundValue}, and returns all the runs
@@ -72,7 +71,25 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
             });
             currentTrace.removeLast();
         }
-
+        
+        @Override
+        public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
+            currentTrace.addLast( nd );
+            boolean matchFound = false;
+            for (ConsiderAnswer ans : nd.getAnswers()) {
+                CompoundValue answer = ans.getAnswer();
+                if (valueStack.peek().isSupersetOf(answer)) {
+                    matchFound = true;
+                    nd.getNodeFor(ans).accept(this);
+                }
+            }
+            if ( ! matchFound ) {
+                nd.getElseNode();
+            }
+            
+            currentTrace.removeLast();
+        }
+        
         @Override
         public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
             currentTrace.addLast(nd);

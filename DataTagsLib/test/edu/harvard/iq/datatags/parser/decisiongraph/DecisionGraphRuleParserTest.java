@@ -354,7 +354,50 @@ public class DecisionGraphRuleParserTest {
                         + "    {no: [>no-end< end]} "
                         + "}]"));
     }
+    
+    @Test
+    public void testConsiderNode() {
+        String program = "[>44< consider:\n"
+                + "  {slot:Greeting } \n"
+                + "  {options: \n"
+                + "  	{hello:[set: Subject+= world] \n}}"
+                + "  {else:  [set:Subject+=planet] }]\n"
+                + "[end]";
+        List<? extends AstNode> expected = asList(
+                new AstConsiderNode("44", asList("Greeting"),
+                        asList(new AstConsiderAnswerSubNode(
+                                asList("hello"),
+                                asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("world"))))))),
+                        asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("planet")))))),
+                new AstEndNode(null)
+        );
 
+        Parser<List<? extends AstNode>> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.graphParser());
+
+        assertEquals(expected, sut.parse(program));
+    }
+
+    @Test
+    public void testWhenNode() {
+        String program = "[>44< when:\n"
+                + "  	{Greeting=hello:[set: Subject+= world] \n}"
+                + "  {else:  [set:Subject+=planet] }]\n"
+                + "[end]";
+        List<? extends AstNode> expected = asList(
+                new AstConsiderNode("44", null,
+                        asList(new AstConsiderAnswerSubNode(
+                                asList(new AstSetNode.AtomicAssignment(asList("Greeting"), "hello")),
+                                asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("world"))))))),
+                        asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("planet")))))),
+                new AstEndNode(null)
+        );
+
+        Parser<List<? extends AstNode>> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.graphParser());
+
+        assertEquals(expected, sut.parse(program));
+    }
+
+    
     @Test
     public void smallProgramTest() {
         String program = "[>44< ask:\n"
@@ -386,48 +429,5 @@ public class DecisionGraphRuleParserTest {
 
         assertEquals(expected, sut.parse(program));
     }
-
-    @Test
-    public void testConsiderNode() {
-        String program = "[>44< consider:\n"
-                + "  {slot:Greeting } \n"
-                + "  {options: \n"
-                + "  	{hello:[set: Subject+= world] \n}}"
-                + "  {else:  [set:Subject+=planet] }]\n"
-                + "[end]";
-        List<? extends AstNode> expected = asList(
-                new AstConsiderNode("44", asList("Greeting"),
-                        asList(new AstConsiderAnswerSubNode(
-                                asList("hello"),
-                                asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("world"))))))),
-                        asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("planet")))))),
-                new AstEndNode(null)
-        );
-
-        Parser<List<? extends AstNode>> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.graphParser());
-
-        assertEquals(expected, sut.parse(program));
-    }
-
-    @Test
-    public void testWhenNode() {
-        String program = "[>44< when:\n"
-           
-                + "  	{Greeting=hello:[set: Subject+= world] \n}"
-                + "  {else:  [set:Subject+=planet] }]\n"
-                + "[end]";
-        List<? extends AstNode> expected = asList(
-                new AstConsiderNode("44", null,
-                        asList(new AstConsiderAnswerSubNode(
-                                asList(new AstSetNode.AtomicAssignment(asList("Greeting"), "hello")),
-                                asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("world"))))))),
-                        asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("planet")))))),
-                new AstEndNode(null)
-        );
-
-        Parser<List<? extends AstNode>> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.graphParser());
-
-        assertEquals(expected, sut.parse(program));
-    }
-
+  
 }

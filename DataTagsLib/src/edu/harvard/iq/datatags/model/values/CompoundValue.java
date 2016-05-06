@@ -41,7 +41,6 @@ public class CompoundValue extends TagValue {
         fields.remove(type);
     }
 
-
     public TagValue get(TagType type) {
         if (getType().getFieldTypes().contains(type)) {
             return fields.get(type);
@@ -105,6 +104,36 @@ public class CompoundValue extends TagValue {
     }
 
     /**
+     * Checks whether:
+     * <ul>
+     * <li>{@code this} instance agrees on all the values defined in
+     * {@code other}, and</li>
+     * <li>{@code other} has no fields missing from {@code this}.</li>
+     * </ul>
+     *
+     * @param other
+     * @return {@code true} iff {@code this} is a superset of {@code other}, as
+     * defined above.
+     */
+    public boolean isSupersetOf(CompoundValue other) {
+        if (!(getTypesWithNonNullValues().containsAll(other.getTypesWithNonNullValues()))) {
+            // condition 2 unsatisfied - other has more defined fields than this
+            return false;
+        }
+
+        for (TagType type : getTypesWithNonNullValues()) {
+            TagValue ourValue = get(type);
+            TagValue otherValue = other.get(type);
+            if (otherValue != null) {
+                if (!ourValue.accept(new SubsetComparator()).test(otherValue)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * Returns a copy with values of both {@code this} and {@code other}. For
      * each value type T, the composition is as follows:
      * <ul>
@@ -125,7 +154,7 @@ public class CompoundValue extends TagValue {
      * {@link #getOwnableInstance()}.
      *
      * @param other
-     * @return A new DataTags object, composed from {@code this} and
+     * @return A new CompoundValue object, composed from {@code this} and
      * {@code other}.
      */
     public CompoundValue composeWith(CompoundValue other) {
@@ -155,35 +184,88 @@ public class CompoundValue extends TagValue {
         }
         return result;
     }
- /**
-     * Checks whether:
-     * <ul>
-     * <li>{@code this} instance agrees on all the values defined in {@code other}, and</li>
-     * <li>{@code other} has no fields missing from {@code this}.</li>
-     * </ul>
+
+    /**
+     * Returns a copy with only values shared by {@code this} and {@code other}.
+     * For each value type T, the intersection will occur <b>only</b> if both
+     * values are equal.
+     *
+     * Note: if {@code other} is {@code null}, this method behaves as
+     * {@link #getOwnableInstance()}.
+     *
      * @param other
-     * @return {@code true} iff {@code this} is a superset of {@code other}, as defined above.
+     * @return A new DataTags object, composed from {@code this} and
+     * {@code other}.
      */
-    public boolean isSupersetOf( CompoundValue other ) {
-        if ( !(getTypesWithNonNullValues().containsAll(other.getTypesWithNonNullValues())) ) {
-            // condition 2 unsatisfied - other has more defined fields than this
-            return false;
+    public CompoundValue intersectWith(CompoundValue other) {
+        int count = 0;
+        if (other == null) {
+            return getOwnableInstance();
         }
-        
-        for( TagType type : getTypesWithNonNullValues() ){
-            TagValue ourValue = get( type );
-            TagValue otherValue = other.get(type);
-            if ( otherValue != null ) {
-                if ( ! ourValue.accept(new SubsetComparator()).test(otherValue) ) {
-                    return false;
+        if (!getType().equals(other.getType())) {
+            throw new RuntimeException("Cannot compose values of different types (" + getType() + " and " + other.getType() + ")");
+        }
+
+        CompoundValue result = getType().createInstance();
+
+        // Composing. Note that for each type in types, at least one object has a non-null value
+        for (TagType tp : C.intersectSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
+            TagValue ours = get(tp);
+            TagValue its = other.get(tp);
+
+            /* if both tags were found */
+            if ((ours != null) && (its != null)) {
+                if (ours.equals(its)) {
+                    result.set(ours.getOwnableInstance());
+                    count++;
                 }
             }
         }
-        return true;
+        if (count == 0) {
+            return null;
+        }
+        return result;
+    }
+
+    /**
+     * Returns a copy with only values types that {@code this} had and
+     * {@code other} does not.
+     *
+     * Note: if {@code other} is {@code null}, this method behaves as
+     * {@link #getOwnableInstance()}.
+     *
+     * @param other
+     * @return A new DataTags object, composed from {@code this} and
+     * {@code other}.
+     */
+    public CompoundValue subtractKeys(CompoundValue other) {
+        if (other == null) {
+            return this;
+        }
+
+        if (!getType().equals(other.getType())) {
+            throw new RuntimeException("Cannot substract values of different types (" + getType() + " and " + other.getType() + ")");
+        }
+
+        CompoundValue result = getType().createInstance();
+
+        Set<TagType> substractedSet = C.subtractSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues());
+
+        /* Check if any key left */
+        if (substractedSet.isEmpty()) {
+            return null;
+        }
+
+        // Composing. Note that for each type in types, at least one object has a non-null value
+        for (TagType tp : substractedSet) {
+            TagValue ours = get(tp);
+            result.set(ours.getOwnableInstance());
+        }
+
+        return result;
     }
 
 }
-
 
 class Resolver implements TagValue.Visitor<TagValue.Function> {
 
@@ -223,21 +305,18 @@ class Resolver implements TagValue.Visitor<TagValue.Function> {
 
     @Override
     public TagValue.Function visitCompoundValue(final CompoundValue cv) {
-        return new TagValue.Function() {
-            @Override
-            public TagValue apply(TagValue v) {
-                CompoundValue res = cv.getOwnableInstance();
-                if (v == null) {
-                    return res;
-                }
-                CompoundValue cv2 = (CompoundValue) v;
-                for (TagType tt : C.unionSet(cv2.getTypesWithNonNullValues(), cv.getTypesWithNonNullValues())) {
-                    res.set(
-                            (res.get(tt) == null) ? cv2.get(tt)
-                            : ((TagValue.Function) cv.get(tt).accept(Resolver.this)).apply(cv2.get(tt)));
-                }
+        return (TagValue v) -> {
+            CompoundValue res = cv.getOwnableInstance();
+            if (v == null) {
                 return res;
             }
+            CompoundValue cv2 = (CompoundValue) v;
+            C.unionSet(cv2.getTypesWithNonNullValues(), cv.getTypesWithNonNullValues()).stream().forEach((tt) -> {
+                res.set(
+                        (res.get(tt) == null) ? cv2.get(tt)
+                        : ((TagValue.Function) cv.get(tt).accept(Resolver.this)).apply(cv2.get(tt)));
+            });
+            return res;
         };
     }
 }
@@ -256,12 +335,12 @@ class SubsetComparator implements TagValue.Visitor<Predicate<TagValue>> {
 
     @Override
     public Predicate<TagValue> visitAggregateValue(AggregateValue thisValue) {
-        return (TagValue other)->thisValue.getValues().containsAll( ((AggregateValue)other).getValues() );
+        return (TagValue other) -> thisValue.getValues().containsAll(((AggregateValue) other).getValues());
     }
 
     @Override
     public Predicate<TagValue> visitCompoundValue(CompoundValue thisValue) {
-        return (TagValue other)->thisValue.isSupersetOf((CompoundValue)other);
+        return (TagValue other) -> thisValue.isSupersetOf((CompoundValue) other);
     }
 
 }
