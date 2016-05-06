@@ -44,7 +44,8 @@ public class OptimizeDecisionGraphCommand implements CliCommand {
             sel = new EagerSetCallsOptimizer();
         }
         if ( sel != null ) {
-            sel.optimize(rnr.getDecisionGraph());
+            // optimize using the selected optimizer.
+            rnr.setDecisionGraph(sel.optimize(rnr.getDecisionGraph()));
         } else {
             rnr.printWarning("%s is not available", res);
         }
