@@ -5,13 +5,13 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A single consider-answer, given to a {@link ConsiderNode} . In order to allow
+ * A single consider-answer, given to a {@link edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode} . In order to allow
  * object reuse (there are typically a lot of similar answers in a
  * questionnaire) instances may be pooled, which the class constructor is
  * private.
  *
- * Use {@link #get(java.lang.String)} or statically import
- * {@link #Answer(java.lang.String)} to obtain/generate instances.
+ * Use {@link #get(edu.harvard.iq.datatags.model.values.CompoundValue)} or statically import
+ * {@link #Answer(edu.harvard.iq.datatags.model.values.CompoundValue)} to obtain/generate instances.
  *
  */
 public class ConsiderAnswer {
