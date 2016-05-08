@@ -8,7 +8,7 @@ import edu.harvard.iq.datatags.model.values.ToDoValue;
  */
 public class ToDoType extends TagType {
     
-    final ToDoValue singleValue = new ToDoValue("todo", this, null);
+    final ToDoValue singleValue = new ToDoValue(this, null);
     
 	public ToDoType(String name, String info) {
 		super(name, info);

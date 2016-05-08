@@ -2,8 +2,8 @@ package edu.harvard.iq.datatags.cli;
 
 import edu.harvard.iq.datatags.tools.EagerSetCallsOptimizer;
 import edu.harvard.iq.datatags.tools.EndNodeOptimizer;
-import edu.harvard.iq.datatags.tools.FlowChartOptimizer;
 import java.util.List;
+import edu.harvard.iq.datatags.tools.DecisionGraphOptimizer;
 
 /**
  * Runs an optimizer on the decision graph.
@@ -36,7 +36,7 @@ public class OptimizeDecisionGraphCommand implements CliCommand {
             return;
         }
         
-        FlowChartOptimizer sel = null;
+        DecisionGraphOptimizer sel = null;
         
         if ( res.equals("1") ) {
             sel = new EndNodeOptimizer();

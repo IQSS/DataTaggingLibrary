@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * A reference to @{code [set XXX]} instruction.
+ * A reference to @{code [set YYY]} instruction.
  * 
  * @author Michael Bar-Sinai
  */

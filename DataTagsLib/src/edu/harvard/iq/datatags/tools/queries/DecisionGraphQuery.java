@@ -6,7 +6,7 @@ package edu.harvard.iq.datatags.tools.queries;
  */
 public interface DecisionGraphQuery {
     
-    public interface Listener {
+    interface Listener {
         void started( DecisionGraphQuery dgq );
         void matchFound( DecisionGraphQuery dgq );
         void nonMatchFound( DecisionGraphQuery dgq );

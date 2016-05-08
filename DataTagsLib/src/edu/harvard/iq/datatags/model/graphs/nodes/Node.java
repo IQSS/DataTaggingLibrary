@@ -23,7 +23,7 @@ public abstract class Node {
 
         R visit(CallNode nd) throws DataTagsRuntimeException;
 
-        R visit(TodoNode nd) throws DataTagsRuntimeException;
+        R visit(ToDoNode nd) throws DataTagsRuntimeException;
 
         R visit(EndNode nd) throws DataTagsRuntimeException;
     }
@@ -61,7 +61,7 @@ public abstract class Node {
         }
 
         @Override
-        public Void visit(TodoNode nd) throws DataTagsRuntimeException {
+        public Void visit(ToDoNode nd) throws DataTagsRuntimeException {
             visitImpl(nd);
             return null;
         }
@@ -82,7 +82,7 @@ public abstract class Node {
 
         public abstract void visitImpl(CallNode nd) throws DataTagsRuntimeException;
 
-        public abstract void visitImpl(TodoNode nd) throws DataTagsRuntimeException;
+        public abstract void visitImpl(ToDoNode nd) throws DataTagsRuntimeException;
 
         public abstract void visitImpl(EndNode nd) throws DataTagsRuntimeException;
 

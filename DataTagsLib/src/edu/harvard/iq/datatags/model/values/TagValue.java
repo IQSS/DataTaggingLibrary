@@ -17,7 +17,7 @@ public abstract class TagValue {
 	}
 
 	public interface Function {
-		public TagValue apply(TagValue v);
+        TagValue apply(TagValue v);
 	}
 
 	private final TagType type;

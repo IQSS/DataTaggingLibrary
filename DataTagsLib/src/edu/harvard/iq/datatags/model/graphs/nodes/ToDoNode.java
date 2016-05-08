@@ -7,11 +7,11 @@ import java.util.Objects;
  * A node that marks a section of the decision graph that will be implemented later.
  * @author michael
  */
-public class TodoNode extends ThroughNode {
+public class ToDoNode extends ThroughNode {
 	
 	private String todoText;
 	
-	public TodoNode(String id, String aTodoText) {
+	public ToDoNode(String id, String aTodoText) {
 		super(id);
         todoText = aTodoText;
 	}
@@ -44,10 +44,10 @@ public class TodoNode extends ThroughNode {
         if (obj == null) {
             return false;
         }
-        if ( ! (obj instanceof TodoNode) ) {
+        if ( ! (obj instanceof ToDoNode) ) {
             return false;
         }
-        final TodoNode other = (TodoNode) obj;
+        final ToDoNode other = (ToDoNode) obj;
         return (Objects.equals(this.todoText, other.todoText))
                 ? equalsAsNode(other) : false;
     }

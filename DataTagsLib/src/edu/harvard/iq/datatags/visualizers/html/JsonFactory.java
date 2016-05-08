@@ -7,7 +7,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
 import edu.harvard.iq.datatags.model.types.AtomicType;
@@ -104,21 +104,6 @@ public class JsonFactory {
         if (!checkExsit || (value !=null && value.length()>0))
             obj.put(key, value.trim());
     }
-    
-    
-    
-    
-    
-    // parse String collection to JSON Array
-    private static JSONArray parseStringCollection ( Collection c ) {
-        
-        JSONArray jArr= new JSONArray();
-        jArr.addAll(c);
-        return jArr;
-    };
-   
-    
-    
     
     /**
         Parse the tag space into a json object.
@@ -383,7 +368,7 @@ public class JsonFactory {
             }
             
             @Override
-            public void visitImpl(TodoNode node) throws DataTagsRuntimeException {
+            public void visitImpl(ToDoNode node) throws DataTagsRuntimeException {
                 
                 if (!visited(node))
                 {
@@ -520,7 +505,7 @@ public class JsonFactory {
         for ( Node n : fc.nodes() ) { candidates.add(n);}
         for ( Node n : fc.nodes() ) {
             if ( candidates.contains(n) ) {
-                n.accept( new Node.VoidVisitor(){
+                n.accept(new Node.VoidVisitor(){
                     
                     @Override
                     public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
@@ -561,7 +546,7 @@ public class JsonFactory {
                     }
 
                     @Override
-                    public void visitImpl(TodoNode nd) throws DataTagsRuntimeException {
+                    public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
                         candidates.remove(nd.getNextNode());
                         nd.getNextNode().accept(this);
                     }

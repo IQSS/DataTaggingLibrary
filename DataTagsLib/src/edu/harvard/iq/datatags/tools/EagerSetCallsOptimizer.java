@@ -7,7 +7,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.types.TagType;
@@ -26,7 +26,7 @@ import static edu.harvard.iq.datatags.util.CollectionHelper.C;
  *
  * @author eyalben
  */
-public class EagerSetCallsOptimizer implements FlowChartOptimizer {
+public class EagerSetCallsOptimizer implements DecisionGraphOptimizer {
 
     @Override
     public String getTitle() {
@@ -255,7 +255,7 @@ public class EagerSetCallsOptimizer implements FlowChartOptimizer {
             
 
             @Override
-            public Conclusion visitImpl(TodoNode nd) throws DataTagsRuntimeException {
+            public Conclusion visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
                 Node nextNode = nd.getNextNode();
                 return nextNode.accept(this);
             }
@@ -360,7 +360,7 @@ public class EagerSetCallsOptimizer implements FlowChartOptimizer {
         }
 
         @Override
-        public Conclusion visit(TodoNode nd) throws DataTagsRuntimeException {
+        public Conclusion visit(ToDoNode nd) throws DataTagsRuntimeException {
             return visitImpl(nd);
         }
 
@@ -373,7 +373,7 @@ public class EagerSetCallsOptimizer implements FlowChartOptimizer {
         public abstract Conclusion visitImpl( SetNode nd    ) throws DataTagsRuntimeException;
         public abstract Conclusion visitImpl( RejectNode nd ) throws DataTagsRuntimeException;
         public abstract Conclusion visitImpl( CallNode nd   ) throws DataTagsRuntimeException;
-        public abstract Conclusion visitImpl( TodoNode nd   ) throws DataTagsRuntimeException;
+        public abstract Conclusion visitImpl( ToDoNode nd   ) throws DataTagsRuntimeException;
         public abstract Conclusion visitImpl( EndNode nd    ) throws DataTagsRuntimeException;
 
     }

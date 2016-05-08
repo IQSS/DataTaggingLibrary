@@ -7,7 +7,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 
 /**
@@ -74,7 +74,7 @@ class VerboseNodePrinter extends Node.VoidVisitor {
     }
 
     @Override
-    public void visitImpl(TodoNode nd) throws DataTagsRuntimeException {
+    public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
         rnr.printTitle("Node >%s<: [todo]", nd.getId());
         rnr.print(nd.getTodoText());
         rnr.println();

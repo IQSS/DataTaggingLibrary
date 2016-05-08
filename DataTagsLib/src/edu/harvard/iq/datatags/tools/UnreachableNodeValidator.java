@@ -8,7 +8,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node.VoidVisitor;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
@@ -130,7 +130,7 @@ public class UnreachableNodeValidator extends VoidVisitor {
      * traversed before recursing.
      */
     @Override
-    public void visitImpl(TodoNode nd) throws DataTagsRuntimeException {
+    public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
         if (!reachedNodeIds.contains(nd.getId())) {
             reachedNodeIds.add(nd.getId());
         }

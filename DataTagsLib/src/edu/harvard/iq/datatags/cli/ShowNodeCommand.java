@@ -6,7 +6,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.List;
 

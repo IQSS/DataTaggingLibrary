@@ -7,7 +7,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.types.TagType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
@@ -90,7 +90,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
         for ( Node n : fc.nodes() ) { candidates.add(n);}
         for ( Node n : fc.nodes() ) {
             if ( candidates.contains(n) ) {
-                n.accept( new Node.VoidVisitor(){
+                n.accept(new Node.VoidVisitor(){
                     
                     @Override
                     public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
@@ -128,7 +128,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
                     }
 
                     @Override
-                    public void visitImpl(TodoNode nd) throws DataTagsRuntimeException {
+                    public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
                         candidates.remove(nd.getNextNode());
                         nd.getNextNode().accept(this);
                     }
@@ -212,7 +212,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
 		}
 		
 		@Override
-		public void visitImpl(TodoNode node) throws DataTagsRuntimeException {
+		public void visitImpl(ToDoNode node) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(node))
 							.fillColor("#AAFFAA")
 							.shape(GvNode.Shape.note)

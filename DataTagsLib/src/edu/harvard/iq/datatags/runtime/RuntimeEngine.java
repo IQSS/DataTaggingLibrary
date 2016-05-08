@@ -3,7 +3,7 @@ package edu.harvard.iq.datatags.runtime;
 import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
@@ -90,7 +90,7 @@ public class RuntimeEngine {
         }
 
         @Override
-        public Node visit(TodoNode nd) {
+        public Node visit(ToDoNode nd) {
             // Skip!
             // TODO allow engines to stop here, it's a valid use-case.
             return nd.getNextNode();

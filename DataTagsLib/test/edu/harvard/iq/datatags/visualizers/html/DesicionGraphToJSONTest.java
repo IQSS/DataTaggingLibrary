@@ -8,16 +8,13 @@ import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.*;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
 *
-* @author michael
+* @author tzulang
 */
 public class DesicionGraphToJSONTest {
     
@@ -28,34 +25,12 @@ public class DesicionGraphToJSONTest {
     public DesicionGraphToJSONTest() {
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-        
-        
-        
-        
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
     @Before
     public void setUp() {
         parser= new DecisionGraphParser();
         dg =null;
-        
-    }
-    
-    @After
-    public void tearDown() {
-    }
-    
-    private void p (JSONObject a, JSONObject b){
-        System.out.println(a);
-        System.out.println(b);
-    };
-    
+            }
+
     @Test
     public void toDoTest()throws Exception {
         

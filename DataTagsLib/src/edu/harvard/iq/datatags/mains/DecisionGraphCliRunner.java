@@ -70,7 +70,4 @@ public class DecisionGraphCliRunner {
         return new String(Files.readAllBytes(p), StandardCharsets.UTF_8);
     }
     
-    private static void printUsage() {
-        System.out.println("Please provide paths to the tag space and decision grpah files.");
-    }
 }

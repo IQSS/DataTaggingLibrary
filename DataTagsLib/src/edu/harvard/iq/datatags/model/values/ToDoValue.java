@@ -13,7 +13,7 @@ import edu.harvard.iq.datatags.model.types.ToDoType;
 public class ToDoValue extends TagValue {
     private final String info;
 
-	public ToDoValue(String name, ToDoType type, String someInfo) {
+	public ToDoValue(ToDoType type, String someInfo) {
 		super(type);
         info = someInfo;
 	}

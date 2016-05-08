@@ -4,7 +4,6 @@ import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.*;
 import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
@@ -14,32 +13,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 public class EagerSetCallOptimizerTest {
-    private DecisionGraphParser dgp;
-    private AstNodeIdProvider nodeIdProvider;
     private final String tsCode = "DataTags: consists of A, B, X, Y, Z." +
                                   "A: one of AA, BB, CC, DD, EE, FF." +
                                   "B: one of AA, BB, CC, DD, EE, FF." +
                                   "X: one of AA, BB, CC, DD, EE, FF." +
                                   "Z: one of AA, BB, CC, DD, EE, FF." +
                                   "Y: one of AA, BB, CC, DD, EE, FF.";
-
-    @BeforeClass
-    public static void setUpClass() {
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-        dgp = new DecisionGraphParser();
-        nodeIdProvider = new AstNodeIdProvider();
-    }
-
-    @After
-    public void tearDown() {
-    }
 
     private void compareAndTest(String dgCodeOriginal, String dgCodeOpt) throws DataTagsParseException {
         CompoundType ts = new TagSpaceParser().parse(tsCode).buildType("DataTags").get();
@@ -394,13 +373,13 @@ public class EagerSetCallOptimizerTest {
             return true;
         }
 
-        if (node1 instanceof TodoNode) {
-            if (!(node2 instanceof TodoNode)) {
+        if (node1 instanceof ToDoNode) {
+            if (!(node2 instanceof ToDoNode)) {
                 return false;
             }
 
-            TodoNode n1 = (TodoNode) node1;
-            TodoNode n2 = (TodoNode) node2;
+            ToDoNode n1 = (ToDoNode) node1;
+            ToDoNode n2 = (ToDoNode) node2;
             // 1. Compare text
             if (!(n1.getTodoText().equals(n2.getTodoText()))) {
                 return false;

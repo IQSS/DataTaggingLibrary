@@ -8,7 +8,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node.VoidVisitor;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -56,7 +56,7 @@ public class QuestionnaireTagValues extends VoidVisitor {
     }
 
     @Override
-    public void visitImpl(TodoNode nd) throws DataTagsRuntimeException {
+    public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
         // do nothing
     }
 

@@ -7,7 +7,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
@@ -113,7 +113,6 @@ public class DecisionGraphParseResult {
             product.setTitle(C.last(source.getPath().split("/")));
         }
 
-        // TODO Graph-level validators may go here.
         return product;
     }
 
@@ -309,7 +308,7 @@ public class DecisionGraphParseResult {
                 @Override
                 public Node visit(AstTodoNode astNode
                 ) {
-                    final TodoNode todoNode = new TodoNode(astNode.getId(), astNode.getTodoText());
+                    final ToDoNode todoNode = new ToDoNode(astNode.getId(), astNode.getTodoText());
                     todoNode.setNextNode(buildNodes(C.tail(astNodes), defaultNode));
                     return product.add(todoNode);
                 }

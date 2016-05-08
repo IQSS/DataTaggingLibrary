@@ -7,7 +7,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.TodoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.types.AggregateType;
 import edu.harvard.iq.datatags.model.types.AtomicType;
 import edu.harvard.iq.datatags.model.types.CompoundType;
@@ -101,7 +101,7 @@ public class DecisionGraphParseResultTest {
     @Test
     public void todoCallEndTest() throws Exception {
 
-        TodoNode start = new TodoNode(nodeIdProvider.nextId(), "this and that");
+        ToDoNode start = new ToDoNode(nodeIdProvider.nextId(), "this and that");
         start.setNextNode(new CallNode(nodeIdProvider.nextId(), "ghostbusters")).setNextNode(new EndNode(nodeIdProvider.nextId()));
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
@@ -125,7 +125,7 @@ public class DecisionGraphParseResultTest {
     @Test
     public void todoCallRejectTest() throws Exception {
 
-        TodoNode start = new TodoNode(nodeIdProvider.nextId(), "this and that");
+        ToDoNode start = new ToDoNode(nodeIdProvider.nextId(), "this and that");
         start.setNextNode(new CallNode(nodeIdProvider.nextId(), "ghostbusters")).setNextNode(new RejectNode(nodeIdProvider.nextId(), "obvious."));
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
