@@ -87,7 +87,7 @@ public class LoadQuestionnaireCommand implements CliCommand {
         } catch (SemanticsErrorException ex) {
             rnr.printWarning("Semantics Error: " + ex.getMessage() );
         } catch (DataTagsParseException ex) {
-            rnr.printWarning("Error parsing decisino graph: " + ex.getMessage() );
+            rnr.printWarning("Error parsing decision graph: " + ex.getMessage() );
         }
 
     }

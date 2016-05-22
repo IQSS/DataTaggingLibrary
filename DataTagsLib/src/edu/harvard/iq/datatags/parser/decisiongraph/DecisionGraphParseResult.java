@@ -213,10 +213,11 @@ public class DecisionGraphParseResult {
 
                     TagType slot = findSlot(astNode.getSlot(), topValue, valueBuilder);
 
-                    if (slot instanceof AggregateType || slot instanceof AtomicType) {//consider node
+                    if (slot instanceof AggregateType || slot instanceof AtomicType) {
+                        // Original node was [consider]
                         for (AstConsiderAnswerSubNode astAns : astNode.getAnswers()) {
                             if (astAns.getAnswerList() == null) {
-                                throw new RuntimeException(" (consider slot get only values)");
+                                throw new RuntimeException(" (consider slot gets only values, not answers)");
                             }
                             topValue = topLevelType.createInstance();
                             valueBuilder = new SetNodeValueBuilder(topValue);
@@ -226,16 +227,21 @@ public class DecisionGraphParseResult {
                             } else {
                                 assignment = new AstSetNode.AtomicAssignment(astNode.getSlot(), astAns.getAnswerList().get(0).trim());
                             }
-
+                            
+                            if ( assignment == null ) {
+                                throw new RuntimeException(new DataTagsParseException(astNode, "Error: bad assignment (at node " + astNode + ")" ) );
+                            }
                             try {
                                 assignment.accept(valueBuilder);
                             } catch (RuntimeException re) {
-                                throw new RuntimeException(" (at node " + astNode + ")");
+                                throw new RuntimeException(" (at node " + astNode + ")", re);
                             }
                             CompoundValue answer = topValue;
                             res.setNodeFor(ConsiderAnswer.Answer(answer), buildNodes(astAns.getSubGraph(), syntacticallyNext));
                         }
-                    } else if (slot instanceof CompoundType) {//when node
+                        
+                    } else if (slot instanceof CompoundType) {
+                        // Original node was [when]
                         for (AstConsiderAnswerSubNode astAns : astNode.getAnswers()) {
                             if (astAns.getAssignments() == null) {
                                 throw new RuntimeException(" (compund slot get assignment )");
@@ -250,7 +256,7 @@ public class DecisionGraphParseResult {
                                     asnmnt.accept(valueBuilder);
                                 }
                             } catch (RuntimeException re) {
-                                throw new RuntimeException(" (at node " + astNode + ")");
+                                throw new RuntimeException(" (at node " + astNode + ")", re);
                             }
                             CompoundValue answer = topValue;
                             if(res.getNodeFor(ConsiderAnswer.Answer(answer))==null)
@@ -262,8 +268,7 @@ public class DecisionGraphParseResult {
                 }
 
                 @Override
-                public Node visit(AstAskNode astNode
-                ) {
+                public Node visit(AstAskNode astNode) {
                     AskNode res = new AskNode(astNode.getId());
                     res.setText(astNode.getTextNode().getText());
                     if (astNode.getTerms() != null) {
@@ -281,8 +286,7 @@ public class DecisionGraphParseResult {
                 }
 
                 @Override
-                public Node visit(AstCallNode astNode
-                ) {
+                public Node visit(AstCallNode astNode) {
                     CallNode callNode = new CallNode(astNode.getId());
                     callNode.setCalleeNodeId(astNode.getCalleeId());
                     callNode.setNextNode(buildNodes(C.tail(astNodes), defaultNode));
@@ -290,8 +294,7 @@ public class DecisionGraphParseResult {
                 }
 
                 @Override
-                public Node visit(AstSetNode astNode
-                ) {
+                public Node visit(AstSetNode astNode) {
                     final CompoundValue topValue = topLevelType.createInstance();
                     SetNodeValueBuilder valueBuilder = new SetNodeValueBuilder(topValue);
                     try {
@@ -306,27 +309,23 @@ public class DecisionGraphParseResult {
                 }
 
                 @Override
-                public Node visit(AstTodoNode astNode
-                ) {
+                public Node visit(AstTodoNode astNode) {
                     final ToDoNode todoNode = new ToDoNode(astNode.getId(), astNode.getTodoText());
                     todoNode.setNextNode(buildNodes(C.tail(astNodes), defaultNode));
                     return product.add(todoNode);
                 }
 
                 @Override
-                public Node visit(AstRejectNode astNode
-                ) {
+                public Node visit(AstRejectNode astNode) {
                     return product.add(new RejectNode(astNode.getId(), astNode.getReason()));
                 }
 
                 @Override
-                public Node visit(AstEndNode astNode
-                ) {
+                public Node visit(AstEndNode astNode) {
                     return product.add(new EndNode(astNode.getId()));
                 }
 
-            }
-            );
+            });
         } catch (RuntimeException re) {
             Throwable cause = re.getCause();
             if ((cause != null) && (cause instanceof DataTagsParseException)) {

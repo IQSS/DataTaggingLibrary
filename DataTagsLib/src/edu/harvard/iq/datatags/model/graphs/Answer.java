@@ -16,11 +16,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author michael
  */
 public class Answer {
-	private final String answerText;
 	private static final Map<String, Answer> ANSWER_POOL = new ConcurrentHashMap<>();
 	public static final Answer YES;
 	public static final Answer NO;
 	
+	private final String answerText;
+    
     public static Answer get(String anAnswerText) {
         return Answer(anAnswerText);
     }
@@ -31,8 +32,9 @@ public class Answer {
 	}
 	
     static {
-        YES = Answer("yes");
-        NO  = Answer("no");
+        // Initialize now, when ANSWER_POOL is there.
+        YES = Answer("Yes");
+        NO  = Answer("No");
     }
     
 	private Answer(String anAnswerText) {

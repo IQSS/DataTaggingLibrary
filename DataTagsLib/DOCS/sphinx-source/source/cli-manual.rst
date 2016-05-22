@@ -84,3 +84,8 @@ visualize-ts, visualize-dg
   Create a visualization of the tag space (-ts) and the decision graph (-dg). Requires `Graphviz`_.
 
 .. _Graphviz: http://www.graphviz.org
+
+toJson
+  Create a ``json`` file describing the questionnaire. The generated file can be used to generate an interactive visualization of the questionnaire, using DataTags' `interactive visualizer`_.
+
+.. _interactive visualizer: http://iqss.github.io/DataTagsInteractiveVisualizer/

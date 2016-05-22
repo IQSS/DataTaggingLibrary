@@ -16,5 +16,6 @@ Sample toy interview
 [>ensureLegality< ask:
   {text: Did you get parental consent?}
   {answers:
-    {no: [reject: Must get parental consent before collecting data from subjects under 18.]}}]
+    {no:
+       [reject: Must get parental consent before collecting data from subjects under 18.]}}]
 [end]

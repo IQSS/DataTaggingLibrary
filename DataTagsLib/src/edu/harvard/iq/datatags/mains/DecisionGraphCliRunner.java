@@ -26,7 +26,10 @@ public class DecisionGraphCliRunner {
         cliRunner.printSplashScreen();
         
         if ( args.length < 2 ) {
-            new LoadQuestionnaireCommand().execute(cliRunner, Collections.emptyList());
+            while ( cliRunner.getDecisionGraph() == null ) {
+                // we need a loop here since loading the questionnaire may fail.
+                new LoadQuestionnaireCommand().execute(cliRunner, Collections.emptyList());
+            }
             
         } else {
             Path tagSpace = Paths.get(args[args.length-2]);

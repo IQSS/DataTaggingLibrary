@@ -156,7 +156,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
         public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
 
             nodes.add(node(nodeId(nd))
-                    .shape(GvNode.Shape.oval)
+                    .shape(GvNode.Shape.egg)
                     .label(idLabel(nd) + "consider\n")
                     .gv());
             for (ConsiderAnswer ans : nd.getAnswers()) {
