@@ -16,27 +16,8 @@ import org.junit.Test;
  *
  * @author michael
  */
-public class SimpleValueTypeTest {
+public class AtomicTypeTest {
 	
-	public SimpleValueTypeTest() {
-	}
-	
-	@BeforeClass
-	public static void setUpClass() {
-	}
-	
-	@AfterClass
-	public static void tearDownClass() {
-	}
-	
-	@Before
-	public void setUp() {
-	}
-	
-	@After
-	public void tearDown() {
-	}
-
 	/**
 	 * Test of registerValue method, of class AtomicType.
 	 */
@@ -57,5 +38,24 @@ public class SimpleValueTypeTest {
 		
 		assertEquals( new TreeSet<>(vals), instance.values() );
 	}
-	
+
+    /**
+	 * Test of registerValue method, of class AtomicType.
+	 */
+	@Test( expected=IllegalArgumentException.class )
+	public void valueOf() {
+		AtomicType instance = new AtomicType("Test", null);
+		
+		assertTrue( instance.values().isEmpty() );
+		
+		AtomicValue v1 = instance.registerValue("1", null);
+		AtomicValue v2 = instance.registerValue("2", null);
+		AtomicValue v3 = instance.registerValue("3", null);
+		
+		
+		assertEquals( "value instances shouldbe reused", v1, instance.valueOf("1") );
+		assertEquals( "value instances shouldbe reused", v2, instance.valueOf("2") );
+        instance.valueOf("a nonexistant value");
+	}
+
 }

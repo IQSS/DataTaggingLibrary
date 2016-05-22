@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.model.types;
 
 import edu.harvard.iq.datatags.model.values.*;
+import edu.harvard.iq.datatags.runtime.RuntimeEngineStatus;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,8 +48,18 @@ public class AtomicType extends TagType {
 		return v;
 	}
     
+    /**
+     * Returns the value of {@code this} type that has the passed name,
+     * @param name the name of the requested value. Case-sensitive.
+     * @return The value with the passed name.
+     * @throws IllegalArgumentException if no value by that name exists.
+     */
     public AtomicValue valueOf( String name ) {
-        return values.get(name);
+        if ( values.containsKey(name) ) {
+            return values.get(name);
+        } else {
+            throw new IllegalArgumentException("Atomic type " + getName() + " has no value '" + name + "'");
+        }
     }
 
 	@Override

@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.cli;
 
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpaceVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpacePathsVizualizer;
 import java.awt.Desktop;
 import java.io.OutputStreamWriter;
 import java.nio.file.Path;
@@ -26,7 +26,7 @@ public class VisualizeTagSpaceCommand extends DotCommand {
     @Override
     protected void executeWithDot(Path dot, CliRunner rnr, List<String> args) throws Exception {
         ProcessBuilder pb = new ProcessBuilder(dot.toString(), "-Tpdf");
-        GraphvizTagSpaceVisualizer viz = new GraphvizTagSpaceVisualizer(rnr.getDecisionGraph().getTopLevelType());
+        GraphvizTagSpacePathsVizualizer viz = new GraphvizTagSpacePathsVizualizer(rnr.getDecisionGraph().getTopLevelType());
         
         Path outputPath;
         outputPath = getOuputFilePath(rnr, args, rnr.getTagSpacePath(), "-ts");

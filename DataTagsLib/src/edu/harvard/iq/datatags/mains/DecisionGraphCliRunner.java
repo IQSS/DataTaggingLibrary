@@ -50,12 +50,24 @@ public class DecisionGraphCliRunner {
 
             System.out.println("Reading decision graph: " + decisionGraphPath );
             System.out.println(" (full:  " + decisionGraphPath.toAbsolutePath() + ")" );
-
-            DecisionGraph dg = fcsParser.parse(decisionGraphPath).compile(definitions);
-
-            cliRunner.setDecisionGraph(dg);
-            cliRunner.setTagSpacePath(tagSpace);
-            cliRunner.setDecisionGraphPath(decisionGraphPath);
+            
+            try {
+                DecisionGraph dg = fcsParser.parse(decisionGraphPath).compile(definitions);
+                cliRunner.setDecisionGraph(dg);
+                cliRunner.setTagSpacePath(tagSpace);
+                cliRunner.setDecisionGraphPath(decisionGraphPath);
+                
+            } catch ( DataTagsParseException dte ) {
+                cliRunner.printWarning("Error loading questionnaire: ");
+                cliRunner.printWarning(dte.getMessage());
+                if ( dte.getOffendingNode() != null ) {
+                    cliRunner.printWarning("Offending node: %s", dte.getOffendingNode());
+                }
+                if ( dte.getWhere()!=null ) {
+                    cliRunner.printWarning("At location: %s", dte.getWhere());
+                }
+                System.exit(2);
+            }
         }
         cliRunner.go();
         

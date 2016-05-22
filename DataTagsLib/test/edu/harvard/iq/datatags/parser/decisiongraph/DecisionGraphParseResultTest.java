@@ -236,7 +236,7 @@ public class DecisionGraphParseResultTest {
         expected.add(start);
         expected.setStart(start);
 
-        String code = "[ask: {text: Should I?} {answers: {yes:[>end-yes< end]}}][>end-no< end]";
+        String code = "[ask: {text: Should I?} {answers: {Yes:[>end-yes< end]}}][>end-no< end]";
         DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
         actual.setTopLevelType(emptyTagSpace);
 
