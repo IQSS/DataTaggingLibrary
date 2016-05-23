@@ -3,33 +3,36 @@
 Take Tags for a Spin
 ======================
 
-In order to work with Tags, take these steps:
+To start developing questionnaires using Tags and it's tools, you'll need Tags' console application, **CliRunner**. It is available from
+the `tags binaries`_ from the DataTaggingLibrary GitHub repository. There are two .zip files
+of interest in the release:
 
-* Clone the project from https://github.com/IQSS/DataTaggingLibrary.
-* When using `NetBeans IDE`_, open the cloned directory - it contains a NetBeans project.
+.. _tags binaries: https://github.com/IQSS/DataTaggingLibrary/releases
 
-  *  For other IDEs, create a project and import the code. All needed .jar files are in the ``DataTagsLib/lib`` directory.
+* **DataTags-[version_goes_here].zip** CliRunner and Java libraries. You need this one.
+* **sample-questionnaires.zip** Some sample questionnaires. Optional.
 
-* In the code, package `edu.harvard.iq.datatags.mains`_ contains classes that can be run from the command line or as an IDE target. These classes are:
+.. note::
+   CliRunner requires Java. You can freely download and install it from http://java.com.
 
-  * ``DecisionGraphCliRunner.java``: run an interactive command line interview.
-  * ``DecisionGraphCompilint.java``: Compiles and visualizes a tag space and a decision graph.
-  * ``DecisionGraphValidations.java`` and ``QuestionnaireValidations.java``: run a few validations on the graph.
+.. tip:: When coding Tags questionnaires, you may want to use the `language support package`_ for the `Atom`_ text editor.
 
-* The repository currently has a large questionnaire (tag definitions and decision graph), developed by the `Privacy Tools for Sharing Research Data`_ project, at the ``DataTagLib/WORK/dtl/0.8`` directory. Note that this questionnaire is a proof-of-concept and should not be used in real-world scenarios. Additional, simpler questionnaires are also available at that directory. Code for the documentation site (the thing you read now) is available at ``DataTagLib/DOCS/sphinx-source/source/tutorial/code/``.
-* When coding Tags questionnaires, you may want to use our `language support package`_ for the `Atom`_ text editor.
-
-.. _NetBeans IDE: http://www.netbeans.org
-.. _edu.harvard.iq.datatags.mains: https://github.com/IQSS/DataTaggingLibrary/tree/master/DataTagsLib/src/edu/harvard/iq/datatags/mains
-.. _Privacy Tools for Sharing Research Data: http://http://privacytools.seas.harvard.edu
 .. _Atom: https://atom.io/
 .. _language support package: https://atom.io/packages/language-datatags
+
+Download and extract the **DataTags-1.0-beta.zip** file (the version number may be different, this is an example). Using a console, naviagte to the newly extracted  directory, and type::
+
+  java -jar DataTagsLib.jar
+
+You should see the DataTags logo, followd by a prompt for a tags space file.
 
 The CliRunner
 -----------------------
 
-.. image:: /img/CliRunner.png
+.. figure:: /img/CliRunner.png
    :align: center
+
+   The CliRunner application is a swiss-army knife tool for questionnaire developers
 
 The DataTaggingLibrary comes with a command line tool for developing questionnaires. It allows for:
 
@@ -38,11 +41,13 @@ The DataTaggingLibrary comes with a command line tool for developing questionnai
 * *Visualizations* (requires `graphviz`_)
 * Run inspections - trace, stack status, tag status
 
-.. _graphviz: http://www.graphviz.org
+  .. _graphviz: http://www.graphviz.org
 
 While developing the questionnaire, it is useful to keep a CliRunner open. The user can reload the
 questionnaire by typing ``\reload`` on the console when needed.
 
-Main class for CliRunner is ``edu.harvard.iq.datatags.mains.DecisionGraphCliRunner``. The class takes two parameters - path to the definitions file, and a path to the decision graph file. It is also the main class for the .jar file, so it is also available for invocation via ``java -jar DataTagsLib.jar``.
+To start CliRunner with a specific questionnaire, pass the tagspace and decision graph as parameters, like so::
+
+  java -jar DataTagsLib.jar path/to/tag-space.ts path/to/decision-graph.dg
 
 .. tip :: For a more structured introduction, see the :doc:`tutorial/index`
