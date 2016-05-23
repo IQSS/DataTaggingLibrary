@@ -23,14 +23,16 @@ public class AggregateValue extends TagValue {
 		super(type);
 	}
 	
+    /**
+     * Returns an unmodifiable list of the values in {@code this} value.
+     * @return members of this aggregation.
+     */
 	public Set<AtomicValue> getValues() {
 		return Collections.unmodifiableSet(values);
 	}
 	
 	public void add( Collection<? extends AtomicValue> valueCollection ) {
-		for ( AtomicValue v : valueCollection ) {
-			add( v );
-		}
+        valueCollection.stream().forEach( this::add );
 	}
 	
     @Override

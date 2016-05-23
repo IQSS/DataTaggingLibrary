@@ -13,7 +13,7 @@ public abstract class TagValue {
 		R visitToDoValue(ToDoValue v);
 		R visitAtomicValue(AtomicValue v);
 		R visitAggregateValue(AggregateValue v);
-		R visitCompoundValue(CompoundValue aThis);
+		R visitCompoundValue(CompoundValue v);
 	}
 
 	public interface Function {

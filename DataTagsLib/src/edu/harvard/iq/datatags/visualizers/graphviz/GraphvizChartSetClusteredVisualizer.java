@@ -65,13 +65,13 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
         public String visitCompoundValue(CompoundValue aThis) {
             StringBuilder sb = new StringBuilder();
             sb.append("[");
-            for ( SlotType tt : aThis.getTypesWithNonNullValues() ) {
+            for ( SlotType tt : aThis.getNonEmptySubSlotTypes() ) {
                 sb.append( tt.getName() );
                 sb.append(":");
                 sb.append( aThis.get(tt).accept(this) );
                 sb.append( " " );
             }
-            if ( ! aThis.getTypesWithNonNullValues().isEmpty() ) {
+            if ( ! aThis.getNonEmptySubSlotTypes().isEmpty() ) {
                 sb.setLength( sb.length()-1 );
             }
             sb.append("]");
@@ -161,7 +161,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
                     .gv());
             for (ConsiderAnswer ans : nd.getAnswers()) {
                 StringBuilder label = new StringBuilder();
-                for (SlotType tt : ans.getAnswer().getTypesWithNonNullValues()) {
+                for (SlotType tt : ans.getAnswer().getNonEmptySubSlotTypes()) {
                     label.append(tt.getName())
                             .append("=")
                             .append(ans.getAnswer().get(tt).accept(valueNamer))
@@ -227,7 +227,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
             StringBuilder label = new StringBuilder();
             label.append( idLabel(nd) )
                     .append("Set\n");
-            for ( SlotType tt : nd.getTags().getTypesWithNonNullValues() ) {
+            for ( SlotType tt : nd.getTags().getNonEmptySubSlotTypes() ) {
                 label.append( tt.getName() )
                         .append( "=" )
                         .append( nd.getTags().get(tt).accept(valueNamer) )

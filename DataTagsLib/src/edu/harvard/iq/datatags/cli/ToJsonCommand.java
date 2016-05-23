@@ -16,7 +16,7 @@ import org.json.simple.JSONObject;
  *
  * @author Yonatan Tzulang
  */
-public class toJsonCommand implements CliCommand {
+public class ToJsonCommand implements CliCommand {
 
     @Override
     public String command() {

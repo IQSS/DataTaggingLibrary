@@ -417,7 +417,7 @@ public class JsonFactory {
                     public String visitCompoundValue(CompoundValue aThis) {
                         
                         StringBuilder res= new StringBuilder("[ ");  
-                        for ( SlotType tt : aThis.getTypesWithNonNullValues() ) {
+                        for ( SlotType tt : aThis.getNonEmptySubSlotTypes() ) {
                             res.append("{\"").append(tt.getName()).append("\":")
                                .append(aThis.get(tt).accept(this))
                                .append("}, ");
@@ -434,7 +434,7 @@ public class JsonFactory {
                     JSONObject obj         = new JSONObject();
                     JSONArray  assignments = new JSONArray();
                     
-                    for ( SlotType tt : node.getTags().getTypesWithNonNullValues() ) {
+                    for ( SlotType tt : node.getTags().getNonEmptySubSlotTypes() ) {
                         JSONObject tag= new JSONObject();
                         tag.put(tt.getName(),
                                     JSONValue.parse(

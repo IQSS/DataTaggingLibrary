@@ -50,11 +50,9 @@ public class CompoundValue extends TagValue {
     }
 
     /**
-     * All the field types for which {@code this} has values.
-     *
-     * @return Set of all the types who have non-null values.
+     * @return All the types of all the sub-slot of {@code this}, where there are values.
      */
-    public Set<SlotType> getTypesWithNonNullValues() {
+    public Set<SlotType> getNonEmptySubSlotTypes() {
         return fields.keySet();
     }
 
@@ -69,7 +67,7 @@ public class CompoundValue extends TagValue {
     }
 
     protected <T extends CompoundValue> T buildOwnableInstance(T startingPoint) {
-        for (SlotType tt : getTypesWithNonNullValues()) {
+        for (SlotType tt : getNonEmptySubSlotTypes()) {
             startingPoint.set(get(tt).getOwnableInstance());
         }
 
@@ -116,12 +114,12 @@ public class CompoundValue extends TagValue {
      * defined above.
      */
     public boolean isSupersetOf(CompoundValue other) {
-        if (!(getTypesWithNonNullValues().containsAll(other.getTypesWithNonNullValues()))) {
+        if (!(getNonEmptySubSlotTypes().containsAll(other.getNonEmptySubSlotTypes()))) {
             // condition 2 unsatisfied - other has more defined fields than this
             return false;
         }
 
-        for (SlotType type : getTypesWithNonNullValues()) {
+        for (SlotType type : getNonEmptySubSlotTypes()) {
             TagValue ourValue = get(type);
             TagValue otherValue = other.get(type);
             if (otherValue != null) {
@@ -167,7 +165,7 @@ public class CompoundValue extends TagValue {
 
         CompoundValue result = getType().createInstance();
         // Composing. Note that for each type in types, at least one object has a non-null value
-        for (SlotType tp : C.unionSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
+        for (SlotType tp : C.unionSet(getNonEmptySubSlotTypes(), other.getNonEmptySubSlotTypes())) {
             TagValue ours = get(tp);
             TagValue its = other.get(tp);
             if (ours == null) {
@@ -209,7 +207,7 @@ public class CompoundValue extends TagValue {
         CompoundValue result = getType().createInstance();
 
         // Composing. Note that for each type in types, at least one object has a non-null value
-        for (SlotType tp : C.intersectSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
+        for (SlotType tp : C.intersectSet(getNonEmptySubSlotTypes(), other.getNonEmptySubSlotTypes())) {
             TagValue ours = get(tp);
             TagValue its = other.get(tp);
 
@@ -249,7 +247,7 @@ public class CompoundValue extends TagValue {
 
         CompoundValue result = getType().createInstance();
 
-        Set<SlotType> substractedSet = C.subtractSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues());
+        Set<SlotType> substractedSet = C.subtractSet(getNonEmptySubSlotTypes(), other.getNonEmptySubSlotTypes());
 
         /* Check if any key left */
         if (substractedSet.isEmpty()) {
@@ -311,7 +309,7 @@ class Resolver implements TagValue.Visitor<TagValue.Function> {
                 return res;
             }
             CompoundValue cv2 = (CompoundValue) v;
-            C.unionSet(cv2.getTypesWithNonNullValues(), cv.getTypesWithNonNullValues()).stream().forEach((tt) -> {
+            C.unionSet(cv2.getNonEmptySubSlotTypes(), cv.getNonEmptySubSlotTypes()).stream().forEach((tt) -> {
                 res.set(
                         (res.get(tt) == null) ? cv2.get(tt)
                         : ((TagValue.Function) cv.get(tt).accept(Resolver.this)).apply(cv2.get(tt)));

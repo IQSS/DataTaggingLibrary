@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * A slot that does not contain other slots, i.e {@link AtomicSlot} or (@link CompoundSlot}.
+ * A slot that does not contain other slots, i.e {@link AtomicAstSlot} or (@link CompoundAstSlot}.
  * @author michael
  */
 public abstract class AbstractSimpleAstSlot extends AbstractAstSlot {

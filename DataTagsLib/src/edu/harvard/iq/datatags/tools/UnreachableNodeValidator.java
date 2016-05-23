@@ -12,6 +12,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.HashSet;
@@ -65,6 +66,10 @@ public class UnreachableNodeValidator extends VoidVisitor {
             if (!reachedNodeIds.contains(nd.getNodeFor(answer).getId())) {
                 nd.getNodeFor(answer).accept(this);
             }
+        }
+        Node elseNode = nd.getElseNode();
+        if ( ! reachedNodeIds.contains(elseNode.getId()) ) {
+            elseNode.accept(this);
         }
     }
     /**

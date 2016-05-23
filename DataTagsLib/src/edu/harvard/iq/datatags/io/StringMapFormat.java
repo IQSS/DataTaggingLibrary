@@ -59,7 +59,7 @@ public class StringMapFormat {
             @Override
             public Void visitCompoundValue(CompoundValue cv) {
                 stack.add( cv.getType().getName() );
-                for ( SlotType tt : cv.getTypesWithNonNullValues() ) {
+                for ( SlotType tt : cv.getNonEmptySubSlotTypes() ) {
                     cv.get(tt).accept(this);
                 }
                 stack.remove( stack.size()-1 );

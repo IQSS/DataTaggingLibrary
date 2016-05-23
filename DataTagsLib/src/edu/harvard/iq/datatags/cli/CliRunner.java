@@ -92,7 +92,7 @@ public class CliRunner {
                 new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand(), 
                 new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand(),
                 new OptimizeDecisionGraphCommand(),
-                new toJsonCommand()
+                new ToJsonCommand()
         ).forEach(c -> commands.put(c.command(), c));
         
         // shortcuts

@@ -50,7 +50,7 @@ public class EagerSetCallsOptimizer implements DecisionGraphOptimizer {
                 CompoundValue result = current.getType().createInstance();
 
                 // Composing. Note that for each type in types, at least one object has a non-null value
-                for (SlotType tp : C.unionSet(current.getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
+                for (SlotType tp : C.unionSet(current.getNonEmptySubSlotTypes(), other.getNonEmptySubSlotTypes())) {
                     TagValue ours = current.get(tp);
                     TagValue its = other.get(tp);
                     if (ours == null) {
