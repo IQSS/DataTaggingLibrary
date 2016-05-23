@@ -16,12 +16,14 @@ In order to work with Tags, take these steps:
   * ``DecisionGraphCompilint.java``: Compiles and visualizes a tag space and a decision graph.
   * ``DecisionGraphValidations.java`` and ``QuestionnaireValidations.java``: run a few validations on the graph.
 
-* The repository currently has a large questionnaire (tag definitions and decision graph), developed by the `Privacy Tools for Sharing Research Data`_ project, at the ``DataTagLib/WORK/dtl/0.8`` directory. Some simpler questionnaires are coming soon.
+* The repository currently has a large questionnaire (tag definitions and decision graph), developed by the `Privacy Tools for Sharing Research Data`_ project, at the ``DataTagLib/WORK/dtl/0.8`` directory. Note that this questionnaire is a proof-of-concept and should not be used in real-world scenarios. Additional, simpler questionnaires are also available at that directory. Code for the documentation site (the thing you read now) is available at ``DataTagLib/DOCS/sphinx-source/source/tutorial/code/``.
+* When coding Tags questionnaires, you may want to use our `language support package`_ for the `Atom`_ text editor.
 
 .. _NetBeans IDE: http://www.netbeans.org
 .. _edu.harvard.iq.datatags.mains: https://github.com/IQSS/DataTaggingLibrary/tree/master/DataTagsLib/src/edu/harvard/iq/datatags/mains
 .. _Privacy Tools for Sharing Research Data: http://http://privacytools.seas.harvard.edu
-
+.. _Atom: https://atom.io/
+.. _language support package: https://atom.io/packages/language-datatags
 
 The CliRunner
 -----------------------

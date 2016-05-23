@@ -64,8 +64,24 @@ In the below decision graph snippet, the ``EU-Compliance`` section is referenced
   [>EU-Compliance< todo: This section will ensure compliance with the EU regulations.]
 
 
+.. index: Text Editor Support
 
-Language Name
--------------
-Used to be "datatags", but as there are now more efforts for creating DataTags implementation, we don't want to hog the name.
-We're currently leaning towards *Tags*, but other suggestions are welcome!
+
+Text-Editor Support
+-------------------
+
+It's always easier to code when the text editor helps. Tags has a `language support package`_
+for the `Atom`_ text editor. It offers syntax colorizing and code templates. It could be installed from
+Atom itself or by using ``apm``::
+
+  apm install language-datatags
+
+.. _language support package: https://atom.io/packages/language-datatags
+.. _Atom: https://atom.io
+
+.. figure:: /img/atom-support.png
+   :align: center
+   :alt: atom support package screenshot.
+
+   Our language support package for the Atom text editor offers syntax coloring
+   and code templates.
