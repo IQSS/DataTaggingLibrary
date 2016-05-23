@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.cli;
 
-import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.AtomicType;
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.TagType;
-import edu.harvard.iq.datatags.model.types.ToDoType;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import java.util.List;
 
 /**
@@ -34,32 +34,32 @@ public class StatisticsCommand implements CliCommand {
     
 }
 
-class TagCounter extends TagType.VoidVisitor {
+class TagCounter extends SlotType.VoidVisitor {
     
     int slotsCount=0;
     int valuesCount=0;
     
     @Override
-    public void visitAtomicTypeImpl(AtomicType t) {
+    public void visitAtomicSlotImpl(AtomicSlot t) {
         valuesCount += t.values().size();
     }
 
     @Override
-    public void visitAggregateTypeImpl(AggregateType t) {
+    public void visitAggregateSlotImpl(AggregateSlot t) {
         valuesCount += t.getItemType().values().size();
     }
 
     @Override
-    public void visitCompoundTypeImpl(CompoundType t) {
+    public void visitCompoundSlotImpl(CompoundSlot t) {
         slotsCount++;
-        for ( TagType tt : t.getFieldTypes() ) {
+        for ( SlotType tt : t.getFieldTypes() ) {
             slotsCount++;
             tt.accept(this);
         }
     }
 
     @Override
-    public void visitTodoTypeImpl(ToDoType t) {
+    public void visitTodoSlotImpl(ToDoSlot t) {
         valuesCount++;
     }
     

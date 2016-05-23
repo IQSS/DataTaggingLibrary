@@ -6,11 +6,11 @@ import edu.harvard.iq.datatags.model.values.ToDoValue;
  * A placeholder tag.
  * @author michael
  */
-public class ToDoType extends TagType {
+public class ToDoSlot extends SlotType {
     
     final ToDoValue singleValue = new ToDoValue(this, null);
     
-	public ToDoType(String name, String info) {
+	public ToDoSlot(String name, String info) {
 		super(name, info);
 	}
     
@@ -20,7 +20,7 @@ public class ToDoType extends TagType {
     
 	@Override
 	public <T> T accept(Visitor<T> v) {
-		return v.visitTodoType(this);
+		return v.visitTodoSlot(this);
 	}
 	
 }

@@ -3,8 +3,8 @@ package edu.harvard.iq.util;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.AtomicType;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.runtime.ChartRunningTest;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
@@ -43,9 +43,9 @@ public class DecisionGraphHelper {
 		return retVal;
 	}
 	
-    public static CompoundType mockTopLevelType() {
-        CompoundType mock = new CompoundType("Mock", "A mock type to just have a type there.");
-        AtomicType st1 = new AtomicType("st1",null);
+    public static CompoundSlot mockTopLevelType() {
+        CompoundSlot mock = new CompoundSlot("Mock", "A mock type to just have a type there.");
+        AtomicSlot st1 = new AtomicSlot("st1",null);
         st1.registerValue("v1", null);
         st1.registerValue("v2", null);
         st1.registerValue("v3", null);
@@ -82,7 +82,7 @@ public class DecisionGraphHelper {
     
 	public static void assertExecutionTrace(DecisionGraph dg, Iterable<Answer> answers, Iterable<String> expectedIds, boolean logToStdOut) {
 		if ( dg.getTopLevelType() == null ) {
-            dg.setTopLevelType( new CompoundType("placeholder","") );
+            dg.setTopLevelType(new CompoundSlot("placeholder","") );
         }
         RuntimeEngine ngn = new RuntimeEngine();
 		ngn.setDecisionGraph(dg);

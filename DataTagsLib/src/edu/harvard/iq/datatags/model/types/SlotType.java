@@ -9,54 +9,54 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A type of a value a data tag may have.
+ * A type that a slot may have.
  * 
  * @author michael
  */
-public abstract class TagType {
+public abstract class SlotType {
 	
 	public interface Visitor<T> {
-		T visitSimpleType( AtomicType t );
-		T visitAggregateType( AggregateType t );
-		T visitCompoundType( CompoundType t );
-		T visitTodoType( ToDoType t );
+		T visitSimpleSlot( AtomicSlot t );
+		T visitAggregateSlot( AggregateSlot t );
+		T visitCompoundSlot( CompoundSlot t );
+		T visitTodoSlot( ToDoSlot t );
 	}
 	
     public abstract static class VoidVisitor implements Visitor<Void> {
         @Override
-        public Void visitSimpleType( AtomicType t ) {
-            visitAtomicTypeImpl(t);
+        public Void visitSimpleSlot( AtomicSlot t ) {
+            visitAtomicSlotImpl(t);
             return null;
         }
         
         @Override
-        public Void visitAggregateType( AggregateType t ) {
-            visitAggregateTypeImpl(t);
+        public Void visitAggregateSlot( AggregateSlot t ) {
+            visitAggregateSlotImpl(t);
             return null;
         }
         
         @Override
-        public Void visitCompoundType( CompoundType t ) {
-            visitCompoundTypeImpl(t);
+        public Void visitCompoundSlot( CompoundSlot t ) {
+            visitCompoundSlotImpl(t);
             return null;
         }
         
         @Override
-        public Void visitTodoType( ToDoType t ) {
-            visitTodoTypeImpl(t);
+        public Void visitTodoSlot( ToDoSlot t ) {
+            visitTodoSlotImpl(t);
             return null;
         }
 
-        public abstract void visitAtomicTypeImpl( AtomicType t );
-        public abstract void visitAggregateTypeImpl( AggregateType t );
-        public abstract void visitCompoundTypeImpl( CompoundType t );
-        public abstract void visitTodoTypeImpl( ToDoType t );
+        public abstract void visitAtomicSlotImpl( AtomicSlot t );
+        public abstract void visitAggregateSlotImpl( AggregateSlot t );
+        public abstract void visitCompoundSlotImpl( CompoundSlot t );
+        public abstract void visitTodoSlotImpl( ToDoSlot t );
     }
     
 	private final String name;
 	private String note;
 
-	public TagType(String name, String note) {
+	public SlotType(String name, String note) {
 		this.name = name;
 		this.note = note;
 	}
@@ -76,10 +76,10 @@ public abstract class TagType {
 	public abstract <T> T accept( Visitor<T> v );
 	
     public TagValueLookupResult lookupValue( final String slotName, final String valueName ) {
-        return accept(new TagType.Visitor<TagValueLookupResult>() {
+        return accept(new SlotType.Visitor<TagValueLookupResult>() {
             
             @Override
-            public TagValueLookupResult visitSimpleType(AtomicType t) {
+            public TagValueLookupResult visitSimpleSlot(AtomicSlot t) {
                 if ( slotName.equals(t.getName()) ) {
                     TagValue v = t.valueOf( valueName );
                     return (v!=null) ? TagValueLookupResult.Success(v)
@@ -90,13 +90,13 @@ public abstract class TagType {
             }
 
             @Override
-            public TagValueLookupResult visitAggregateType(AggregateType t) {
+            public TagValueLookupResult visitAggregateSlot(AggregateSlot t) {
                 if ( slotName.equals(t.getName()) ) {
                     AggregateValue res = t.createInstance();
                     AtomicValue singleValue = t.getItemType().valueOf(valueName);
                     
                     if ( singleValue == null ) {
-                        return TagValueLookupResult.ValueNotFound(TagType.this, valueName);
+                        return TagValueLookupResult.ValueNotFound(SlotType.this, valueName);
                     } else {
                         res.add(singleValue);
                         return TagValueLookupResult.Success(res);
@@ -108,7 +108,7 @@ public abstract class TagType {
             }
 
             @Override
-            public TagValueLookupResult visitCompoundType(CompoundType t) {
+            public TagValueLookupResult visitCompoundSlot(CompoundSlot t) {
                 final List<TagValueLookupResult.Success> matches = new LinkedList<>();
                 final AtomicReference<TagValueLookupResult.ValueNotFound> vnfRef = new AtomicReference<>(null);
                 
@@ -134,7 +134,7 @@ public abstract class TagType {
                 };
                 
                 // group results by status.
-                for ( TagType tt : t.getFieldTypes() ) {
+                for ( SlotType tt : t.getFieldTypes() ) {
                     tt.accept(this) // get the lookup result
                       .accept(aggregator); // process the lookup result
                 }
@@ -153,7 +153,7 @@ public abstract class TagType {
             }
 
             @Override
-            public TagValueLookupResult visitTodoType(ToDoType t) {
+            public TagValueLookupResult visitTodoSlot(ToDoSlot t) {
                 if ( slotName.equals(t.getName())) {
                     return TagValueLookupResult.Success(t.getValue());
                 } else {
@@ -176,10 +176,10 @@ public abstract class TagType {
 		if (obj == null) {
 			return false;
 		}
-		if ( ! (obj instanceof TagType) ) {
+		if ( ! (obj instanceof SlotType) ) {
 			return false;
 		}
-		final TagType other = (TagType) obj;
+		final SlotType other = (SlotType) obj;
 		if (!Objects.equals(this.name, other.name)) {
 			return false;
 		}

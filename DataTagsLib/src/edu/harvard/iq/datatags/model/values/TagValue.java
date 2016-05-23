@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.model.values;
 
-import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.types.SlotType;
 import java.util.Objects;
 
 /**
- * Base class for a value / instance of a given {@link TagType}.
+ * Base class for a value / instance of a given {@link SlotType}.
  * @author michael
  */
 public abstract class TagValue {
@@ -20,14 +20,14 @@ public abstract class TagValue {
         TagValue apply(TagValue v);
 	}
 
-	private final TagType type;
+	private final SlotType type;
 
-    public TagValue(TagType type) {
+    public TagValue(SlotType type) {
 		this.type = type;
 	}
 
 
-	public TagType getType() {
+	public SlotType getType() {
 		return type;
 	}
 

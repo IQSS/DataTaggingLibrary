@@ -32,23 +32,23 @@ public class CompoundTypeTest {
     public static void tearDownClass() {
     }
     
-    CompoundType ctSut;
-    AtomicType stA, stB;
-    AggregateType aggT;
-    AtomicType stSetItem;
+    CompoundSlot ctSut;
+    AtomicSlot stA, stB;
+    AggregateSlot aggT;
+    AtomicSlot stSetItem;
     
-    Map<AtomicType,List<AtomicValue>> values;
+    Map<AtomicSlot,List<AtomicValue>> values;
     
     @Before
     public void setUp() {
-        stA = new AtomicType("A", null);
-        stB = new AtomicType("B", null);
-        stSetItem = new AtomicType("SetItem",null);
-        aggT = new AggregateType("SetOfItems", null, stSetItem);
+        stA = new AtomicSlot("A", null);
+        stB = new AtomicSlot("B", null);
+        stSetItem = new AtomicSlot("SetItem",null);
+        aggT = new AggregateSlot("SetOfItems", null, stSetItem);
         
         values = new HashMap<>();
         
-        for ( AtomicType st : C.list(stA, stB, stSetItem) ) {
+        for ( AtomicSlot st : C.list(stA, stB, stSetItem) ) {
             List<AtomicValue> valueList = new ArrayList<>(4);
             for ( int i=0; i<4; i++ ) {
                 valueList.add(st.registerValue( st.getName() + "-" +i, null));
@@ -56,7 +56,7 @@ public class CompoundTypeTest {
             values.put(st, valueList);
         }
         
-        ctSut = new CompoundType("SUT", "The type we test");
+        ctSut = new CompoundSlot("SUT", "The type we test");
         
         ctSut.addFieldType(stA);
         ctSut.addFieldType(stB);
@@ -82,7 +82,7 @@ public class CompoundTypeTest {
     @Test( expected=IllegalArgumentException.class)
     public void testSimpleSet_fail() {
         CompoundValue val = ctSut.createInstance();
-        val.set( new AtomicType("NotThere","").registerValue("banana", null) );
+        val.set( new AtomicSlot("NotThere","").registerValue("banana", null) );
         
     }
     
@@ -113,15 +113,15 @@ public class CompoundTypeTest {
     
     @Test
 	public void testComposeWith_simple() {
-		AtomicType simple_t1 = new AtomicType("st1", null);
-		AtomicType simple_t2 = new AtomicType("st2", null);
+		AtomicSlot simple_t1 = new AtomicSlot("st1", null);
+		AtomicSlot simple_t2 = new AtomicSlot("st2", null);
 		
 		AtomicValue v1_t1 = simple_t1.registerValue("1", null);
 		AtomicValue v2_t1 = simple_t1.registerValue("2", null);
 		
 		AtomicValue v1_t2 = simple_t2.registerValue("1", null);
 		
-        CompoundType ct = new CompoundType("compoundType", null);
+        CompoundSlot ct = new CompoundSlot("compoundType", null);
         ct.addFieldType( simple_t1 );
         ct.addFieldType( simple_t2 );
 		CompoundValue a = ct.createInstance();
@@ -147,8 +147,8 @@ public class CompoundTypeTest {
 
 	@Test
 	public void testComposeWith_aggregate() {
-		AtomicType simple_t = new AtomicType( "t1", null );
-		AggregateType agg_t = new AggregateType( "a1", null, simple_t );
+		AtomicSlot simple_t = new AtomicSlot( "t1", null );
+		AggregateSlot agg_t = new AggregateSlot( "a1", null, simple_t );
 		
 		AggregateValue agg_1 = agg_t.createInstance();
 		AggregateValue agg_2 = agg_t.createInstance();
@@ -162,7 +162,7 @@ public class CompoundTypeTest {
 		agg_1.add(inBoth);
 		agg_2.add(inBoth);
 		
-        CompoundType ct = new CompoundType("ct",null );
+        CompoundSlot ct = new CompoundSlot("ct",null );
         ct.addFieldType( simple_t );
         ct.addFieldType( agg_t );
         
@@ -182,17 +182,17 @@ public class CompoundTypeTest {
 	
 	@Test
 	public void testComposeWith_compound_single() {
-		AtomicType simple_t1 = new AtomicType( "OnA", null );
-		AtomicType simple_t2 = new AtomicType( "OnB", null );
-		AtomicType simple_t3 = new AtomicType( "OnBoth-A bigger", null );
-		AtomicType simple_t4 = new AtomicType( "OnBoth-B bigger", null );
+		AtomicSlot simple_t1 = new AtomicSlot( "OnA", null );
+		AtomicSlot simple_t2 = new AtomicSlot( "OnB", null );
+		AtomicSlot simple_t3 = new AtomicSlot( "OnBoth-A bigger", null );
+		AtomicSlot simple_t4 = new AtomicSlot( "OnBoth-B bigger", null );
 		
-		List<AtomicType> simpleTypes = Arrays.asList( simple_t1, simple_t2, simple_t3, simple_t4 );
+		List<AtomicSlot> simpleTypes = Arrays.asList( simple_t1, simple_t2, simple_t3, simple_t4 );
 		
-		CompoundType compound_t = new CompoundType("compound_t", "The type we test");
-		for ( AtomicType st : simpleTypes ) compound_t.addFieldType(st);
+		CompoundSlot compound_t = new CompoundSlot("compound_t", "The type we test");
+		for ( AtomicSlot st : simpleTypes ) compound_t.addFieldType(st);
 		
-		for ( AtomicType st : simpleTypes ) {
+		for ( AtomicSlot st : simpleTypes ) {
 			int idx=0;
 			st.registerValue(st.getName() + (++idx), null);
 			st.registerValue(st.getName() + (++idx), null);
@@ -214,7 +214,7 @@ public class CompoundTypeTest {
 		cvExpected.set(C.list(simple_t3.values()).get(1) );
 		cvExpected.set(C.list(simple_t4.values()).get(1) );
 		
-        CompoundType sut = new CompoundType("sut", null);
+        CompoundSlot sut = new CompoundSlot("sut", null);
         sut.addFieldType(compound_t);
         
 		CompoundValue a = sut.createInstance();
@@ -230,11 +230,11 @@ public class CompoundTypeTest {
 	
 	@Test
 	public void testComposeWith_compound_aggregate() {
-		AtomicType items_t = new AtomicType("Type of items", null);
+		AtomicSlot items_t = new AtomicSlot("Type of items", null);
 		
 		for ( int i=0; i<3; i++ ) items_t.registerValue("item " + i, null);
 		
-		AggregateType agg_t = new AggregateType("agg1",null, items_t);
+		AggregateSlot agg_t = new AggregateSlot("agg1",null, items_t);
 		
 		AggregateValue agg_v1 = agg_t.createInstance();
 		AggregateValue agg_v2 = agg_t.createInstance();
@@ -250,7 +250,7 @@ public class CompoundTypeTest {
 		agg_ex.add( C.list(items_t.values()).get(1) );
 		agg_ex.add( C.list(items_t.values()).get(2) );
 		
-		CompoundType cmp_t = new CompoundType("SUT",null);
+		CompoundSlot cmp_t = new CompoundSlot("SUT",null);
 		cmp_t.addFieldType(agg_t);
 		
 		CompoundValue cv1 = cmp_t.createInstance();

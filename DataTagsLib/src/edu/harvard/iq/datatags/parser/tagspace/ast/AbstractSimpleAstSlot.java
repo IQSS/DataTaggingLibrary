@@ -7,11 +7,11 @@ import java.util.Objects;
  * A slot that does not contain other slots, i.e {@link AtomicSlot} or (@link CompoundSlot}.
  * @author michael
  */
-public abstract class AbstractSimpleSlot extends AbstractSlot {
+public abstract class AbstractSimpleAstSlot extends AbstractAstSlot {
     
     private final List<ValueDefinition> valueDefinitions;
 
-    public AbstractSimpleSlot(String aName, String aNote, List<ValueDefinition> valueDefinitions) {
+    public AbstractSimpleAstSlot(String aName, String aNote, List<ValueDefinition> valueDefinitions) {
         super(aName, aNote);
         this.valueDefinitions = valueDefinitions;
     }
@@ -36,7 +36,7 @@ public abstract class AbstractSimpleSlot extends AbstractSlot {
         if ( obj==this ) return true;
         
         if ( obj.getClass() == getClass() ) {
-            AbstractSimpleSlot other = (AbstractSimpleSlot) obj;
+            AbstractSimpleAstSlot other = (AbstractSimpleAstSlot) obj;
             return Objects.equals(getValueDefinitions(), other.getValueDefinitions())
                     && super.equals(obj);
             

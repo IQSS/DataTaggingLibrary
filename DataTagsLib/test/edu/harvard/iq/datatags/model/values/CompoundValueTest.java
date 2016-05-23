@@ -1,8 +1,8 @@
 package edu.harvard.iq.datatags.model.values;
 
-import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.AtomicType;
-import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -17,12 +17,12 @@ import org.junit.Test;
  */
 public class CompoundValueTest {
     
-    CompoundType lunchType;
-    CompoundType burritoType;
-    AtomicType bagType;
-    AtomicType wrapType;
-    AtomicType mainType;
-    AggregateType sideType;
+    CompoundSlot lunchType;
+    CompoundSlot burritoType;
+    AtomicSlot bagType;
+    AtomicSlot wrapType;
+    AtomicSlot mainType;
+    AggregateSlot sideType;
     
     public CompoundValueTest() {
     }
@@ -44,11 +44,11 @@ public class CompoundValueTest {
                       "Main : one of  chicken, tofu, beef.\n" +
                       "Side : some of rice , corn , guacamole ,cream, cheese.";
         lunchType = new TagSpaceParser().parse(code).buildType("DataTags").get();
-        bagType = (AtomicType) lunchType.getTypeNamed("Bag");
-        burritoType = (CompoundType) lunchType.getTypeNamed("Burrito");
-        wrapType = (AtomicType) burritoType.getTypeNamed("Wrap");
-        sideType = (AggregateType) burritoType.getTypeNamed("Side");
-        mainType = (AtomicType) burritoType.getTypeNamed("Main");
+        bagType = (AtomicSlot) lunchType.getTypeNamed("Bag");
+        burritoType = (CompoundSlot) lunchType.getTypeNamed("Burrito");
+        wrapType = (AtomicSlot) burritoType.getTypeNamed("Wrap");
+        sideType = (AggregateSlot) burritoType.getTypeNamed("Side");
+        mainType = (AtomicSlot) burritoType.getTypeNamed("Main");
     }
     
     @After

@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.model.values;
 
-import edu.harvard.iq.datatags.model.types.AggregateType;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,7 +19,7 @@ public class AggregateValue extends TagValue {
 	
 	private final Set<AtomicValue> values = new HashSet<>();
 
-    public AggregateValue(AggregateType type) {
+    public AggregateValue(AggregateSlot type) {
 		super(type);
 	}
 	
@@ -34,8 +34,8 @@ public class AggregateValue extends TagValue {
 	}
 	
     @Override
-    public AggregateType getType() {
-        return (AggregateType) super.getType();
+    public AggregateSlot getType() {
+        return (AggregateSlot) super.getType();
     }
     
 	public void add( AtomicValue tagValue ) {

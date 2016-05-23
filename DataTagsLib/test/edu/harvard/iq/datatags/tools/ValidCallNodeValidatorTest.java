@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
@@ -52,7 +52,7 @@ public class ValidCallNodeValidatorTest {
     public void validateIdReferencesTest_noId() throws BadSetInstructionException, DataTagsParseException {
         String code = "[todo: There's no id here to do anything with][end]";
         parseResult = dgParser.parse(code);
-        dg = parseResult.compile(new CompoundType("", ""));
+        dg = parseResult.compile(new CompoundSlot("", ""));
         List<NodeValidationMessage> messages = instance.validateIdReferences(dg);
         assertEquals(new LinkedList<>(), messages);
     }
@@ -62,7 +62,7 @@ public class ValidCallNodeValidatorTest {
         String code = "[call: ppraCompliance ]" +
                       "[>ppraCompliance< ask:{text: This should work!} {answers: {yes:[end]}}][end]";
         parseResult = dgParser.parse(code);
-        dg = parseResult.compile(new CompoundType("", ""));
+        dg = parseResult.compile(new CompoundSlot("", ""));
         
         List<NodeValidationMessage> messages = instance.validateIdReferences(dg);
         assertEquals(new LinkedList<>(), messages);
@@ -75,7 +75,7 @@ public class ValidCallNodeValidatorTest {
                       "[end]";
         
         parseResult = dgParser.parse(code);
-        dg = parseResult.compile(new CompoundType("", ""));
+        dg = parseResult.compile(new CompoundSlot("", ""));
         List<NodeValidationMessage> actual = instance.validateIdReferences(dg);
         assertEquals(ValidationMessage.Level.ERROR, actual.get(0).getLevel());
         assertTrue( actual.get(0).getMessage().contains("invalid-node") );

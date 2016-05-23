@@ -6,16 +6,16 @@ import edu.harvard.iq.datatags.model.values.AggregateValue;
  * A type whose values contain varying number of (sub-) values, of type {@link #itemType}.
  * @author michael
  */
-public class AggregateType extends TagType {
+public class AggregateSlot extends SlotType {
 	
-	private final AtomicType itemType;
+	private final AtomicSlot itemType;
 	
-	public AggregateType(String name, String info, AtomicType itemType) {
+	public AggregateSlot(String name, String info, AtomicSlot itemType) {
 		super(name, info);
 		this.itemType = itemType;
 	}
 
-	public AtomicType getItemType() {
+	public AtomicSlot getItemType() {
 		return itemType;
 	}
 	
@@ -25,7 +25,7 @@ public class AggregateType extends TagType {
 
 	@Override
 	public <T> T accept(Visitor<T> v) {
-		return v.visitAggregateType(this);
+		return v.visitAggregateSlot(this);
 	}
 	
 }

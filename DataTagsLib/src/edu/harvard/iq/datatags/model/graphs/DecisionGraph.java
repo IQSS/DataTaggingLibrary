@@ -8,7 +8,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URI;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public class DecisionGraph {
 
     private URI source;
     private Node start;
-    private CompoundType topLevelType = null;
+    private CompoundSlot topLevelType = null;
     private final Map<String, Node> nodes = new HashMap<>();
     private String id;
 
@@ -157,11 +157,11 @@ public class DecisionGraph {
         return nodes.keySet();
     }
 
-    public CompoundType getTopLevelType() {
+    public CompoundSlot getTopLevelType() {
         return topLevelType;
     }
 
-    public void setTopLevelType(CompoundType topLevelType) {
+    public void setTopLevelType(CompoundSlot topLevelType) {
         this.topLevelType = topLevelType;
     }
 

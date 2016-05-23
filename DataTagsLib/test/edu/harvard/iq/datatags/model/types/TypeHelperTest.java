@@ -24,7 +24,7 @@ public class TypeHelperTest {
     public TypeHelperTest() {
     }
     
-    TagType dataTagsType;
+    SlotType dataTagsType;
     
     @Before
     public void setUp() throws DataTagsParseException {
@@ -50,7 +50,7 @@ public class TypeHelperTest {
      */
     @Test
     public void testSafeGet_simple() {
-        AtomicType colorType = (AtomicType)((CompoundType)dataTagsType).getTypeNamed("color");
+        AtomicSlot colorType = (AtomicSlot)((CompoundSlot)dataTagsType).getTypeNamed("color");
         TagValue red = TypeHelper.getCreateValue(colorType, "red", "");
         assertEquals( red, TypeHelper.safeGet(dataTagsType, "color", "red") );
     }

@@ -1,11 +1,11 @@
 package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.AtomicType;
-import edu.harvard.iq.datatags.model.types.TagType.VoidVisitor;
-import edu.harvard.iq.datatags.model.types.ToDoType;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.types.SlotType.VoidVisitor;
+import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,22 +25,22 @@ public class AllTagValues extends VoidVisitor {
     }
 
     @Override
-    public void visitAtomicTypeImpl(AtomicType t) {
+    public void visitAtomicSlotImpl(AtomicSlot t) {
         t.values().forEach( definedTagValues::add );
     }
 
     @Override
-    public void visitAggregateTypeImpl(AggregateType t) {
+    public void visitAggregateSlotImpl(AggregateSlot t) {
         t.getItemType().accept(this);
     }
 
     @Override
-    public void visitCompoundTypeImpl(CompoundType t) {
+    public void visitCompoundSlotImpl(CompoundSlot t) {
         t.getFieldTypes().forEach(tagType -> tagType.accept(this));
     }
 
     @Override
-    public void visitTodoTypeImpl(ToDoType t) {
+    public void visitTodoSlotImpl(ToDoSlot t) {
         definedTagValues.add(t.getValue());
     }
     

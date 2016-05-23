@@ -7,14 +7,14 @@ import java.util.List;
  * {@code SampleAggregateSlot: some of alpha, beta, gamma.}
  * @author michael
  */
-public class AggregateSlot extends AbstractSimpleSlot {
+public class AggregateAstSlot extends AbstractSimpleAstSlot {
     
-    public AggregateSlot(String aName, String aNote, List<ValueDefinition> valueDefinitions) {
+    public AggregateAstSlot(String aName, String aNote, List<ValueDefinition> valueDefinitions) {
         super(aName, aNote, valueDefinitions);
     }
     
     @Override
-    public <R> R accept(AbstractSlot.Visitor<R> visitor ) {
+    public <R> R accept(AbstractAstSlot.Visitor<R> visitor ) {
         return visitor.visit(this);
     }
     

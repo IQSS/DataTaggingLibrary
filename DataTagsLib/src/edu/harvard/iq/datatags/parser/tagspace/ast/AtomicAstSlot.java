@@ -8,14 +8,14 @@ import java.util.List;
  * 
  * @author michael
  */
-public class AtomicSlot extends AbstractSimpleSlot {
+public class AtomicAstSlot extends AbstractSimpleAstSlot {
     
-    public AtomicSlot(String name, String note, List<ValueDefinition> someValueNames ) {
+    public AtomicAstSlot(String name, String note, List<ValueDefinition> someValueNames ) {
         super(name, note, someValueNames);
     }
     
     @Override
-    public <R> R accept(AbstractSlot.Visitor<R> visitor ) {
+    public <R> R accept(AbstractAstSlot.Visitor<R> visitor ) {
         return visitor.visit(this);
     }
 }

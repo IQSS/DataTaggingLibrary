@@ -4,7 +4,7 @@ import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
-import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import static edu.harvard.iq.datatags.model.graphs.Answer.NO;
 import static edu.harvard.iq.datatags.model.graphs.Answer.YES;
@@ -52,11 +52,11 @@ public class RuntimeEngineStateTest {
 
     @Test
     public void testSnapshots() {
-        CompoundType ct = new CompoundType("considerAnswer", "");
+        CompoundSlot ct = new CompoundSlot("considerAnswer", "");
         CompoundValue tags = ct.createInstance();
         String chartId = "rec";
         DecisionGraph dg = linearYesChart(chartId, 3);
-        dg.setTopLevelType(new CompoundType("", ""));
+        dg.setTopLevelType(new CompoundSlot("", ""));
         AskNode n2 = (AskNode) dg.getNode(chartId + "_2");
         ConsiderNode consider = n2.setNodeFor(NO, dg.add(new ConsiderNode("1", null)));
         CallNode caller = consider.setNodeFor(ConsiderAnswer.get(tags), dg.add(new CallNode("Caller")));

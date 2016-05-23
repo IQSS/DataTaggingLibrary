@@ -14,13 +14,13 @@ import java.util.TreeSet;
  * 
  * @author michael
  */
-public class AtomicType extends TagType {
+public class AtomicSlot extends SlotType {
 	
 	private int nextOrdinal = 0;
 	
 	private final Map<String, AtomicValue> values = new HashMap<>(); 
 
-	public AtomicType(String name, String note) {
+	public AtomicSlot(String name, String note) {
 		super(name, note);
 	}
 
@@ -64,7 +64,7 @@ public class AtomicType extends TagType {
 
 	@Override
 	public <T> T accept(Visitor<T> v) {
-		return v.visitSimpleType(this);
+		return v.visitSimpleSlot(this);
 	}
 	
 	

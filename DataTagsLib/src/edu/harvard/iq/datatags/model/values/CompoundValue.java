@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.model.values;
 
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.SlotType;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,15 +18,15 @@ public class CompoundValue extends TagValue {
 
     private static final Resolver RESOLVER = new Resolver();
 
-    private final Map<TagType, TagValue> fields = new HashMap<>();
+    private final Map<SlotType, TagValue> fields = new HashMap<>();
 
-    public CompoundValue(CompoundType type) {
+    public CompoundValue(CompoundSlot type) {
         super(type);
     }
 
     @Override
-    public CompoundType getType() {
-        return (CompoundType) super.getType();
+    public CompoundSlot getType() {
+        return (CompoundSlot) super.getType();
     }
 
     public void set(TagValue value) {
@@ -37,11 +37,11 @@ public class CompoundValue extends TagValue {
         }
     }
 
-    public void clear(TagType type) {
+    public void clear(SlotType type) {
         fields.remove(type);
     }
 
-    public TagValue get(TagType type) {
+    public TagValue get(SlotType type) {
         if (getType().getFieldTypes().contains(type)) {
             return fields.get(type);
         } else {
@@ -54,7 +54,7 @@ public class CompoundValue extends TagValue {
      *
      * @return Set of all the types who have non-null values.
      */
-    public Set<TagType> getTypesWithNonNullValues() {
+    public Set<SlotType> getTypesWithNonNullValues() {
         return fields.keySet();
     }
 
@@ -69,7 +69,7 @@ public class CompoundValue extends TagValue {
     }
 
     protected <T extends CompoundValue> T buildOwnableInstance(T startingPoint) {
-        for (TagType tt : getTypesWithNonNullValues()) {
+        for (SlotType tt : getTypesWithNonNullValues()) {
             startingPoint.set(get(tt).getOwnableInstance());
         }
 
@@ -121,7 +121,7 @@ public class CompoundValue extends TagValue {
             return false;
         }
 
-        for (TagType type : getTypesWithNonNullValues()) {
+        for (SlotType type : getTypesWithNonNullValues()) {
             TagValue ourValue = get(type);
             TagValue otherValue = other.get(type);
             if (otherValue != null) {
@@ -167,7 +167,7 @@ public class CompoundValue extends TagValue {
 
         CompoundValue result = getType().createInstance();
         // Composing. Note that for each type in types, at least one object has a non-null value
-        for (TagType tp : C.unionSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
+        for (SlotType tp : C.unionSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
             TagValue ours = get(tp);
             TagValue its = other.get(tp);
             if (ours == null) {
@@ -209,7 +209,7 @@ public class CompoundValue extends TagValue {
         CompoundValue result = getType().createInstance();
 
         // Composing. Note that for each type in types, at least one object has a non-null value
-        for (TagType tp : C.intersectSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
+        for (SlotType tp : C.intersectSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
             TagValue ours = get(tp);
             TagValue its = other.get(tp);
 
@@ -249,7 +249,7 @@ public class CompoundValue extends TagValue {
 
         CompoundValue result = getType().createInstance();
 
-        Set<TagType> substractedSet = C.subtractSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues());
+        Set<SlotType> substractedSet = C.subtractSet(getTypesWithNonNullValues(), other.getTypesWithNonNullValues());
 
         /* Check if any key left */
         if (substractedSet.isEmpty()) {
@@ -257,7 +257,7 @@ public class CompoundValue extends TagValue {
         }
 
         // Composing. Note that for each type in types, at least one object has a non-null value
-        for (TagType tp : substractedSet) {
+        for (SlotType tp : substractedSet) {
             TagValue ours = get(tp);
             result.set(ours.getOwnableInstance());
         }

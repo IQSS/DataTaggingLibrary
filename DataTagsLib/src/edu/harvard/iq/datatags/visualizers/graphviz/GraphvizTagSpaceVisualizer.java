@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.AtomicType;
-import edu.harvard.iq.datatags.model.types.TagType;
-import edu.harvard.iq.datatags.model.types.ToDoType;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -12,14 +12,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Visualizes a {@link TagType} as a tree.
+ * Visualizes a {@link SlotType} as a tree.
  * @author michael
  */
 public class GraphvizTagSpaceVisualizer extends GraphvizVisualizer {
 	
-	private final TagType topLevel;
+	private final SlotType topLevel;
 
-	public GraphvizTagSpaceVisualizer(TagType topLevel) {
+	public GraphvizTagSpaceVisualizer(SlotType topLevel) {
 		this.topLevel = topLevel;
 	}
 
@@ -36,10 +36,10 @@ public class GraphvizTagSpaceVisualizer extends GraphvizVisualizer {
 		final List<String> nodes = new LinkedList<>();
 		final List<String> edges = new LinkedList<>();
 		
-		TagType.Visitor typePainter = new TagType.Visitor<Void>(){
+		SlotType.Visitor typePainter = new SlotType.Visitor<Void>(){
 
 			@Override
-			public Void visitSimpleType(AtomicType t) {
+			public Void visitSimpleSlot(AtomicSlot t) {
 				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[label=\""+t.getName()+"\" shape=\"egg\"]");
 				for ( AtomicValue val : t.values() ) {
@@ -51,7 +51,7 @@ public class GraphvizTagSpaceVisualizer extends GraphvizVisualizer {
 			}
 
 			@Override
-			public Void visitAggregateType(AggregateType t) {
+			public Void visitAggregateSlot(AggregateSlot t) {
 				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[label=\""+t.getName()+"\" shape=\"egg\" peripheries=\"2\"]");
 				for ( AtomicValue val : t.getItemType().values() ) {
@@ -63,10 +63,10 @@ public class GraphvizTagSpaceVisualizer extends GraphvizVisualizer {
 			}
 
 			@Override
-			public Void visitCompoundType(CompoundType t) {
+			public Void visitCompoundSlot(CompoundSlot t) {
 				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[label=\""+t.getName()+"\" shape=\"octagon\" peripheries=\"2\"]");
-				for ( TagType val : t.getFieldTypes() ) {
+				for ( SlotType val : t.getFieldTypes() ) {
 					edges.add( sTypeName + " -> " + sanitizeId(val.getName()) );
 					val.accept(this);
 				}
@@ -74,7 +74,7 @@ public class GraphvizTagSpaceVisualizer extends GraphvizVisualizer {
 			}
 
 			@Override
-			public Void visitTodoType(ToDoType t) {
+			public Void visitTodoSlot(ToDoSlot t) {
 				nodes.add( sanitizeId(t.getName()) + "[label=\""+t.getName()+" (todo)\" shape=\"plaintext\" peripheries=\"2\"]");
 				return null;
 			}

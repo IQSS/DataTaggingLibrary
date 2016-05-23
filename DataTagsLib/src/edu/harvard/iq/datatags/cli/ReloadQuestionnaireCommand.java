@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.cli;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
@@ -43,7 +43,7 @@ public class ReloadQuestionnaireCommand implements CliCommand {
             return;
         }
         
-        CompoundType ts;
+        CompoundSlot ts;
         try {
             rnr.println("reloading:\n* %s\n* %s", tsPath, dgPath);
             ts = new TagSpaceParser().parse(tsPath).buildType("DataTags").get();

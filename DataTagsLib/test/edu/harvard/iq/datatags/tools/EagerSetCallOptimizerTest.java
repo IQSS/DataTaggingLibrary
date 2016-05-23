@@ -3,7 +3,7 @@ package edu.harvard.iq.datatags.tools;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.*;
-import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
@@ -21,7 +21,7 @@ public class EagerSetCallOptimizerTest {
                                   "Y: one of AA, BB, CC, DD, EE, FF.";
 
     private void compareAndTest(String dgCodeOriginal, String dgCodeOpt) throws DataTagsParseException {
-        CompoundType ts = new TagSpaceParser().parse(tsCode).buildType("DataTags").get();
+        CompoundSlot ts = new TagSpaceParser().parse(tsCode).buildType("DataTags").get();
 
         DecisionGraph dgOriginal = new DecisionGraphParser().parse(dgCodeOriginal).compile(ts);
         DecisionGraph dgOptimized = new DecisionGraphParser().parse(dgCodeOpt).compile(ts);

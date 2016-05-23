@@ -1,9 +1,9 @@
 package edu.harvard.iq.datatags.visualizers.html;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.AtomicType;
-import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import org.json.simple.JSONObject;
@@ -18,7 +18,7 @@ import org.junit.Test;
 */
 public class DesicionGraphToJSONTest {
     
-    private final CompoundType emptyTagSpace = new CompoundType("","");
+    private final CompoundSlot emptyTagSpace = new CompoundSlot("","");
     private DecisionGraphParser parser ;
     private DecisionGraph dg;
     
@@ -152,17 +152,17 @@ public class DesicionGraphToJSONTest {
 //
     @Test
     public void setTest() throws Exception{
-        AtomicType t1 = new AtomicType("t1", "");
+        AtomicSlot t1 = new AtomicSlot("t1", "");
         t1.registerValue("a", "");
         t1.registerValue("b", "");
         t1.registerValue("c", "");
         
-        AtomicType t2Items = new AtomicType("t2Items","");
-        AggregateType t2 = new AggregateType("t2","", t2Items);
+        AtomicSlot t2Items = new AtomicSlot("t2Items","");
+        AggregateSlot t2 = new AggregateSlot("t2","", t2Items);
         t2Items.registerValue("b", "");
         t2Items.registerValue("c", "");
         
-        CompoundType ct = new CompoundType("topLevel", "");
+        CompoundSlot ct = new CompoundSlot("topLevel", "");
         ct.addFieldType(t1);
         ct.addFieldType(t2);
         
@@ -233,7 +233,7 @@ public class DesicionGraphToJSONTest {
                 "		}]\n" +
                 "	}\n" +
                 "}";
-        CompoundType ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
+        CompoundSlot ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
         dg = parser.parse(code).compile(ts);
         dg.setTopLevelType(ts);
         

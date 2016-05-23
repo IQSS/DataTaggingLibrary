@@ -2,7 +2,7 @@ package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
@@ -44,7 +44,7 @@ public class DecisionGraphValidations {
             System.out.println(" (full:  " + tagsFile.toAbsolutePath() + ")");
 
             TagSpaceParser tagsParser = new TagSpaceParser();
-            CompoundType baseType = tagsParser.parse(readAll(tagsFile)).buildType("DataTags").get();
+            CompoundSlot baseType = tagsParser.parse(readAll(tagsFile)).buildType("DataTags").get();
 
             System.out.println("Reading chart: " + chartFile);
             System.out.println(" (full:  " + chartFile.toAbsolutePath() + ")");

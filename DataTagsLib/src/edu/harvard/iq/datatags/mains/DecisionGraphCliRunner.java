@@ -3,7 +3,7 @@ package edu.harvard.iq.datatags.mains;
 import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.cli.LoadQuestionnaireCommand;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
@@ -44,7 +44,7 @@ public class DecisionGraphCliRunner {
                System.exit(2);
             }
 
-            CompoundType definitions = parseDefinitions(tagSpace);
+            CompoundSlot definitions = parseDefinitions(tagSpace);
 
             DecisionGraphParser fcsParser = new DecisionGraphParser();
 
@@ -73,7 +73,7 @@ public class DecisionGraphCliRunner {
         
     }
     
-    public static CompoundType parseDefinitions(Path definitionsFile) throws DataTagsParseException, IOException {
+    public static CompoundSlot parseDefinitions(Path definitionsFile) throws DataTagsParseException, IOException {
         
         System.out.println("Reading definitions: " + definitionsFile );
         System.out.println(" (full:  " + definitionsFile.toAbsolutePath() + ")" );

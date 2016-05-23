@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.model.values;
 
-import edu.harvard.iq.datatags.model.types.ToDoType;
+import edu.harvard.iq.datatags.model.types.ToDoSlot;
 
 /**
  * A placeholder value, to be filled in later in the
@@ -13,14 +13,14 @@ import edu.harvard.iq.datatags.model.types.ToDoType;
 public class ToDoValue extends TagValue {
     private final String info;
 
-	public ToDoValue(ToDoType type, String someInfo) {
+	public ToDoValue(ToDoSlot type, String someInfo) {
 		super(type);
         info = someInfo;
 	}
 
     @Override
-    public ToDoType getType() {
-        return (ToDoType) super.getType();
+    public ToDoSlot getType() {
+        return (ToDoSlot) super.getType();
     }
     
 	@Override

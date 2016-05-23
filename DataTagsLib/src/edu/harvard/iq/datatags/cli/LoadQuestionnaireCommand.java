@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.cli;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
@@ -61,7 +61,7 @@ public class LoadQuestionnaireCommand implements CliCommand {
         } while (dgPath == null);
 
         try {
-            CompoundType ts;
+            CompoundSlot ts;
             rnr.println("Reading Tag Space:");
             rnr.println( tsPath.toRealPath().toString() );
             ts = new TagSpaceParser().parse(tsPath).buildType("DataTags").get();

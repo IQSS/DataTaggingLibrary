@@ -23,7 +23,7 @@ public class AtomicTypeTest {
 	 */
 	@Test
 	public void testMake() {
-		AtomicType instance = new AtomicType("Test", null);
+		AtomicSlot instance = new AtomicSlot("Test", null);
 		
 		assertTrue( instance.values().isEmpty() );
 		
@@ -44,7 +44,7 @@ public class AtomicTypeTest {
 	 */
 	@Test( expected=IllegalArgumentException.class )
 	public void valueOf() {
-		AtomicType instance = new AtomicType("Test", null);
+		AtomicSlot instance = new AtomicSlot("Test", null);
 		
 		assertTrue( instance.values().isEmpty() );
 		

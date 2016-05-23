@@ -1,9 +1,9 @@
 package edu.harvard.iq.datatags.model.values;
 
-import edu.harvard.iq.datatags.model.types.AtomicType;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
 
 /**
- * A value of an {@link AtomicType}.
+ * A value of an {@link AtomicSlot}.
  * @author michael
  */
 public class AtomicValue extends TagValue implements Comparable<AtomicValue>{
@@ -20,7 +20,7 @@ public class AtomicValue extends TagValue implements Comparable<AtomicValue>{
 	 * @param type the type of the value
 	 * @param someInfo additional info
 	 */
-	public AtomicValue(int ordinal, String aName, AtomicType type, String someInfo) {
+	public AtomicValue(int ordinal, String aName, AtomicSlot type, String someInfo) {
 		super(type);
 		this.ordinal = ordinal;
         name = aName;
@@ -28,8 +28,8 @@ public class AtomicValue extends TagValue implements Comparable<AtomicValue>{
 	}
 	
     @Override
-    public AtomicType getType() {
-        return (AtomicType) super.getType();
+    public AtomicSlot getType() {
+        return (AtomicSlot) super.getType();
     }
     
     

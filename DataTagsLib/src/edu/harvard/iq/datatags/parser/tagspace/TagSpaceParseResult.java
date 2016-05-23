@@ -1,17 +1,17 @@
 package edu.harvard.iq.datatags.parser.tagspace;
 
-import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.AtomicType;
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.TagType;
-import edu.harvard.iq.datatags.model.types.ToDoType;
-import edu.harvard.iq.datatags.parser.tagspace.ast.AbstractSlot;
-import edu.harvard.iq.datatags.parser.tagspace.ast.AggregateSlot;
-import edu.harvard.iq.datatags.parser.tagspace.ast.AtomicSlot;
-import edu.harvard.iq.datatags.parser.tagspace.ast.CompoundSlot;
-import edu.harvard.iq.datatags.parser.tagspace.ast.ToDoSlot;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AbstractAstSlot;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AggregateAstSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AtomicAstSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.CompoundAstSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.ToDoAstSlot;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
  */
 public class TagSpaceParseResult {
     
-    private final List<? extends AbstractSlot> slots; 
-    private final Map<String, AbstractSlot> slotsByName = new TreeMap<>();
+    private final List<? extends AbstractAstSlot> slots; 
+    private final Map<String, AbstractAstSlot> slotsByName = new TreeMap<>();
     private Set<String> duplicateSlotNames;
     private URI source;
     
@@ -54,10 +54,10 @@ public class TagSpaceParseResult {
         
     }
     
-    TagSpaceParseResult( List<? extends AbstractSlot> someSlots ) throws SemanticsErrorException {
+    TagSpaceParseResult( List<? extends AbstractAstSlot> someSlots ) throws SemanticsErrorException {
         slots = someSlots;
         
-        Map<String, List<AbstractSlot>> slotMap = new HashMap<>();
+        Map<String, List<AbstractAstSlot>> slotMap = new HashMap<>();
         slots.forEach( s -> slotMap.computeIfAbsent(s.getName(), n -> new LinkedList<>()).add(s));
             
             // Validate that the there are no duplicate slot names
@@ -75,11 +75,11 @@ public class TagSpaceParseResult {
             }
     }
     
-    public List<? extends AbstractSlot> getSlots() {
+    public List<? extends AbstractAstSlot> getSlots() {
         return slots;
     }
     
-    public Optional<AbstractSlot> getSlot( String name ) {
+    public Optional<AbstractAstSlot> getSlot( String name ) {
         return Optional.ofNullable( slotsByName.get(name) );
     }
     
@@ -95,26 +95,26 @@ public class TagSpaceParseResult {
      * @return A compound type instance based on the slot, or the empty Optional.
      * @throws edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException if the slot is of the wrong type, or there are duplicate slot names..
      */
-    public Optional<CompoundType> buildType( String slotName ) throws SemanticsErrorException  {
+    public Optional<CompoundSlot> buildType( String slotName ) throws SemanticsErrorException  {
         
         if ( duplicateSlotNames != null ) {
                 throw new SemanticsErrorException( new CompilationUnitLocationReference(-1, -1), 
                     "The following slots were defined more than once: " + duplicateSlotNames );
         }
         
-        AbstractSlot slot = slotsByName.get( slotName );
+        AbstractAstSlot slot = slotsByName.get( slotName );
         if ( slot == null ) {
             return Optional.empty();
         }
-        if ( ! (slot instanceof CompoundSlot) ) {
+        if ( ! (slot instanceof CompoundAstSlot) ) {
             throw new SemanticsErrorException(null, "Slot " + slotName + " is not a compound (consists of) slot");
         }
         
-        CompoundSlot baseSlot = (CompoundSlot) slot;
+        CompoundAstSlot baseSlot = (CompoundAstSlot) slot;
         TypeBuilder tb = new TypeBuilder();
         
         try {
-            return Optional.of( (CompoundType)baseSlot.accept(tb) );
+            return Optional.of((CompoundSlot)baseSlot.accept(tb) );
             
         } catch ( MissingSlotException mse ) {
             throw new SemanticsErrorException( new CompilationUnitLocationReference(-1, -1), 
@@ -123,27 +123,27 @@ public class TagSpaceParseResult {
     }
     
     /**
-     * Visits a slot, builds a type based on it.
+     * Visits an slot, builds a SlotType based on it.
      */
-    class TypeBuilder implements AbstractSlot.Visitor<TagType> {
+    class TypeBuilder implements AbstractAstSlot.Visitor<SlotType> {
 
         @Override
-        public TagType visit(ToDoSlot slot) {
-            return new ToDoType(slot.getName(), slot.getNote());
+        public SlotType visit(ToDoAstSlot slot) {
+            return new ToDoSlot(slot.getName(), slot.getNote());
         }
 
         @Override
-        public TagType visit(AtomicSlot slot) {
-            AtomicType newType = new AtomicType(slot.getName(), slot.getNote());
+        public SlotType visit(AtomicAstSlot slot) {
+            AtomicSlot newType = new AtomicSlot(slot.getName(), slot.getNote());
             slot.getValueDefinitions().forEach( vd -> newType.registerValue(vd.getName(), vd.getNote()) );
             
             return newType;
         }
 
         @Override
-        public TagType visit(AggregateSlot slot) {
-            AtomicType itemType = new AtomicType( slot.getName() + "#item", "" );
-            AggregateType newType = new AggregateType(slot.getName(), slot.getNote(), itemType );
+        public SlotType visit(AggregateAstSlot slot) {
+            AtomicSlot itemType = new AtomicSlot( slot.getName() + "#item", "" );
+            AggregateSlot newType = new AggregateSlot(slot.getName(), slot.getNote(), itemType );
             
             slot.getValueDefinitions().forEach( vd -> itemType.registerValue(vd.getName(), vd.getNote()) );
             
@@ -151,8 +151,8 @@ public class TagSpaceParseResult {
         }
 
         @Override
-        public CompoundType visit(CompoundSlot slot) {
-            CompoundType newType = new CompoundType(slot.getName(), slot.getNote());
+        public CompoundSlot visit(CompoundAstSlot slot) {
+            CompoundSlot newType = new CompoundSlot(slot.getName(), slot.getNote());
             slot.getSubSlotNames().forEach( 
                 (String name) -> 
                     newType.addFieldType( 

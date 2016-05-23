@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.parser.tagspace;
 
-import edu.harvard.iq.datatags.parser.tagspace.ast.AbstractSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AbstractAstSlot;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
@@ -20,7 +20,7 @@ import org.codehaus.jparsec.Parser;
  */
 public class TagSpaceParser {
    
-    private final Parser<List<? extends AbstractSlot>> parser = TagSpaceTerminalParser.buildParser( TagSpaceRuleParser.RULES );
+    private final Parser<List<? extends AbstractAstSlot>> parser = TagSpaceTerminalParser.buildParser( TagSpaceRuleParser.RULES );
     
     /**
      * Parse Tag Space code into a result that can be used to create actual types.

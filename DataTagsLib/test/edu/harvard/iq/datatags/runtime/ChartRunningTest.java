@@ -5,7 +5,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
-import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import static edu.harvard.iq.datatags.model.graphs.Answer.*;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
@@ -46,7 +46,7 @@ public class ChartRunningTest {
 
         String flowChartName = "flowChart";
         DecisionGraph c1 = new DecisionGraph(flowChartName);
-        CompoundType ct = new CompoundType("topLevel", "");
+        CompoundSlot ct = new CompoundSlot("topLevel", "");
         CompoundValue tags = ct.createInstance();
         ConsiderNode start = c1.add(new ConsiderNode("1",  null));
 
@@ -89,7 +89,7 @@ public class ChartRunningTest {
     @Test
     public void chartWithCall() throws DataTagsParseException {
         String code = "[>a< todo:a][>b< todo:a][>c< call:n][>e<end][>n< end]";
-        DecisionGraph chart = new DecisionGraphParser().parse(code).compile(new CompoundType("", ""));
+        DecisionGraph chart = new DecisionGraphParser().parse(code).compile(new CompoundSlot("", ""));
 
         assertExecutionTrace(chart, Arrays.asList("a", "b", "c", "n", "e"), false);
     }

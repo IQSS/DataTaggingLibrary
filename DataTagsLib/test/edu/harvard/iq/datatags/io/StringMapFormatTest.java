@@ -5,9 +5,9 @@
 package edu.harvard.iq.datatags.io;
 
 import edu.harvard.iq.datatags.io.StringMapFormat.TrieNode;
-import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.SlotType;
 import edu.harvard.iq.datatags.model.types.TypeHelper;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
@@ -29,7 +29,7 @@ public class StringMapFormatTest {
     public StringMapFormatTest() {
     }
     
-    TagType dataTagsType;
+    SlotType dataTagsType;
     
     @Before
     public void setUp() throws DataTagsParseException {
@@ -111,13 +111,13 @@ public class StringMapFormatTest {
     
 
     private CompoundValue makeCompoundValue() {
-        CompoundValue val = ((CompoundType)dataTagsType).createInstance();
+        CompoundValue val = ((CompoundSlot)dataTagsType).createInstance();
         val.set( TypeHelper.safeGet(dataTagsType, "color", "red") );
         AggregateValue stylesVal = (AggregateValue) TypeHelper.safeGet(dataTagsType, "styles", "Jazz");
-        AggregateType stylesType = stylesVal.getType();
+        AggregateSlot stylesType = stylesVal.getType();
         stylesVal.add( TypeHelper.getCreateValue( stylesType.getItemType(), "Blues", "") );
         stylesVal.add( TypeHelper.getCreateValue( stylesType.getItemType(), "RockAndRoll", "") );
-        CompoundType mealType = (CompoundType) val.getType().getTypeNamed("meal");
+        CompoundSlot mealType = (CompoundSlot) val.getType().getTypeNamed("meal");
         CompoundValue meal = mealType.createInstance();
         meal.set( TypeHelper.safeGet(mealType, "open", "salad") );
         meal.set( TypeHelper.safeGet(mealType, "main", "meat") );

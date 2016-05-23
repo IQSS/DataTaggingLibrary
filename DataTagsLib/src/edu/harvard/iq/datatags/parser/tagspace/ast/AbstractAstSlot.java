@@ -7,20 +7,20 @@ import java.util.Objects;
  * Base class for AST nodes that describe slots.
  * @author michael
  */
-public abstract class AbstractSlot {
+public abstract class AbstractAstSlot {
     
     public interface Visitor<R> {
-        R visit(ToDoSlot slot);
-        R visit(AtomicSlot slot);
-        R visit(AggregateSlot slot);
-        R visit(CompoundSlot slot);
+        R visit(ToDoAstSlot slot);
+        R visit(AtomicAstSlot slot);
+        R visit(AggregateAstSlot slot);
+        R visit(CompoundAstSlot slot);
     }
     
     private final String name;
     
     private final String note;
 
-    public AbstractSlot(String aName, String aNote) {
+    public AbstractAstSlot(String aName, String aNote) {
         name = aName;
         note = aNote;
     }
@@ -63,10 +63,10 @@ public abstract class AbstractSlot {
         if (obj == null) {
             return false;
         }
-        if ( ! (obj instanceof AbstractSlot) ) {
+        if ( ! (obj instanceof AbstractAstSlot) ) {
             return false;
         }
-        final AbstractSlot other = (AbstractSlot) obj;
+        final AbstractAstSlot other = (AbstractAstSlot) obj;
         if (!Objects.equals(this.name, other.getName())) {
             return false;
         }

@@ -24,7 +24,7 @@ public class TypeHelper {
      * @return The tag value pointed by the slot name.
      * @throws RuntimeException When the value is not there, or is not distinct.
      */
-    static public TagValue safeGet( TagType tt, String slotName, String valueName ) {
+    static public TagValue safeGet( SlotType tt, String slotName, String valueName ) {
         return tt.lookupValue(slotName, valueName).accept(new TagValueLookupResult.SuccessFailVisitor<TagValue, RuntimeException>(){
 
             @Override
@@ -39,7 +39,7 @@ public class TypeHelper {
         });
     }
     
-    static public AtomicValue getCreateValue( AtomicType tt, String valueName, String note ) {
+    static public AtomicValue getCreateValue( AtomicSlot tt, String valueName, String note ) {
         return (tt.valueOf(valueName) != null ) 
                 ? tt.valueOf( valueName )
                 : tt.registerValue(valueName, note);

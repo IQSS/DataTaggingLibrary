@@ -8,11 +8,11 @@ import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.AtomicType;
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.TagType;
-import edu.harvard.iq.datatags.model.types.ToDoType;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
@@ -62,7 +62,7 @@ public class DecisionGraphParseResult {
      */
     final Map<List<String>, List<String>> fullyQualifiedSlotName = new HashMap<>();
 
-    private CompoundType topLevelType;
+    private CompoundSlot topLevelType;
 
     private DecisionGraph product;
 
@@ -82,7 +82,7 @@ public class DecisionGraphParseResult {
      * @return A ready-to-run graph.
      * @throws DataTagsParseException
      */
-    public DecisionGraph compile(CompoundType tagSpace) throws DataTagsParseException {
+    public DecisionGraph compile(CompoundSlot tagSpace) throws DataTagsParseException {
         buildTypeIndex(tagSpace);
 
         product = new DecisionGraph();
@@ -214,9 +214,9 @@ public class DecisionGraphParseResult {
                     }
                     ConsiderNode res = new ConsiderNode(astNode.getId(), elseNode);
 
-                    TagType slot = findSlot(astNode.getSlot(), topValue, valueBuilder);
+                    SlotType slot = findSlot(astNode.getSlot(), topValue, valueBuilder);
 
-                    if (slot instanceof AggregateType || slot instanceof AtomicType) {
+                    if (slot instanceof AggregateSlot || slot instanceof AtomicSlot) {
                         // Original node was [consider]
                         for (AstConsiderAnswerSubNode astAns : astNode.getAnswers()) {
                             if (astAns.getAnswerList() == null) {
@@ -225,7 +225,7 @@ public class DecisionGraphParseResult {
                             topValue = topLevelType.createInstance();
                             valueBuilder = new SetNodeValueBuilder(topValue);
                             AstSetNode.Assignment assignment;
-                            if (slot instanceof AggregateType) {
+                            if (slot instanceof AggregateSlot) {
                                 assignment = new AstSetNode.AggregateAssignment(astNode.getSlot(), astAns.getAnswerList());
                             } else {
                                 assignment = new AstSetNode.AtomicAssignment(astNode.getSlot(), astAns.getAnswerList().get(0).trim());
@@ -248,7 +248,7 @@ public class DecisionGraphParseResult {
                             res.setNodeFor(ConsiderAnswer.Answer(answer), buildNodes(astAns.getSubGraph(), syntacticallyNext));
                         }
                         
-                    } else if (slot instanceof CompoundType) {
+                    } else if (slot instanceof CompoundSlot) {
                         // Original node was [when]
                         for (AstConsiderAnswerSubNode astAns : astNode.getAnswers()) {
                             if (astAns.getAssignments() == null) {
@@ -379,37 +379,37 @@ public class DecisionGraphParseResult {
      *
      * @param topLevel the top level type to build from.
      */
-    void buildTypeIndex(CompoundType topLevel) {
+    void buildTypeIndex(CompoundSlot topLevel) {
         topLevelType = topLevel;
 
         List<List<String>> fullyQualifiedNames = new LinkedList<>();
         // initial index
-        topLevelType.accept(new TagType.VoidVisitor() {
+        topLevelType.accept(new SlotType.VoidVisitor() {
             LinkedList<String> stack = new LinkedList<>();
 
             @Override
-            public void visitAtomicTypeImpl(AtomicType t) {
+            public void visitAtomicSlotImpl(AtomicSlot t) {
                 addType(t);
             }
 
             @Override
-            public void visitAggregateTypeImpl(AggregateType t) {
+            public void visitAggregateSlotImpl(AggregateSlot t) {
                 addType(t);
             }
 
             @Override
-            public void visitTodoTypeImpl(ToDoType t) {
+            public void visitTodoSlotImpl(ToDoSlot t) {
                 addType(t);
             }
 
             @Override
-            public void visitCompoundTypeImpl(CompoundType t) {
+            public void visitCompoundSlotImpl(CompoundSlot t) {
                 stack.push(t.getName());
                 t.getFieldTypes().forEach(tt -> tt.accept(this));
                 stack.pop();
             }
 
-            void addType(TagType tt) {
+            void addType(SlotType tt) {
                 stack.push(tt.getName());
                 fullyQualifiedNames.add(C.reverse((List) stack));
                 stack.pop();
@@ -439,8 +439,8 @@ public class DecisionGraphParseResult {
         fullyQualifiedSlotName.putAll(newEntries);
     }
 
-    TagType findSlot(List<String> astSlot, CompoundValue topValue, SetNodeValueBuilder valueBuilder) {
-        TagType slot;
+    SlotType findSlot(List<String> astSlot, CompoundValue topValue, SetNodeValueBuilder valueBuilder) {
+        SlotType slot;
 
         if (astSlot == null || C.last(astSlot).equals(topLevelType.getName())) {
             slot = topLevelType;
@@ -567,14 +567,14 @@ public class DecisionGraphParseResult {
         @Override
         public void visit(AstSetNode.AtomicAssignment aa) {
             final CompoundValue additionPoint = descend(C.tail(fullyQualifiedSlotName.get(aa.getSlot())), topValue);
-            TagType valueType = additionPoint.getType().getTypeNamed(C.last(aa.getSlot()));
+            SlotType valueType = additionPoint.getType().getTypeNamed(C.last(aa.getSlot()));
             if (valueType == null) {
                 throw new RuntimeException("Type '" + additionPoint.getType().getName()
                         + "' does not have a field of type '" + C.last(aa.getSlot()) + "'");
             }
-            valueType.accept(new TagType.VoidVisitor() {
+            valueType.accept(new SlotType.VoidVisitor() {
                 @Override
-                public void visitAtomicTypeImpl(AtomicType t) {
+                public void visitAtomicSlotImpl(AtomicSlot t) {
                     try {
                         additionPoint.set(t.valueOf(aa.getValue())); // if there's no such value, an IllegalArgumentException will be thrown.
                     } catch ( IllegalArgumentException iae ) {
@@ -583,17 +583,17 @@ public class DecisionGraphParseResult {
                 }
 
                 @Override
-                public void visitAggregateTypeImpl(AggregateType t) {
+                public void visitAggregateSlotImpl(AggregateSlot t) {
                     throw new RuntimeException("Slot " + aa.getSlot() + " is aggregate, not atomic. Use ``+='' .");
                 }
 
                 @Override
-                public void visitCompoundTypeImpl(CompoundType t) {
+                public void visitCompoundSlotImpl(CompoundSlot t) {
                     throw new RuntimeException("Slot " + aa.getSlot() + " is compound, not atomic. Can't assign values here.");
                 }
 
                 @Override
-                public void visitTodoTypeImpl(ToDoType t) {
+                public void visitTodoSlotImpl(ToDoSlot t) {
                     throw new RuntimeException("Slot " + aa.getSlot() + " is a placeholder. Can't assign values here.");
                 }
             });
@@ -607,18 +607,18 @@ public class DecisionGraphParseResult {
                         + aa.getSlot().stream().collect(Collectors.joining("/")) + "' not found"));
             }
             final CompoundValue additionPoint = descend(C.tail(fullyQualifiedName), topValue);
-            TagType valueType = additionPoint.getType().getTypeNamed(C.last(aa.getSlot()));
+            SlotType valueType = additionPoint.getType().getTypeNamed(C.last(aa.getSlot()));
             if (valueType == null) {
                 throw new RuntimeException(new BadLookupException(additionPoint.getType(), C.last(aa.getSlot()), null));
             }
-            valueType.accept(new TagType.VoidVisitor() {
+            valueType.accept(new SlotType.VoidVisitor() {
                 @Override
-                public void visitAtomicTypeImpl(AtomicType t) {
+                public void visitAtomicSlotImpl(AtomicSlot t) {
                     throw new RuntimeException("Slot " + aa.getSlot() + " is aggregate, not atomic. Use ``+='' .");
                 }
 
                 @Override
-                public void visitAggregateTypeImpl(AggregateType t) {
+                public void visitAggregateSlotImpl(AggregateSlot t) {
                     AggregateValue value = (AggregateValue) additionPoint.get(t);
                     if (value == null) {
                         value = t.createInstance();
@@ -634,12 +634,12 @@ public class DecisionGraphParseResult {
                 }
 
                 @Override
-                public void visitCompoundTypeImpl(CompoundType t) {
+                public void visitCompoundSlotImpl(CompoundSlot t) {
                     throw new RuntimeException("Slot " + aa.getSlot() + " is compound, not atomic. Can't assign values here.");
                 }
 
                 @Override
-                public void visitTodoTypeImpl(ToDoType t) {
+                public void visitTodoSlotImpl(ToDoSlot t) {
                     throw new RuntimeException("Slot " + aa.getSlot() + " is a placeholder. Can't assign values here.");
                 }
             });
@@ -659,33 +659,33 @@ public class DecisionGraphParseResult {
             if (pathRemainder.size() == 1) {
                 return cVal;
             }
-            CompoundType cType = cVal.getType();
-            TagType nextTagType = cType.getTypeNamed(C.head(pathRemainder));
+            CompoundSlot cType = cVal.getType();
+            SlotType nextTagType = cType.getTypeNamed(C.head(pathRemainder));
             if (nextTagType == null) {
                 throw new RuntimeException("Type '" + cType.getName()
                         + "' does not have a field of type '" + C.head(pathRemainder));
             }
 
-            return descend(C.tail(pathRemainder), nextTagType.accept(new TagType.Visitor<CompoundValue>() {
+            return descend(C.tail(pathRemainder), nextTagType.accept(new SlotType.Visitor<CompoundValue>() {
                 @Override
-                public CompoundValue visitSimpleType(AtomicType t) {
+                public CompoundValue visitSimpleSlot(AtomicSlot t) {
                     throw new RuntimeException("Type '" + t.getName()
                             + "' is not a compound type");
                 }
 
                 @Override
-                public CompoundValue visitAggregateType(AggregateType t) {
+                public CompoundValue visitAggregateSlot(AggregateSlot t) {
                     throw new RuntimeException("Type '" + t.getName()
                             + "' is not a compound type");
                 }
 
                 @Override
-                public CompoundValue visitTodoType(ToDoType t) {
+                public CompoundValue visitTodoSlot(ToDoSlot t) {
                     throw new RuntimeException("Type '" + t.getName() + "' is not a compound type");
                 }
 
                 @Override
-                public CompoundValue visitCompoundType(CompoundType t) {
+                public CompoundValue visitCompoundSlot(CompoundSlot t) {
                     if (cVal.get(t) == null) {
                         final CompoundValue newInstance = t.createInstance();
                         cVal.set(newInstance);

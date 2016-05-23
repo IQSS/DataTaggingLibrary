@@ -13,27 +13,27 @@ import java.util.Set;
  * 
  * @author michael
  */
-public class CompoundType extends TagType {
-	private final Set<TagType> fieldTypes = new HashSet<>();
+public class CompoundSlot extends SlotType {
+	private final Set<SlotType> fieldTypes = new HashSet<>();
 
-	public CompoundType(String name, String note) {
+	public CompoundSlot(String name, String note) {
 		super(name, note);
 	}
 	
-	public void addFieldType( TagType tt ) {
+	public void addFieldType( SlotType tt ) {
 		fieldTypes.add( tt );
 	}
 	
-	public Set<TagType> getFieldTypes() {
+	public Set<SlotType> getFieldTypes() {
 		return Collections.unmodifiableSet(fieldTypes);
 	}
 	
-	public void removeFieldType( TagType tt ) {
+	public void removeFieldType( SlotType tt ) {
 		fieldTypes.remove(tt);
 	}
     
-    public TagType getTypeNamed( String typeName ) {
-        for ( TagType tt : getFieldTypes() ) {
+    public SlotType getTypeNamed( String typeName ) {
+        for ( SlotType tt : getFieldTypes() ) {
             if ( tt.getName().equals(typeName) ) {
                 return tt;
             }
@@ -47,7 +47,7 @@ public class CompoundType extends TagType {
 
 	@Override
 	public <T> T accept(Visitor<T> v) {
-		return v.visitCompoundType(this);
+		return v.visitCompoundSlot(this);
 	}
     
     

@@ -80,15 +80,15 @@ public abstract class TagValueLookupResult {
     }
     
     public static class ValueNotFound extends TagValueLookupResult {
-        private final TagType tagType;
+        private final SlotType tagType;
         private final String valueName;
 
-        public ValueNotFound(TagType aTagType, String aValueName) {
+        public ValueNotFound(SlotType aTagType, String aValueName) {
             tagType = aTagType;
             valueName = aValueName;
         }
 
-        public TagType getTagType() {
+        public SlotType getTagType() {
             return tagType;
         }
 
@@ -165,7 +165,7 @@ public abstract class TagValueLookupResult {
         return new SlotNotFound(slotName);
     }
 
-    static public ValueNotFound ValueNotFound(TagType tt, String valueName) {
+    static public ValueNotFound ValueNotFound(SlotType tt, String valueName) {
         return new ValueNotFound(tt, valueName);
     }
 

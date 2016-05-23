@@ -10,7 +10,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
-import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.types.SlotType;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
@@ -50,7 +50,7 @@ public class EagerSetCallsOptimizer implements DecisionGraphOptimizer {
                 CompoundValue result = current.getType().createInstance();
 
                 // Composing. Note that for each type in types, at least one object has a non-null value
-                for (TagType tp : C.unionSet(current.getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
+                for (SlotType tp : C.unionSet(current.getTypesWithNonNullValues(), other.getTypesWithNonNullValues())) {
                     TagValue ours = current.get(tp);
                     TagValue its = other.get(tp);
                     if (ours == null) {

@@ -2,7 +2,7 @@ package edu.harvard.iq.datatags.model.graphs.nodes;
 
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
-import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.types.SlotType;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.HashMap;
 import java.util.LinkedList;

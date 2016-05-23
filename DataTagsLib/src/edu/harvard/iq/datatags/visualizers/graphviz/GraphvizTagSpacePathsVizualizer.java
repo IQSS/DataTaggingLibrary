@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.AtomicType;
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.TagType;
-import edu.harvard.iq.datatags.model.types.ToDoType;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
@@ -19,9 +19,9 @@ import java.util.List;
  */
 public class GraphvizTagSpacePathsVizualizer extends GraphvizVisualizer {
 	
-	private final TagType topLevel;
+	private final SlotType topLevel;
 
-	public GraphvizTagSpacePathsVizualizer(TagType topLevel) {
+	public GraphvizTagSpacePathsVizualizer(SlotType topLevel) {
 		this.topLevel = topLevel;
 	}
 
@@ -38,16 +38,16 @@ public class GraphvizTagSpacePathsVizualizer extends GraphvizVisualizer {
 		final List<String> nodes = new LinkedList<>();
 		final List<String> edges = new LinkedList<>();
 		
-		TagType.Visitor typePainter = new TagType.VoidVisitor(){
+		SlotType.Visitor typePainter = new SlotType.VoidVisitor(){
 
 			@Override
-			public void visitAtomicTypeImpl(AtomicType t) {
+			public void visitAtomicSlotImpl(AtomicSlot t) {
 				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[shape=\"none\" fillcolor=\"none\" label=<"+makeHtml(t)+">]");
 			}
 
 			@Override
-			public void visitAggregateTypeImpl(AggregateType t) {
+			public void visitAggregateSlotImpl(AggregateSlot t) {
 				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[shape=\"invtrapezium\" label=\"some of\"]");
                 t.getItemType().values().forEach( val -> {
@@ -58,7 +58,7 @@ public class GraphvizTagSpacePathsVizualizer extends GraphvizVisualizer {
 			}
 
 			@Override
-			public void visitCompoundTypeImpl(CompoundType t) {
+			public void visitCompoundSlotImpl(CompoundSlot t) {
 				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[shape=\"point\"]");
                 t.getFieldTypes().forEach((subFieldType) -> {
@@ -68,11 +68,11 @@ public class GraphvizTagSpacePathsVizualizer extends GraphvizVisualizer {
 			}
 
 			@Override
-			public void visitTodoTypeImpl(ToDoType t) {
+			public void visitTodoSlotImpl(ToDoSlot t) {
 				nodes.add( node(sanitizeId(t.getName())).label("TODO").shape(GvNode.Shape.note).fillColor("#AAFFAA").gv());
 			}
 
-            private String makeHtml(AtomicType t) {
+            private String makeHtml(AtomicSlot t) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("<TABLE border=\"1\" cellborder=\"0\" cellspacing=\"0\" cellpadding=\"4\"><TR>");
                 sb.append("<TD>one of:</TD>");

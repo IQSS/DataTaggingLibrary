@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.parser.tagspace;
 
-import edu.harvard.iq.datatags.parser.tagspace.ast.AbstractSlot;
-import edu.harvard.iq.datatags.parser.tagspace.ast.AggregateSlot;
-import edu.harvard.iq.datatags.parser.tagspace.ast.AtomicSlot;
-import edu.harvard.iq.datatags.parser.tagspace.ast.CompoundSlot;
-import edu.harvard.iq.datatags.parser.tagspace.ast.ToDoSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AbstractAstSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AggregateAstSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.AtomicAstSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.CompoundAstSlot;
+import edu.harvard.iq.datatags.parser.tagspace.ast.ToDoAstSlot;
 import edu.harvard.iq.datatags.parser.tagspace.ast.ValueDefinition;
 import java.util.List;
 import org.codehaus.jparsec.Parser;
@@ -37,43 +37,40 @@ public class TagSpaceRuleParser {
         );
     }
     
-    final static Parser<AtomicSlot> ATOMIC_SLOT_RULE = Parsers.sequence(
-            Terminals.Identifier.PARSER,
+    final static Parser<AtomicAstSlot> ATOMIC_SLOT_RULE = Parsers.sequence(Terminals.Identifier.PARSER,
             Terminals.fragment("description").optional(),
             slotTypeParser("one"),
             VALUE_DEFINITION_RULE.sepBy( TagSpaceTerminalParser.keyword(",") ),
             TagSpaceTerminalParser.keyword("."), 
-            ( String name, String desc, Object _slotType, List<ValueDefinition> defs, Object _d ) -> new AtomicSlot(name, cleanDescription(desc), defs)
+            ( String name, String desc, Object _slotType, List<ValueDefinition> defs, Object _d ) -> new AtomicAstSlot(name, cleanDescription(desc), defs)
     );
     
-    final static Parser<AggregateSlot> AGGREGATE_SLOT_RULE = Parsers.sequence(
-            Terminals.Identifier.PARSER,
+    final static Parser<AggregateAstSlot> AGGREGATE_SLOT_RULE = Parsers.sequence(Terminals.Identifier.PARSER,
             Terminals.fragment("description").optional(),
             slotTypeParser("some"),
             VALUE_DEFINITION_RULE.sepBy( TagSpaceTerminalParser.keyword(",") ),
             TagSpaceTerminalParser.keyword("."), 
-            ( String name, String desc, Object _slotType, List<ValueDefinition> defs, Object _d ) -> new AggregateSlot(name, cleanDescription(desc), defs)
+            ( String name, String desc, Object _slotType, List<ValueDefinition> defs, Object _d ) -> new AggregateAstSlot(name, cleanDescription(desc), defs)
     );
     
-    final static Parser<CompoundSlot> COMPOUND_SLOT_RULE = Parsers.sequence(
-            Terminals.Identifier.PARSER,
+    final static Parser<CompoundAstSlot> COMPOUND_SLOT_RULE = Parsers.sequence(Terminals.Identifier.PARSER,
             Terminals.fragment("description").optional(),
             slotTypeParser("consists"),
             Terminals.Identifier.PARSER.sepBy( TagSpaceTerminalParser.keyword(",") ),
             TagSpaceTerminalParser.keyword("."), 
-            ( String name, String desc, Object _slotType, List<String> defs, Object _d ) -> new CompoundSlot(name, cleanDescription(desc), defs)
+            ( String name, String desc, Object _slotType, List<String> defs, Object _d ) -> new CompoundAstSlot(name, cleanDescription(desc), defs)
     );
     
-    final static Parser<ToDoSlot> TODO_RULE = Parsers.sequence(Terminals.Identifier.PARSER,
+    final static Parser<ToDoAstSlot> TODO_RULE = Parsers.sequence(Terminals.Identifier.PARSER,
             Terminals.fragment("description").optional(),
             TagSpaceTerminalParser.keyword(":"),
             Terminals.fragment("todo"),
             TagSpaceTerminalParser.keyword("."), 
-            ( String name, String description, Object _a, Object _b, Object _c) -> new ToDoSlot( name, cleanDescription(description) )
+            ( String name, String description, Object _a, Object _b, Object _c) -> new ToDoAstSlot( name, cleanDescription(description) )
     );
     
-    final static Parser<? extends AbstractSlot> RULE = Parsers.or( TODO_RULE, COMPOUND_SLOT_RULE, AGGREGATE_SLOT_RULE, ATOMIC_SLOT_RULE);
-    final static Parser<List<? extends AbstractSlot>> RULES = RULE.many().cast();
+    final static Parser<? extends AbstractAstSlot> RULE = Parsers.or( TODO_RULE, COMPOUND_SLOT_RULE, AGGREGATE_SLOT_RULE, ATOMIC_SLOT_RULE);
+    final static Parser<List<? extends AbstractAstSlot>> RULES = RULE.many().cast();
     
     /**
      * Cleans the description coming from the parser (e.g removes the brackets).

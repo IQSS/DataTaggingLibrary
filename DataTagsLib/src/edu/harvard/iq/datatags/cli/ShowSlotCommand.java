@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.cli;
 
-import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.AtomicType;
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.TagType;
-import edu.harvard.iq.datatags.model.types.ToDoType;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import static edu.harvard.iq.datatags.model.types.TypeHelper.formatTypePath;
 import java.util.Arrays;
 import java.util.Deque;
@@ -37,15 +37,15 @@ public class ShowSlotCommand implements CliCommand {
 
         Deque<String> pathLeft = new LinkedList<>(Arrays.asList(typePath.split("/", -1)));
         Deque<String> pathDone = new LinkedList<>();
-        final CompoundType topLevelType = rnr.getEngine().getDecisionGraph().getTopLevelType();
+        final CompoundSlot topLevelType = rnr.getEngine().getDecisionGraph().getTopLevelType();
         
         if ( pathLeft.peekFirst().equals(topLevelType.getName()) ) {
             pathDone.addLast( pathLeft.removeFirst());
         }
         
-        topLevelType.accept(new TagType.VoidVisitor() {
+        topLevelType.accept(new SlotType.VoidVisitor() {
             @Override
-            public void visitCompoundTypeImpl(CompoundType t) {
+            public void visitCompoundSlotImpl(CompoundSlot t) {
                 if (pathLeft.isEmpty()) {
                     rnr.println("%s: compound slot (consists of)", typePath);
                     printNote(t);
@@ -58,7 +58,7 @@ public class ShowSlotCommand implements CliCommand {
                     });
                 } else {
                     String nextTypeName = pathLeft.removeFirst();
-                    TagType nextType = t.getTypeNamed(nextTypeName);
+                    SlotType nextType = t.getTypeNamed(nextTypeName);
                     if ( nextType == null ) {
                         rnr.printWarning("Slot %s does not exist: %s does not have a sub-slot named %s.", typePath, formatTypePath(pathDone), nextTypeName );
                     } else {
@@ -70,7 +70,7 @@ public class ShowSlotCommand implements CliCommand {
             }
 
             @Override
-            public void visitAtomicTypeImpl(AtomicType t) {
+            public void visitAtomicSlotImpl(AtomicSlot t) {
                 if (pathLeft.isEmpty()) {
                     rnr.println("%s: atomic slot (one of)", typePath);
                     printNote(t);
@@ -87,7 +87,7 @@ public class ShowSlotCommand implements CliCommand {
             }
 
             @Override
-            public void visitAggregateTypeImpl(AggregateType t) {
+            public void visitAggregateSlotImpl(AggregateSlot t) {
                 if (pathLeft.isEmpty()) {
                     rnr.println("%s: aggregate slot (some of)", typePath);
                     printNote(t);
@@ -104,7 +104,7 @@ public class ShowSlotCommand implements CliCommand {
             }
 
             @Override
-            public void visitTodoTypeImpl(ToDoType t) {
+            public void visitTodoSlotImpl(ToDoSlot t) {
                 if (pathLeft.isEmpty()) {
                     rnr.println("%s: TODO", typePath);
                     printNote(t);
@@ -113,7 +113,7 @@ public class ShowSlotCommand implements CliCommand {
                 }
             }
 
-            void printNote(TagType t) {
+            void printNote(SlotType t) {
                 if (t.getNote() != null && !t.getNote().isEmpty()) {
                     rnr.println(t.getNote());
                 }

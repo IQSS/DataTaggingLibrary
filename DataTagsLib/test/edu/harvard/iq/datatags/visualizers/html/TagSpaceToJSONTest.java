@@ -15,10 +15,10 @@ import org.junit.Test;
  * @author michael
  */
 public class TagSpaceToJSONTest {
-	static AtomicType atomicType, atomicType2;
-        static AggregateType aggregateType;
-        static ToDoType todoType;
-        static CompoundType compoundType;
+	static AtomicSlot atomicType, atomicType2;
+        static AggregateSlot aggregateType;
+        static ToDoSlot todoType;
+        static CompoundSlot compoundType;
         
 	public TagSpaceToJSONTest() {
 	}
@@ -26,23 +26,23 @@ public class TagSpaceToJSONTest {
 	@BeforeClass
 	public static void setUpClass() {
              
-            atomicType = new AtomicType("Atomic", "note of Test atomicType");
+            atomicType = new AtomicSlot("Atomic", "note of Test atomicType");
                 atomicType.registerValue("1", null);
                 atomicType.registerValue("2", null);
                 atomicType.registerValue("3",  "note of 3");
                 
          
             
-            atomicType2 = new AtomicType("Atomic 2", "note of Test atomicType 2");
+            atomicType2 = new AtomicSlot("Atomic 2", "note of Test atomicType 2");
                 atomicType2.registerValue("11", "not of 11");
                 atomicType2.registerValue("22", null);
                 atomicType2.registerValue("33",  null);
                 
-            aggregateType=new AggregateType("aggregate","note of Test aggregateType",  atomicType);
+            aggregateType=new AggregateSlot("aggregate","note of Test aggregateType",  atomicType);
             
-            todoType = new ToDoType("todo_type", "to do info");
+            todoType = new ToDoSlot("todo_type", "to do info");
             
-            compoundType= new CompoundType("compound"," note of Compound");
+            compoundType= new CompoundSlot("compound"," note of Compound");
             compoundType.addFieldType(atomicType);
             compoundType.addFieldType(aggregateType);
 //            compoundType.addFieldType(atomicType2);

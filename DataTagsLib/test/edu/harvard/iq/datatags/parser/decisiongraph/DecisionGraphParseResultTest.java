@@ -8,9 +8,9 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.AtomicType;
-import edu.harvard.iq.datatags.model.types.CompoundType;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
@@ -38,7 +38,7 @@ import org.junit.Test;
  */
 public class DecisionGraphParseResultTest {
 
-    private final CompoundType emptyTagSpace = new CompoundType("", "");
+    private final CompoundSlot emptyTagSpace = new CompoundSlot("", "");
     private DecisionGraphParser dgp;
     private AstNodeIdProvider nodeIdProvider;
 
@@ -74,7 +74,7 @@ public class DecisionGraphParseResultTest {
                 + "bottom3: one of Z31, Z32, Z33.";
 
         TagSpaceParseResult parse = new TagSpaceParser().parse(typeDef);
-        CompoundType topType = parse.buildType("top").get();
+        CompoundSlot topType = parse.buildType("top").get();
 
         DecisionGraphParseResult res = new DecisionGraphParseResult(Collections.emptyList());
 
@@ -152,10 +152,10 @@ public class DecisionGraphParseResultTest {
         final CallNode whyNotCallNode = new CallNode("wnc", "duh");
         final CallNode whyNotCallNode2 = new CallNode("wnc2", "duh2");
         whyNotCallNode.setNextNode(finalEndNode);
-        AtomicType t2Items = new AtomicType("Subject", "");
-        AggregateType t2 = new AggregateType("Subject", "", t2Items);
+        AtomicSlot t2Items = new AtomicSlot("Subject", "");
+        AggregateSlot t2 = new AggregateSlot("Subject", "", t2Items);
         t2Items.registerValue("world", "");
-        CompoundType ct = new CompoundType("topLevel", "");
+        CompoundSlot ct = new CompoundSlot("topLevel", "");
         ct.addFieldType(t2);
         CompoundValue tags = ct.createInstance();
 
@@ -254,17 +254,17 @@ public class DecisionGraphParseResultTest {
     @Test
     public void setEndTest() throws Exception {
 
-        AtomicType t1 = new AtomicType("t1", "");
+        AtomicSlot t1 = new AtomicSlot("t1", "");
         t1.registerValue("a", "");
         t1.registerValue("b", "");
         t1.registerValue("c", "");
 
-        AtomicType t2Items = new AtomicType("t2Items", "");
-        AggregateType t2 = new AggregateType("t2", "", t2Items);
+        AtomicSlot t2Items = new AtomicSlot("t2Items", "");
+        AggregateSlot t2 = new AggregateSlot("t2", "", t2Items);
         t2Items.registerValue("b", "");
         t2Items.registerValue("c", "");
 
-        CompoundType ct = new CompoundType("topLevel", "");
+        CompoundSlot ct = new CompoundSlot("topLevel", "");
         ct.addFieldType(t1);
         ct.addFieldType(t2);
 
@@ -301,13 +301,13 @@ public class DecisionGraphParseResultTest {
                 + "bottom1: one of Q, W, E.\n"
                 + "bottom2: some of A,S,D,F.";
 
-        CompoundType ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
+        CompoundSlot ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
 
         CompoundValue expected = ts.createInstance();
-        expected.set(((AtomicType) ts.getTypeNamed("mid1")).valueOf("B"));
-        CompoundValue mid2 = ((CompoundType) ts.getTypeNamed("mid2")).createInstance();
-        mid2.set(((AtomicType) mid2.getType().getTypeNamed("bottom1")).valueOf("W"));
-        final AggregateValue bottom2Value = ((AggregateType) mid2.getType().getTypeNamed("bottom2")).createInstance();
+        expected.set(((AtomicSlot) ts.getTypeNamed("mid1")).valueOf("B"));
+        CompoundValue mid2 = ((CompoundSlot) ts.getTypeNamed("mid2")).createInstance();
+        mid2.set(((AtomicSlot) mid2.getType().getTypeNamed("bottom1")).valueOf("W"));
+        final AggregateValue bottom2Value = ((AggregateSlot) mid2.getType().getTypeNamed("bottom2")).createInstance();
         bottom2Value.add(bottom2Value.getType().getItemType().valueOf("S"));
         bottom2Value.add(bottom2Value.getType().getItemType().valueOf("D"));
         bottom2Value.add(bottom2Value.getType().getItemType().valueOf("F"));
@@ -330,11 +330,11 @@ public class DecisionGraphParseResultTest {
                 + "bottom1: one of Q, W, E.\n"
                 + "bottom2: some of A,S,D,F.";
 
-        CompoundType ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
+        CompoundSlot ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
 
-        CompoundValue mid2 = ((CompoundType) ts.getTypeNamed("mid2")).createInstance();
-        mid2.set(((AtomicType) mid2.getType().getTypeNamed("bottom1")).valueOf("W"));
-        final AggregateValue bottom2Value = ((AggregateType) mid2.getType().getTypeNamed("bottom2")).createInstance();
+        CompoundValue mid2 = ((CompoundSlot) ts.getTypeNamed("mid2")).createInstance();
+        mid2.set(((AtomicSlot) mid2.getType().getTypeNamed("bottom1")).valueOf("W"));
+        final AggregateValue bottom2Value = ((AggregateSlot) mid2.getType().getTypeNamed("bottom2")).createInstance();
         bottom2Value.add(bottom2Value.getType().getItemType().valueOf("S"));
         bottom2Value.add(bottom2Value.getType().getItemType().valueOf("D"));
         bottom2Value.add(bottom2Value.getType().getItemType().valueOf("F"));
@@ -359,12 +359,12 @@ public class DecisionGraphParseResultTest {
                 + "bottom1: one of Q, W, E.\n"
                 + "bottom2: some of A,S,D,F.";
 
-        CompoundType ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
+        CompoundSlot ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
 
         CompoundValue expected = ts.createInstance();
-        expected.set(((AtomicType) ts.getTypeNamed("mid1")).valueOf("B"));
-        CompoundValue mid2 = ((CompoundType) ts.getTypeNamed("mid2")).createInstance();
-        mid2.set(((AtomicType) mid2.getType().getTypeNamed("bottom1")).valueOf("W"));
+        expected.set(((AtomicSlot) ts.getTypeNamed("mid1")).valueOf("B"));
+        CompoundValue mid2 = ((CompoundSlot) ts.getTypeNamed("mid2")).createInstance();
+        mid2.set(((AtomicSlot) mid2.getType().getTypeNamed("bottom1")).valueOf("W"));
         expected.set(mid2);
 
         String dgCode = "[set: mid1=B; bottom1=W][end]";
@@ -383,11 +383,11 @@ public class DecisionGraphParseResultTest {
                 + "bottom1: one of Q, W, E.\n"
                 + "bottom2: some of A,S,D,F.";
 
-        CompoundType ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
+        CompoundSlot ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
 
         CompoundValue expected = ts.createInstance();
-        CompoundValue mid2 = ((CompoundType) ts.getTypeNamed("mid2")).createInstance();
-        mid2.set(((AtomicType) mid2.getType().getTypeNamed("bottom1")).valueOf("W"));
+        CompoundValue mid2 = ((CompoundSlot) ts.getTypeNamed("mid2")).createInstance();
+        mid2.set(((AtomicSlot) mid2.getType().getTypeNamed("bottom1")).valueOf("W"));
         expected.set(mid2);
 
         String dgCode = "[set: bottom1=W][end]";

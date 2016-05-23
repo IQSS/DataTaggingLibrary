@@ -8,7 +8,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.model.types.TagType;
+import edu.harvard.iq.datatags.model.types.SlotType;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
@@ -65,7 +65,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
         public String visitCompoundValue(CompoundValue aThis) {
             StringBuilder sb = new StringBuilder();
             sb.append("[");
-            for ( TagType tt : aThis.getTypesWithNonNullValues() ) {
+            for ( SlotType tt : aThis.getTypesWithNonNullValues() ) {
                 sb.append( tt.getName() );
                 sb.append(":");
                 sb.append( aThis.get(tt).accept(this) );
@@ -161,7 +161,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
                     .gv());
             for (ConsiderAnswer ans : nd.getAnswers()) {
                 StringBuilder label = new StringBuilder();
-                for (TagType tt : ans.getAnswer().getTypesWithNonNullValues()) {
+                for (SlotType tt : ans.getAnswer().getTypesWithNonNullValues()) {
                     label.append(tt.getName())
                             .append("=")
                             .append(ans.getAnswer().get(tt).accept(valueNamer))
@@ -227,7 +227,7 @@ public class GraphvizChartSetClusteredVisualizer extends GraphvizVisualizer {
             StringBuilder label = new StringBuilder();
             label.append( idLabel(nd) )
                     .append("Set\n");
-            for ( TagType tt : nd.getTags().getTypesWithNonNullValues() ) {
+            for ( SlotType tt : nd.getTags().getTypesWithNonNullValues() ) {
                 label.append( tt.getName() )
                         .append( "=" )
                         .append( nd.getTags().get(tt).accept(valueNamer) )

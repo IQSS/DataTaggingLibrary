@@ -13,14 +13,14 @@ package edu.harvard.iq.datatags.parser.tagspace.ast;
  * }
  * @author michael
  */
-public class ToDoSlot extends AbstractSlot {
+public class ToDoAstSlot extends AbstractAstSlot {
     
-    public ToDoSlot(String aName, String aNote) {
+    public ToDoAstSlot(String aName, String aNote) {
         super(aName, aNote);
     }
     
     @Override
-    public <R> R accept(AbstractSlot.Visitor<R> visitor ) {
+    public <R> R accept(AbstractAstSlot.Visitor<R> visitor ) {
         return visitor.visit(this);
     }
     

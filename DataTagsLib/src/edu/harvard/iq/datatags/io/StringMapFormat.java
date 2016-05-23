@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.io;
 
-import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.AtomicType;
-import edu.harvard.iq.datatags.model.types.TagType;
-import edu.harvard.iq.datatags.model.types.ToDoType;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
@@ -59,7 +59,7 @@ public class StringMapFormat {
             @Override
             public Void visitCompoundValue(CompoundValue cv) {
                 stack.add( cv.getType().getName() );
-                for ( TagType tt : cv.getTypesWithNonNullValues() ) {
+                for ( SlotType tt : cv.getTypesWithNonNullValues() ) {
                     cv.get(tt).accept(this);
                 }
                 stack.remove( stack.size()-1 );
@@ -85,25 +85,25 @@ public class StringMapFormat {
      * @param serializedValue Tag of the expected type, serialized by this format.
      * @return The value, or {@code null} if {@code serializedValue} is empty.
      */
-    public TagValue parse( TagType type, Map<String,String> serializedValue ) {
+    public TagValue parse( SlotType type, Map<String,String> serializedValue ) {
         return serializedValue.isEmpty() 
                 ? null
                 : evaluate( type, makeTrie(serializedValue).getSingleChild() );
     }
     
-    TagValue evaluate( final TagType type, final TrieNode node ) {
+    TagValue evaluate( final SlotType type, final TrieNode node ) {
         if ( node == null ) return null;
         
-        return type.accept(new TagType.Visitor<TagValue>() {
+        return type.accept(new SlotType.Visitor<TagValue>() {
 
             @Override
-            public TagValue visitSimpleType(AtomicType t) {
+            public TagValue visitSimpleSlot(AtomicSlot t) {
                 // We expect a single value.
                 return t.valueOf(node.getSingleKey());
             }
 
             @Override
-            public TagValue visitAggregateType(AggregateType t) {
+            public TagValue visitAggregateSlot(AggregateSlot t) {
                 AggregateValue val = t.createInstance();
                 String values = node.getSingleKey();
                 for ( String itemName : values.split(",") ) {
@@ -113,10 +113,10 @@ public class StringMapFormat {
             }
 
             @Override
-            public TagValue visitCompoundType(CompoundType t) {
+            public TagValue visitCompoundSlot(CompoundSlot t) {
                 CompoundValue val = t.createInstance();
                 
-                for ( TagType fieldType : t.getFieldTypes() ) {
+                for ( SlotType fieldType : t.getFieldTypes() ) {
                     TagValue fieldValue = evaluate(fieldType, node.get(fieldType.getName()));
                     if ( fieldValue != null ) {
                         val.set( fieldValue );
@@ -127,7 +127,7 @@ public class StringMapFormat {
             }
 
             @Override
-            public TagValue visitTodoType(ToDoType t) {
+            public TagValue visitTodoSlot(ToDoSlot t) {
                 return t.getValue();
             }
         });

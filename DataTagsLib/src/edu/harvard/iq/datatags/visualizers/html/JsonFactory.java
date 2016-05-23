@@ -8,11 +8,11 @@ import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.model.types.AggregateType;
-import edu.harvard.iq.datatags.model.types.CompoundType;
-import edu.harvard.iq.datatags.model.types.AtomicType;
-import edu.harvard.iq.datatags.model.types.TagType;
-import edu.harvard.iq.datatags.model.types.ToDoType;
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
@@ -32,7 +32,7 @@ import org.json.simple.JSONValue;
 
 
 /**
- * Given a {@link DecisionGraph} and a {@link TagType} of the tag space 
+ * Given a {@link DecisionGraph} and a {@link SlotType} of the tag space 
  * top level, instances of this class create json files 
  * for the use of an html visualizing application of the decision graph and tag
  * space.
@@ -54,11 +54,11 @@ public class JsonFactory {
            }
            
           
-        @param topLevel {@link TagType} tag space top level Tag
+        @param topLevel {@link SlotType} tag space top level Tag
         @param dg {@link DecisionGraph} 
         @return a {@link JSONObject} of the given data
     */
-    public static JSONObject toJson(TagType topLevel, DecisionGraph dg){
+    public static JSONObject toJson(SlotType topLevel, DecisionGraph dg){
         
         JSONObject tagSpace= tagSaceToJSON(topLevel);
         JSONObject decisionGraph = decisionGraphToJSON(dg);
@@ -75,7 +75,7 @@ public class JsonFactory {
     
     // same as the above function . used to parse only the parse
     // only the tag space . used for testing
-    public static JSONObject toJson(TagType topLevel){
+    public static JSONObject toJson(SlotType topLevel){
         return tagSaceToJSON(topLevel);
     };
     
@@ -116,14 +116,14 @@ public class JsonFactory {
         traverse the tag space. to add a new slot JSON parser 
         one should implement the new slot visitor
     
-        @param topLevel {@link TagType} tag space top level Tag
+        @param topLevel {@link SlotType} tag space top level Tag
         @return a {@link JSONObject} of the given tagSpace
     */
-    protected static JSONObject tagSaceToJSON(TagType topLevel)  {
+    protected static JSONObject tagSaceToJSON(SlotType topLevel)  {
         
-        TagType.Visitor typeStringify = new TagType.Visitor<JSONObject>(){
+        SlotType.Visitor typeStringify = new SlotType.Visitor<JSONObject>(){
             @Override
-            public JSONObject visitSimpleType(AtomicType t) {
+            public JSONObject visitSimpleSlot(AtomicSlot t) {
                 
                 JSONObject obj=new JSONObject();
                 JSONArray values = new JSONArray();
@@ -145,7 +145,7 @@ public class JsonFactory {
             }
             
             @Override
-            public JSONObject visitAggregateType(AggregateType t) {
+            public JSONObject visitAggregateSlot(AggregateSlot t) {
                 JSONObject obj=new JSONObject();
                 JSONArray values = new JSONArray();
                 
@@ -165,11 +165,11 @@ public class JsonFactory {
             }
             
             @Override
-            public JSONObject visitCompoundType(CompoundType t) {
+            public JSONObject visitCompoundSlot(CompoundSlot t) {
                 JSONObject obj=new JSONObject();
                 JSONArray values = new JSONArray();
                 
-                for (TagType subTag : t.getFieldTypes() ){
+                for (SlotType subTag : t.getFieldTypes() ){
                     values.add( subTag.accept(this));
                 }
                 
@@ -181,7 +181,7 @@ public class JsonFactory {
             }
             
             @Override
-            public JSONObject visitTodoType(ToDoType t) {
+            public JSONObject visitTodoSlot(ToDoSlot t) {
                 JSONObject obj=new JSONObject();
                 
                 sanitizedPut(obj, "note", t.getNote(),true);
@@ -417,7 +417,7 @@ public class JsonFactory {
                     public String visitCompoundValue(CompoundValue aThis) {
                         
                         StringBuilder res= new StringBuilder("[ ");  
-                        for ( TagType tt : aThis.getTypesWithNonNullValues() ) {
+                        for ( SlotType tt : aThis.getTypesWithNonNullValues() ) {
                             res.append("{\"").append(tt.getName()).append("\":")
                                .append(aThis.get(tt).accept(this))
                                .append("}, ");
@@ -434,7 +434,7 @@ public class JsonFactory {
                     JSONObject obj         = new JSONObject();
                     JSONArray  assignments = new JSONArray();
                     
-                    for ( TagType tt : node.getTags().getTypesWithNonNullValues() ) {
+                    for ( SlotType tt : node.getTags().getTypesWithNonNullValues() ) {
                         JSONObject tag= new JSONObject();
                         tag.put(tt.getName(),
                                     JSONValue.parse(
