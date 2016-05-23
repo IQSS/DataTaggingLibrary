@@ -1,0 +1,80 @@
+[ask:
+  {text: Do the data contain information about living persons?}
+  {answers:
+    {Yes: [set: Subjects += livingPersons]}
+  }
+]
+[ask:
+  {text: Do the data contain information about recently deceased people? }
+  {terms:
+    {recently deceased: People who died up to 50 years ago.}
+  }
+  {answers:
+    {Yes: [set: Subjects += deceasedPersons]}
+  }
+]
+[call: collect-domains]
+
+[>privacyNeeded?< when:
+  {Subjects+=livingPersons: [call: privacy]}
+  {Subjects+=deceasedPersons; Domains+=medical: [call: privacy]}
+  {else:
+    [call: open-data]
+  }
+]
+[end]
+
+[>open-data< set: Transfer=clear; Storage=clear]
+[end]
+
+<** We have human data, asses privacy risks *>
+[>privacy< ask:
+  {text: Do the data contain personal information?}
+  {answers:
+      {Yes:
+        [ask:
+        {text: Were any disclosure limitations applied? }
+        {answers:
+          {None: [set: Granularity=accurate]}
+          {Aggregation: [set: Granularity=aggregate]}
+          {Noise Addition: [set: Granularity=noisy]}
+        }
+      ]}
+  }
+]
+[>cbg< consider:
+  {slot: Granularity}
+  {options:
+    {accurate:  [set: Transfer=encrypt; Storage=multipartyEncrypt]}
+    {aggregate: [set: Transfer=encrypt; Storage=clear]}
+    {noisy:     [set: Transfer=clear; Storage=clear]}
+  }
+  {else:
+    [call: open-data]
+  }
+]
+[end]
+
+<**
+ * Collect which domains the data is about.
+ *>
+[>collect-domains< ask:
+  {text: Do the data contain geographic information?}
+  {answers:
+    {Yes: [set: Domains += geographic]}}]
+[when:
+  {Assertions/Subjects+=livingPersons: [call: human-domains]}
+  {Assertions/Subjects+=deceasedPersons: [call: human-domains]}
+]
+[end]
+
+<** Collect which human-specific domains the data is about *>
+[>human-domains< ask:
+  {text: Do the data contain medical information?}
+  {answers:
+    {Yes: [set: Domains+=medical]}}]
+[ask:
+  {text: Do the data contain educational information?}
+  {answers:
+    {Yes: [set: Domains+=education]}}]
+[end]

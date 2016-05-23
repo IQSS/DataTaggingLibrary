@@ -3,7 +3,7 @@
 Consider and When Nodes
 =======================
 
-``[consider]`` and ``[when]`` nodes are similar to :doc:`ask node`, but instead of asking the user what to do, they look at the current :any:`Tags Value`. Use these nodes to avoid asking questions whose answers can be inferred from information the questionnaire already has. While both nodes look at the :any:`Tags Value`, ``when`` nodes are able to look at any combination of values, while ``consider`` nodes provide a more syntactically pleasent way of examining a single slot.
+``[consider]`` and ``[when]`` nodes are similar to :doc:`ask-node`, but instead of asking the user what to do, they look at the current :any:`Tags Value`. Use these nodes to avoid asking questions whose answers can be inferred from information the questionnaire already has. While both nodes look at the :any:`Tags Value`, ``when`` nodes are able to look at any combination of values, while ``consider`` nodes provide a more syntactically pleasent way of examining a single slot.
 
 Both nodes provide an ``else`` sub-node, which is selected when none of the other options matches. These nodes are similar to the ``if`` and ``switch`` keywords in other languages.
 
@@ -11,6 +11,7 @@ Consider node
 -------------
 
 ::
+
   <* SubjectType may have been collected above *>
   [>cn< consider:
     {slot: SubjectType}
@@ -34,6 +35,7 @@ When node
 When nodes are a more general form of ``[consider]``. They can describe any combination of values in the slots.
 
 ::
+
   [when:
     {Subjects+=livingPresons: [call: privacy]}
     {Subjects+=deceasedPresons; Domains += medical: [call: privacy]}
