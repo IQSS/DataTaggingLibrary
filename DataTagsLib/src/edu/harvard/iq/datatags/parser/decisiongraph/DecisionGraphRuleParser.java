@@ -244,13 +244,14 @@ public class DecisionGraphRuleParser {
                 ( head, text, terms, answers, _e) -> new AstAskNode( head.getId(), text, terms, answers ));
     }       
     
-    final static Parser<AstConsiderNode> considerNode(Parser<List<? extends AstNode>> bodyParser
-    ) {
-        return Parsers.sequence(Parsers.sequence(
-                nodeStructurePart("["),
-                nodeHead("consider"),
-                nodeStructurePart(":"),
-                (_s, h, _c) -> h),
+    final static Parser<AstConsiderNode> considerNode(Parser<List<? extends AstNode>> bodyParser) {
+        return Parsers.sequence(
+                Parsers.sequence(
+                    nodeStructurePart("["),
+                    nodeHead("consider"),
+                    nodeStructurePart(":"),
+                    (_s, h, _c) -> h
+                ),
                 SLOT_SUBNODE,
                 considerAnswersSubNode(bodyParser),
                 ELSE_SUBGRAPH(bodyParser).optional(),
@@ -258,8 +259,7 @@ public class DecisionGraphRuleParser {
                 (head, slot, answers, elseNode, _e) -> new AstConsiderNode(head.getId(), slot, answers, elseNode));
     }
 
-    final static Parser<AstConsiderNode> whenNode(Parser<List<? extends AstNode>> bodyParser
-    ) {
+    final static Parser<AstConsiderNode> whenNode(Parser<List<? extends AstNode>> bodyParser) {
         return Parsers.sequence(
                 Parsers.sequence(
                         nodeStructurePart("["),

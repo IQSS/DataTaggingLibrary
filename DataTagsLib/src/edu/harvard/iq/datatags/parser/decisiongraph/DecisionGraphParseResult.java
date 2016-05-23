@@ -28,6 +28,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
+import edu.harvard.iq.datatags.parser.exceptions.BadLookupException;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -41,6 +42,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import org.codehaus.jparsec.internal.util.Strings;
 
 /**
  * The result of parsing a decision graph code. Can create an actual decision
@@ -234,7 +237,12 @@ public class DecisionGraphParseResult {
                             try {
                                 assignment.accept(valueBuilder);
                             } catch (RuntimeException re) {
-                                throw new RuntimeException(" (at node " + astNode + ")", re);
+                                if ( re.getCause() instanceof DataTagsParseException ) {
+                                    ((DataTagsParseException)re.getCause()).setOffendingNode(astNode);
+                                    throw re;
+                                } else {
+                                    throw new RuntimeException(re.getMessage() + " (at node " + astNode + ")", re);
+                                }
                             }
                             CompoundValue answer = topValue;
                             res.setNodeFor(ConsiderAnswer.Answer(answer), buildNodes(astAns.getSubGraph(), syntacticallyNext));
@@ -244,7 +252,7 @@ public class DecisionGraphParseResult {
                         // Original node was [when]
                         for (AstConsiderAnswerSubNode astAns : astNode.getAnswers()) {
                             if (astAns.getAssignments() == null) {
-                                throw new RuntimeException(" (compund slot get assignment )");
+                                throw new RuntimeException("Expecting some values for the [when] node's options.");
                             }
                             topValue = topLevelType.createInstance();
                             valueBuilder = new SetNodeValueBuilder(topValue);
@@ -256,7 +264,12 @@ public class DecisionGraphParseResult {
                                     asnmnt.accept(valueBuilder);
                                 }
                             } catch (RuntimeException re) {
-                                throw new RuntimeException(" (at node " + astNode + ")", re);
+                                if ( re.getCause() instanceof DataTagsParseException ) {
+                                    ((DataTagsParseException)re.getCause()).setOffendingNode(astNode);
+                                    throw re;
+                                } else {
+                                    throw new RuntimeException(re.getMessage() + " (at node " + astNode + ")", re);
+                                }
                             }
                             CompoundValue answer = topValue;
                             if(res.getNodeFor(ConsiderAnswer.Answer(answer))==null)
@@ -562,11 +575,11 @@ public class DecisionGraphParseResult {
             valueType.accept(new TagType.VoidVisitor() {
                 @Override
                 public void visitAtomicTypeImpl(AtomicType t) {
-                    AtomicValue value = t.valueOf(aa.getValue());
-                    if (value == null) {
-                        throw new RuntimeException("Field " + aa.getSlot() + " does not have a value " + aa.getValue());
+                    try {
+                        additionPoint.set(t.valueOf(aa.getValue())); // if there's no such value, an IllegalArgumentException will be thrown.
+                    } catch ( IllegalArgumentException iae ) {
+                        throw new RuntimeException( new BadLookupException(t, aa.getValue(), null));
                     }
-                    additionPoint.set(value);
                 }
 
                 @Override
@@ -588,11 +601,15 @@ public class DecisionGraphParseResult {
 
         @Override
         public void visit(AstSetNode.AggregateAssignment aa) {
-            final CompoundValue additionPoint = descend(C.tail(fullyQualifiedSlotName.get(aa.getSlot())), topValue);
+            final List<String> fullyQualifiedName = fullyQualifiedSlotName.get(aa.getSlot());
+            if ( fullyQualifiedName == null ) {
+                throw new RuntimeException(new DataTagsParseException((AstNode)null, "slot '"
+                        + aa.getSlot().stream().collect(Collectors.joining("/")) + "' not found"));
+            }
+            final CompoundValue additionPoint = descend(C.tail(fullyQualifiedName), topValue);
             TagType valueType = additionPoint.getType().getTypeNamed(C.last(aa.getSlot()));
             if (valueType == null) {
-                throw new RuntimeException("Type '" + additionPoint.getType().getName()
-                        + "' does not have a field of type '" + C.last(aa.getSlot()));
+                throw new RuntimeException(new BadLookupException(additionPoint.getType(), C.last(aa.getSlot()), null));
             }
             valueType.accept(new TagType.VoidVisitor() {
                 @Override
@@ -608,7 +625,11 @@ public class DecisionGraphParseResult {
                         additionPoint.set(value);
                     }
                     for (String val : aa.getValue()) {
-                        value.add(t.getItemType().valueOf(val));
+                        try {
+                            value.add(t.getItemType().valueOf(val));
+                        } catch ( IllegalArgumentException iae ) {
+                            throw new RuntimeException( new BadLookupException(t, val, null));
+                        }
                     }
                 }
 

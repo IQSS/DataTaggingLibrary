@@ -50,6 +50,7 @@ Throughout the execution, the engine keeps a single value of the top-level type 
 
    set-node
    ask-node
+   consider-when-node
    call-node
    end-node
    reject-node
