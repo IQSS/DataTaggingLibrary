@@ -17,7 +17,6 @@ import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
-import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
@@ -43,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.codehaus.jparsec.internal.util.Strings;
 
 /**
  * The result of parsing a decision graph code. Can create an actual decision

@@ -240,7 +240,7 @@ public class CliRunner {
         println(ask.getText());
         if (!ask.getTermNames().isEmpty()) {
             println(" Terms:");
-            ask.getTermNames().forEach( termName -> {
+            ask.getTermOrder().forEach( termName -> {
                 print(" * " + termName + ":\n");
                 println("\t" + ask.getTermText(termName));
             });
