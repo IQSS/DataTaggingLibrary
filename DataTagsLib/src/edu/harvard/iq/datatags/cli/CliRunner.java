@@ -53,7 +53,7 @@ public class CliRunner {
             + "                                   datatags.org|___/\n";
 
     RuntimeEngine ngn = new RuntimeEngine();
-    ;
+    
     BufferedReader reader;
     private final StringMapFormat dtFormat = new StringMapFormat();
     private final Map<String, CliCommand> commands = new HashMap<>();

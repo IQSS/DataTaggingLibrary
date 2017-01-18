@@ -5,7 +5,12 @@
         <group/>
         <group name="Everyday"/>
         <group name="DataTags">
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/cli/CliRunner.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/model/graphs/nodes/AskNode.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/decisiongraph/DecisionGraphParseResult.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/decisiongraph/ast/AstAskNode.java</file>
             <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/model/values/CompoundValue.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/cli/AskAgainCommand.java</file>
         </group>
     </open-files>
 </project-private>

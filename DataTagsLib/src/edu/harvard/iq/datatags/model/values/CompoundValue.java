@@ -280,19 +280,14 @@ class Resolver implements TagValue.Visitor<TagValue.Function> {
 
     @Override
     public TagValue.Function visitAggregateValue(final AggregateValue op1) {
-        return new TagValue.Function() {
-            @Override
-            public TagValue apply(TagValue v) {
-                AggregateValue res = op1.getOwnableInstance();
-                if (v == null) {
-                    return res;
-                }
-                AggregateValue op2 = (AggregateValue) v;
-                for (AtomicValue tv : op2.getValues()) {
-                    res.add(tv);
-                }
+        return (TagValue v) -> {
+            AggregateValue res = op1.getOwnableInstance();
+            if (v == null) {
                 return res;
             }
+            AggregateValue op2 = (AggregateValue) v;
+            op2.getValues().forEach( res::add );
+            return res;
         };
     }
 
