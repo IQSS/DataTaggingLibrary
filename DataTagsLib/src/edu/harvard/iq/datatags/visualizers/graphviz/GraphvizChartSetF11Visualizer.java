@@ -142,7 +142,7 @@ public class GraphvizChartSetF11Visualizer extends AbstractGraphvizDecisionGraph
         @Override
 		public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
-						.label( idLabel(nd) + "REJECT\n" + wrap(nd.getReason())  )
+						.label( idLabel(nd) + wrap(nd.getReason())  )
 						.fillColor("#FF4444")
                         .fontColor("#FFFF44")
 						.gv() );
