@@ -1,7 +1,7 @@
 :doc:`Home <index>`
 
-Terms Their Meaning
-====================
+Terms and Their Meaning
+=======================
 
 .. glossary::
 

@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * private.
  *
  * Use {@link #get(edu.harvard.iq.datatags.model.values.CompoundValue)} or statically import
- * {@link #Answer(edu.harvard.iq.datatags.model.values.CompoundValue)} to obtain/generate instances.
+ * {@link #make(edu.harvard.iq.datatags.model.values.CompoundValue)} to obtain/generate instances.
  *
  */
 public class ConsiderAnswer {
@@ -20,11 +20,10 @@ public class ConsiderAnswer {
     private static final Map<CompoundValue, ConsiderAnswer> ANSWER_POOL = new ConcurrentHashMap<>();
 
     public static ConsiderAnswer get(CompoundValue ans) {
-        return Answer(ans);
+        return make(ans);
     }
 
-    public static ConsiderAnswer Answer(CompoundValue ans) {
-
+    public static ConsiderAnswer make(CompoundValue ans) {
         return ANSWER_POOL.computeIfAbsent(ans, s -> new ConsiderAnswer(s));
     }
 

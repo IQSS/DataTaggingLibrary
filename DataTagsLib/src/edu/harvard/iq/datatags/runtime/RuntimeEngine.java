@@ -215,8 +215,8 @@ public class RuntimeEngine {
             throw new IllegalArgumentException("Snapshot cannot be null");
         }
         setStatus(snapshot.getStatus());
-        currentTags = (CompoundValue) new StringMapFormat().parse(
-                (decisionGraph.getTopLevelType()),
+        currentTags = new StringMapFormat().parseCompoundValue(
+                decisionGraph.getTopLevelType(),
                 snapshot.getSerializedTagValue());
         currentNode = decisionGraph.getNode(snapshot.getCurrentNodeId());
 

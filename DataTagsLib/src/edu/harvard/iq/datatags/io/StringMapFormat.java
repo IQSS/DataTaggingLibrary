@@ -83,12 +83,25 @@ public class StringMapFormat {
      * Builds a {@link TagValue} from a map created by {@link #format}.
      * @param type The expected type of the resulting tag value.
      * @param serializedValue Tag of the expected type, serialized by this format.
-     * @return The value, or {@code null} if {@code serializedValue} is empty.
+     * @return The value, or {@code null} for empty map.
+     * @see #parseCompoundValue(edu.harvard.iq.datatags.model.types.CompoundSlot, java.util.Map) 
      */
     public TagValue parse( SlotType type, Map<String,String> serializedValue ) {
         return serializedValue.isEmpty() 
                 ? null
                 : evaluate( type, makeTrie(serializedValue).getSingleChild() );
+    }
+    
+    /**
+     * Builds a {@link TagValue} from a map created by {@link #format}.
+     * @param type The expected type of the resulting tag value.
+     * @param serializedValue Tag of the expected type, serialized by this format.
+     * @return The value (empty map translates to empty value).
+     */
+    public CompoundValue parseCompoundValue( CompoundSlot type, Map<String,String> serializedValue ) {
+        return serializedValue.isEmpty() 
+                ? type.createInstance()
+                : (CompoundValue)evaluate( type, makeTrie(serializedValue).getSingleChild() );
     }
     
     TagValue evaluate( final SlotType type, final TrieNode node ) {

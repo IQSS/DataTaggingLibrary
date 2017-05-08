@@ -53,7 +53,7 @@ public class CliRunner {
             + "                                   datatags.org|___/\n";
 
     RuntimeEngine ngn = new RuntimeEngine();
-    ;
+    
     BufferedReader reader;
     private final StringMapFormat dtFormat = new StringMapFormat();
     private final Map<String, CliCommand> commands = new HashMap<>();
@@ -164,7 +164,7 @@ public class CliRunner {
             ansText = ansText.trim();
             if ( ansText.isEmpty() ) continue;
             
-            Answer ans = Answer.Answer(ansText);
+            Answer ans = Answer.get(ansText);
             if ((ngn.getCurrentNode() instanceof AskNode)
                     && (((AskNode) ngn.getCurrentNode()).getAnswers().contains(ans))) {
                 return ans;
@@ -240,7 +240,7 @@ public class CliRunner {
         println(ask.getText());
         if (!ask.getTermNames().isEmpty()) {
             println(" Terms:");
-            ask.getTermNames().forEach( termName -> {
+            ask.getTermOrder().forEach( termName -> {
                 print(" * " + termName + ":\n");
                 println("\t" + ask.getTermText(termName));
             });

@@ -2,6 +2,7 @@ package edu.harvard.iq.datatags.model.graphs.nodes;
 
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +22,8 @@ public class AskNode extends Node {
      */
     private final List<Answer> answers = new LinkedList<>();
     private final Map<Answer, Node> nextNodeByAnswer = new HashMap<>();
-    private final Map<String, String> terms = new HashMap<>();
+    private final HashMap<String, String> terms = new HashMap<>();
+    private final List<String> termOrder = new ArrayList<>();
     private String text;
 
     public AskNode(String id) {
@@ -64,6 +66,14 @@ public class AskNode extends Node {
         this.text = text;
     }
 
+    public List<String> getTermOrder() {
+        return termOrder;
+    }
+    
+    /**
+     * @see #getTermOrder() 
+     * @return Set of term names.
+     */
     public Set<String> getTermNames() {
         return terms.keySet();
     }
@@ -74,6 +84,7 @@ public class AskNode extends Node {
 
     public void addTerm(String termName, String termText) {
         terms.put(termName, termText);
+        termOrder.add(termName);
     }
 
     public List<Answer> getAnswers() {

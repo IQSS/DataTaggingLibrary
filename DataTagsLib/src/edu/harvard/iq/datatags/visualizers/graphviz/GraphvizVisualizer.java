@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 public abstract class GraphvizVisualizer {
 	protected final Pattern whitespace = Pattern.compile("\\s|-");
     
-    private String decisionGraphName = "DecisionGraph";
     private final Map<Character, String> idEncodeMap = new HashMap<>();
+    protected String decisionGraphName = "DecisionGraph";
     
     public GraphvizVisualizer(){
         String idChars = ".,/~?!()@#$%^&*_+-[] ";
@@ -96,14 +96,6 @@ public abstract class GraphvizVisualizer {
         return sb.toString();
 	}
 
-    public String getDecisionGraphName() {
-        return decisionGraphName;
-    }
-
-    public void setDecisionGraphName(String aName) {
-        this.decisionGraphName = aName;
-    }
-    
     public String wrap( String source ) {
         return wrapAt( source, 40 );
     }
@@ -144,5 +136,14 @@ public abstract class GraphvizVisualizer {
 
         return out.toString();
     }
+
+    public void setDecisionGraphName(String aName) {
+        this.decisionGraphName = aName;
+    }
+    
+    public String getDecisionGraphName() {
+        return decisionGraphName;
+    }
+    
     
 }
