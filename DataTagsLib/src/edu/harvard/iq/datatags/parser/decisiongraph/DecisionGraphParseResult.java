@@ -243,7 +243,7 @@ public class DecisionGraphParseResult {
                                 }
                             }
                             CompoundValue answer = topValue;
-                            res.setNodeFor(ConsiderAnswer.Answer(answer), buildNodes(astAns.getSubGraph(), syntacticallyNext));
+                            res.setNodeFor(ConsiderAnswer.make(answer), buildNodes(astAns.getSubGraph(), syntacticallyNext));
                         }
                         
                     } else if (slot instanceof CompoundSlot) {
@@ -270,8 +270,8 @@ public class DecisionGraphParseResult {
                                 }
                             }
                             CompoundValue answer = topValue;
-                            if(res.getNodeFor(ConsiderAnswer.Answer(answer))==null)
-                            res.setNodeFor(ConsiderAnswer.Answer(answer), buildNodes(astAns.getSubGraph(), syntacticallyNext));
+                            if(res.getNodeFor(ConsiderAnswer.make(answer))==null)
+                            res.setNodeFor(ConsiderAnswer.make(answer), buildNodes(astAns.getSubGraph(), syntacticallyNext));
 
                         }
                     }

@@ -18,7 +18,6 @@ import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -29,13 +28,24 @@ import java.util.Set;
  * 
  * @author michael
  */
-public class GraphvizChartSetClusteredVisualizer extends AbstractGraphvizDecisionGraphVisualizer {
+public class GraphvizChartSetF11Visualizer extends AbstractGraphvizDecisionGraphVisualizer {
     
+    private static final String NODE_FILL_COLOR = "#3B8298";
+    private static final String NO_NODE_FILL_COLOR = "#515151";
+    
+    private boolean showEndNodes = false;
+    
+    public GraphvizChartSetF11Visualizer(boolean showEndNodes) {
+        this.showEndNodes = showEndNodes;
+    }
+    
+    public GraphvizChartSetF11Visualizer() {
+        this(false);
+    }
             
 	private class NodePainter extends  Node.VoidVisitor {
 		
 		List<String> nodes = new LinkedList<>(), edges = new LinkedList<>();
-        Set<Node> targets = new HashSet<>();
         
 		public void reset() {
 			nodes.clear();
@@ -46,7 +56,6 @@ public class GraphvizChartSetClusteredVisualizer extends AbstractGraphvizDecisio
         public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
 
             nodes.add(node(nodeId(nd))
-                    .shape(GvNode.Shape.egg)
                     .label(idLabel(nd) + "consider\n")
                     .gv());
             for (ConsiderAnswer ans : nd.getAnswers()) {
@@ -57,12 +66,25 @@ public class GraphvizChartSetClusteredVisualizer extends AbstractGraphvizDecisio
                             .append(ans.getAnswer().get(tt).accept(valueNamer))
                             .append("\n");
                 }
-
-                edges.add(edge(nodeId(nd), nodeId(nd.getNodeFor(ans))).tailLabel(label.toString()).gv());
-                targets.add(nd.getNodeFor(ans));
+                String ansId = nodeId(nd) + "_" + sanitizeId(ans.getAnswerText());
+                nodes.add( answerNodeGv(ansId, ans.getAnswerText()) );
+                edges.add( edge(nodeId(nd), ansId).arrowhead(GvEdge.ArrowType.None).gv() );
+                Node nextNode = nd.getNodeFor(ans);
+                if ( showEndNodes || !(nextNode instanceof EndNode) ) {
+                    edges.add( edge(ansId, nodeId(nextNode)).gv() );
+                }
             }
-            edges.add(edge(nodeId(nd), nodeId(nd.getElseNode())).tailLabel("else").gv());
-            targets.add(nd.getElseNode());
+            if ( nd.getElseNode() != null ) {
+                String elseId = nodeId(nd)+"_ELSE";
+                nodes.add( answerNodeGv(elseId, "else") );
+                edges.add( edge(nodeId(nd), elseId).arrowhead(GvEdge.ArrowType.None).gv() );
+                
+                Node nextNode = nd.getElseNode();
+                if ( showEndNodes || !(nextNode instanceof EndNode) ) {
+                    edges.add( edge(elseId, nodeId(nextNode)).gv() );
+                }
+                
+            }
         }
 		
 		@Override
@@ -72,15 +94,39 @@ public class GraphvizChartSetClusteredVisualizer extends AbstractGraphvizDecisio
                 nodeText = nodeText.substring(0,140) + "...";
             }
 			nodes.add( node(nodeId(nd))
-					.shape(GvNode.Shape.oval)
-					.label( idLabel(nd) + "ask\n" + wrap(nodeText) )
+					.label( idLabel(nd) + wrap(nodeText) )
 					.gv());
+            
 			for ( Answer ans : nd.getAnswers() ) {
-				edges.add( edge(nodeId(nd), nodeId(nd.getNodeFor(ans))).tailLabel(ans.getAnswerText()).gv() );
-                targets.add( nd.getNodeFor(ans));
+                String ansId = nodeId(nd) + "_" + sanitizeId(ans.getAnswerText());
+                nodes.add( answerNodeGv(ansId, ans.getAnswerText()) );
+				edges.add( edge(nodeId(nd), ansId).arrowhead(GvEdge.ArrowType.None).gv() );
+             
+                Node nextNode = nd.getNodeFor(ans);
+                if ( showEndNodes || !(nextNode instanceof EndNode) ) {
+                    edges.add( edge(ansId, nodeId(nextNode)).gv() );
+                }
+			
 			}
 		}
-
+        
+        
+        private String answerNodeGv( String nodeId, String ans ) {
+            String answerText = ans.toLowerCase();
+            GvNode nodeBld = node(nodeId).label(ans)
+                    .shape(GvNode.Shape.circle);
+            switch( answerText ) {
+                case "yes":
+                    return nodeBld.label("Yes").fontColor(NO_NODE_FILL_COLOR)
+                              .fillColor("white").color(NO_NODE_FILL_COLOR)
+                                .style(GvNode.Style.dashed).gv();
+                case "no":
+                    return nodeBld.label("No").fontColor("white").fillColor(NO_NODE_FILL_COLOR).gv();
+                default:
+                    return nodeBld.fontColor("white").fillColor(NODE_FILL_COLOR).gv();
+            }
+        }
+        
 		@Override
 		public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
@@ -88,16 +134,17 @@ public class GraphvizChartSetClusteredVisualizer extends AbstractGraphvizDecisio
 						.shape(GvNode.Shape.cds)
 						.fillColor("#BBBBFF")
 						.gv() );
-			edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).gv() );
-            targets.add( nd.getNextNode() );
+            if ( showEndNodes || !(nd.getNextNode() instanceof EndNode) ) {
+                edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).gv() );
+            }
 		}
 		
         @Override
 		public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
 						.label( idLabel(nd) + "REJECT\n" + wrap(nd.getReason())  )
-						.shape(GvNode.Shape.hexagon)
-						.fillColor("#FFAAAA")
+						.fillColor("#FF4444")
+                        .fontColor("#FFFF44")
 						.gv() );
 		}
 		
@@ -105,18 +152,19 @@ public class GraphvizChartSetClusteredVisualizer extends AbstractGraphvizDecisio
 		public void visitImpl(ToDoNode node) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(node))
 							.fillColor("#AAFFAA")
+                            .fontColor("#888888")
 							.shape(GvNode.Shape.note)
 							.label(idLabel(node) + "todo\n"+ wrap(node.getTodoText())).gv() );
-			
-            edges.add( edge(nodeId(node), nodeId(node.getNextNode())).gv() );
-            targets.add( node.getNextNode() );
+			if ( showEndNodes || !(node.getNextNode() instanceof EndNode) ) {
+                edges.add( edge(nodeId(node), nodeId(node.getNextNode())).gv() );
+            }
+            
 		}
 		
 		@Override
 		public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
             StringBuilder label = new StringBuilder();
-            label.append( idLabel(nd) )
-                    .append("Set\n");
+            label.append( idLabel(nd) );
             for ( SlotType tt : nd.getTags().getNonEmptySubSlotTypes() ) {
                 label.append( tt.getName() )
                         .append( "=" )
@@ -124,23 +172,25 @@ public class GraphvizChartSetClusteredVisualizer extends AbstractGraphvizDecisio
                         .append("\n");
             }
 			nodes.add( node(nodeId(nd))
-						.fillColor("#AADDAA")
-						.shape(GvNode.Shape.rect)
+						.fillColor("#77A576")
 						.label( label.toString() )
 						.gv());
-            edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).gv() );
-            targets.add( nd.getNextNode() );
+            if ( showEndNodes || !(nd.getNextNode() instanceof EndNode) ) {
+                edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).gv() );
+            }
 		}
 
 		@Override
 		public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
-			nodes.add( node(nodeId(nd))
-                        .shape(GvNode.Shape.point)
-                        .fontColor("#AAAAAA")
-                        .fillColor("#000000")
-                        .add("height", "0.2")
-                        .add("width", "0.2")
-                        .label("x").gv() );
+            if ( showEndNodes ) {
+                nodes.add( node(nodeId(nd))
+                            .shape(GvNode.Shape.point)
+                            .fontColor("#AAAAAA")
+                            .fillColor("#000000")
+                            .add("height", "0.2")
+                            .add("width", "0.2")
+                            .label("x").gv() );
+            }
 		}
 		
         private String idLabel( Node nd ) {
@@ -148,22 +198,23 @@ public class GraphvizChartSetClusteredVisualizer extends AbstractGraphvizDecisio
         }
 	}
 	
-    
     @Override
     void printHeader(BufferedWriter out) throws IOException {
 		out.write("digraph " + getDecisionGraphName() + " {");
 		out.newLine();
         out.write( "fontname=\"Courier\"" );
 		out.newLine();
-		out.write("edge [fontname=\"Helvetica\" fontsize=\"10\"]");
+        out.write( "graph[splines=ortho, nodesep=1, concentrate=true]\n" );
 		out.newLine();
-		out.write("node [fillcolor=\"lightgray\" style=\"filled\" fontname=\"Helvetica\" fontsize=\"10\"]");
+		out.write("edge [style=dotted arrowhead=open]");
+		out.newLine();
+		out.write("node [shape=Mrecord fillcolor=\""+NODE_FILL_COLOR+"\" style=\"filled\" fontcolor=white color=white fontname=\"Helvetica\" fontsize=\"10\"]");
 		out.newLine();
         out.write( node("start")
                 .fillColor("transparent")
                 .shape(GvNode.Shape.none)
-                .fontColor("#008800")
-                .fontSize(16)
+                .fontColor(NODE_FILL_COLOR)
+                .fontSize(12)
                 .gv() );
 		out.newLine();
 	}
@@ -172,8 +223,9 @@ public class GraphvizChartSetClusteredVisualizer extends AbstractGraphvizDecisio
 	protected void printBody(BufferedWriter out) throws IOException {
         printChart(theGraph, out);
         out.write( edge("start", nodeId(theGraph.getStart()))
-                    .color("#008800")
-                    .penwidth(4)
+                    .color(NODE_FILL_COLOR)
+                    .penwidth(1)
+                    .style(GvEdge.Style.Solid)
                     .gv());
         out.write("{rank=source; start}");
 		out.newLine();

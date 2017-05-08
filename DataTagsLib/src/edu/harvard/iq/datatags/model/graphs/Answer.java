@@ -8,10 +8,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * A single answer, given to a {@link AskNode} by the user. In order to 
  * allow object reuse (there are typically a lot of similar answers in a questionnaire)
- * instances may be pooled, which the class constructor is private. 
+ * instances may be pooled, which is why the class constructor is private. 
  * 
- * Use {@link #get(java.lang.String)} or statically import
- * {@link #Answer(java.lang.String)} to obtain/generate instances.
+ * Use {@link #get(java.lang.String)} to obtain/generate instances.
  * 
  * @author michael
  */
@@ -23,18 +22,14 @@ public class Answer {
 	private final String answerText;
     
     public static Answer get(String anAnswerText) {
-        return Answer(anAnswerText);
-    }
-    
-	public static Answer Answer( String anAnswerText ) {
         String canonical = anAnswerText.intern();
 		return ANSWER_POOL.computeIfAbsent(canonical,  s -> new Answer(s) );
 	}
 	
     static {
         // Initialize now, when ANSWER_POOL is there.
-        YES = Answer("Yes");
-        NO  = Answer("No");
+        YES = get("Yes");
+        NO  = get("No");
     }
     
 	private Answer(String anAnswerText) {

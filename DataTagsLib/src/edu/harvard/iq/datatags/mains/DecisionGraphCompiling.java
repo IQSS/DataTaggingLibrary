@@ -10,6 +10,7 @@ import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetClusteredVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetF11Visualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpaceVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVizalizer;
 import java.io.IOException;
@@ -84,6 +85,12 @@ public class DecisionGraphCompiling {
         System.out.println("Writing: " + outfile );
 		fcsViz.setDecisionGraph(dg);
         fcsViz.vizualize( outfile );
+        
+        GraphvizChartSetF11Visualizer f11Viz = new GraphvizChartSetF11Visualizer();
+        outfile = chartFile.resolveSibling( chartFile.getFileName().toString() + "-f11.gv" );
+        System.out.println("Writing: " + outfile );
+		f11Viz.setDecisionGraph(dg);
+        f11Viz.vizualize( outfile );
 
     }
     

@@ -164,7 +164,7 @@ public class CliRunner {
             ansText = ansText.trim();
             if ( ansText.isEmpty() ) continue;
             
-            Answer ans = Answer.Answer(ansText);
+            Answer ans = Answer.get(ansText);
             if ((ngn.getCurrentNode() instanceof AskNode)
                     && (((AskNode) ngn.getCurrentNode()).getAnswers().contains(ans))) {
                 return ans;
