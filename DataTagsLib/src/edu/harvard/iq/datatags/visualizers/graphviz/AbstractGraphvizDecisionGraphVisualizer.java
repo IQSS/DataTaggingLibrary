@@ -45,12 +45,12 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
         @Override
         public String visitAggregateValue(AggregateValue v) {
             StringBuilder sb = new StringBuilder();
-            sb.append("{");
+            sb.append("\\{");
             v.getValues().forEach((AtomicValue tv) -> sb.append(tv.accept(this)).append(","));
             if (!v.getValues().isEmpty()) {
                 sb.setLength(sb.length() - 1);
             }
-            sb.append("}");
+            sb.append("\\}");
             return sb.toString();
         }
 

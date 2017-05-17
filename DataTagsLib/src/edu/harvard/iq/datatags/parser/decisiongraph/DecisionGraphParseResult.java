@@ -92,8 +92,9 @@ public class DecisionGraphParseResult {
         // stage 3: Compile and link direct nodes.
         EndNode endAll = new EndNode("[SYN-END]");
         try {
-            breakAstNodeList(astNodes).forEach((segment)
-                    -> buildNodes(segment, endAll));
+            breakAstNodeList(astNodes)
+                    .forEach( segment -> buildNodes(segment, endAll) );
+            
         } catch (RuntimeException re) {
             Throwable cause = re.getCause();
             if ((cause != null) && (cause instanceof DataTagsParseException)) {
