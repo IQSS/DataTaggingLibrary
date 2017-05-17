@@ -18,6 +18,8 @@ public abstract class Node {
         R visit(AskNode nd) throws DataTagsRuntimeException;
 
         R visit(SetNode nd) throws DataTagsRuntimeException;
+        
+        R visit(SectionNode nd) throws DataTagsRuntimeException;
 
         R visit(RejectNode nd) throws DataTagsRuntimeException;
 
@@ -44,6 +46,12 @@ public abstract class Node {
 
         @Override
         public Void visit(SetNode nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+
+        @Override
+        public Void visit(SectionNode nd) throws DataTagsRuntimeException {
             visitImpl(nd);
             return null;
         }
@@ -77,6 +85,8 @@ public abstract class Node {
         public abstract void visitImpl(AskNode nd) throws DataTagsRuntimeException;
 
         public abstract void visitImpl(SetNode nd) throws DataTagsRuntimeException;
+        
+        public abstract void visitImpl(SectionNode nd) throws DataTagsRuntimeException;
 
         public abstract void visitImpl(RejectNode nd) throws DataTagsRuntimeException;
 
