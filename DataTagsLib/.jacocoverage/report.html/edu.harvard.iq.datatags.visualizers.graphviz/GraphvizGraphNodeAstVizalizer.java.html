@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GraphvizGraphNodeAstVizalizer.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.visualizers.graphviz</a> &gt; <span class="el_source">GraphvizGraphNodeAstVizalizer.java</span></div><h1>GraphvizGraphNodeAstVizalizer.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.visualizers.graphviz;
+
+import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
+import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
+import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Visualizes the AST of a decision graph.
+ *
+ * @author Michael Bar-Sinai
+ */
+public class GraphvizGraphNodeAstVizalizer extends GraphvizVisualizer {
+
+    private final List&lt;? extends AstNode&gt; nodeList;
+
+<span class="nc" id="L33">    List&lt;String&gt; nodes = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L34">    List&lt;String&gt; edges = new LinkedList&lt;&gt;();</span>
+
+    interface AstNodeHandler&lt;T extends AstNode&gt; {
+
+        void handle(T node, int depth);
+    }
+
+<span class="nc" id="L41">    private final Map&lt;Class&lt;?&gt;, AstNodeHandler&gt; handlers = new HashMap&lt;&gt;();</span>
+
+<span class="nc" id="L43">    int nextId = 0;</span>
+
+<span class="nc" id="L45">    public GraphvizGraphNodeAstVizalizer(List&lt;? extends AstNode&gt; aNodeList) {</span>
+<span class="nc" id="L46">        nodeList = aNodeList;</span>
+<span class="nc" id="L47">        addIds(nodeList, new AstNodeIdProvider());</span>
+<span class="nc" id="L48">        initMap();</span>
+<span class="nc" id="L49">    }</span>
+
+    @Override
+    protected void printBody(BufferedWriter out) throws IOException {
+<span class="nc" id="L53">        visualizeNodeList(nodeList, 0);</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        for (String node : nodes) {</span>
+<span class="nc" id="L55">            out.write(node);</span>
+<span class="nc" id="L56">            out.newLine();</span>
+<span class="nc" id="L57">        }</span>
+<span class="nc" id="L58">        out.newLine();</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        for (String edge : edges) {</span>
+<span class="nc" id="L60">            out.write(edge);</span>
+<span class="nc" id="L61">            out.newLine();</span>
+<span class="nc" id="L62">        }</span>
+<span class="nc" id="L63">    }</span>
+
+    void visualizeNodeList(List&lt;? extends AstNode&gt; list, int depth) {
+<span class="nc" id="L66">        AstNode lastNode = null;</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        for (AstNode curNode : list) {</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">            if (lastNode != null) {</span>
+<span class="nc" id="L69">                edges.add(edge(sanitizeId(lastNode.getId()), sanitizeId(curNode.getId()))</span>
+<span class="nc" id="L70">                        .color(&quot;#AAAABB&quot;)</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">                        .label(&quot;ast_next&quot;)</span>
+<span class="nc" id="L72">                        .constraint(depth != 0)</span>
+<span class="nc" id="L73">                        .style(GvEdge.Style.Dashed)</span>
+<span class="nc" id="L74">                        .gv());</span>
+            }
+
+<span class="nc" id="L77">            handlers.get(curNode.getClass()).handle(curNode, depth + 1);</span>
+
+<span class="nc" id="L79">            lastNode = curNode;</span>
+
+<span class="nc" id="L81">        }</span>
+<span class="nc" id="L82">    }</span>
+
+    void writeTermNode(String termNodeId, AstTermSubNode node) {
+<span class="nc" id="L85">        nodes.add(node(termNodeId)</span>
+<span class="nc" id="L86">                .label(nodeLabel(null, &quot;term\\n&quot; + node.getExplanation()))</span>
+<span class="nc" id="L87">                .fillColor(&quot;#BBBB22&quot;)</span>
+<span class="nc" id="L88">                .fontSize(9)</span>
+<span class="nc" id="L89">                .shape(GvNode.Shape.tab)</span>
+<span class="nc" id="L90">                .gv());</span>
+<span class="nc" id="L91">    }</span>
+
+    void writeAnswerNode(String nodeId, String ansNodeId, AstAnswerSubNode node, int depth) {
+<span class="nc" id="L94">        nodes.add(node(ansNodeId).label(nodeLabel(null, &quot;answer&quot;)).gv());</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (!node.getSubGraph().isEmpty()) {</span>
+<span class="nc" id="L96">            edges.add(edge(ansNodeId, sanitizeId(node.getSubGraph().get(0).getId())).label(&quot;impl&quot;).gv());</span>
+        }
+<span class="nc" id="L98">        visualizeNodeList(node.getSubGraph(), depth);</span>
+<span class="nc" id="L99">    }</span>
+
+    private void initMap() {
+
+<span class="nc" id="L103">        setNodeTypeHandler(AstAskNode.class, (AstAskNode node, int depth) -&gt; {</span>
+<span class="nc" id="L104">            final String gvNodeId = sanitizeId(node.getId());</span>
+            // consider node
+<span class="nc" id="L106">            nodes.add(node(gvNodeId)</span>
+<span class="nc" id="L107">                    .label(nodeLabel(node.getId(), &quot;consider\n&quot;))</span>
+<span class="nc" id="L108">                    .fillColor(&quot;#BBBBFF&quot;)</span>
+<span class="nc" id="L109">                    .gv());</span>
+            // ask node
+<span class="nc" id="L111">            nodes.add(node(gvNodeId)</span>
+<span class="nc" id="L112">                    .label(nodeLabel(node.getId(), &quot;ask\n&quot;))</span>
+<span class="nc" id="L113">                    .fillColor(&quot;#BBBBFF&quot;)</span>
+<span class="nc" id="L114">                    .gv());</span>
+
+            // text node
+<span class="nc" id="L117">            edges.add(edge(gvNodeId, gvNodeId + &quot;_TEXT&quot;).label(&quot;text&quot;).gv());</span>
+<span class="nc" id="L118">            nodes.add(node(gvNodeId + &quot;_TEXT&quot;)</span>
+<span class="nc" id="L119">                    .label(nodeLabel(null, node.getTextNode().getText()))</span>
+<span class="nc" id="L120">                    .gv());</span>
+
+            // answers nodes
+<span class="nc" id="L123">            node.getAnswers().forEach(a -&gt; {</span>
+<span class="nc" id="L124">                String ansNodeId = gvNodeId + &quot;_ans_&quot; + sanitizeId(a.getAnswerText());</span>
+<span class="nc" id="L125">                edges.add(edge(gvNodeId, ansNodeId).label(a.getAnswerText()).gv());</span>
+<span class="nc" id="L126">                writeAnswerNode(gvNodeId, ansNodeId, a, depth);</span>
+<span class="nc" id="L127">            });</span>
+
+<span class="nc bnc" id="L129" title="All 2 branches missed.">            if (node.getTerms() != null) {</span>
+<span class="nc" id="L130">                node.getTerms().forEach(tsn -&gt; {</span>
+<span class="nc" id="L131">                    String termNodeId = gvNodeId + &quot;_t_&quot; + sanitizeId(tsn.getTerm());</span>
+<span class="nc" id="L132">                    edges.add(edge(gvNodeId, termNodeId).label(tsn.getTerm()).gv());</span>
+<span class="nc" id="L133">                    writeTermNode(termNodeId, tsn);</span>
+<span class="nc" id="L134">                });</span>
+            }
+<span class="nc" id="L136">        });</span>
+
+<span class="nc" id="L138">        setNodeTypeHandler(AstCallNode.class, (AstCallNode node, int depth) -&gt; {</span>
+<span class="nc" id="L139">            nodes.add(node(sanitizeId(node.getId()))</span>
+<span class="nc" id="L140">                    .shape(GvNode.Shape.cds)</span>
+<span class="nc" id="L141">                    .fillColor(&quot;#BBDDFF&quot;)</span>
+<span class="nc" id="L142">                    .label(nodeLabel(node.getId(), &quot;call\n&quot; + node.getCalleeId())).gv());</span>
+<span class="nc" id="L143">        });</span>
+
+<span class="nc" id="L145">        setNodeTypeHandler(AstEndNode.class, (AstEndNode node, int depth) -&gt; {</span>
+<span class="nc" id="L146">            nodes.add(node(sanitizeId(node.getId()))</span>
+<span class="nc" id="L147">                    .label(nodeLabel(node.getId(), &quot;end&quot;))</span>
+<span class="nc" id="L148">                    .shape(GvNode.Shape.box)</span>
+<span class="nc" id="L149">                    .color(&quot;#000000&quot;)</span>
+<span class="nc" id="L150">                    .fillColor(&quot;#000000&quot;)</span>
+<span class="nc" id="L151">                    .fontColor(&quot;#FFFFFF&quot;)</span>
+<span class="nc" id="L152">                    .gv());</span>
+<span class="nc" id="L153">        });</span>
+
+<span class="nc" id="L155">        setNodeTypeHandler(AstSetNode.class, (AstSetNode node, int depth) -&gt; {</span>
+<span class="nc" id="L156">            final StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L157">            AstSetNode.Assignment.Visitor asgnmntPainter = new AstSetNode.Assignment.Visitor() {</span>
+                @Override
+                public void visit(AstSetNode.AtomicAssignment aa) {
+<span class="nc" id="L160">                    sb.append(aa.getSlot()).append(&quot;=&quot;).append(aa.getValue()).append(&quot; &quot;);</span>
+<span class="nc" id="L161">                }</span>
+
+                @Override
+                public void visit(AstSetNode.AggregateAssignment aa) {
+<span class="nc" id="L165">                    sb.append(aa.getSlot()).append(&quot;+={&quot;).append(aa.getValue()).append(&quot;}&quot;).append(&quot; &quot;);</span>
+<span class="nc" id="L166">                }</span>
+            };
+<span class="nc" id="L168">            node.getAssignments().forEach(a -&gt; a.accept(asgnmntPainter));</span>
+
+<span class="nc" id="L170">            final String nodeLabel = nodeLabel(node.getId(), &quot;set\n&quot; + sb.toString());</span>
+<span class="nc" id="L171">            nodes.add(node(sanitizeId(node.getId()))</span>
+<span class="nc" id="L172">                    .label(nodeLabel)</span>
+<span class="nc" id="L173">                    .shape(GvNode.Shape.box)</span>
+<span class="nc" id="L174">                    .gv());</span>
+<span class="nc" id="L175">        });</span>
+
+<span class="nc" id="L177">        setNodeTypeHandler(AstTodoNode.class, (AstTodoNode node, int depth) -&gt; {</span>
+<span class="nc" id="L178">            nodes.add(node(sanitizeId(node.getId()))</span>
+<span class="nc" id="L179">                    .fillColor(&quot;#AAFFAA&quot;)</span>
+<span class="nc" id="L180">                    .shape(GvNode.Shape.note)</span>
+<span class="nc" id="L181">                    .label(nodeLabel(node.getId(), &quot;todo\n&quot; + node.getTodoText())).gv());</span>
+<span class="nc" id="L182">        });</span>
+
+<span class="nc" id="L184">        setNodeTypeHandler(AstRejectNode.class, (AstRejectNode node, int depth) -&gt; {</span>
+<span class="nc" id="L185">            nodes.add(node(sanitizeId(node.getId()))</span>
+<span class="nc" id="L186">                    .fillColor(&quot;#FFAAAA&quot;)</span>
+<span class="nc" id="L187">                    .shape(GvNode.Shape.hexagon).label(nodeLabel(node.getId(), &quot;reject\n&quot; + node.getReason())).gv());</span>
+<span class="nc" id="L188">        });</span>
+
+<span class="nc" id="L190">    }</span>
+
+    private &lt;T extends AstNode&gt; void setNodeTypeHandler(Class&lt;T&gt; clazz, AstNodeHandler&lt;T&gt; hnd) {
+<span class="nc" id="L193">        handlers.put(clazz, hnd);</span>
+<span class="nc" id="L194">    }</span>
+
+    String nodeLabel(String nodeId, String extras) {
+<span class="nc bnc" id="L197" title="All 4 branches missed.">        return wrap((nodeId == null || nodeId.startsWith(&quot;[#&quot;))</span>
+                ? extras
+                : (&quot;&gt;&quot; + nodeId + &quot;&lt;\n&quot; + extras));
+    }
+
+    private void addIds(List&lt;? extends AstNode&gt; nodes, AstNodeIdProvider nodeIdProvider) {
+<span class="nc" id="L203">        AstNode.NullVisitor idSupplier = new AstNode.NullVisitor() {</span>
+
+           
+
+            @Override
+            public void visitImpl(AstConsiderNode nd) throws DataTagsRuntimeException {
+<span class="nc bnc" id="L209" title="All 2 branches missed.">                if (nd.getId() == null) {</span>
+<span class="nc" id="L210">                    nd.setId(nodeIdProvider.nextId());</span>
+                }
+<span class="nc" id="L212">                nd.getAnswers().forEach(ans -&gt; addIds(ans.getSubGraph(), nodeIdProvider));</span>
+<span class="nc" id="L213">            }</span>
+
+            @Override
+            public void visitImpl(AstAskNode nd) throws DataTagsRuntimeException {
+<span class="nc bnc" id="L217" title="All 2 branches missed.">                if (nd.getId() == null) {</span>
+<span class="nc" id="L218">                    nd.setId(nodeIdProvider.nextId());</span>
+                }
+<span class="nc" id="L220">                nd.getAnswers().forEach(ans -&gt; addIds(ans.getSubGraph(), nodeIdProvider));</span>
+<span class="nc" id="L221">            }</span>
+
+            @Override
+            public void visitImpl(AstSetNode nd) throws DataTagsRuntimeException {
+<span class="nc bnc" id="L225" title="All 2 branches missed.">                if (nd.getId() == null) {</span>
+<span class="nc" id="L226">                    nd.setId(nodeIdProvider.nextId());</span>
+                }
+<span class="nc" id="L228">            }</span>
+
+            @Override
+            public void visitImpl(AstRejectNode nd) throws DataTagsRuntimeException {
+<span class="nc bnc" id="L232" title="All 2 branches missed.">                if (nd.getId() == null) {</span>
+<span class="nc" id="L233">                    nd.setId(nodeIdProvider.nextId());</span>
+                }
+<span class="nc" id="L235">            }</span>
+
+            @Override
+            public void visitImpl(AstCallNode nd) throws DataTagsRuntimeException {
+<span class="nc bnc" id="L239" title="All 2 branches missed.">                if (nd.getId() == null) {</span>
+<span class="nc" id="L240">                    nd.setId(nodeIdProvider.nextId());</span>
+                }
+<span class="nc" id="L242">            }</span>
+
+            @Override
+            public void visitImpl(AstTodoNode nd) throws DataTagsRuntimeException {
+<span class="nc bnc" id="L246" title="All 2 branches missed.">                if (nd.getId() == null) {</span>
+<span class="nc" id="L247">                    nd.setId(nodeIdProvider.nextId());</span>
+                }
+<span class="nc" id="L249">            }</span>
+
+            @Override
+            public void visitImpl(AstEndNode nd) throws DataTagsRuntimeException {
+<span class="nc bnc" id="L253" title="All 2 branches missed.">                if (nd.getId() == null) {</span>
+<span class="nc" id="L254">                    nd.setId(nodeIdProvider.nextId());</span>
+                }
+<span class="nc" id="L256">            }</span>
+        };
+
+<span class="nc" id="L259">        nodes.forEach(n -&gt; n.accept(idSupplier));</span>
+<span class="nc" id="L260">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

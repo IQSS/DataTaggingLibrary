@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CompoundSlot.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.model.types</a> &gt; <span class="el_source">CompoundSlot.java</span></div><h1>CompoundSlot.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.model.types;
+
+import edu.harvard.iq.datatags.model.values.CompoundValue;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * A type whose values contain fields. As there is only one field of each type,
+ * the fields are accessible by using the type as key.
+ * &lt;br&gt;
+ * Corollary: Instances of compound types are maps from types to values of those types.
+ * 
+ * @author michael
+ */
+public class CompoundSlot extends SlotType {
+<span class="fc" id="L17">	private final Set&lt;SlotType&gt; fieldTypes = new HashSet&lt;&gt;();</span>
+
+	public CompoundSlot(String name, String note) {
+<span class="fc" id="L20">		super(name, note);</span>
+<span class="fc" id="L21">	}</span>
+	
+	public void addFieldType( SlotType tt ) {
+<span class="fc" id="L24">		fieldTypes.add( tt );</span>
+<span class="fc" id="L25">	}</span>
+	
+	public Set&lt;SlotType&gt; getFieldTypes() {
+<span class="fc" id="L28">		return Collections.unmodifiableSet(fieldTypes);</span>
+	}
+	
+	public void removeFieldType( SlotType tt ) {
+<span class="nc" id="L32">		fieldTypes.remove(tt);</span>
+<span class="nc" id="L33">	}</span>
+    
+    public SlotType getTypeNamed( String typeName ) {
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        for ( SlotType tt : getFieldTypes() ) {</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">            if ( tt.getName().equals(typeName) ) {</span>
+<span class="fc" id="L38">                return tt;</span>
+            }
+<span class="fc" id="L40">        }</span>
+<span class="nc" id="L41">        return null;</span>
+    }
+    
+    public CompoundValue createInstance() {
+<span class="fc" id="L45">        return new CompoundValue( this );</span>
+    }
+
+	@Override
+	public &lt;T&gt; T accept(Visitor&lt;T&gt; v) {
+<span class="fc" id="L50">		return v.visitCompoundSlot(this);</span>
+	}
+    
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

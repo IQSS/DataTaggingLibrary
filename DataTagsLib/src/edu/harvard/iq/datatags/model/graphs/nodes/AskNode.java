@@ -36,14 +36,14 @@ public class AskNode extends Node {
     }
 
     /**
-     * Sets the node for the passed answer
+     * Adds an answer, and sets the node for it.
      *
      * @param <T> the actual type of the node
      * @param answer the answer for which the node applies
      * @param node the node
      * @return {@code node}, for convenience, call chaining, etc.
      */
-    public <T extends Node> T setNodeFor(Answer answer, T node) {
+    public <T extends Node> T addAnswer(Answer answer, T node) {
         answers.add(answer);
         nextNodeByAnswer.put(answer, node);
         return node;

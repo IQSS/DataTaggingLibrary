@@ -198,9 +198,9 @@ public class DecisionGraphParseResultTest {
 
         AskNode start = new AskNode(nodeIdProvider.nextId());
         start.setText("why?");
-        start.setNodeFor(Answer.get("dunno"), new EndNode("de"));
+        start.addAnswer(Answer.get("dunno"), new EndNode("de"));
         final CallNode whyNotCallNode = new CallNode("wnc", "duh");
-        start.setNodeFor(Answer.get("why not"), whyNotCallNode);
+        start.addAnswer(Answer.get("why not"), whyNotCallNode);
 
         EndNode finalEndNode = new EndNode(nodeIdProvider.nextId());
         whyNotCallNode.setNextNode(finalEndNode);
@@ -229,14 +229,14 @@ public class DecisionGraphParseResultTest {
 
         AskNode start = new AskNode(nodeIdProvider.nextId());
         start.setText("Should I?");
-        start.setNodeFor(Answer.YES, new EndNode("end-yes"));
-        start.setNodeFor(Answer.NO, new EndNode("end-no"));
+        start.addAnswer(Answer.YES, new EndNode("end-yes"));
+        start.addAnswer(Answer.NO, new EndNode("end-no"));
 
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
         expected.setStart(start);
 
-        String code = "[ask: {text: Should I?} {answers: {Yes:[>end-yes< end]}}][>end-no< end]";
+        String code = "[ask: {text: Should I?} {answers: {yes:[>end-yes< end]}}][>end-no< end]";
         DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
         actual.setTopLevelType(emptyTagSpace);
 

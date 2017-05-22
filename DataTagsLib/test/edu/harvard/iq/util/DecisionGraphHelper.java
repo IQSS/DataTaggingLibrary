@@ -37,9 +37,9 @@ public class DecisionGraphHelper {
 		AskNode last = retVal.add( new AskNode( id + "_1" ) );
 		retVal.setStart( last );
 		for ( int count=0; count<length-1; count++ ) {
-			last = last.setNodeFor(Answer.YES, retVal.add(new AskNode(id + "_" + (count+2))));
+			last = last.addAnswer(Answer.YES, retVal.add(new AskNode(id + "_" + (count+2))));
 		}
-		last.setNodeFor(Answer.YES, new EndNode( id + "_END") );
+		last.addAnswer(Answer.YES, new EndNode( id + "_END") );
 		return retVal;
 	}
 	

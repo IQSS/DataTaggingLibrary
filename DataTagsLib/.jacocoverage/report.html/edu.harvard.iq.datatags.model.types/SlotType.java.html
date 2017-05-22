@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SlotType.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.model.types</a> &gt; <span class="el_source">SlotType.java</span></div><h1>SlotType.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.model.types;
+
+import edu.harvard.iq.datatags.model.values.AggregateValue;
+import edu.harvard.iq.datatags.model.values.AtomicValue;
+import edu.harvard.iq.datatags.model.values.TagValue;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * A type that a slot may have.
+ * 
+ * @author michael
+ */
+public abstract class SlotType {
+	
+	public interface Visitor&lt;T&gt; {
+		T visitSimpleSlot( AtomicSlot t );
+		T visitAggregateSlot( AggregateSlot t );
+		T visitCompoundSlot( CompoundSlot t );
+		T visitTodoSlot( ToDoSlot t );
+	}
+	
+<span class="fc" id="L25">    public abstract static class VoidVisitor implements Visitor&lt;Void&gt; {</span>
+        @Override
+        public Void visitSimpleSlot( AtomicSlot t ) {
+<span class="fc" id="L28">            visitAtomicSlotImpl(t);</span>
+<span class="fc" id="L29">            return null;</span>
+        }
+        
+        @Override
+        public Void visitAggregateSlot( AggregateSlot t ) {
+<span class="fc" id="L34">            visitAggregateSlotImpl(t);</span>
+<span class="fc" id="L35">            return null;</span>
+        }
+        
+        @Override
+        public Void visitCompoundSlot( CompoundSlot t ) {
+<span class="fc" id="L40">            visitCompoundSlotImpl(t);</span>
+<span class="fc" id="L41">            return null;</span>
+        }
+        
+        @Override
+        public Void visitTodoSlot( ToDoSlot t ) {
+<span class="nc" id="L46">            visitTodoSlotImpl(t);</span>
+<span class="nc" id="L47">            return null;</span>
+        }
+
+        public abstract void visitAtomicSlotImpl( AtomicSlot t );
+        public abstract void visitAggregateSlotImpl( AggregateSlot t );
+        public abstract void visitCompoundSlotImpl( CompoundSlot t );
+        public abstract void visitTodoSlotImpl( ToDoSlot t );
+    }
+    
+	private final String name;
+	private String note;
+
+<span class="fc" id="L59">	public SlotType(String name, String note) {</span>
+<span class="fc" id="L60">		this.name = name;</span>
+<span class="fc" id="L61">		this.note = note;</span>
+<span class="fc" id="L62">	}</span>
+
+	public String getNote() {
+<span class="fc" id="L65">		return note;</span>
+	}
+
+	public void setNote(String note) {
+<span class="nc" id="L69">		this.note = note;</span>
+<span class="nc" id="L70">	}</span>
+	
+	public String getName() {
+<span class="fc" id="L73">		return name;</span>
+	}
+
+	public abstract &lt;T&gt; T accept( Visitor&lt;T&gt; v );
+	
+    public TagValueLookupResult lookupValue( final String slotName, final String valueName ) {
+<span class="fc" id="L79">        return accept(new SlotType.Visitor&lt;TagValueLookupResult&gt;() {</span>
+            
+            @Override
+            public TagValueLookupResult visitSimpleSlot(AtomicSlot t) {
+<span class="fc bfc" id="L83" title="All 2 branches covered.">                if ( slotName.equals(t.getName()) ) {</span>
+<span class="fc" id="L84">                    TagValue v = t.valueOf( valueName );</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">                    return (v!=null) ? TagValueLookupResult.Success(v)</span>
+<span class="nc" id="L86">                                     : TagValueLookupResult.ValueNotFound(t, valueName);</span>
+                } else {
+<span class="fc" id="L88">                    return TagValueLookupResult.SlotNotFound(slotName);</span>
+                }
+            }
+
+            @Override
+            public TagValueLookupResult visitAggregateSlot(AggregateSlot t) {
+<span class="fc bfc" id="L94" title="All 2 branches covered.">                if ( slotName.equals(t.getName()) ) {</span>
+<span class="fc" id="L95">                    AggregateValue res = t.createInstance();</span>
+<span class="fc" id="L96">                    AtomicValue singleValue = t.getItemType().valueOf(valueName);</span>
+                    
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">                    if ( singleValue == null ) {</span>
+<span class="nc" id="L99">                        return TagValueLookupResult.ValueNotFound(SlotType.this, valueName);</span>
+                    } else {
+<span class="fc" id="L101">                        res.add(singleValue);</span>
+<span class="fc" id="L102">                        return TagValueLookupResult.Success(res);</span>
+                    }
+                    
+                } else {
+<span class="fc" id="L106">                    return TagValueLookupResult.SlotNotFound(slotName);</span>
+                }
+            }
+
+            @Override
+            public TagValueLookupResult visitCompoundSlot(CompoundSlot t) {
+<span class="fc" id="L112">                final List&lt;TagValueLookupResult.Success&gt; matches = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L113">                final AtomicReference&lt;TagValueLookupResult.ValueNotFound&gt; vnfRef = new AtomicReference&lt;&gt;(null);</span>
+                
+<span class="fc" id="L115">                TagValueLookupResult.VoidVisitor aggregator = new TagValueLookupResult.VoidVisitor() {</span>
+
+                    @Override
+<span class="fc" id="L118">                    protected void visitImpl(TagValueLookupResult.SlotNotFound snf) {}</span>
+
+                    @Override
+                    protected void visitImpl(TagValueLookupResult.ValueNotFound vnf) {
+<span class="nc" id="L122">                        vnfRef.set(vnf);</span>
+<span class="nc" id="L123">                    }</span>
+
+                    @Override
+                    protected void visitImpl(TagValueLookupResult.Ambiguity amb) {
+<span class="nc" id="L127">                        matches.addAll( amb.getPossibilities() );</span>
+<span class="nc" id="L128">                    }</span>
+
+                    @Override
+                    protected void visitImpl(TagValueLookupResult.Success scss) {
+<span class="fc" id="L132">                        matches.add( scss );</span>
+<span class="fc" id="L133">                    }</span>
+                };
+                
+                // group results by status.
+<span class="fc bfc" id="L137" title="All 2 branches covered.">                for ( SlotType tt : t.getFieldTypes() ) {</span>
+<span class="fc" id="L138">                    tt.accept(this) // get the lookup result</span>
+<span class="fc" id="L139">                      .accept(aggregator); // process the lookup result</span>
+<span class="fc" id="L140">                }</span>
+                
+<span class="pc bpc" id="L142" title="1 of 3 branches missed.">                switch ( matches.size() ) {</span>
+                    case 0:
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">                        return (vnfRef.get()==null)</span>
+<span class="pc" id="L145">                                ? TagValueLookupResult.SlotNotFound(slotName)</span>
+<span class="nc" id="L146">                                : vnfRef.get();</span>
+                    case 1: 
+<span class="fc" id="L148">                        return matches.get(0);</span>
+                        
+                    default: 
+<span class="nc" id="L151">                        return TagValueLookupResult.Ambiguity(matches);</span>
+                }
+            }
+
+            @Override
+            public TagValueLookupResult visitTodoSlot(ToDoSlot t) {
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">                if ( slotName.equals(t.getName())) {</span>
+<span class="nc" id="L158">                    return TagValueLookupResult.Success(t.getValue());</span>
+                } else {
+<span class="fc" id="L160">                    return TagValueLookupResult.SlotNotFound(slotName);</span>
+                }
+            }
+        });
+    }
+    
+	@Override
+	public int hashCode() {
+<span class="fc" id="L168">		int hash = 3;</span>
+<span class="fc" id="L169">		hash = 89 * hash + Objects.hashCode(this.name);</span>
+<span class="fc" id="L170">		hash = 89 * hash + Objects.hashCode(this.note);</span>
+<span class="fc" id="L171">		return hash;</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">		if (obj == null) {</span>
+<span class="nc" id="L177">			return false;</span>
+		}
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">		if ( ! (obj instanceof SlotType) ) {</span>
+<span class="nc" id="L180">			return false;</span>
+		}
+<span class="fc" id="L182">		final SlotType other = (SlotType) obj;</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">		if (!Objects.equals(this.name, other.name)) {</span>
+<span class="nc" id="L184">			return false;</span>
+		}
+	
+<span class="fc" id="L187">		return Objects.equals(this.note, other.note);</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L192">		String[] className = getClass().getName().split(&quot;\\.&quot;);</span>
+<span class="fc" id="L193">		return String.format(&quot;[%s name:%s]&quot;, className[className.length-1], getName());</span>
+	}
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

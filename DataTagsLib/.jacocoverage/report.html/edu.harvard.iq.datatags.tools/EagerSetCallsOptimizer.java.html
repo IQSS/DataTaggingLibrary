@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>EagerSetCallsOptimizer.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.tools</a> &gt; <span class="el_source">EagerSetCallsOptimizer.java</span></div><h1>EagerSetCallsOptimizer.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.tools;
+
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
+import edu.harvard.iq.datatags.model.graphs.Answer;
+import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.values.AtomicValue;
+import edu.harvard.iq.datatags.model.values.CompoundValue;
+import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static edu.harvard.iq.datatags.util.CollectionHelper.C;
+
+/**
+ * An optimizer that makes [set] calls as early as possible.
+ *
+ * @author eyalben
+ */
+<span class="fc" id="L29">public class EagerSetCallsOptimizer implements DecisionGraphOptimizer {</span>
+
+    @Override
+    public String getTitle() {
+<span class="nc" id="L33">        return &quot;Preceding nodes.&quot;;</span>
+    }
+
+    @Override
+    public DecisionGraph optimize(final DecisionGraph fcs) {
+
+        // now traverse the chart and replace all.
+<span class="fc" id="L40">        EagerSetCallsOptimizer.ConclusionVisitor traversor = new EagerSetCallsOptimizer.ConclusionVisitor() {</span>
+
+            private CompoundValue smartComposeWith(CompoundValue current, CompoundValue other) {
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">                if (other == null) {</span>
+<span class="nc" id="L44">                    return current.getOwnableInstance();</span>
+                }
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">                if ( ! current.getType().equals(other.getType()) ) {</span>
+<span class="nc" id="L47">                    throw new RuntimeException(&quot;Cannot compose values of different types (&quot; + current.getType() + &quot; and &quot; + other.getType() + &quot;)&quot;);</span>
+                }
+
+<span class="fc" id="L50">                CompoundValue result = current.getType().createInstance();</span>
+
+                // Composing. Note that for each type in types, at least one object has a non-null value
+<span class="fc bfc" id="L53" title="All 2 branches covered.">                for (SlotType tp : C.unionSet(current.getNonEmptySubSlotTypes(), other.getNonEmptySubSlotTypes())) {</span>
+<span class="fc" id="L54">                    TagValue ours = current.get(tp);</span>
+<span class="fc" id="L55">                    TagValue its = other.get(tp);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">                    if (ours == null) {</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">                        if (its == null) {</span>
+<span class="nc" id="L58">                            throw new IllegalStateException(&quot;Both [this] and [other] had null tag value for a tag type&quot;);</span>
+                        } else {
+<span class="fc" id="L60">                            result.set(its);</span>
+                        }
+<span class="fc bfc" id="L62" title="All 2 branches covered.">                    } else if (its == null) {</span>
+<span class="fc" id="L63">                        result.set(ours);</span>
+                    } else {
+
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">                        if (ours instanceof AtomicValue) {</span>
+                            // Get other value as it is the newer
+<span class="fc" id="L68">                            result.set(its);</span>
+                        }
+                        else {
+                            // TODO: Not Implemented
+                        }
+
+                    }
+<span class="fc" id="L75">                }</span>
+<span class="fc" id="L76">                return result;</span>
+            }
+
+            @Override
+            public Conclusion visitImpl(AskNode nd) throws DataTagsRuntimeException {
+<span class="fc" id="L81">                List&lt;Conclusion&gt; conclusions = new ArrayList&lt;&gt;();</span>
+
+                /* 1. Collect conclusions from children */
+<span class="fc bfc" id="L84" title="All 2 branches covered.">                for ( Answer a : nd.getAnswers() ) {</span>
+<span class="fc" id="L85">                    Node ansNode = nd.getNodeFor(a);</span>
+
+<span class="fc" id="L87">                    Conclusion c = ansNode.accept(this);</span>
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">                    if (c != null) {</span>
+<span class="fc" id="L89">                        c.relatedAnswer = a;</span>
+<span class="fc" id="L90">                        conclusions.add(c);</span>
+                    }
+<span class="fc" id="L92">                }</span>
+
+                /* 2. Values must be added */
+<span class="fc" id="L95">                List&lt;CompoundValue&gt; allValuesList = new ArrayList&lt;&gt;();</span>
+
+                /* Collect values to lists */
+<span class="fc bfc" id="L98" title="All 2 branches covered.">                for (Conclusion c : conclusions) {</span>
+<span class="fc" id="L99">                    CompoundValue union = null;</span>
+
+<span class="fc bfc" id="L101" title="All 4 branches covered.">                    if (c.values != null &amp;&amp; c.mustAdd != null) {</span>
+<span class="fc" id="L102">                        union = smartComposeWith(c.values, c.mustAdd);</span>
+<span class="fc" id="L103">                        allValuesList.add(union);</span>
+<span class="fc" id="L104">                        continue;</span>
+                    }
+
+<span class="fc bfc" id="L107" title="All 2 branches covered.">                    if (c.values != null) {</span>
+<span class="fc" id="L108">                        union = c.values;</span>
+                    }
+
+<span class="fc bfc" id="L111" title="All 2 branches covered.">                    if (c.mustAdd != null) {</span>
+<span class="fc" id="L112">                        union = c.mustAdd;</span>
+                    }
+
+<span class="fc" id="L115">                    allValuesList.add(union);</span>
+<span class="fc" id="L116">                }</span>
+
+                /* Evaluate values for different cases */
+<span class="fc" id="L119">                CompoundValue sharedValues = intersectValues(allValuesList);</span>
+
+
+                /* Remove Key-Values(shared values) from direct children of values that will be populated up as 'must' */
+<span class="fc bfc" id="L123" title="All 2 branches covered.">                for (Conclusion c : conclusions) {</span>
+<span class="fc" id="L124">                    Node answerNode = nd.getNodeFor(c.relatedAnswer);</span>
+
+                    /* answer is SetNode */
+<span class="fc bfc" id="L127" title="All 2 branches covered.">                    if (answerNode instanceof SetNode) {</span>
+<span class="fc" id="L128">                        SetNode answerSetNode = (SetNode) answerNode;</span>
+
+<span class="fc" id="L130">                        CompoundValue newAnswerValues = answerSetNode.getTags().getOwnableInstance();</span>
+
+<span class="fc" id="L132">                        newAnswerValues = newAnswerValues.composeWith(c.mustAdd);</span>
+
+<span class="fc" id="L134">                        newAnswerValues = newAnswerValues.subtractKeys(sharedValues);</span>
+
+                        /* If new SetNode should be empty */
+<span class="fc bfc" id="L137" title="All 2 branches covered.">                        if (null == newAnswerValues) {</span>
+                            /* Just remove the node */
+<span class="fc" id="L139">                            nd.removeAnswer(c.relatedAnswer);</span>
+<span class="fc" id="L140">                            nd.setNodeFor(c.relatedAnswer, answerSetNode.getNextNode());</span>
+<span class="fc" id="L141">                            fcs.remove(answerSetNode);</span>
+                        }
+
+                        else {
+                            /* Create new node */
+<span class="fc" id="L146">                            SetNode newAnswerSetNode = new SetNode(&quot;[#&quot; + getNewId() + &quot;-Zoptimizer]&quot;, newAnswerValues);</span>
+<span class="fc" id="L147">                            newAnswerSetNode.setNextNode(answerSetNode.getNextNode());</span>
+
+                            /* Replace old node */
+<span class="fc" id="L150">                            nd.removeAnswer(c.relatedAnswer);</span>
+<span class="fc" id="L151">                            nd.setNodeFor(c.relatedAnswer, newAnswerSetNode);</span>
+<span class="fc" id="L152">                            fcs.remove(answerSetNode);</span>
+                        }
+<span class="fc" id="L154">                    }</span>
+
+                    else {
+
+                        // See if there are values to be added
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">                        if (c.mustAdd == null) {</span>
+<span class="nc" id="L160">                            continue;</span>
+                        }
+
+                        // If so - make sure we are not populating them to the parent
+<span class="fc" id="L164">                        CompoundValue valuesToBeAdded = c.mustAdd.subtractKeys(sharedValues);</span>
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">                        if (valuesToBeAdded == null) {</span>
+<span class="nc" id="L166">                            continue;</span>
+                        }
+                        // Create new node
+<span class="fc" id="L169">                        SetNode newAnswerSetNode = new SetNode(&quot;[#&quot; + getNewId() + &quot;-Zoptimizer]&quot;, valuesToBeAdded);</span>
+<span class="fc" id="L170">                        newAnswerSetNode.setNextNode(answerNode);</span>
+
+                        /* Replace old node */
+<span class="fc" id="L173">                        nd.removeAnswer(c.relatedAnswer);</span>
+<span class="fc" id="L174">                        nd.setNodeFor(c.relatedAnswer, newAnswerSetNode);</span>
+<span class="fc" id="L175">                        fcs.remove(answerNode);</span>
+
+                    }
+
+<span class="fc" id="L179">                }</span>
+
+<span class="fc" id="L181">                Conclusion conclusion = new Conclusion(nd.getId(), null, sharedValues, null);</span>
+<span class="fc" id="L182">                return conclusion;</span>
+            }
+
+            private CompoundValue intersectValues(List&lt;CompoundValue&gt; values) {
+<span class="fc" id="L186">                boolean first = true;</span>
+<span class="fc" id="L187">                CompoundValue result = null;</span>
+
+<span class="fc bfc" id="L189" title="All 2 branches covered.">                for (CompoundValue v : values) {</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">                    if (first) {</span>
+<span class="fc" id="L191">                        result = v;</span>
+<span class="fc" id="L192">                        first = false;</span>
+                    }
+
+<span class="fc" id="L195">                    result = result.intersectWith(v);</span>
+
+                    // If empty intersection
+<span class="fc bfc" id="L198" title="All 2 branches covered.">                    if (result == null)</span>
+<span class="fc" id="L199">                        break;</span>
+<span class="fc" id="L200">                }</span>
+
+<span class="fc" id="L202">                return result;</span>
+            }
+
+            private CompoundValue unionValues(List&lt;CompoundValue&gt; values) {
+<span class="nc" id="L206">                boolean first = true;</span>
+<span class="nc" id="L207">                CompoundValue result = null;</span>
+
+<span class="nc bnc" id="L209" title="All 2 branches missed.">                for (CompoundValue v : values) {</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">                    if (first) {</span>
+<span class="nc" id="L211">                        result = v;</span>
+<span class="nc" id="L212">                        first = false;</span>
+                    }
+
+<span class="nc" id="L215">                    result = result.composeWith(v);</span>
+<span class="nc" id="L216">                }</span>
+
+<span class="nc" id="L218">                return result;</span>
+            }
+
+            @Override
+            public Conclusion visitImpl(SetNode nd) throws DataTagsRuntimeException {
+<span class="fc" id="L223">                CompoundValue retvalMust = null;</span>
+
+<span class="fc" id="L225">                Node nextNode = nd.getNextNode();</span>
+<span class="fc" id="L226">                Conclusion childConclusion = nextNode.accept(this);</span>
+<span class="fc bfc" id="L227" title="All 2 branches covered.">                if (childConclusion != null) {</span>
+<span class="fc" id="L228">                    retvalMust = childConclusion.mustAdd;</span>
+                }
+
+                /* If next node is SetNode - remove it and make sure values will be merge */
+<span class="fc bfc" id="L232" title="All 2 branches covered.">                if (nextNode instanceof SetNode) {</span>
+<span class="fc" id="L233">                    SetNode nextSetNode = (SetNode) nextNode;</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">                    if (retvalMust == null) {</span>
+<span class="fc" id="L235">                        retvalMust = nextSetNode.getTags();</span>
+                    }
+                    else {
+<span class="fc" id="L238">                        retvalMust = retvalMust.composeWith(nextSetNode.getTags());</span>
+                    }
+
+<span class="fc" id="L241">                    nd.setNextNode(nextSetNode.getNextNode());</span>
+<span class="fc" id="L242">                    fcs.remove(nextSetNode);</span>
+                }
+
+<span class="fc" id="L245">                Conclusion conclusion = new Conclusion(nd.getId(), nd.getTags(), retvalMust, null);</span>
+<span class="fc" id="L246">                return conclusion;</span>
+            }
+
+
+            @Override
+            public Conclusion visitImpl(CallNode nd) throws DataTagsRuntimeException {
+<span class="nc" id="L252">                return null;</span>
+            }
+            
+            
+
+            @Override
+            public Conclusion visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
+<span class="nc" id="L259">                Node nextNode = nd.getNextNode();</span>
+<span class="nc" id="L260">                return nextNode.accept(this);</span>
+            }
+
+            @Override
+            public Conclusion visitImpl(RejectNode nd) throws DataTagsRuntimeException {
+<span class="nc" id="L265">                return null;</span>
+            }
+            @Override
+            public Conclusion visitImpl(EndNode nd) throws DataTagsRuntimeException {
+<span class="fc" id="L269">                return null;</span>
+            }
+
+            @Override
+            public Conclusion visit(ConsiderNode nd) throws DataTagsRuntimeException {
+<span class="nc" id="L274">                System.out.println(&quot;IN CONSIDER NODE&quot;);</span>
+<span class="nc" id="L275">                return null; // TODO support this as well. Should be pretty close to [ask].</span>
+            }
+        };
+
+<span class="fc" id="L279">        Node startNode = fcs.getStart();</span>
+
+        /* Traverse from head */
+<span class="fc" id="L282">        Conclusion finalConclusion = startNode.accept(traversor);</span>
+
+        /* Add last conclusion */
+<span class="fc bfc" id="L285" title="All 2 branches covered.">        if (finalConclusion.mustAdd != null) {</span>
+
+<span class="pc bpc" id="L287" title="1 of 2 branches missed.">            if (startNode instanceof SetNode) {</span>
+<span class="nc" id="L288">                SetNode startSetNode = (SetNode) startNode;</span>
+<span class="nc" id="L289">                CompoundValue newValues = finalConclusion.mustAdd.getOwnableInstance().composeWith(startSetNode.getTags());</span>
+
+<span class="nc" id="L291">                SetNode setNode = new SetNode(&quot;[#&quot; + fcs.getId() + &quot;-setoptX]&quot;, newValues);</span>
+<span class="nc" id="L292">                setNode.setNextNode(startSetNode.getNextNode());</span>
+<span class="nc" id="L293">                fcs.setStart(setNode);</span>
+<span class="nc" id="L294">                fcs.remove(startSetNode);</span>
+
+<span class="nc" id="L296">            } else {</span>
+
+                // else - insert new node
+<span class="fc" id="L299">                SetNode setNode = new SetNode(&quot;[#&quot; + fcs.getId() + &quot;-setoptX]&quot;, finalConclusion.mustAdd.getOwnableInstance());</span>
+<span class="fc" id="L300">                setNode.setNextNode(startNode);</span>
+<span class="fc" id="L301">                fcs.setStart(setNode);</span>
+            }
+        }
+
+<span class="fc" id="L305">        return fcs;</span>
+    }
+
+    /**
+     * Recursive Information Struct
+     */
+    public static class Conclusion {
+        public String nodeId;
+        public CompoundValue values;
+        public CompoundValue mustAdd;
+        public Answer relatedAnswer;  /* if applicable */
+
+<span class="fc" id="L317">        public Conclusion(String nodeId, CompoundValue values, CompoundValue mustAdd, Answer relatedAnswer) {</span>
+<span class="fc" id="L318">            this.nodeId = nodeId;</span>
+<span class="fc" id="L319">            this.values = values;</span>
+<span class="fc" id="L320">            this.mustAdd = mustAdd;</span>
+<span class="fc" id="L321">            this.relatedAnswer = relatedAnswer;</span>
+<span class="fc" id="L322">        }</span>
+    }
+
+    /**
+     * CompoundValue visitor allows us to get 'compound' set values from child
+     */
+
+    public static abstract class ConclusionVisitor implements Node.Visitor&lt;Conclusion&gt; {
+
+        private int counter;
+
+<span class="fc" id="L333">        public ConclusionVisitor() {</span>
+<span class="fc" id="L334">            counter = 0;</span>
+<span class="fc" id="L335">        }</span>
+
+        public String getNewId() {
+<span class="fc" id="L338">            counter++;</span>
+<span class="fc" id="L339">            return Integer.toString(counter);</span>
+        }
+
+        @Override
+        public Conclusion visit(AskNode nd) throws DataTagsRuntimeException {
+<span class="fc" id="L344">            return visitImpl(nd);</span>
+        }
+
+        @Override
+        public Conclusion visit(SetNode nd) throws DataTagsRuntimeException {
+<span class="fc" id="L349">            return visitImpl(nd);</span>
+        }
+
+        @Override
+        public Conclusion visit(RejectNode nd) throws DataTagsRuntimeException {
+<span class="nc" id="L354">            return visitImpl(nd);</span>
+        }
+
+        @Override
+        public Conclusion visit(CallNode nd) throws DataTagsRuntimeException {
+<span class="nc" id="L359">            return visitImpl(nd);</span>
+        }
+
+        @Override
+        public Conclusion visit(ToDoNode nd) throws DataTagsRuntimeException {
+<span class="nc" id="L364">            return visitImpl(nd);</span>
+        }
+
+        @Override
+        public Conclusion visit(EndNode nd) throws DataTagsRuntimeException {
+<span class="fc" id="L369">            return visitImpl(nd);</span>
+        }
+
+        public abstract Conclusion visitImpl( AskNode nd    ) throws DataTagsRuntimeException;
+        public abstract Conclusion visitImpl( SetNode nd    ) throws DataTagsRuntimeException;
+        public abstract Conclusion visitImpl( RejectNode nd ) throws DataTagsRuntimeException;
+        public abstract Conclusion visitImpl( CallNode nd   ) throws DataTagsRuntimeException;
+        public abstract Conclusion visitImpl( ToDoNode nd   ) throws DataTagsRuntimeException;
+        public abstract Conclusion visitImpl( EndNode nd    ) throws DataTagsRuntimeException;
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

@@ -1,9 +1,9 @@
 package edu.harvard.iq.datatags.cli;
 
-import edu.harvard.iq.datatags.tools.EagerSetCallsOptimizer;
-import edu.harvard.iq.datatags.tools.EndNodeOptimizer;
+import edu.harvard.iq.datatags.tools.processors.EagerSetCallsOptimizer;
+import edu.harvard.iq.datatags.tools.processors.EndNodeOptimizer;
 import java.util.List;
-import edu.harvard.iq.datatags.tools.DecisionGraphOptimizer;
+import edu.harvard.iq.datatags.tools.processors.DecisionGraphProcessor;
 
 /**
  * Runs an optimizer on the decision graph.
@@ -36,7 +36,7 @@ public class OptimizeDecisionGraphCommand implements CliCommand {
             return;
         }
         
-        DecisionGraphOptimizer sel = null;
+        DecisionGraphProcessor sel = null;
         
         if ( res.equals("1") ) {
             sel = new EndNodeOptimizer();
@@ -45,7 +45,7 @@ public class OptimizeDecisionGraphCommand implements CliCommand {
         }
         if ( sel != null ) {
             // optimize using the selected optimizer.
-            rnr.setDecisionGraph(sel.optimize(rnr.getDecisionGraph()));
+            rnr.setDecisionGraph(sel.process(rnr.getDecisionGraph()));
         } else {
             rnr.printWarning("%s is not available", res);
         }

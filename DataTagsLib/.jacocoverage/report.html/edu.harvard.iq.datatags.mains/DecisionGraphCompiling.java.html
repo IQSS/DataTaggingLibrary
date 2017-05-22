@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DecisionGraphCompiling.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.mains</a> &gt; <span class="el_source">DecisionGraphCompiling.java</span></div><h1>DecisionGraphCompiling.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.mains;
+
+import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
+import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
+import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
+import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetClusteredVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetF11Visualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpaceVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVizalizer;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+/**
+ * Compiles and visualizes a tag space and a decision graph.
+ * @author michael
+ */
+<span class="nc" id="L26">public class DecisionGraphCompiling {</span>
+    public static void main(String[] args) {
+<span class="nc" id="L28">        DecisionGraphCompiling fcc = new DecisionGraphCompiling();</span>
+        try {
+<span class="nc" id="L30">            fcc.go(args);</span>
+<span class="nc" id="L31">        } catch (IOException ex) {</span>
+<span class="nc" id="L32">            System.out.println(&quot;Error reading file: &quot; + ex.getMessage() );</span>
+<span class="nc" id="L33">            System.out.println(&quot;Trace:&quot;);</span>
+<span class="nc" id="L34">            ex.printStackTrace(System.out);</span>
+            
+<span class="nc" id="L36">        } catch (BadSetInstructionException ex) {</span>
+<span class="nc" id="L37">            TagValueLookupResult badRes = ex.getBadResult();</span>
+            
+<span class="nc bnc" id="L39" title="All 2 branches missed.">            if ( badRes != null ) {</span>
+<span class="nc" id="L40">                System.out.println(&quot;Bad Set instruction: &quot; + ex.getMessage());</span>
+<span class="nc" id="L41">                badRes.accept( new BadSetInstructionPrinter() );</span>
+            }
+<span class="nc" id="L43">            System.out.println(&quot;Error in [set] node: &quot; + ex.getMessage() );</span>
+<span class="nc" id="L44">            System.out.println(&quot;offending Set node: &quot; + ex.getOffendingNode() );</span>
+            
+<span class="nc" id="L46">        } catch (DataTagsParseException ex) {</span>
+<span class="nc" id="L47">            System.out.println(&quot;Semantic Error in data tags program: &quot; + ex.getMessage() );</span>
+<span class="nc" id="L48">            System.out.println(&quot;Trace:&quot;);</span>
+<span class="nc" id="L49">            ex.printStackTrace(System.out);</span>
+<span class="nc" id="L50">        }</span>
+<span class="nc" id="L51">    }</span>
+    
+	public void go(String[] args) throws IOException, DataTagsParseException {
+<span class="nc" id="L54">        Path tagsFile = Paths.get(args[0]);</span>
+<span class="nc" id="L55">        Path chartFile = Paths.get(args[1]);</span>
+        
+<span class="nc" id="L57">        System.out.println(&quot;Reading tags: &quot; + tagsFile );</span>
+<span class="nc" id="L58">        System.out.println(&quot; (full:  &quot; + tagsFile.toAbsolutePath() + &quot;)&quot; );</span>
+        
+<span class="nc" id="L60">        TagSpaceParser tagsParser = new TagSpaceParser();</span>
+<span class="nc" id="L61">        CompoundSlot baseType = tagsParser.parse(readAll(tagsFile)).buildType(&quot;DataTags&quot;).get();</span>
+        
+<span class="nc" id="L63">        GraphvizTagSpaceVisualizer tagViz = new GraphvizTagSpaceVisualizer(baseType);</span>
+<span class="nc" id="L64">        Path tagsOutPath = tagsFile.resolveSibling(tagsFile.getFileName().toString() + &quot;.gv&quot;);</span>
+<span class="nc" id="L65">        System.out.println(&quot;Writing &quot; + tagsOutPath );</span>
+<span class="nc" id="L66">		tagViz.vizualize( tagsOutPath );</span>
+        
+<span class="nc" id="L68">        System.out.println(&quot;Reading chart: &quot; + chartFile );</span>
+<span class="nc" id="L69">        System.out.println(&quot; (full:  &quot; + chartFile.toAbsolutePath() + &quot;)&quot; );</span>
+        
+<span class="nc" id="L71">        String source = readAll(chartFile);</span>
+        
+<span class="nc" id="L73">        DecisionGraphParser dgParser = new DecisionGraphParser();</span>
+<span class="nc" id="L74">        DecisionGraphParseResult parsedGraph = dgParser.parse(source);</span>
+        
+<span class="nc" id="L76">        GraphvizGraphNodeAstVizalizer viz = new GraphvizGraphNodeAstVizalizer(parsedGraph.getNodes());</span>
+<span class="nc" id="L77">        Path outfile = chartFile.resolveSibling( chartFile.getFileName().toString() + &quot;-ast.gv&quot; );</span>
+<span class="nc" id="L78">        System.out.println(&quot;Writing: &quot; + outfile );</span>
+<span class="nc" id="L79">        viz.vizualize( outfile );</span>
+        
+<span class="nc" id="L81">        DecisionGraph dg = parsedGraph.compile(baseType);</span>
+		
+<span class="nc" id="L83">        GraphvizChartSetClusteredVisualizer fcsViz = new GraphvizChartSetClusteredVisualizer();</span>
+<span class="nc" id="L84">        outfile = chartFile.resolveSibling( chartFile.getFileName().toString() + &quot;-fcs.gv&quot; );</span>
+<span class="nc" id="L85">        System.out.println(&quot;Writing: &quot; + outfile );</span>
+<span class="nc" id="L86">		fcsViz.setDecisionGraph(dg);</span>
+<span class="nc" id="L87">        fcsViz.vizualize( outfile );</span>
+        
+<span class="nc" id="L89">        GraphvizChartSetF11Visualizer f11Viz = new GraphvizChartSetF11Visualizer();</span>
+<span class="nc" id="L90">        outfile = chartFile.resolveSibling( chartFile.getFileName().toString() + &quot;-f11.gv&quot; );</span>
+<span class="nc" id="L91">        System.out.println(&quot;Writing: &quot; + outfile );</span>
+<span class="nc" id="L92">		f11Viz.setDecisionGraph(dg);</span>
+<span class="nc" id="L93">        f11Viz.vizualize( outfile );</span>
+
+<span class="nc" id="L95">    }</span>
+    
+    private String readAll( Path p ) throws IOException {
+<span class="nc" id="L98">        return new String(Files.readAllBytes(p), StandardCharsets.UTF_8);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

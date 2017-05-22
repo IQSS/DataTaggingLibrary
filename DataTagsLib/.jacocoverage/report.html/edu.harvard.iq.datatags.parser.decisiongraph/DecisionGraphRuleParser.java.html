@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DecisionGraphRuleParser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.parser.decisiongraph</a> &gt; <span class="el_source">DecisionGraphRuleParser.java</span></div><h1>DecisionGraphRuleParser.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.parser.decisiongraph;
+
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphTerminalParser.Tags;
+import static edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphTerminalParser.nodeStructurePart;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNodeHead;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTextSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
+import java.util.ArrayList;
+import java.util.List;
+import static java.util.stream.Collectors.toList;
+import org.codehaus.jparsec.Parser;
+import org.codehaus.jparsec.Parsers;
+import org.codehaus.jparsec.Terminals;
+
+/**
+ * Parses the terminals of a decision graph code into an AST.
+ * This parsers in this class are &lt;em&gt;token level&lt;/em&gt; parsers - they expect
+ * a token stream input, rather than a String-based one.
+ * 
+ * @see DecisionGraphTerminalParser
+ * 
+ * @author michael
+ */
+<span class="nc" id="L34">public class DecisionGraphRuleParser {</span>
+    
+    // -------------------------------
+    // Node parts and helper parsers.
+    // -------------------------------
+    
+    static Parser&lt;AstNodeHead&gt; nodeHeadWithId( String keyword ){
+<span class="fc" id="L41">        return Parsers.sequence(</span>
+<span class="fc" id="L42">                Terminals.fragment( Tags.NODE_ID ),</span>
+<span class="fc" id="L43">                nodeStructurePart(keyword),</span>
+<span class="fc" id="L44">                (  id,  word ) -&gt; new AstNodeHead(id, keyword) );</span>
+    }
+    
+    static Parser&lt;AstNodeHead&gt; nodeHeadNoId(String keyword) {
+<span class="fc" id="L48">            return nodeStructurePart(keyword).map(( _w ) -&gt; new AstNodeHead(null, keyword) );</span>
+    }
+    
+    static Parser&lt;AstNodeHead&gt; nodeHead( String keyword ) {
+<span class="fc" id="L52">        return Parsers.or( nodeHeadWithId(keyword), nodeHeadNoId(keyword));</span>
+    }
+    
+    final static Parser&lt;String&gt; IDENTIFIER_WITH_KEYWORDS;
+    
+    static {
+<span class="fc" id="L58">        List&lt;Parser&lt;?&gt;&gt; parsers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L59">        parsers.addAll( DecisionGraphTerminalParser.NODE_STRUCTURE_TOKENS.stream()</span>
+<span class="fc" id="L60">                        .filter( t -&gt; t.toLowerCase().matches(&quot;^[a-z][a-z0-9]*$&quot;) )</span>
+<span class="fc" id="L61">                        .map( t -&gt; nodeStructurePart(t) ) </span>
+<span class="fc" id="L62">                            .collect( toList() ) );</span>
+<span class="fc" id="L63">        IDENTIFIER_WITH_KEYWORDS =  Parsers.sequence(</span>
+<span class="fc" id="L64">                Parsers.or(parsers).many(),</span>
+<span class="fc" id="L65">                Terminals.identifier().many()</span>
+<span class="fc" id="L66">                ).source().map( String::trim );</span>
+    }
+    
+    final static Parser&lt;String&gt; textbodyUpTo( String terminatingNodePart ) {
+<span class="fc" id="L70">        List&lt;Parser&lt;?&gt;&gt; parsers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L71">        parsers.add( Terminals.fragment(Tags.TEXT_BODY ) );</span>
+<span class="fc" id="L72">        parsers.add( Terminals.identifier() );</span>
+<span class="fc" id="L73">        DecisionGraphTerminalParser.NODE_STRUCTURE_TOKENS.stream()</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">                .filter( t -&gt; ! t.equals(terminatingNodePart) )</span>
+<span class="fc" id="L75">                .forEach( okPart -&gt; parsers.add(nodeStructurePart(okPart)) );</span>
+        
+<span class="fc" id="L77">        return Parsers.or(parsers).many().source();</span>
+    }
+    
+<span class="fc" id="L80">    final static Parser&lt;AstSetNode.AtomicAssignment&gt; ATOMIC_ASSIGNMENT_SLOT = Parsers.sequence(</span>
+<span class="fc" id="L81">            IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart(&quot;/&quot;)),</span>
+<span class="fc" id="L82">            nodeStructurePart(&quot;=&quot;),</span>
+            IDENTIFIER_WITH_KEYWORDS,
+<span class="fc" id="L84">            (path, _eq, value) -&gt; new AstSetNode.AtomicAssignment(path, value.trim())</span>
+        );
+    
+<span class="fc" id="L87">    final static Parser&lt;AstSetNode.AggregateAssignment&gt; AGGREGATE_ASSIGNMENT_SLOT = Parsers.sequence(</span>
+<span class="fc" id="L88">            IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart(&quot;/&quot;)),</span>
+<span class="fc" id="L89">            nodeStructurePart(&quot;+=&quot;),</span>
+<span class="fc" id="L90">            IDENTIFIER_WITH_KEYWORDS.sepBy( nodeStructurePart(&quot;,&quot;) ),</span>
+<span class="fc" id="L91">            (path, _eq, value) -&gt; new AstSetNode.AggregateAssignment(path, value)</span>
+        );
+    
+<span class="fc" id="L94">    final static Parser&lt;AstTextSubNode&gt; TEXT_SUBNODE = Parsers.sequence(</span>
+<span class="fc" id="L95">            nodeStructurePart(&quot;{&quot;),</span>
+<span class="fc" id="L96">            nodeStructurePart(&quot;text&quot;),</span>
+<span class="fc" id="L97">            nodeStructurePart(&quot;:&quot;),</span>
+<span class="fc" id="L98">            textbodyUpTo(&quot;}&quot;),</span>
+<span class="fc" id="L99">            nodeStructurePart(&quot;}&quot;),</span>
+<span class="fc" id="L100">            (_s, _t, _c, text, _e) -&gt; new AstTextSubNode(text)</span>
+    ); 
+    
+<span class="fc" id="L103">    final static Parser&lt;AstTermSubNode&gt; TERM_SUBNODE = Parsers.sequence(</span>
+<span class="fc" id="L104">            nodeStructurePart(&quot;{&quot;),</span>
+<span class="fc" id="L105">            textbodyUpTo(&quot;:&quot;),</span>
+<span class="fc" id="L106">            nodeStructurePart(&quot;:&quot;),</span>
+<span class="fc" id="L107">            textbodyUpTo(&quot;}&quot;),</span>
+<span class="fc" id="L108">            nodeStructurePart(&quot;}&quot;),</span>
+<span class="fc" id="L109">            (_s, name, _c, text, _e) -&gt; new AstTermSubNode(name.trim(), text.trim())</span>
+    );
+    
+<span class="fc" id="L112">    final static Parser&lt;List&lt;AstTermSubNode&gt;&gt; TERMS_SUBNODE = Parsers.sequence(</span>
+<span class="fc" id="L113">            nodeStructurePart(&quot;{&quot;),</span>
+<span class="fc" id="L114">            nodeStructurePart( &quot;terms&quot;),</span>
+<span class="fc" id="L115">            nodeStructurePart(&quot;:&quot;),</span>
+<span class="fc" id="L116">            TERM_SUBNODE.many(),</span>
+<span class="fc" id="L117">            nodeStructurePart(&quot;}&quot;),</span>
+<span class="fc" id="L118">            (_s, _h, _c, termNodes, _e) -&gt; termNodes</span>
+    );
+    
+    final static Parser&lt;AstAnswerSubNode&gt; answerSubNode( Parser&lt;List&lt;? extends AstNode&gt;&gt; bodyParser ) {
+<span class="fc" id="L122">        return Parsers.sequence(</span>
+<span class="fc" id="L123">            nodeStructurePart(&quot;{&quot;),</span>
+<span class="fc" id="L124">            textbodyUpTo(&quot;:&quot;),</span>
+<span class="fc" id="L125">            nodeStructurePart(&quot;:&quot;),</span>
+            bodyParser,
+<span class="fc" id="L127">            nodeStructurePart(&quot;}&quot;),</span>
+<span class="fc" id="L128">            (_s, name, _c, body, _e) -&gt; new AstAnswerSubNode(name.trim(), body));</span>
+    }
+    
+    final static Parser&lt;List&lt;AstAnswerSubNode&gt;&gt; answersSubNode( Parser&lt;List&lt;? extends AstNode&gt;&gt; bodyParser ) {
+<span class="fc" id="L132">        return Parsers.sequence(</span>
+<span class="fc" id="L133">            nodeStructurePart(&quot;{&quot;),</span>
+<span class="fc" id="L134">            nodeStructurePart(&quot;answers&quot;),</span>
+<span class="fc" id="L135">            nodeStructurePart(&quot;:&quot;),</span>
+<span class="fc" id="L136">            answerSubNode(bodyParser).many1(),</span>
+<span class="fc" id="L137">            nodeStructurePart(&quot;}&quot;),</span>
+<span class="fc" id="L138">            (_s, _name, _c, answers, _e) -&gt; answers );</span>
+    }
+    
+<span class="fc" id="L141">    final static Parser&lt;List&lt;String&gt;&gt; SLOT_SUBNODE = Parsers.sequence(</span>
+<span class="fc" id="L142">            nodeStructurePart(&quot;{&quot;),</span>
+<span class="fc" id="L143">            nodeStructurePart(&quot;slot&quot;),</span>
+<span class="fc" id="L144">            nodeStructurePart(&quot;:&quot;),</span>
+<span class="fc" id="L145">            Terminals.identifier().sepBy(nodeStructurePart(&quot;/&quot;)),</span>
+<span class="fc" id="L146">            nodeStructurePart(&quot;}&quot;),</span>
+<span class="fc" id="L147">            (_s, _t, _c, slot, _e) -&gt; slot</span>
+    );
+
+    final static Parser&lt;List&lt;? extends AstNode&gt;&gt; ELSE_SUBGRAPH(Parser&lt;List&lt;? extends AstNode&gt;&gt; bodyParser) {
+<span class="fc" id="L151">        return Parsers.sequence(</span>
+<span class="fc" id="L152">                nodeStructurePart(&quot;{&quot;),</span>
+<span class="fc" id="L153">                nodeStructurePart(&quot;else&quot;),</span>
+<span class="fc" id="L154">                nodeStructurePart(&quot;:&quot;),</span>
+                bodyParser,
+<span class="fc" id="L156">                nodeStructurePart(&quot;}&quot;),</span>
+<span class="fc" id="L157">                (_s, _t, _c, elseNode, _e) -&gt; elseNode</span>
+        );
+    }
+     final static Parser&lt;AstConsiderAnswerSubNode&gt; considerAnswerSubNode(Parser&lt;List&lt;? extends AstNode&gt;&gt; bodyParser) {
+<span class="fc" id="L161">        return Parsers.sequence(</span>
+<span class="fc" id="L162">                nodeStructurePart(&quot;{&quot;),</span>
+<span class="fc" id="L163">                Terminals.identifier().sepBy(nodeStructurePart(&quot;,&quot;)),</span>
+<span class="fc" id="L164">                nodeStructurePart(&quot;:&quot;),</span>
+                bodyParser,
+<span class="fc" id="L166">                nodeStructurePart(&quot;}&quot;),</span>
+<span class="fc" id="L167">                (_s, answer, _c, body, _e) -&gt; new AstConsiderAnswerSubNode(answer, body));</span>
+
+    }
+
+    final static Parser&lt;List&lt;AstConsiderAnswerSubNode&gt;&gt; considerAnswersSubNode(Parser&lt;List&lt;? extends AstNode&gt;&gt; bodyParser) {
+<span class="fc" id="L172">        return Parsers.sequence(</span>
+<span class="fc" id="L173">                nodeStructurePart(&quot;{&quot;),</span>
+<span class="fc" id="L174">                nodeStructurePart(&quot;options&quot;),</span>
+<span class="fc" id="L175">                nodeStructurePart(&quot;:&quot;),</span>
+<span class="fc" id="L176">                considerAnswerSubNode(bodyParser).many1(),</span>
+<span class="fc" id="L177">                nodeStructurePart(&quot;}&quot;),</span>
+<span class="fc" id="L178">                (_s, _name, _c, answers, _e) -&gt; answers);</span>
+    }
+
+    final static Parser&lt;AstConsiderAnswerSubNode&gt; WhenAnswerSubNode(Parser&lt;List&lt;? extends AstNode&gt;&gt; bodyParser) {
+<span class="fc" id="L182">        return Parsers.sequence(</span>
+<span class="fc" id="L183">                nodeStructurePart(&quot;{&quot;),</span>
+<span class="fc" id="L184">                Parsers.or(ATOMIC_ASSIGNMENT_SLOT, AGGREGATE_ASSIGNMENT_SLOT).sepBy(nodeStructurePart(&quot;;&quot;)),</span>
+<span class="fc" id="L185">                nodeStructurePart(&quot;:&quot;),</span>
+                bodyParser,
+<span class="fc" id="L187">                nodeStructurePart(&quot;}&quot;),</span>
+<span class="fc" id="L188">                (_s, answer, _c, body, _e) -&gt; new AstConsiderAnswerSubNode(answer, body));</span>
+
+    }
+    
+    // -------------------------------
+    // Top-level (instruction) nodes.
+    // -------------------------------
+<span class="fc" id="L195">    final static Parser&lt;AstEndNode&gt; END_NODE = Parsers.sequence(</span>
+<span class="fc" id="L196">            nodeStructurePart(&quot;[&quot;),</span>
+<span class="fc" id="L197">            nodeHead(&quot;end&quot;),</span>
+<span class="fc" id="L198">            nodeStructurePart(&quot;]&quot;),</span>
+<span class="fc" id="L199">            ( _s, nhr, _e ) -&gt; new AstEndNode(nhr.getId()));</span>
+    
+<span class="fc" id="L201">    final static Parser&lt;AstTodoNode&gt; TODO_NODE = Parsers.sequence(</span>
+<span class="fc" id="L202">            nodeStructurePart(&quot;[&quot;),</span>
+<span class="fc" id="L203">            nodeHead(&quot;todo&quot;),</span>
+<span class="fc" id="L204">            nodeStructurePart(&quot;:&quot;),</span>
+<span class="fc" id="L205">            textbodyUpTo(&quot;]&quot;),</span>
+<span class="fc" id="L206">            nodeStructurePart(&quot;]&quot;),</span>
+<span class="fc" id="L207">            ( _s, headRef, _clmn, text, _e ) -&gt; new AstTodoNode( headRef.getId(), text.trim()) );</span>
+    
+<span class="fc" id="L209">    final static Parser&lt;AstCallNode&gt; CALL_NODE = Parsers.sequence(</span>
+<span class="fc" id="L210">            nodeStructurePart(&quot;[&quot;),</span>
+<span class="fc" id="L211">            nodeHead(&quot;call&quot;),</span>
+<span class="fc" id="L212">            nodeStructurePart(&quot;:&quot;),</span>
+<span class="fc" id="L213">            textbodyUpTo(&quot;]&quot;),</span>
+<span class="fc" id="L214">            nodeStructurePart(&quot;]&quot;),</span>
+<span class="fc" id="L215">            ( _s, headRef, _clmn, text, _e ) -&gt; new AstCallNode( headRef.getId(), text.trim()) );</span>
+    
+<span class="fc" id="L217">    final static Parser&lt;AstRejectNode&gt; REJECT_NODE = Parsers.sequence(</span>
+<span class="fc" id="L218">            nodeStructurePart(&quot;[&quot;),</span>
+<span class="fc" id="L219">            nodeHead(&quot;reject&quot;),</span>
+<span class="fc" id="L220">            nodeStructurePart(&quot;:&quot;),</span>
+<span class="fc" id="L221">            textbodyUpTo(&quot;]&quot;),</span>
+<span class="fc" id="L222">            nodeStructurePart(&quot;]&quot;),</span>
+<span class="fc" id="L223">            ( _s, headRef, _clmn, text, _e ) -&gt; new AstRejectNode( headRef.getId(), text.trim()) );</span>
+   
+<span class="fc" id="L225">    final static Parser&lt;AstSetNode&gt; SET_NODE = Parsers.sequence(</span>
+<span class="fc" id="L226">            nodeStructurePart(&quot;[&quot;),</span>
+<span class="fc" id="L227">            nodeHead(&quot;set&quot;),</span>
+<span class="fc" id="L228">            nodeStructurePart(&quot;:&quot;),</span>
+<span class="fc" id="L229">            Parsers.or( ATOMIC_ASSIGNMENT_SLOT, AGGREGATE_ASSIGNMENT_SLOT).sepBy(nodeStructurePart(&quot;;&quot;)),</span>
+<span class="fc" id="L230">            nodeStructurePart(&quot;]&quot;),</span>
+<span class="fc" id="L231">            ( _s, head, _c, slots, _e) -&gt; new AstSetNode(head.getId(), slots));</span>
+            
+    final static Parser&lt;AstAskNode&gt; askNode( Parser&lt;List&lt;? extends AstNode&gt;&gt; bodyParser ) {
+<span class="fc" id="L234">        return Parsers.sequence(</span>
+<span class="fc" id="L235">                Parsers.sequence(</span>
+<span class="fc" id="L236">                        nodeStructurePart(&quot;[&quot;),</span>
+<span class="fc" id="L237">                        nodeHead(&quot;ask&quot;),</span>
+<span class="fc" id="L238">                        nodeStructurePart(&quot;:&quot;),</span>
+<span class="fc" id="L239">                        (_s, h, _c) -&gt; h ),</span>
+                TEXT_SUBNODE,
+<span class="fc" id="L241">                TERMS_SUBNODE.optional(),</span>
+<span class="fc" id="L242">                answersSubNode(bodyParser),</span>
+<span class="fc" id="L243">                nodeStructurePart(&quot;]&quot;),</span>
+<span class="fc" id="L244">                ( head, text, terms, answers, _e) -&gt; new AstAskNode( head.getId(), text, terms, answers ));</span>
+    }       
+    
+    final static Parser&lt;AstConsiderNode&gt; considerNode(Parser&lt;List&lt;? extends AstNode&gt;&gt; bodyParser) {
+<span class="fc" id="L248">        return Parsers.sequence(</span>
+<span class="fc" id="L249">                Parsers.sequence(</span>
+<span class="fc" id="L250">                    nodeStructurePart(&quot;[&quot;),</span>
+<span class="fc" id="L251">                    nodeHead(&quot;consider&quot;),</span>
+<span class="fc" id="L252">                    nodeStructurePart(&quot;:&quot;),</span>
+<span class="fc" id="L253">                    (_s, h, _c) -&gt; h</span>
+                ),
+                SLOT_SUBNODE,
+<span class="fc" id="L256">                considerAnswersSubNode(bodyParser),</span>
+<span class="fc" id="L257">                ELSE_SUBGRAPH(bodyParser).optional(),</span>
+<span class="fc" id="L258">                nodeStructurePart(&quot;]&quot;),</span>
+<span class="fc" id="L259">                (head, slot, answers, elseNode, _e) -&gt; new AstConsiderNode(head.getId(), slot, answers, elseNode));</span>
+    }
+
+    final static Parser&lt;AstConsiderNode&gt; whenNode(Parser&lt;List&lt;? extends AstNode&gt;&gt; bodyParser) {
+<span class="fc" id="L263">        return Parsers.sequence(</span>
+<span class="fc" id="L264">                Parsers.sequence(</span>
+<span class="fc" id="L265">                        nodeStructurePart(&quot;[&quot;),</span>
+<span class="fc" id="L266">                        nodeHead(&quot;when&quot;),</span>
+<span class="fc" id="L267">                        nodeStructurePart(&quot;:&quot;),</span>
+<span class="fc" id="L268">                        (_s, h, _c) -&gt; h),</span>
+<span class="fc" id="L269">                WhenAnswerSubNode(bodyParser).until(Parsers.or(ELSE_SUBGRAPH(bodyParser),nodeStructurePart(&quot;]&quot;))),</span>
+<span class="fc" id="L270">                ELSE_SUBGRAPH(bodyParser).optional(),</span>
+<span class="fc" id="L271">                nodeStructurePart(&quot;]&quot;),</span>
+<span class="fc" id="L272">                (head, answers, elseNode, _e) -&gt; new AstConsiderNode(head.getId(), null, answers, elseNode));</span>
+    }
+
+    // -------------------------------
+    // Program-level parsers.
+    // -------------------------------
+    final static Parser&lt;List&lt;? extends AstNode&gt;&gt; graphParser() {
+<span class="fc" id="L279">        Parser.Reference&lt;List&lt;? extends AstNode&gt;&gt; nodeListParserRef = Parser.newReference();</span>
+<span class="fc" id="L280">        Parser&lt;? extends AstNode&gt; singleAstNode = Parsers.or(END_NODE, CALL_NODE, TODO_NODE, REJECT_NODE, SET_NODE,</span>
+<span class="fc" id="L281">                askNode(nodeListParserRef.lazy()), considerNode(nodeListParserRef.lazy()), whenNode(nodeListParserRef.lazy()));</span>
+<span class="fc" id="L282">        Parser&lt;List&lt;? extends AstNode&gt;&gt; nodeSequence = singleAstNode.many().cast();</span>
+<span class="fc" id="L283">        nodeListParserRef.set(nodeSequence);</span>
+
+<span class="fc" id="L285">        return nodeSequence;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

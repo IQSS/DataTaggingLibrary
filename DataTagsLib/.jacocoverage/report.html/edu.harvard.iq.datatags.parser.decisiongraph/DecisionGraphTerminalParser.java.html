@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DecisionGraphTerminalParser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.parser.decisiongraph</a> &gt; <span class="el_source">DecisionGraphTerminalParser.java</span></div><h1>DecisionGraphTerminalParser.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.parser.decisiongraph;
+
+import java.util.Arrays;
+import java.util.List;
+import org.codehaus.jparsec.Parser;
+import org.codehaus.jparsec.Parsers;
+import org.codehaus.jparsec.Scanners;
+import org.codehaus.jparsec.Terminals;
+import org.codehaus.jparsec.Tokens;
+import org.codehaus.jparsec.Tokens.Tag;
+import org.codehaus.jparsec.misc.Mapper;
+import org.codehaus.jparsec.pattern.Patterns;
+import static org.codehaus.jparsec.Scanners.notAmong;
+import static org.codehaus.jparsec.Scanners.string;
+
+/**
+ * Terminal parser for the decision graph language.
+ *
+ * @author michael
+ */
+<span class="nc" id="L21">public class DecisionGraphTerminalParser {</span>
+
+    /**
+     * Tags the tokenizer uses for the various tokenized parts.
+     */
+<span class="nc" id="L26">    public static class Tags {</span>
+
+<span class="fc" id="L28">        public static final Object NODE_STRUCTURE = Tag.RESERVED;</span>
+<span class="fc" id="L29">        public static final Object NODE_ID = &quot;node-id&quot;;</span>
+<span class="fc" id="L30">        public static final Object KEYWORD = &quot;keyword&quot;;</span>
+<span class="fc" id="L31">        public static final Object TEXT_BODY = &quot;text-body&quot;;</span>
+    }
+
+    static final String NODE_TEXT_TERMINATORS = &quot;:]}&quot;;
+<span class="fc" id="L35">    static final List&lt;String&gt; NODE_STRUCTURE_TOKENS = Arrays.asList(&quot;/&quot;, &quot;+=&quot;, &quot;=&quot;, &quot;,&quot;, &quot;;&quot;,</span>
+            &quot;[&quot;, &quot;:&quot;, &quot;{&quot;, &quot;}&quot;, &quot;]&quot;,
+            &quot;else&quot;, &quot;slot&quot;, &quot;when&quot;, &quot;consider&quot;, &quot;ask&quot;, &quot;set&quot;, &quot;end&quot;, &quot;reject&quot;, &quot;call&quot;, &quot;todo&quot;,
+            &quot;text&quot;, &quot;terms&quot;, &quot;answers&quot;, &quot;options&quot;);
+<span class="fc" id="L39">    static final Terminals NODE_STRUCTURE_TERMINALS = Terminals.operators(NODE_STRUCTURE_TOKENS);</span>
+
+    static final Parser&lt;Object&gt; TOKENIZER;
+
+<span class="fc" id="L43">    static final Parser&lt;Void&gt; IGNORABLES = Parsers.or(Scanners.WHITESPACES,</span>
+<span class="fc" id="L44">            Scanners.lineComment(&quot;&lt;--&quot;),</span>
+<span class="fc" id="L45">            Scanners.blockComment(&quot;&lt;*&quot;, &quot;*&gt;&quot;));</span>
+
+<span class="fc" id="L47">    static final Parser&lt;Tokens.Fragment&gt; NODE_TEXT = notAmong(NODE_TEXT_TERMINATORS).many1()</span>
+<span class="fc" id="L48">            .source().map(s -&gt; Tokens.fragment(s, Tags.TEXT_BODY));</span>
+
+<span class="fc" id="L50">    static final Parser&lt;Tokens.Fragment&gt; KEYWORDS = Parsers.or(string(&quot;ask&quot;), string(&quot;set&quot;), string(&quot;end&quot;), string(&quot;reject&quot;), string(&quot;call&quot;), string(&quot;todo&quot;))</span>
+<span class="pc" id="L51">            .source().map(s -&gt; Tokens.fragment(s, Tags.KEYWORD));</span>
+
+<span class="fc" id="L53">    static final Parser&lt;Tokens.Fragment&gt; NODE_ID = Parsers.between(</span>
+<span class="fc" id="L54">            Scanners.among(&quot;&gt;&quot;),</span>
+<span class="fc" id="L55">            Patterns.among(&quot;.,/~?!()@#$%^&amp;*_+-&quot;).or(Patterns.range('a', 'z'))</span>
+<span class="fc" id="L56">            .or(Patterns.range('A', 'Z')).or(Patterns.range('0', '9')).many1()</span>
+<span class="fc" id="L57">            .toScanner(Tags.NODE_ID.toString()).source(),</span>
+<span class="fc" id="L58">            Scanners.among(&quot;&lt;&quot;)).map(s -&gt; Tokens.fragment(s, Tags.NODE_ID));</span>
+
+    static {
+<span class="fc" id="L61">        TOKENIZER</span>
+<span class="fc" id="L62">                = Parsers.&lt;Object&gt;or(NODE_STRUCTURE_TERMINALS.tokenizer(),</span>
+                        NODE_ID,
+                        Terminals.Identifier.TOKENIZER,
+                        NODE_TEXT);
+<span class="fc" id="L66">    }</span>
+
+    static Parser&lt;?&gt; nodeStructurePart(String part) {
+<span class="fc" id="L69">        return Mapper.skip(NODE_STRUCTURE_TERMINALS.token(part));</span>
+    }
+
+    static &lt;T&gt; Parser&lt;T&gt; buildParser(Parser&lt;T&gt; base) {
+<span class="fc" id="L73">        return base.from(TOKENIZER, IGNORABLES.skipMany());</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

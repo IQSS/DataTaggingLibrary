@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AtomicSlot.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.model.types</a> &gt; <span class="el_source">AtomicSlot.java</span></div><h1>AtomicSlot.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.model.types;
+
+import edu.harvard.iq.datatags.model.values.*;
+import edu.harvard.iq.datatags.runtime.RuntimeEngineStatus;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
+/**
+ * A type whose values cannot be divided. Values of this type are not
+ * mutable, and can thus be shared safely. Values maintain ordering thanks to the 
+ * &quot;ordinal&quot; field they have. That field is final.
+ * 
+ * @author michael
+ */
+public class AtomicSlot extends SlotType {
+	
+<span class="fc" id="L19">	private int nextOrdinal = 0;</span>
+	
+<span class="fc" id="L21">	private final Map&lt;String, AtomicValue&gt; values = new HashMap&lt;&gt;(); </span>
+
+	public AtomicSlot(String name, String note) {
+<span class="fc" id="L24">		super(name, note);</span>
+<span class="fc" id="L25">	}</span>
+
+	public SortedSet&lt;AtomicValue&gt; values() {
+<span class="fc" id="L28">		return Collections.unmodifiableSortedSet(new TreeSet&lt;&gt;(values.values()));</span>
+	}
+	
+	/**
+	 * Creates a new value of this type. Maintains all the bookkeeping,
+	 * such as ordinality and value aggregation.&lt;br&gt;
+     * Values are cached, so subsequent calls with the same name yield the same object.
+     * 
+	 * @param name name of the new value.
+	 * @param note additional info (if applicable)
+	 * @return A new value of this type.
+     * @throws IllegalArgumentException if a value by this name is already registered.
+     * @see #valueOf(java.lang.String) 
+	 */
+	public AtomicValue registerValue( String name, String note ) {
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">        if ( values.containsKey(name) ) {</span>
+<span class="nc" id="L44">            throw new IllegalArgumentException(&quot;Value &quot; + name + &quot; already regiseterd.&quot;);</span>
+        }
+<span class="fc" id="L46">		AtomicValue v = new AtomicValue( nextOrdinal++, name, this, note );</span>
+<span class="fc" id="L47">		values.put( name, v );</span>
+<span class="fc" id="L48">		return v;</span>
+	}
+    
+    /**
+     * Returns the value of {@code this} type that has the passed name,
+     * @param name the name of the requested value. Case-sensitive.
+     * @return The value with the passed name.
+     * @throws IllegalArgumentException if no value by that name exists.
+     */
+    public AtomicValue valueOf( String name ) {
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if ( values.containsKey(name) ) {</span>
+<span class="fc" id="L59">            return values.get(name);</span>
+        } else {
+<span class="fc" id="L61">            throw new IllegalArgumentException(&quot;Atomic type &quot; + getName() + &quot; has no value '&quot; + name + &quot;'&quot;);</span>
+        }
+    }
+
+	@Override
+	public &lt;T&gt; T accept(Visitor&lt;T&gt; v) {
+<span class="fc" id="L67">		return v.visitSimpleSlot(this);</span>
+	}
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

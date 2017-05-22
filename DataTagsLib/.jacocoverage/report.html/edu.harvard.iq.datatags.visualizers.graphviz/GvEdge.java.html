@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GvEdge.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.visualizers.graphviz</a> &gt; <span class="el_source">GvEdge.java</span></div><h1>GvEdge.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.visualizers.graphviz;
+
+/**
+ * An edge in GraphViz.
+ * 
+ * @author michael
+ */
+public class GvEdge extends GvObject&lt;GvEdge&gt; {
+    
+<span class="nc" id="L10">    public enum ArrowType {</span>
+<span class="nc" id="L11">        Normal, Inv, Dot,</span>
+<span class="nc" id="L12">        Invdot, Odot, Invodot, None,</span>
+<span class="nc" id="L13">        Tee, empty, Invempty, Diamond,</span>
+<span class="nc" id="L14">        Odiamond, Ediamond, Crow, Box,</span>
+<span class="nc" id="L15">        Obox, Open, Halfopen, Vee, Circle	</span>
+    }
+    
+<span class="nc" id="L18">    public enum Style {</span>
+<span class="nc" id="L19">        Solid, Dashed, Dotted, Bold</span>
+    }
+    
+    private final String from, to;
+    
+    public static GvEdge edge( String from, String to ) {
+<span class="nc" id="L25">        return new GvEdge( from, to );</span>
+    }
+    
+<span class="nc" id="L28">    public GvEdge(String from, String to) {</span>
+<span class="nc" id="L29">        this.from = from;</span>
+<span class="nc" id="L30">        this.to = to;</span>
+<span class="nc" id="L31">    }</span>
+    
+    public GvEdge style( Style aStyle ) {
+<span class="nc" id="L34">        return add(&quot;style&quot;, aStyle.name().toLowerCase());</span>
+    }
+    
+    public GvEdge arrowhead( ArrowType at ) {
+<span class="nc" id="L38">        return add(&quot;arrowhead&quot;, at.name().toLowerCase());</span>
+    }
+    
+    public GvEdge arrowtail( ArrowType at ) {
+<span class="nc" id="L42">        return add(&quot;arrowtail&quot;, at.name().toLowerCase());</span>
+    }
+    
+    public GvEdge constraint( boolean c ) {
+<span class="nc" id="L46">        return add(&quot;constraint&quot;, Boolean.toString(c));</span>
+    }
+    
+    public GvEdge decorate( boolean c ) {
+<span class="nc" id="L50">        return add(&quot;decorate&quot;, Boolean.toString(c));</span>
+    }
+    
+    public GvEdge sameHead( String headId ) {
+<span class="nc" id="L54">        return add(&quot;samehead&quot;, headId );</span>
+    }
+    
+    public GvEdge sameTail( String tailId ) {
+<span class="nc" id="L58">        return add(&quot;sametail&quot;, tailId );</span>
+    }
+    
+    public GvEdge headLabel(String lbl) {
+<span class="nc" id="L62">        return add(&quot;headlabel&quot;, lbl );</span>
+    }
+    
+    public GvEdge tailLabel(String lbl) {
+<span class="nc" id="L66">        return add(&quot;taillabel&quot;, lbl );</span>
+    }
+    
+    @Override
+    public String gvTitle() {
+<span class="nc" id="L71">        return sanitizeId(from) + &quot; -&gt; &quot; + sanitizeId(to);</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

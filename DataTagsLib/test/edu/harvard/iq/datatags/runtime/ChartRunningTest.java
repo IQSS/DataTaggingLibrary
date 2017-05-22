@@ -29,10 +29,10 @@ public class ChartRunningTest {
         DecisionGraph c1 = new DecisionGraph(flowChartName);
 
         AskNode start = c1.add(new AskNode("1"));
-        start.setNodeFor(YES, c1.add(new AskNode("2")))
-                .setNodeFor(YES, c1.add(new AskNode("3")))
-                .setNodeFor(YES, c1.add(new AskNode("4")))
-                .setNodeFor(YES, c1.add(new EndNode("END")));
+        start.addAnswer(YES, c1.add(new AskNode("2")))
+                .addAnswer(YES, c1.add(new AskNode("3")))
+                .addAnswer(YES, c1.add(new AskNode("4")))
+                .addAnswer(YES, c1.add(new EndNode("END")));
 
         c1.setStart(start);
 
@@ -68,15 +68,15 @@ public class ChartRunningTest {
         DecisionGraph c1 = new DecisionGraph(flowChartName);
 
         AskNode start = c1.add(new AskNode("1"));
-        start.setNodeFor(YES, c1.add(new AskNode("2")))
-                .setNodeFor(NO, c1.add(new AskNode("3")))
-                .setNodeFor(YES, c1.add(new AskNode("4")))
-                .setNodeFor(NO, c1.add(new EndNode("END")));
+        start.addAnswer(YES, c1.add(new AskNode("2")))
+                .addAnswer(NO, c1.add(new AskNode("3")))
+                .addAnswer(YES, c1.add(new AskNode("4")))
+                .addAnswer(NO, c1.add(new EndNode("END")));
 
-        ((AskNode) c1.getNode("1")).setNodeFor(NO, c1.add(new AskNode("x")));
-        ((AskNode) c1.getNode("2")).setNodeFor(YES, c1.add(new AskNode("xx")));
-        ((AskNode) c1.getNode("3")).setNodeFor(NO, c1.add(new AskNode("xxx")));
-        ((AskNode) c1.getNode("4")).setNodeFor(YES, c1.add(new EndNode("xxxx")));
+        ((AskNode) c1.getNode("1")).addAnswer(NO, c1.add(new AskNode("x")));
+        ((AskNode) c1.getNode("2")).addAnswer(YES, c1.add(new AskNode("xx")));
+        ((AskNode) c1.getNode("3")).addAnswer(NO, c1.add(new AskNode("xxx")));
+        ((AskNode) c1.getNode("4")).addAnswer(YES, c1.add(new EndNode("xxxx")));
 
         c1.setStart(start);
 
@@ -100,7 +100,7 @@ public class ChartRunningTest {
         DecisionGraph rec = linearYesChart(chartId, 3);
 
         AskNode n2 = (AskNode) rec.getNode(chartId + "_2");
-        CallNode caller = n2.setNodeFor(NO, rec.add(new CallNode("Caller")));
+        CallNode caller = n2.addAnswer(NO, rec.add(new CallNode("Caller")));
         caller.setCalleeNodeId(chartId + "_1");
         caller.setNextNode(new EndNode("CallerEnd"));
 
@@ -125,7 +125,7 @@ public class ChartRunningTest {
         DecisionGraph rec = linearYesChart(chartId, 3);
 
         AskNode n2 = (AskNode) rec.getNode(chartId + "_2");
-        CallNode caller = n2.setNodeFor(NO, rec.add(new CallNode("Caller")));
+        CallNode caller = n2.addAnswer(NO, rec.add(new CallNode("Caller")));
         caller.setCalleeNodeId(chartId + "_1");
         caller.setNextNode(new EndNode("CallerEnd"));
 

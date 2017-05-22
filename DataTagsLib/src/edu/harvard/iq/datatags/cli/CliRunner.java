@@ -91,8 +91,7 @@ public class CliRunner {
                 new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
                 new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand(), 
                 new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand(),
-                new OptimizeDecisionGraphCommand(),
-                new ToJsonCommand()
+                new OptimizeDecisionGraphCommand()
         ).forEach(c -> commands.put(c.command(), c));
         
         // shortcuts

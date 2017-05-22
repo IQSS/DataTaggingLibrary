@@ -289,10 +289,10 @@ public class DecisionGraphParseResult {
 
                     Node syntacticallyNext = buildNodes(C.tail(astNodes), defaultNode);
 
-                    astNode.getAnswers().forEach(ansSubNode -> res.setNodeFor(Answer.get(ansSubNode.getAnswerText()),
+                    astNode.getAnswers().forEach(ansSubNode -> res.addAnswer(Answer.get(ansSubNode.getAnswerText()),
                             buildNodes(ansSubNode.getSubGraph(), syntacticallyNext)));
 
-                    impliedAnswers(res).forEach(ans -> res.setNodeFor(ans, syntacticallyNext));
+                    impliedAnswers(res).forEach(ans -> res.addAnswer(ans, syntacticallyNext));
 
                     return product.add(res);
                 }

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GraphvizTagSpacePathsVizualizer.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.visualizers.graphviz</a> &gt; <span class="el_source">GraphvizTagSpacePathsVizualizer.java</span></div><h1>GraphvizTagSpacePathsVizualizer.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.visualizers.graphviz;
+
+import edu.harvard.iq.datatags.model.types.AggregateSlot;
+import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import edu.harvard.iq.datatags.model.values.AtomicValue;
+import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
+import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * Visualizes a tag space based on the qualified names, or paths, of each slot.
+ * @author michael
+ */
+public class GraphvizTagSpacePathsVizualizer extends GraphvizVisualizer {
+	
+	private final SlotType topLevel;
+
+<span class="nc" id="L24">	public GraphvizTagSpacePathsVizualizer(SlotType topLevel) {</span>
+<span class="nc" id="L25">		this.topLevel = topLevel;</span>
+<span class="nc" id="L26">	}</span>
+
+	@Override
+	void printHeader(BufferedWriter out) throws IOException {
+<span class="nc" id="L30">		super.printHeader(out);</span>
+//		out.write(&quot;graph [overlap=true ranksep=3]&quot;);
+<span class="nc" id="L32">		out.newLine();</span>
+<span class="nc" id="L33">	}</span>
+	
+	@Override
+	protected void printBody( BufferedWriter out ) throws IOException {
+		
+<span class="nc" id="L38">		final List&lt;String&gt; nodes = new LinkedList&lt;&gt;();</span>
+<span class="nc" id="L39">		final List&lt;String&gt; edges = new LinkedList&lt;&gt;();</span>
+		
+<span class="nc" id="L41">		SlotType.Visitor typePainter = new SlotType.VoidVisitor(){</span>
+
+			@Override
+			public void visitAtomicSlotImpl(AtomicSlot t) {
+<span class="nc" id="L45">				String sTypeName = sanitizeId(t.getName());</span>
+<span class="nc" id="L46">				nodes.add( sTypeName + &quot;[shape=\&quot;none\&quot; fillcolor=\&quot;none\&quot; label=&lt;&quot;+makeHtml(t)+&quot;&gt;]&quot;);</span>
+<span class="nc" id="L47">			}</span>
+
+			@Override
+			public void visitAggregateSlotImpl(AggregateSlot t) {
+<span class="nc" id="L51">				String sTypeName = sanitizeId(t.getName());</span>
+<span class="nc" id="L52">				nodes.add( sTypeName + &quot;[shape=\&quot;invtrapezium\&quot; label=\&quot;some of\&quot;]&quot;);</span>
+<span class="nc" id="L53">                t.getItemType().values().forEach( val -&gt; {</span>
+<span class="nc" id="L54">                    String sValue = sTypeName+&quot;_&quot;+sanitizeId( val.getName() );</span>
+<span class="nc" id="L55">                    nodes.add( sValue + &quot;[label=\&quot;&quot;+val.getName()+&quot;\&quot; shape=\&quot;egg\&quot; fillcolor=\&quot;#CCCCFF\&quot;]&quot;);</span>
+<span class="nc" id="L56">                    edges.add( sTypeName + &quot;:n -&gt; &quot; + sValue + &quot;[ dir=\&quot;back\&quot; style=\&quot;dashed\&quot;]&quot;  );</span>
+<span class="nc" id="L57">                });</span>
+<span class="nc" id="L58">			}</span>
+
+			@Override
+			public void visitCompoundSlotImpl(CompoundSlot t) {
+<span class="nc" id="L62">				String sTypeName = sanitizeId(t.getName());</span>
+<span class="nc" id="L63">				nodes.add( sTypeName + &quot;[shape=\&quot;point\&quot;]&quot;);</span>
+<span class="nc" id="L64">                t.getFieldTypes().forEach((subFieldType) -&gt; {</span>
+<span class="nc" id="L65">                    edges.add( sTypeName + &quot; -&gt; &quot; + sanitizeId(subFieldType.getName()) + &quot;:w [label=\&quot;&quot; + subFieldType.getName() + &quot;\&quot;]&quot; );</span>
+<span class="nc" id="L66">                    subFieldType.accept(this);</span>
+<span class="nc" id="L67">                });</span>
+<span class="nc" id="L68">			}</span>
+
+			@Override
+			public void visitTodoSlotImpl(ToDoSlot t) {
+<span class="nc" id="L72">				nodes.add( node(sanitizeId(t.getName())).label(&quot;TODO&quot;).shape(GvNode.Shape.note).fillColor(&quot;#AAFFAA&quot;).gv());</span>
+<span class="nc" id="L73">			}</span>
+
+            private String makeHtml(AtomicSlot t) {
+<span class="nc" id="L76">                StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L77">                sb.append(&quot;&lt;TABLE border=\&quot;1\&quot; cellborder=\&quot;0\&quot; cellspacing=\&quot;0\&quot; cellpadding=\&quot;4\&quot;&gt;&lt;TR&gt;&quot;);</span>
+<span class="nc" id="L78">                sb.append(&quot;&lt;TD&gt;one of:&lt;/TD&gt;&quot;);</span>
+<span class="nc" id="L79">                int startRGB[] = {200,200,255};</span>
+<span class="nc" id="L80">                int endRGB[] = {255,80,80};</span>
+<span class="nc" id="L81">                int step=0;</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">                for ( AtomicValue at:t.values() ) {</span>
+<span class="nc" id="L83">                    String htmlCol = &quot;#&quot;+ mix(startRGB[0], endRGB[0], step, t.values().size())</span>
+<span class="nc" id="L84">                                        + mix(startRGB[1], endRGB[1], step, t.values().size())</span>
+<span class="nc" id="L85">                                        + mix(startRGB[2], endRGB[2], step, t.values().size());</span>
+<span class="nc" id="L86">                    sb.append(&quot;&lt;TD BGCOLOR=\&quot;&quot;).append(htmlCol).append(&quot;\&quot;&gt;&quot;).append(at.getName()).append(&quot;&lt;/TD&gt;&quot;);</span>
+<span class="nc" id="L87">                    step++;</span>
+<span class="nc" id="L88">                 }</span>
+<span class="nc" id="L89">                sb.append(&quot;&lt;/TR&gt;&lt;/TABLE&gt;&quot;);</span>
+                
+<span class="nc" id="L91">                return sb.toString();</span>
+            }
+            
+            private String mix( int s, int e, int step, int stepCount ) {
+<span class="nc" id="L95">                String retVal = Integer.toHexString( ((stepCount-step)*s + step*e)/stepCount );</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                return retVal.length()&lt;2 ? &quot;0&quot;+retVal : retVal;</span>
+            }
+		};
+
+<span class="nc" id="L100">		topLevel.accept(typePainter);</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">		for ( String s : nodes ) {</span>
+<span class="nc" id="L102">			out.write(s);</span>
+<span class="nc" id="L103">			out.newLine();</span>
+<span class="nc" id="L104">		}</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">		for ( String s : edges ) {</span>
+<span class="nc" id="L106">			out.write(s);</span>
+<span class="nc" id="L107">			out.newLine();</span>
+<span class="nc" id="L108">		}</span>
+<span class="nc" id="L109">        out.write( node(&quot;start&quot;)</span>
+<span class="nc" id="L110">                .fillColor(&quot;transparent&quot;)</span>
+<span class="nc" id="L111">                .label(&quot;DataTags&quot;)</span>
+<span class="nc" id="L112">                .shape(GvNode.Shape.none)</span>
+<span class="nc" id="L113">                .fontColor(&quot;#008800&quot;)</span>
+<span class="nc" id="L114">                .fontSize(16)</span>
+<span class="nc" id="L115">                .gv() );</span>
+<span class="nc" id="L116">        out.write( edge(&quot;start&quot;, &quot;DataTags&quot;)</span>
+<span class="nc" id="L117">                    .color(&quot;#008800&quot;)</span>
+<span class="nc" id="L118">                    .penwidth(4)</span>
+<span class="nc" id="L119">                    .gv());</span>
+<span class="nc" id="L120">        out.write(&quot;{rank=source; start}&quot;);</span>
+<span class="nc" id="L121">	}</span>
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

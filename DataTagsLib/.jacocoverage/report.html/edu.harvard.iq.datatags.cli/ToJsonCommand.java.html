@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ToJsonCommand.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.cli</a> &gt; <span class="el_source">ToJsonCommand.java</span></div><h1>ToJsonCommand.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.cli;
+
+import edu.harvard.iq.datatags.visualizers.html.JsonFactory;
+import java.awt.Desktop;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import org.json.simple.JSONObject;
+
+/**
+ * exports the decision graph and tag space into a JSON file
+ *
+ * @author Yonatan Tzulang
+ */
+<span class="nc" id="L19">public class ToJsonCommand implements CliCommand {</span>
+
+    @Override
+    public String command() {
+<span class="nc" id="L23">        return &quot;toJson&quot;;</span>
+    }
+
+    @Override
+    public String description() {
+<span class="nc" id="L28">        return &quot;Exports data into json file. Users can provide additional parameter for the output file&quot;;</span>
+    }
+
+    @Override
+    public void execute(CliRunner rnr, List&lt;String&gt; args) throws Exception {
+
+<span class="nc" id="L34">        Path outputPath = getOuputFilePath(rnr, args, rnr.getTagSpacePath());</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        if ( ! Files.exists(outputPath.getParent()) ) {</span>
+<span class="nc" id="L36">            rnr.printWarning(&quot;Path %s not found.&quot;, outputPath.getParent().toAbsolutePath());</span>
+<span class="nc" id="L37">            return;</span>
+        }
+        
+<span class="nc" id="L40">        JSONObject output = JsonFactory.toJson(rnr.getDecisionGraph().getTopLevelType(), rnr.getDecisionGraph());</span>
+
+<span class="nc" id="L42">        try (Writer fileWriter = new FileWriter(outputPath.toString())) {</span>
+<span class="nc" id="L43">            fileWriter.write(output.toJSONString());</span>
+<span class="nc" id="L44">            fileWriter.close();</span>
+<span class="nc bnc" id="L45" title="All 8 branches missed.">        }</span>
+<span class="nc" id="L46">        rnr.println(&quot;File created at: %s&quot;, outputPath.toRealPath());</span>
+<span class="nc" id="L47">        rnr.println(&quot;You can view the file using http://iqss.github.io/DataTagsInteractiveVisualizer/&quot;);</span>
+        
+<span class="nc" id="L49">    }</span>
+
+    private Path getOuputFilePath(CliRunner rnr, List&lt;String&gt; args, Path basePath) throws IOException {
+        Path outputPath;
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        if (args.size() &lt; 2) {</span>
+            // try to suggest a file name
+<span class="nc" id="L55">            String dgFileName = basePath.getFileName().toString();</span>
+<span class="nc" id="L56">            int extensionStart = dgFileName.lastIndexOf(&quot;.&quot;);</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">            if (extensionStart &gt; 0) {</span>
+<span class="nc" id="L58">                dgFileName = dgFileName.substring(0, extensionStart);</span>
+            }
+<span class="nc" id="L60">            Path defaultOutput = basePath.resolveSibling(dgFileName + &quot;.json&quot;);</span>
+<span class="nc" id="L61">            String outputPathFromUser = rnr.readLine(&quot;Enter output file name [%s]: &quot;, defaultOutput);</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">            outputPath = outputPathFromUser.trim().isEmpty() ? defaultOutput : Paths.get(outputPathFromUser.trim());</span>
+<span class="nc" id="L63">        } else {</span>
+<span class="nc" id="L64">            outputPath = Paths.get(args.get(1));</span>
+        }
+<span class="nc" id="L66">        return outputPath;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

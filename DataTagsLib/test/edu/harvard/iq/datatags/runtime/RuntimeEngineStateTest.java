@@ -58,7 +58,7 @@ public class RuntimeEngineStateTest {
         DecisionGraph dg = linearYesChart(chartId, 3);
         dg.setTopLevelType(new CompoundSlot("", ""));
         AskNode n2 = (AskNode) dg.getNode(chartId + "_2");
-        ConsiderNode consider = n2.setNodeFor(NO, dg.add(new ConsiderNode("1", null)));
+        ConsiderNode consider = n2.addAnswer(NO, dg.add(new ConsiderNode("1", null)));
         CallNode caller = consider.setNodeFor(ConsiderAnswer.get(tags), dg.add(new CallNode("Caller")));
         caller.setCalleeNodeId(chartId + "_1");
         caller.setNextNode(new EndNode("CallerEnd"));
