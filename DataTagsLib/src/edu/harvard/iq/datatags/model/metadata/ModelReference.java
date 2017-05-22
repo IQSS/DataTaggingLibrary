@@ -1,9 +1,10 @@
 package edu.harvard.iq.datatags.model.metadata;
 
+import edu.harvard.iq.datatags.model.PolicyModelData;
 import java.util.Objects;
 
 /**
- * A reference a {@link PolicyModel} relies upon.
+ * A reference a {@link PolicyModelData} relies upon.
  * @author michael
  */
 public class ModelReference {
