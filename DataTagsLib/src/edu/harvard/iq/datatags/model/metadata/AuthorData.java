@@ -15,5 +15,7 @@ public interface AuthorData {
             
     String displayString();
     
+    void setName( String aName );
+    
     <R> R accept(Visitor<R> v);
 }

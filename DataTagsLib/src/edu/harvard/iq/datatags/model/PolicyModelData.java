@@ -3,9 +3,8 @@ package edu.harvard.iq.datatags.model;
 import edu.harvard.iq.datatags.model.metadata.AuthorData;
 import edu.harvard.iq.datatags.model.metadata.ModelReference;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -29,11 +28,13 @@ public class PolicyModelData {
     private String title;
     private String version;
     private String doi;
-    private Calendar releaseDate;
+    private String rootTypeName;
+    private LocalDate releaseDate;
     private Path baseFolder, policySpacePath, decisionGraphPath;
     private final List<AuthorData> authors = new ArrayList<>();
-    private final Set<ModelReference> references = new HashSet<>();
+    private final List<ModelReference> references = new ArrayList<>();
     private final Set<String> keywords = new TreeSet<>();
+    private AnswerTransformationMode answerTransformationMode = AnswerTransformationMode.YesFirst;
     
     public String getTitle() {
         return title;
@@ -59,11 +60,11 @@ public class PolicyModelData {
         this.doi = doi;
     }
 
-    public Calendar getReleaseDate() {
+    public LocalDate getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(Calendar releaseDate) {
+    public void setReleaseDate(LocalDate releaseDate) {
         this.releaseDate = releaseDate;
     }
 
@@ -91,7 +92,7 @@ public class PolicyModelData {
         this.decisionGraphPath = decisionGraphPath;
     }
 
-    public Set<ModelReference> getReferences() {
+    public List<ModelReference> getReferences() {
         return references;
     }
     
@@ -116,6 +117,22 @@ public class PolicyModelData {
     public String addKeyword( String aKeyword ) {
         keywords.add(aKeyword);
         return aKeyword;
+    }
+
+    public String getRootTypeName() {
+        return rootTypeName;
+    }
+
+    public void setRootTypeName(String rootTypeName) {
+        this.rootTypeName = rootTypeName;
+    }
+
+    public void setAnswerTransformationMode(AnswerTransformationMode answerTransformationMode) {
+        this.answerTransformationMode = answerTransformationMode;
+    }
+
+    public AnswerTransformationMode getAnswerTransformationMode() {
+        return answerTransformationMode;
     }
     
 }

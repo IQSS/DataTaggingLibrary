@@ -8,6 +8,7 @@ import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.runtime.RuntimeEngineStatus;
+import edu.harvard.iq.datatags.tools.processors.YesNoAnswersSorter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -69,6 +70,7 @@ public class LoadQuestionnaireCommand implements CliCommand {
             rnr.println("Reading Decision Graph:");
             rnr.println( dgPath.toRealPath().toString() );
             DecisionGraph dg = new DecisionGraphParser().parse(dgPath).compile(ts);
+            dg = new YesNoAnswersSorter().process(dg);
             
             rnr.setDecisionGraph(dg);
             rnr.setDecisionGraphPath(dgPath);
