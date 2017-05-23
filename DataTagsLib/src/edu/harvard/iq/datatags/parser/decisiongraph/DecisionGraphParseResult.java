@@ -17,6 +17,7 @@ import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
@@ -25,6 +26,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.parser.exceptions.BadLookupException;
@@ -54,6 +56,8 @@ public class DecisionGraphParseResult {
 
     private final List<? extends AstNode> astNodes;
 
+    EndNode endAll = new EndNode("[SYN-END]");
+    
     /**
      * Maps a name of a slot to its fully qualified version (i.e from the top
      * type). For fully qualified names this is an identity function.
@@ -90,7 +94,6 @@ public class DecisionGraphParseResult {
 
         // stage 2: Break nodes to componsnets, and
         // stage 3: Compile and link direct nodes.
-        EndNode endAll = new EndNode("[SYN-END]");
         try {
             breakAstNodeList(astNodes)
                     .forEach( segment -> buildNodes(segment, endAll) );
@@ -166,6 +169,11 @@ public class DecisionGraphParseResult {
 
             @Override
             public Boolean visit(AstTodoNode astNode) {
+                return false;
+            }
+            
+            @Override
+            public Boolean visit(AstSectionNode astNode) {
                 return false;
             }
         };
@@ -335,6 +343,14 @@ public class DecisionGraphParseResult {
                 @Override
                 public Node visit(AstEndNode astNode) {
                     return product.add(new EndNode(astNode.getId()));
+                }
+                
+                @Override
+                public Node visit(AstSectionNode astNode) {
+                    final SectionNode sectionNode = new SectionNode(astNode.getId(), astNode.getInfo().getText());
+                    buildNodes(astNode.getStartNode(), endAll);
+                    sectionNode.setNextNode(buildNodes(C.tail(astNodes), defaultNode));
+                    return product.add(sectionNode);
                 }
 
             });
@@ -542,6 +558,13 @@ public class DecisionGraphParseResult {
 
             @Override
             public void visitImpl(AstEndNode nd) throws DataTagsRuntimeException {
+                if (nd.getId() == null) {
+                    nd.setId(nodeIdProvider.nextId());
+                }
+            }
+            
+            @Override
+            public void visitImpl(AstSectionNode nd) throws DataTagsRuntimeException {
                 if (nd.getId() == null) {
                     nd.setId(nodeIdProvider.nextId());
                 }

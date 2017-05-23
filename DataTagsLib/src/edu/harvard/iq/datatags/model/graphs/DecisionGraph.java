@@ -6,6 +6,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
@@ -134,6 +135,13 @@ public class DecisionGraph {
             @Override
             public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
                 nodes.put(nd.getId(), nd);
+            }
+            
+            public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{
+                nodes.put(nd.getId(), nd);
+                if ( nd.hasNextNode() ) {
+                    nd.getNextNode().accept(this);
+                }
             }
         });
         return n;

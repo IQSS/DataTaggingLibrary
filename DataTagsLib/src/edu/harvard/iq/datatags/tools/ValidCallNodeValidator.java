@@ -8,6 +8,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node.VoidVisitor;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -69,6 +70,11 @@ public class ValidCallNodeValidator extends VoidVisitor {
     @Override
     public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
         // do nothing
+    }
+    
+    @Override
+    public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
+        
     }
 
     

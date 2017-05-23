@@ -6,9 +6,11 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstInfoSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNodeHead;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTextSubNode;
@@ -150,6 +152,21 @@ public class DecisionGraphRuleParserTest {
         Parser<AstRejectNode> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.REJECT_NODE );
         String rejectText = "unfortunately, we cannot accept your dataset. You're likely breaching §7.6.1(ii) of BANANAA. Can we ask why?";
         assertEquals(new AstRejectNode(null, rejectText), sut.parse("[reject: " + rejectText + "]") );
+    }
+    
+    @Test
+    public void sectionNodeNoId() {
+        Parser<List<? extends AstNode>> bodyParser = 
+                Parsers.or( DecisionGraphRuleParser.END_NODE, DecisionGraphRuleParser.TODO_NODE).many().cast();
+        Parser<AstSectionNode> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.sectionNode(bodyParser) );
+        assertEquals(new AstSectionNode(null, new AstInfoSubNode("bla bla"),
+                                        asList(new AstTodoNode(null, "bla"))),
+                    sut.parse("[ section: {info: bla bla}\n[todo: bla] ]") );
+//        assertEquals(new AstSectionNode(null, "finalize this"), sut.parse("[reject:\nfinalize this]") );
+//        assertEquals(new AstSectionNode(null, "finalize this"), sut.parse("[reject:finalize this\n\n\n]") );
+//
+//        assertEquals(new AstSectionNode(null, "finalize\nthis"), sut.parse("[ reject: finalize\nthis]") );
+//        assertEquals(new AstSectionNode(null, "finalize 16 of these !@#!%!#$!$"), sut.parse("[ reject: finalize 16 of these !@#!%!#$!$]") );
     }
     
     @Test

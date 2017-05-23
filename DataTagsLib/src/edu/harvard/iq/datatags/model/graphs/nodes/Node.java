@@ -95,7 +95,7 @@ public abstract class Node {
         public abstract void visitImpl(ToDoNode nd) throws DataTagsRuntimeException;
 
         public abstract void visitImpl(EndNode nd) throws DataTagsRuntimeException;
-
+        
     }
 
     private final String id;
