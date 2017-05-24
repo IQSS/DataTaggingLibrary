@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.cli;
 
-import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.PolicyModel;
 import java.util.List;
 
 /**
@@ -32,12 +32,12 @@ public class AboutCommand implements CliCommand {
         rnr.println("For more info: http://datatags.org");
         rnr.println("");
         
-        DecisionGraph dg = rnr.getEngine().getDecisionGraph();
+        PolicyModel dg = rnr.getEngine().getModel();
         if ( dg != null ) {
-            rnr.printTitle("Current Questionnaire");
-            rnr.println("Decision Graph: %s (%s)", dg.getTitle(), dg.getId() );
-            rnr.println("Path: %s", rnr.getDecisionGraphPath() );
-            rnr.println("Tag Space: %s", rnr.getTagSpacePath());
+            rnr.printTitle("Current Model");
+            rnr.println("title: %s", rnr.getModel().getMetadata().getTitle() );
+            rnr.println("   at: %s", rnr.getModel().getMetadata().getMetadataFile().getParent() );
+            
         }
         rnr.println("Engine status: %s", rnr.getEngine().getStatus());
         

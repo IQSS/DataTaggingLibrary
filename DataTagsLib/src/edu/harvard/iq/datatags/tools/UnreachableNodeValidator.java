@@ -26,9 +26,9 @@ import java.util.Set;
  * node.
  * @author Naomi
  */
-public class UnreachableNodeValidator extends VoidVisitor {
+public class UnreachableNodeValidator extends VoidVisitor implements DecisionGraphValidator {
     
-    private final List<NodeValidationMessage> validationMessages = new LinkedList<>();
+    private final List<ValidationMessage> validationMessages = new LinkedList<>();
     private final Set<String> reachedNodeIds = new HashSet<>();
     private DecisionGraph flowChart = new DecisionGraph();
     
@@ -38,7 +38,8 @@ public class UnreachableNodeValidator extends VoidVisitor {
      * @param dg The graph we validate.
      * @return WARNING messages showing the unreachable nodes.
      */
-    public List<NodeValidationMessage> validateUnreachableNodes( DecisionGraph dg ) {
+    @Override
+    public List<ValidationMessage> validate( DecisionGraph dg ) {
         Set<String> flowChartNodeIds = new HashSet<>();
         flowChartNodeIds.addAll( dg.nodeIds() );
 
@@ -47,11 +48,11 @@ public class UnreachableNodeValidator extends VoidVisitor {
         flowChartNodeIds.removeAll(reachedNodeIds);
 
         if (!flowChartNodeIds.isEmpty()) {
-            for (String nodeId : flowChartNodeIds) {
+            flowChartNodeIds.forEach((nodeId) -> {
                 validationMessages.add(new NodeValidationMessage(Level.WARNING,
-                                                "Node \"" + nodeId + "\" is unreachable.",
-                                                dg.getNode(nodeId)));
-            }
+                        "Node \"" + nodeId + "\" is unreachable.",
+                        dg.getNode(nodeId)));
+            });
         }
         
         return validationMessages;

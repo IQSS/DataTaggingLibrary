@@ -45,7 +45,7 @@ public class OptimizeDecisionGraphCommand implements CliCommand {
         }
         if ( sel != null ) {
             // optimize using the selected optimizer.
-            rnr.setDecisionGraph(sel.process(rnr.getDecisionGraph()));
+            rnr.getModel().setDecisionGraph(sel.process(rnr.getModel().getDecisionGraph()));
         } else {
             rnr.printWarning("%s is not available", res);
         }

@@ -1,8 +1,6 @@
 package edu.harvard.iq.datatags.model.graphs.nodes;
 
-import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
-import edu.harvard.iq.datatags.model.types.SlotType;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -41,7 +39,9 @@ public class ConsiderNode extends Node {
      * @return {@code node}, for convenience, call chaining, etc.
      */
     public <T extends Node> T setNodeFor(ConsiderAnswer answer, T node) {
-        answers.add(answer);
+        if ( ! answers.contains(answer) ) {
+            answers.add(answer);
+        }
         nextNodeByAnswer.put(answer, node);
         return node;
     }

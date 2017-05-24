@@ -21,20 +21,20 @@ import java.util.List;
  * 
  * @author Naomi
  */
-public class ValidCallNodeValidator extends VoidVisitor {
+public class ValidCallNodeValidator extends VoidVisitor implements DecisionGraphValidator {
     
     private final List<NodeValidationMessage> validationMessages = new LinkedList<>();
     private DecisionGraph chart;
     
     
-    public List<NodeValidationMessage> validateIdReferences( DecisionGraph dg ) {
+    @Override
+    public List<NodeValidationMessage> validate( DecisionGraph dg ) {
         chart = dg;
         for (Node aNode : chart.nodes()) {
             aNode.accept(this);
         }
         return validationMessages;
     }
-    
     
     @Override
     public void visitImpl (CallNode cn) throws DataTagsRuntimeException {

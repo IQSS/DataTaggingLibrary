@@ -24,12 +24,16 @@ public class VisualizeTagSpaceCommand extends DotCommand {
     }
     
     @Override
-    protected void executeWithDot(Path dot, CliRunner rnr, List<String> args) throws Exception {
-        ProcessBuilder pb = new ProcessBuilder(dot.toString(), "-Tpdf");
-        GraphvizTagSpacePathsVizualizer viz = new GraphvizTagSpacePathsVizualizer(rnr.getDecisionGraph().getTopLevelType());
+    protected void executeWithDot(Path pathToDot, CliRunner rnr, List<String> args) throws Exception {
+        GraphvizTagSpacePathsVizualizer viz = new GraphvizTagSpacePathsVizualizer(rnr.getModel().getSpaceRoot());
         
         Path outputPath;
-        outputPath = getOuputFilePath(rnr, args, rnr.getTagSpacePath(), "-ts");
+        outputPath = getOuputFilePath(rnr, args, rnr.getModel().getMetadata().getPolicySpacePath(), "-ps");
+        
+        String[] fileNameComponents = outputPath.getFileName().toString().split("\\.");
+        String fileExtension = (fileNameComponents.length>1)?fileNameComponents[fileNameComponents.length-1]:"pdf";
+        
+        ProcessBuilder pb = new ProcessBuilder(pathToDot.toString(), "-T" + fileExtension);
         
         Process gv = pb.start();
         try (OutputStreamWriter outputToGraphviz = new OutputStreamWriter(gv.getOutputStream())) {

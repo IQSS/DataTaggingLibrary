@@ -1,13 +1,6 @@
 package edu.harvard.iq.datatags.cli;
 
-import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
-import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.List;
 
 /**
@@ -31,7 +24,7 @@ public class ShowNodeCommand implements CliCommand {
         if ( args.size() < 2 ) {
             rnr.printWarning("Please supply node id.");
         }
-        Node soughtNode = rnr.getDecisionGraph().getNode(args.get(1));
+        Node soughtNode = rnr.getModel().getDecisionGraph().getNode(args.get(1));
         if ( soughtNode == null ) {
             rnr.printWarning("Node >%s< not found.", args.get(1));
         } else {

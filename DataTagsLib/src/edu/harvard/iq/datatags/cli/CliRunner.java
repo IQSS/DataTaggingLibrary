@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.cli;
 
 import edu.harvard.iq.datatags.io.StringMapFormat;
-import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
@@ -19,7 +19,6 @@ import edu.harvard.iq.datatags.runtime.listeners.RuntimeEngineTracingListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +58,7 @@ public class CliRunner {
     private final Map<String, CliCommand> commands = new HashMap<>();
     private final Map<String, String> shortcuts = new HashMap<>();
     private boolean printDebugMessages = false;
-    private Path decisionGraphPath, tagSpacePath;
+    private PolicyModel model;
     private RuntimeEngineTracingListener tracer;
     private final Parser<List<String>> cmdScanner = Scanners.many( c -> !Character.isWhitespace(c) ).source().sepBy( Scanners.WHITESPACES );
 
@@ -89,7 +88,7 @@ public class CliRunner {
                 new QuitCommand(), new ToggleDebugMessagesCommand(), new ShowNodeCommand(),
                 new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
                 new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
-                new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand(), 
+                new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadPolicyModelCommand(), 
                 new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand(),
                 new OptimizeDecisionGraphCommand()
         ).forEach(c -> commands.put(c.command(), c));
@@ -114,7 +113,8 @@ public class CliRunner {
         try {
             tracer = new RuntimeEngineTracingListener(new CliEngineListener());
             ngn.setListener(tracer);
-
+            ngn.setModel(model);
+            
             while (true) {
                 try {
                     if (ngn.getStatus() == RuntimeEngineStatus.Idle && ngn.start()) {
@@ -375,14 +375,6 @@ public class CliRunner {
         }
     }
 
-    public DecisionGraph getDecisionGraph() {
-        return ngn.getDecisionGraph();
-    }
-
-    public void setDecisionGraph(DecisionGraph aDecisionGraph) {
-        ngn.setDecisionGraph(aDecisionGraph);
-    }
-
     public RuntimeEngine getEngine() {
         return ngn;
     }
@@ -393,22 +385,6 @@ public class CliRunner {
 
     public boolean getPrintDebugMessages() {
         return printDebugMessages;
-    }
-
-    public Path getDecisionGraphPath() {
-        return decisionGraphPath;
-    }
-
-    public void setDecisionGraphPath(Path decisionGraphPath) {
-        this.decisionGraphPath = decisionGraphPath;
-    }
-
-    public Path getTagSpacePath() {
-        return tagSpacePath;
-    }
-
-    public void setTagSpacePath(Path tagSpacePath) {
-        this.tagSpacePath = tagSpacePath;
     }
 
     public List<Node> getTrace() {
@@ -425,6 +401,15 @@ public class CliRunner {
             return "";
         }
     } 
+
+    public void setModel(PolicyModel aModel) {
+        model = aModel;
+    }
+
+    public PolicyModel getModel() {
+        return model;
+    }
+    
     
     private class CliEngineListener implements RuntimeEngine.Listener {
 

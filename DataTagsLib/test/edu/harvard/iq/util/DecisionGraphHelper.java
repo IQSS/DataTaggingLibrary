@@ -1,5 +1,7 @@
 package edu.harvard.iq.util;
 
+import edu.harvard.iq.datatags.model.PolicyModel;
+import edu.harvard.iq.datatags.model.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
@@ -81,11 +83,16 @@ public class DecisionGraphHelper {
 	}
     
 	public static void assertExecutionTrace(DecisionGraph dg, Iterable<Answer> answers, Iterable<String> expectedIds, boolean logToStdOut) {
-		if ( dg.getTopLevelType() == null ) {
-            dg.setTopLevelType(new CompoundSlot("placeholder","") );
-        }
         RuntimeEngine ngn = new RuntimeEngine();
-		ngn.setDecisionGraph(dg);
+        PolicyModelData md = new PolicyModelData();
+        md.setTitle("assertExecutionTrace Model");
+        
+        PolicyModel model = new PolicyModel();
+        model.setMetadata(md);
+        model.setSpaceRoot(new CompoundSlot("",""));
+        model.setDecisionGraph(dg);
+        
+		ngn.setModel(model);
 		RuntimeEngineTracingListener l = ngn.setListener(
 											new RuntimeEngineTracingListener( 
 													logToStdOut ? new RuntimeEnginePrintStreamListener()

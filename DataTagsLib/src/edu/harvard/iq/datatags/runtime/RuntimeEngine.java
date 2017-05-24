@@ -9,6 +9,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.io.StringMapFormat;
+import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
@@ -32,7 +33,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author michael
  */
-public class RuntimeEngine {
+
+ public class RuntimeEngine {
 
     public interface Listener {
 
@@ -51,8 +53,8 @@ public class RuntimeEngine {
     private static final AtomicInteger COUNTER = new AtomicInteger(0);
 
     private String id = "RuntimeEngine-" + COUNTER.incrementAndGet();
+    private PolicyModel model;
     private DecisionGraph decisionGraph;
-
     private CompoundValue currentTags;
     private final Deque<CallNode> stack = new LinkedList<>();
     private Node currentNode;
@@ -143,11 +145,11 @@ public class RuntimeEngine {
     public boolean start() throws DataTagsRuntimeException {
 
         if (getCurrentTags() == null) {
-            setCurrentTags(getDecisionGraph().getTopLevelType().createInstance());
+            setCurrentTags(model.getSpaceRoot().createInstance());
         }
         setStatus(RuntimeEngineStatus.Running);
         listener.ifPresent(l -> l.runStarted(this));
-        return processNode(getDecisionGraph().getStart());
+        return processNode(decisionGraph.getStart());
     }
 
     /**
@@ -157,10 +159,9 @@ public class RuntimeEngine {
         listener.ifPresent(l -> l.runTerminated(this));
         setStatus(RuntimeEngineStatus.Restarting);
         stack.clear();
-        setCurrentTags(getDecisionGraph().getTopLevelType().createInstance());
+        setCurrentTags(model.getSpaceRoot().createInstance());
 
         start();
-
     }
 
     /**
@@ -216,7 +217,7 @@ public class RuntimeEngine {
         }
         setStatus(snapshot.getStatus());
         currentTags = new StringMapFormat().parseCompoundValue(
-                decisionGraph.getTopLevelType(),
+                model.getSpaceRoot(),
                 snapshot.getSerializedTagValue());
         currentNode = decisionGraph.getNode(snapshot.getCurrentNodeId());
 
@@ -250,14 +251,6 @@ public class RuntimeEngine {
 
     public void setCurrentTags(CompoundValue currentTags) {
         this.currentTags = currentTags;
-    }
-
-    public DecisionGraph getDecisionGraph() {
-        return decisionGraph;
-    }
-
-    public void setDecisionGraph(DecisionGraph decisionGraph) {
-        this.decisionGraph = decisionGraph;
     }
 
     /**
@@ -321,4 +314,14 @@ public class RuntimeEngine {
         this.status = status;
         listener.ifPresent(l -> l.statusChanged(this));
     }
+
+    public PolicyModel getModel() {
+        return model;
+    }
+
+    public void setModel(PolicyModel model) {
+        this.model = model;
+        decisionGraph = model.getDecisionGraph();
+    }
+    
 }

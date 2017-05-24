@@ -23,6 +23,15 @@ import static java.util.stream.Collectors.toSet;
 public class YesNoAnswersSorter implements DecisionGraphProcessor {
     
     private boolean yesFirst = true;
+
+    public YesNoAnswersSorter() {
+    }
+    
+    public YesNoAnswersSorter( boolean isYesFirst ) {
+        yesFirst = isYesFirst;
+    }
+    
+    
     
     @Override
     public String getTitle() {

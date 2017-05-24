@@ -20,16 +20,16 @@ public class StatisticsCommand implements CliCommand {
 
     @Override
     public String description() {
-        return "Prints statistics about the questionnaire.";
+        return "Prints statistics about the model.";
     }
 
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception {
         TagCounter cnt = new TagCounter();
-        rnr.getDecisionGraph().getTopLevelType().accept(cnt);
+        rnr.getModel().getSpaceRoot().accept(cnt);
         rnr.println("Slot count: %d", cnt.slotsCount);
         rnr.println("Value count: %d", cnt.valuesCount);
-        rnr.println("Decision graph nodes: %d", rnr.getDecisionGraph().nodeIds().size() );
+        rnr.println("Decision graph nodes: %d", rnr.getModel().getDecisionGraph().nodeIds().size() );
     }
     
 }
@@ -52,10 +52,10 @@ class TagCounter extends SlotType.VoidVisitor {
     @Override
     public void visitCompoundSlotImpl(CompoundSlot t) {
         slotsCount++;
-        for ( SlotType tt : t.getFieldTypes() ) {
+        t.getFieldTypes().forEach( tt -> {
             slotsCount++;
             tt.accept(this);
-        }
+        });
     }
 
     @Override

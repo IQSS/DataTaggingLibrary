@@ -54,6 +54,15 @@ public class AskNode extends Node {
         nextNodeByAnswer.remove(ans);
     }
 
+    public <T extends Node> T setNodeForAnswer( Answer answer, T node ) {
+        if ( answers.contains(answer) ) {
+            nextNodeByAnswer.put(answer, node);
+        } else {
+            addAnswer(answer, node);
+        }
+        return node;
+    }
+    
     public Node getNodeFor(Answer answer) {
         return nextNodeByAnswer.get(answer);
     }

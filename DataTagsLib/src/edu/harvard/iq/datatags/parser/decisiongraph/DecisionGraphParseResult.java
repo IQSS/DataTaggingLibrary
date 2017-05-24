@@ -109,12 +109,8 @@ public class DecisionGraphParseResult {
         }
 
         product.setStart(product.getNode(C.head(astNodes).getId()));
-        product.setTopLevelType(topLevelType);
         product.setSource(source);
-        if (source != null) {
-            product.setTitle(C.last(source.getPath().split("/")));
-        }
-
+        
         return product;
     }
 

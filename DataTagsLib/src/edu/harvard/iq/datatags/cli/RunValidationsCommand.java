@@ -31,7 +31,7 @@ public class RunValidationsCommand implements CliCommand {
 
         rnr.print("Validating call nodes");
         ValidCallNodeValidator vcnv = new ValidCallNodeValidator();
-        nvms = vcnv.validateIdReferences( rnr.getDecisionGraph() );
+        nvms = vcnv.validate( rnr.getModel().getDecisionGraph() );
         if ( nvms.isEmpty() ) {
             rnr.println(" [ok]");
         } else {
@@ -43,18 +43,18 @@ public class RunValidationsCommand implements CliCommand {
         
         rnr.print("Checking for unreachable nodes");
         UnreachableNodeValidator unv = new UnreachableNodeValidator();
-        nvms = unv.validateUnreachableNodes(rnr.getDecisionGraph());
-        if ( nvms.isEmpty() ) {
+        List<ValidationMessage> unm = unv.validate(rnr.getModel().getDecisionGraph());
+        if ( unm.isEmpty() ) {
             rnr.println(" [ok]");
         } else {
             rnr.println(" [warning]");
             rnr.println("Unreachable nodes found:");
-            nvms.forEach( w -> rnr.println(" - %s", w.getEntities()) );
+            unm.forEach( w -> rnr.println(" - %s", ((NodeValidationMessage)w).getEntities()) );
         }
         
         rnr.print("Checking for unused tags");
         UnusedTagsValidator utv = new UnusedTagsValidator();
-        List<ValidationMessage> vms = utv.validateUnusedTags(rnr.getDecisionGraph());
+        List<ValidationMessage> vms = utv.validateUnusedTags(rnr.getModel());
         
         if ( vms.isEmpty() ) {
             rnr.println(" [ok]");

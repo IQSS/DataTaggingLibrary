@@ -16,8 +16,6 @@ import static java.util.stream.Collectors.toSet;
  */
 public class VisualizeDecisionGraphCommand extends DotCommand {
 
-    Path pathToDot;
-    
     @Override
     public String command() {
         return "visualize-dg";
@@ -37,7 +35,7 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
         
         
         Path outputPath;
-        outputPath = getOuputFilePath(rnr, args, rnr.getDecisionGraphPath(), "");
+        outputPath = getOuputFilePath(rnr, args, rnr.getModel().getMetadata().getDecisionGraphPath(), "-dg");
         
         String[] fileNameComponents = outputPath.getFileName().toString().split("\\.");
         String fileExtension = (fileNameComponents.length>1)?fileNameComponents[fileNameComponents.length-1]:"pdf";
@@ -46,7 +44,7 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
         
         Set<String> argSet = args.stream().map(s->s.toLowerCase()).collect(toSet());
         AbstractGraphvizDecisionGraphVisualizer viz = argSet.contains("-style=f11") ? new GraphvizChartSetF11Visualizer(argSet.contains("-show-ends")) : new GraphvizChartSetClusteredVisualizer();
-        viz.setDecisionGraph(rnr.getDecisionGraph());
+        viz.setDecisionGraph(rnr.getModel().getDecisionGraph());
         
         Process gv = pb.start();
         try (OutputStreamWriter outputToGraphviz = new OutputStreamWriter(gv.getOutputStream())) {

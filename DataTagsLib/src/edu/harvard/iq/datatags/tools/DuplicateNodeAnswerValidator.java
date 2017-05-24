@@ -21,11 +21,12 @@ import java.util.List;
  * Returns list of these nodes.
  * @author Naomi
  */
-public class DuplicateNodeAnswerValidator extends NullVisitor{
+public class DuplicateNodeAnswerValidator extends NullVisitor  implements DecisionGraphAstValidator{
     
     private List<ValidationMessage> validationMessages = new LinkedList<>();
     
-    public List<ValidationMessage> validateDuplicateAnswers(List<? extends AstNode> allRefs) {
+    @Override
+    public List<ValidationMessage> validate(List<? extends AstNode> allRefs) {
         validationMessages = new LinkedList<>();
         allRefs.stream().forEach( ref -> ref.accept(this) );
         return validationMessages;

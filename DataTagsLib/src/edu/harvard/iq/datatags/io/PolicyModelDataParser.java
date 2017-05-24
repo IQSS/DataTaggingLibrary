@@ -11,25 +11,18 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static java.util.stream.Collectors.joining;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 /**
@@ -61,6 +54,7 @@ public class PolicyModelDataParser {
     public PolicyModelData read(String xml, Path pathToXml) throws PolicyModelLoadingException {
         try {
             model = new PolicyModelData();
+            model.setMetadataFile(pathToXml);
             
             SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
             XMLReader reader = parser.getXMLReader();
@@ -209,12 +203,12 @@ public class PolicyModelDataParser {
                     
                 case "space":
                     tmpStr = chars();
-                    model.setPolicySpacePath(xmlFilePath.resolve(tmpStr));
+                    model.setPolicySpacePath(xmlFilePath.resolveSibling(tmpStr));
                     break;
                 
                 case "graph":
                     tmpStr = chars();
-                    model.setDecisionGraphPath(xmlFilePath.resolve(tmpStr));
+                    model.setDecisionGraphPath(xmlFilePath.resolveSibling(tmpStr));
                     break;
                     
                 case "reference":

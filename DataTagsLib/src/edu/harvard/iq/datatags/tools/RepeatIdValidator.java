@@ -13,6 +13,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +26,15 @@ import java.util.TreeMap;
  *
  * @author Naomi
  */
-public class RepeatIdValidator extends NullVisitor {
+public class RepeatIdValidator extends NullVisitor implements DecisionGraphAstValidator {
 
     private final Set<String> seenIds = new HashSet<>();
     private final Map<String, ValidationMessage> validationMessages = new TreeMap<>();
 
-    public Set<ValidationMessage> validateRepeatIds(List<? extends AstNode> refs) {
+    @Override
+    public List<ValidationMessage> validate(List<? extends AstNode> refs) {
         refs.stream().forEach(ref -> ref.accept(this));
-        return new HashSet<>(validationMessages.values());
+        return new ArrayList(validationMessages.values());
     }
 
     @Override

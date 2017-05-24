@@ -37,10 +37,10 @@ public class MatchResultToSequenceCommand implements CliCommand {
         String tagValueExpression = "[>x< set: " + String.join(" ", C.tail(args)) + "]";
         rnr.debugPrint( tagValueExpression );
         try {
-            DecisionGraph dg = new DecisionGraphParser().parse(tagValueExpression).compile(rnr.getDecisionGraph().getTopLevelType());
+            DecisionGraph dg = new DecisionGraphParser().parse(tagValueExpression).compile(rnr.getModel().getSpaceRoot());
             SetNode sn = (SetNode) dg.getNode("x");
 
-            FindSupertypeResultsDgq query = new FindSupertypeResultsDgq(rnr.getDecisionGraph(), sn.getTags());
+            FindSupertypeResultsDgq query = new FindSupertypeResultsDgq(rnr.getModel(), sn.getTags());
             
             query.get( new DecisionGraphQuery.Listener() {
                 long foundCount = 0;

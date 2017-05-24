@@ -64,7 +64,7 @@ public class DecisionGraphValidations {
             
             System.out.println("Validating repeating ids");
             RepeatIdValidator riv = new RepeatIdValidator();
-            Set<ValidationMessage> repeatIdMessages = riv.validateRepeatIds(refs);
+            List<ValidationMessage> repeatIdMessages = riv.validate(refs);
             if (repeatIdMessages.size() > 0) {
                 System.out.println(repeatIdMessages);
             }
@@ -76,17 +76,15 @@ public class DecisionGraphValidations {
             System.out.println("====================");
             UnreachableNodeValidator unv = new UnreachableNodeValidator();
             System.out.println("Validating unreachable nodes");
-            List<NodeValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(dg);
-            unreachableNodeMessages.stream().map((m) -> {
+            List<ValidationMessage> unreachableNodeMessages = unv.validate(dg);
+            unreachableNodeMessages.forEach( m -> {
                 System.out.println(m);
-                return m;
-            }).forEach((m) -> {
-                System.out.println("\t" + m.getEntities());
+                System.out.println("\t" + ((NodeValidationMessage)m).getEntities());
             });
             
             System.out.println("Validating Call nodes");
             ValidCallNodeValidator fcv = new ValidCallNodeValidator();
-            List<NodeValidationMessage> callNodeMessages = fcv.validateIdReferences(dg);
+            List<NodeValidationMessage> callNodeMessages = fcv.validate(dg);
             if (callNodeMessages.size() > 0) {
                 System.out.println(callNodeMessages);
                 System.exit(-1);

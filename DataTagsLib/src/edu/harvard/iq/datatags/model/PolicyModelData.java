@@ -30,12 +30,12 @@ public class PolicyModelData {
     private String doi;
     private String rootTypeName;
     private LocalDate releaseDate;
-    private Path baseFolder, policySpacePath, decisionGraphPath;
+    private Path metadataFile, policySpacePath, decisionGraphPath;
     private final List<AuthorData> authors = new ArrayList<>();
     private final List<ModelReference> references = new ArrayList<>();
     private final Set<String> keywords = new TreeSet<>();
     private AnswerTransformationMode answerTransformationMode = AnswerTransformationMode.YesFirst;
-    
+        
     public String getTitle() {
         return title;
     }
@@ -68,14 +68,14 @@ public class PolicyModelData {
         this.releaseDate = releaseDate;
     }
 
-    public Path getBaseFolder() {
-        return baseFolder;
+    public Path getMetadataFile() {
+        return metadataFile;
     }
 
-    public void setBaseFolder(Path baseFolder) {
-        this.baseFolder = baseFolder;
+    public void setMetadataFile(Path metadataFile) {
+        this.metadataFile = metadataFile;
     }
-
+    
     public Path getPolicySpacePath() {
         return policySpacePath;
     }

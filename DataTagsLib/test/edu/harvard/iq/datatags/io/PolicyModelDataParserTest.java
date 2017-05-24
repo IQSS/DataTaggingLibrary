@@ -77,7 +77,7 @@ public class PolicyModelDataParserTest {
         ref.setText("ref1 text");
         assertEquals(Arrays.asList(ref), pmd.getReferences());
         
-        assertEquals(basePath.resolve("a").resolve("b").resolve("def.ts"), pmd.getPolicySpacePath());
-        assertEquals(basePath.resolve("c").resolve("d").resolve("gr.dg"), pmd.getDecisionGraphPath());
-    }
+        assertEquals(basePath.resolveSibling("a").resolve("b").resolve("def.ts"), pmd.getPolicySpacePath());
+        assertEquals(basePath.resolveSibling("c").resolve("d").resolve("gr.dg"),  pmd.getDecisionGraphPath());
+    } 
 }

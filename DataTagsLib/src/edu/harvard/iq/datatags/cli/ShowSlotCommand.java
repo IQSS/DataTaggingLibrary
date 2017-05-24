@@ -37,7 +37,7 @@ public class ShowSlotCommand implements CliCommand {
 
         Deque<String> pathLeft = new LinkedList<>(Arrays.asList(typePath.split("/", -1)));
         Deque<String> pathDone = new LinkedList<>();
-        final CompoundSlot topLevelType = rnr.getEngine().getDecisionGraph().getTopLevelType();
+        final CompoundSlot topLevelType = rnr.getEngine().getModel().getSpaceRoot();
         
         if ( pathLeft.peekFirst().equals(topLevelType.getName()) ) {
             pathDone.addLast( pathLeft.removeFirst());

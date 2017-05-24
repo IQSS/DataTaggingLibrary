@@ -109,7 +109,6 @@ public class DecisionGraphParseResultTest {
 
         String code = "[todo: this and that][call: ghostbusters][end]";
         DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
-        actual.setTopLevelType(emptyTagSpace);
 
         normalize(actual);
         normalize(expected);
@@ -133,7 +132,6 @@ public class DecisionGraphParseResultTest {
 
         String code = "[todo: this and that][call: ghostbusters][reject: obvious.]";
         DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
-        actual.setTopLevelType(emptyTagSpace);
 
         normalize(actual);
         normalize(expected);
@@ -181,7 +179,6 @@ public class DecisionGraphParseResultTest {
                 + "[>2< end]";
 
         DecisionGraph actual = dgp.parse(code).compile(ct);
-        actual.setTopLevelType(emptyTagSpace);
 
         normalize(actual);
         normalize(expected);
@@ -211,7 +208,6 @@ public class DecisionGraphParseResultTest {
 
         String code = "[ask: {text: why?} {answers: {dunno:[>de< end]} {why not:[>wnc< call: duh]}}][end]";
         DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
-        actual.setTopLevelType(emptyTagSpace);
 
         normalize(actual);
         normalize(expected);
@@ -238,7 +234,6 @@ public class DecisionGraphParseResultTest {
 
         String code = "[ask: {text: Should I?} {answers: {yes:[>end-yes< end]}}][>end-no< end]";
         DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
-        actual.setTopLevelType(emptyTagSpace);
 
         normalize(actual);
         normalize(expected);
@@ -279,7 +274,6 @@ public class DecisionGraphParseResultTest {
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
         expected.setStart(start);
-        expected.setTopLevelType(ct);
         expected.setId("loremIpsum");
         String code = "[set: t1=a; t2 += b,c][end]";
         DecisionGraph actual = dgp.parse(code).compile(ct);
@@ -400,7 +394,6 @@ public class DecisionGraphParseResultTest {
 
     private DecisionGraph normalize(DecisionGraph dg) {
         dg.setId("normalizedId");
-        dg.setTopLevelType(emptyTagSpace);
         return dg;
     }
 }

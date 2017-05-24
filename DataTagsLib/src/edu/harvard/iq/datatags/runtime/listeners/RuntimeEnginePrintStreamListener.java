@@ -26,7 +26,7 @@ public class RuntimeEnginePrintStreamListener implements RuntimeEngine.Listener 
 	
 	@Override
 	public void runStarted(RuntimeEngine ngn) {
-		out.println( title(ngn) +"started on " + ngn.getDecisionGraph().getId());
+		out.println( title(ngn) +"started on " + ngn.getModel().getMetadata().getTitle() );
 	}
 
 	@Override

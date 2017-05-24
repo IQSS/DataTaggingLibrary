@@ -55,7 +55,7 @@ public class EndNodeOptimizer implements DecisionGraphProcessor {
                     Node ansNode = nd.getNodeFor(a);
                     if ( shouldReplace(ansNode) ) {
                         fcs.remove(ansNode);
-                        nd.addAnswer(a, end);
+                        nd.setNodeForAnswer(a, end);
                     }
                 }
             }
