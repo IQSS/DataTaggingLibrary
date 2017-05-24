@@ -105,7 +105,7 @@ public class DecisionGraphRuleParser {
     
     final static Parser<AstInfoSubNode> INFO_SUBNODE = Parsers.sequence(
             nodeStructurePart("{"),
-            nodeStructurePart("info"),
+            nodeStructurePart("title"),
             nodeStructurePart(":"),
             textbodyUpTo("}"),
             nodeStructurePart("}"),

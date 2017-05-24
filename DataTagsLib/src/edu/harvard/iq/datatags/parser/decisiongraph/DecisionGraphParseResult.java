@@ -348,7 +348,9 @@ public class DecisionGraphParseResult {
                 @Override
                 public Node visit(AstSectionNode astNode) {
                     final SectionNode sectionNode = new SectionNode(astNode.getId(), astNode.getInfo().getText());
-                    buildNodes(astNode.getStartNode(), endAll);
+                    Node startNode = buildNodes(astNode.getStartNode(), endAll);
+//                    buildNodes(astNode.getStartNode(), endAll);
+                    sectionNode.setStartNode(startNode);
                     sectionNode.setNextNode(buildNodes(C.tail(astNodes), defaultNode));
                     return product.add(sectionNode);
                 }

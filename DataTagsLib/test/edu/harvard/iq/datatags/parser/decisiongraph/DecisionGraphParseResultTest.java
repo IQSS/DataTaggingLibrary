@@ -14,6 +14,7 @@ import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParseResult;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
@@ -21,6 +22,7 @@ import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -237,6 +239,39 @@ public class DecisionGraphParseResultTest {
         expected.setStart(start);
 
         String code = "[ask: {text: Should I?} {answers: {Yes:[>end-yes< end]}}][>end-no< end]";
+        DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
+        actual.setTopLevelType(emptyTagSpace);
+
+        normalize(actual);
+        normalize(expected);
+
+        expected.nodes().forEach(n -> assertEquals(n, actual.getNode(n.getId())));
+        actual.nodes().forEach(n -> assertEquals(n, expected.getNode(n.getId())));
+
+        expected.equals(actual);
+        assertEquals(expected, actual);
+
+    }
+    
+    @Test
+    public void sectionTest() throws Exception {
+
+        SectionNode start = new SectionNode(nodeIdProvider.nextId());
+        start.setTitle("Section - start");
+        ToDoNode sectionStartNode = new ToDoNode("blaID", "bla bla");
+        CallNode call = new CallNode("CallID", "callid");
+        sectionStartNode.setNextNode(call);
+        start.setStartNode(sectionStartNode);
+//        start.setNextNode(new EndNode("[SYN-END]"));
+
+        EndNode finalEndNode = new EndNode(nodeIdProvider.nextId());
+        start.setNextNode(finalEndNode);
+
+        DecisionGraph expected = new DecisionGraph();
+        expected.add(start);
+        expected.setStart(start);
+
+        String code = "[section: {title: Section - start} [>blaID< todo: bla bla] [>CallID< call: callid]]";
         DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
         actual.setTopLevelType(emptyTagSpace);
 

@@ -90,8 +90,9 @@ class VerboseNodePrinter extends Node.VoidVisitor {
     @Override
     public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
         rnr.printTitle("Node >%s<: [Section]", nd.getId());
+        rnr.print(nd.getTitle());
+        rnr.print("Starting at node: %s", nd.getStartNode().getId());
         rnr.println();
-        //TODO 
     }
     
 }

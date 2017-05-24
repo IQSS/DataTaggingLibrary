@@ -161,12 +161,29 @@ public class DecisionGraphRuleParserTest {
         Parser<AstSectionNode> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.sectionNode(bodyParser) );
         assertEquals(new AstSectionNode(null, new AstInfoSubNode("bla bla"),
                                         asList(new AstTodoNode(null, "bla"))),
-                    sut.parse("[ section: {info: bla bla}\n[todo: bla] ]") );
-//        assertEquals(new AstSectionNode(null, "finalize this"), sut.parse("[reject:\nfinalize this]") );
-//        assertEquals(new AstSectionNode(null, "finalize this"), sut.parse("[reject:finalize this\n\n\n]") );
-//
-//        assertEquals(new AstSectionNode(null, "finalize\nthis"), sut.parse("[ reject: finalize\nthis]") );
-//        assertEquals(new AstSectionNode(null, "finalize 16 of these !@#!%!#$!$"), sut.parse("[ reject: finalize 16 of these !@#!%!#$!$]") );
+                    sut.parse("[ section: {title: bla bla}\n[todo: bla] ]") );
+        assertEquals(new AstSectionNode(null,
+                                        asList(new AstTodoNode(null, "bla"))),
+                    sut.parse("[ section: \n\n [todo: bla]\n\n\n ]") );
+        assertEquals(new AstSectionNode(null, new AstInfoSubNode("bla bla"),
+                                        asList(new AstTodoNode(null, "bla"))),
+                    sut.parse("[section:{title: bla bla}[todo: bla]]") );
+    }
+    
+    @Test
+    public void sectionNodeWithId() {
+        Parser<List<? extends AstNode>> bodyParser = 
+                Parsers.or( DecisionGraphRuleParser.END_NODE, DecisionGraphRuleParser.TODO_NODE).many().cast();
+        Parser<AstSectionNode> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.sectionNode(bodyParser) );
+        assertEquals(new AstSectionNode("id", new AstInfoSubNode("bla bla"),
+                                        asList(new AstTodoNode(null, "bla"))),
+                    sut.parse("[>id< section: {title: bla bla}\n[todo: bla] ]") );
+        assertEquals(new AstSectionNode("id",
+                                        asList(new AstTodoNode(null, "bla"))),
+                    sut.parse("[>id<section: \n\n [todo: bla]\n\n\n ]") );
+        assertEquals(new AstSectionNode("id", new AstInfoSubNode("bla bla"),
+                                        asList(new AstTodoNode(null, "bla"))),
+                    sut.parse("[>id<section:{title: bla bla}[todo: bla]]") );
     }
     
     @Test
@@ -430,6 +447,23 @@ public class DecisionGraphRuleParserTest {
                                + "    {yes: [end]} "
                                + "    {no: [>no-end< end]} "
                                + "}]"));
+    }
+    
+    @Test
+    public void sectionNodeTest() {
+        Parser<List<? extends AstNode>> bodyParser = 
+                Parsers.or( DecisionGraphRuleParser.END_NODE, DecisionGraphRuleParser.TODO_NODE).many().cast();
+        Parser<AstSectionNode> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.sectionNode(bodyParser));
+        
+        assertEquals( new AstSectionNode("id", 
+                                     new AstInfoSubNode("TO-DO List"),
+                                     asList( new AstTodoNode(null, "first thing"), 
+                                             new AstTodoNode(null, "second thing"))),
+                      sut.parse( "[>id< section:"
+                               + " {title: TO-DO List} "
+                               + "  [todo: first thing]"
+                               + "   [todo: second thing] "
+                               + "]"));
     }
     
     @Test

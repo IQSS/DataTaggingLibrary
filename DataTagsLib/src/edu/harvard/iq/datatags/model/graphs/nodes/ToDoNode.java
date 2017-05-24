@@ -51,6 +51,11 @@ public class ToDoNode extends ThroughNode {
         return (Objects.equals(this.todoText, other.todoText))
                 ? equalsAsNode(other) : false;
     }
+
+    @Override
+    public String getCalleeNodeId() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
     

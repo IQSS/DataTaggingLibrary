@@ -1,53 +1,31 @@
 package edu.harvard.iq.datatags.model.graphs.nodes;
 
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
-<<<<<<< Updated upstream
 import java.util.List;
-=======
 import java.util.Objects;
->>>>>>> Stashed changes
 
 /**
  * TODO: Add
  * @author michael
  */
-<<<<<<< Updated upstream
-public class SectionNode extends ThroughNode {
-    
-    private String info;
-    
-    private List<Node> nodes;
-=======
 public class SectionNode extends ThroughNode{
     
-    private String info;
+    private String title;
     
     private Node startNode;
->>>>>>> Stashed changes
     
-    public SectionNode(String info, String id) {
+    public SectionNode(String id, String info) {
         super(id);
-        this.info = info;
+        this.title = info;
+    }
+    
+    public SectionNode(String id) {
+        super(id);
     }
 
-<<<<<<< Updated upstream
-    public SectionNode(String info, String id, Node aNextNode) {
-        super(id, aNextNode);
-        this.info = info;
-    }
-    
-    
-    
-    @Override
-    public <R> R accept(Visitor<R> vr) throws DataTagsRuntimeException {
-        throw new UnsupportedOperationException("Not supported yet."); // TODO: Implement accept
-    }
-
-    public String getInfo() {
-=======
     public SectionNode(String info, String id, Node startNode, Node aNextNode) {
         super(id, aNextNode);
-        this.info = info;
+        this.title = info;
         this.startNode = startNode;
     }
     
@@ -57,17 +35,12 @@ public class SectionNode extends ThroughNode{
     }
 
     public String getTitle() {
->>>>>>> Stashed changes
-        return info;
+        return title;
     }
 
-    public void setInfo(String info) {
-        this.info = info;
+    public void setTitle(String title) {
+        this.title = title;
     }
-<<<<<<< Updated upstream
-    
-}
-=======
 
     public Node getStartNode() {
         return startNode;
@@ -80,7 +53,7 @@ public class SectionNode extends ThroughNode{
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.info);
+        hash = 97 * hash + Objects.hashCode(this.title);
         return hash;
     }
 
@@ -96,14 +69,16 @@ public class SectionNode extends ThroughNode{
             return false;
         }
         final SectionNode other = (SectionNode) obj;
-        if (!Objects.equals(this.info, other.info)) {
+        if (!Objects.equals(this.title, other.title)) {
             return false;
         }
-        if (!Objects.equals(this.startNode, other.startNode)) {
-            return false;
-        }
-        return true;
+
+        return Objects.equals(this.startNode, other.startNode);
+    }
+
+    @Override
+    public String getCalleeNodeId() {
+        return startNode.getId();
     }
     
 }
->>>>>>> Stashed changes

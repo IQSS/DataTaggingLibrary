@@ -23,6 +23,11 @@ public class AstSectionNode extends AstNode{
         this.startNode = startNode;
     }
     
+    public AstSectionNode(String id, List<? extends AstNode> startNode) {
+        super(id);
+        this.startNode = startNode;
+    }
+    
     public AstInfoSubNode getInfo(){
         return this.info;
     }

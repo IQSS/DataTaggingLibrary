@@ -13,6 +13,7 @@ import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.*;
 import java.util.Arrays;
@@ -55,7 +56,7 @@ public class RuntimeEngine {
     private DecisionGraph decisionGraph;
 
     private CompoundValue currentTags;
-    private final Deque<CallNode> stack = new LinkedList<>();
+    private final Deque<ThroughNode> stack = new LinkedList<>();
     private Node currentNode;
     private RuntimeEngineStatus status = RuntimeEngineStatus.Idle;
     private Optional<Listener> listener = Optional.empty();
@@ -131,7 +132,8 @@ public class RuntimeEngine {
         
         @Override
         public Node visit(SectionNode nd) throws DataTagsRuntimeException{
-            return null;
+            stack.push(nd);
+            return nd.getStartNode();
         }
     };
 
@@ -270,7 +272,7 @@ public class RuntimeEngine {
      * @return The current stack of nodes. This is enough to know where the
      * engine is, but not what the data tags state is.
      */
-    public Deque<CallNode> getStack() {
+    public Deque<ThroughNode> getStack() {
         return stack;
     }
 
