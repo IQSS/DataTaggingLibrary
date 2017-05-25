@@ -75,10 +75,5 @@ public class SectionNode extends ThroughNode{
 
         return Objects.equals(this.startNode, other.startNode);
     }
-
-    @Override
-    public String getCalleeNodeId() {
-        return startNode.getId();
-    }
     
 }

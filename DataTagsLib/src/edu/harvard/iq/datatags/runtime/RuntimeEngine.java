@@ -45,6 +45,10 @@ public class RuntimeEngine {
         void runTerminated(RuntimeEngine ngn);
 
         void statusChanged(RuntimeEngine ngn);
+        
+        void sectionStarted(RuntimeEngine ngn, Node node);
+        
+        void sectionEnded(RuntimeEngine ngn, Node node);
     }
 
     /**
@@ -126,12 +130,17 @@ public class RuntimeEngine {
                 setStatus(RuntimeEngineStatus.Accept);
                 return null;
             } else {
-                return stack.pop().getNextNode();
+                ThroughNode node = stack.pop();
+                if (node instanceof SectionNode){
+                    listener.ifPresent(l -> l.sectionEnded(RuntimeEngine.this, node));
+                }
+                return node.getNextNode();
             }
         }
         
         @Override
         public Node visit(SectionNode nd) throws DataTagsRuntimeException{
+            listener.ifPresent(l -> l.sectionStarted(RuntimeEngine.this, nd));
             stack.push(nd);
             return nd.getStartNode();
         }

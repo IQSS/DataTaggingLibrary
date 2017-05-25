@@ -55,10 +55,5 @@ public class SetNode extends ThroughNode {
         
         return Objects.equals(this.tags, other.tags) && equalsAsNode(other);
     }
-
-    @Override
-    public String getCalleeNodeId() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
 }

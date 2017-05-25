@@ -262,9 +262,9 @@ public class DecisionGraphParseResultTest {
         CallNode call = new CallNode("CallID", "callid");
         sectionStartNode.setNextNode(call);
         start.setStartNode(sectionStartNode);
-//        start.setNextNode(new EndNode("[SYN-END]"));
 
-        EndNode finalEndNode = new EndNode(nodeIdProvider.nextId());
+        EndNode finalEndNode = new EndNode("[SYN-END]");
+        call.setNextNode(finalEndNode);
         start.setNextNode(finalEndNode);
 
         DecisionGraph expected = new DecisionGraph();
@@ -272,7 +272,9 @@ public class DecisionGraphParseResultTest {
         expected.setStart(start);
 
         String code = "[section: {title: Section - start} [>blaID< todo: bla bla] [>CallID< call: callid]]";
-        DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
+
+        final DecisionGraphParseResult parseResult = dgp.parse(code);
+        DecisionGraph actual = parseResult.compile(emptyTagSpace);
         actual.setTopLevelType(emptyTagSpace);
 
         normalize(actual);

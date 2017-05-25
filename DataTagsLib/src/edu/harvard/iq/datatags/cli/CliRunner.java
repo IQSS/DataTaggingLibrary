@@ -505,6 +505,20 @@ public class CliRunner {
                 printMsg("Run Done");
             }
         }
+
+        @Override
+        public void sectionStarted(RuntimeEngine ngn, Node node) {
+            if (printDebugMessages) {
+                printMsg("Started section");
+            }
+        }
+
+        @Override
+        public void sectionEnded(RuntimeEngine ngn, Node node) {
+            if (printDebugMessages) {
+                printMsg("Finished section");
+            }
+        }
     }
 
 }

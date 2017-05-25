@@ -146,7 +146,16 @@ public class GraphvizChartSetClusteredVisualizer extends AbstractGraphvizDecisio
                 
                 @Override
                 public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-                    
+                    String nodeTitle = nd.getTitle();
+                    if (nodeTitle.length() > 140) {
+                        nodeTitle = nodeTitle.substring(0, 140) + "...";
+                    }
+                    nodes.add(node(nodeId(nd))
+                            .shape(GvNode.Shape.oval)
+                            .label(idLabel(nd) + "section\n" + wrap(nodeTitle))
+                            .gv());
+                    edges.add( edge(nodeId(nd), nodeId(nd.getStartNode())).gv() );
+                    targets.add( nd.getStartNode() );
                 }
 		
         private String idLabel( Node nd ) {

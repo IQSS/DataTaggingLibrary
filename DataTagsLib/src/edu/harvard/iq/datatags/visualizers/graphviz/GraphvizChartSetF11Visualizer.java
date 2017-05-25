@@ -194,9 +194,20 @@ public class GraphvizChartSetF11Visualizer extends AbstractGraphvizDecisionGraph
             }
 		}
                 
-                @Override
-                public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-                }
+        @Override
+        public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
+            String nodeTitle = nd.getTitle();
+            if ( nodeTitle.length() > 140 ) {
+                nodeTitle = nodeTitle.substring(0,140) + "...";
+            }
+            nodes.add( node(nodeId(nd))
+                    .label( idLabel(nd) + wrap(nodeTitle) )
+                    .gv());
+
+            if ( showEndNodes || !(nd.getNextNode() instanceof EndNode) ) {
+                edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).gv() );
+            }
+        }
 		
         private String idLabel( Node nd ) {
             return nd.getId().startsWith("[#") ? "" : nd.getId()+"\\n";

@@ -187,6 +187,12 @@ public class GraphvizGraphNodeAstVizalizer extends GraphvizVisualizer {
                     .fillColor("#FFAAAA")
                     .shape(GvNode.Shape.hexagon).label(nodeLabel(node.getId(), "reject\n" + node.getReason())).gv());
         });
+        
+        setNodeTypeHandler(AstSectionNode.class, (AstSectionNode node, int depth) -> {
+            nodes.add(node(sanitizeId(node.getId()))
+                    .fillColor("#FFAAAA")
+                    .shape(GvNode.Shape.folder).label(nodeLabel(node.getId(), "section\n" + node.getInfo())).gv());
+        });
 
     }
 

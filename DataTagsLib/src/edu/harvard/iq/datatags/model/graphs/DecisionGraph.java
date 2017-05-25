@@ -139,9 +139,9 @@ public class DecisionGraph {
             
             public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{
                 nodes.put(nd.getId(), nd);
-//                if ( nd.hasNextNode() ) {
-//                    nd.getNextNode().accept(this);
-//                }
+                if ( nd.hasNextNode() ) {
+                    nd.getNextNode().accept(this);
+                }
                 nd.getStartNode().accept(this);
             }
         });
