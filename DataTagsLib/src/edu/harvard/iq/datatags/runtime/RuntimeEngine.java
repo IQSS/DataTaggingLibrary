@@ -13,6 +13,8 @@ import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.*;
 import java.util.Arrays;
@@ -45,6 +47,10 @@ import java.util.concurrent.atomic.AtomicInteger;
         void runTerminated(RuntimeEngine ngn);
 
         void statusChanged(RuntimeEngine ngn);
+        
+        void sectionStarted(RuntimeEngine ngn, Node node);
+        
+        void sectionEnded(RuntimeEngine ngn, Node node);
     }
 
     /**
@@ -56,7 +62,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     private PolicyModel model;
     private DecisionGraph decisionGraph;
     private CompoundValue currentTags;
-    private final Deque<CallNode> stack = new LinkedList<>();
+    private final Deque<ThroughNode> stack = new LinkedList<>();
     private Node currentNode;
     private RuntimeEngineStatus status = RuntimeEngineStatus.Idle;
     private Optional<Listener> listener = Optional.empty();
@@ -126,8 +132,19 @@ import java.util.concurrent.atomic.AtomicInteger;
                 setStatus(RuntimeEngineStatus.Accept);
                 return null;
             } else {
-                return stack.pop().getNextNode();
+                ThroughNode node = stack.pop();
+                if (node instanceof SectionNode){
+                    listener.ifPresent(l -> l.sectionEnded(RuntimeEngine.this, node));
+                }
+                return node.getNextNode();
             }
+        }
+        
+        @Override
+        public Node visit(SectionNode nd) throws DataTagsRuntimeException{
+            listener.ifPresent(l -> l.sectionStarted(RuntimeEngine.this, nd));
+            stack.push(nd);
+            return nd.getStartNode();
         }
     };
 
@@ -156,6 +173,7 @@ import java.util.concurrent.atomic.AtomicInteger;
      * Terminates current run, clears the state and goes back to node 1.
      */
     public void restart() {
+        if ( model == null ) return;
         listener.ifPresent(l -> l.runTerminated(this));
         setStatus(RuntimeEngineStatus.Restarting);
         stack.clear();
@@ -257,7 +275,7 @@ import java.util.concurrent.atomic.AtomicInteger;
      * @return The current stack of nodes. This is enough to know where the
      * engine is, but not what the data tags state is.
      */
-    public Deque<CallNode> getStack() {
+    public Deque<ThroughNode> getStack() {
         return stack;
     }
 

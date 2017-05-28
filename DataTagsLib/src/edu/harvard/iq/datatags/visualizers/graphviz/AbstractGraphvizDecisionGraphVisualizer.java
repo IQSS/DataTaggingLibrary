@@ -9,6 +9,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.types.SlotType;
@@ -130,6 +131,12 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
 
                     @Override
                     public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
+                    }
+                    
+                    @Override
+                    public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
+                        candidates.remove(nd.getNextNode());
+                        nd.getNextNode().accept(this);
                     }
                 });
             }

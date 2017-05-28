@@ -55,6 +55,7 @@ public class LoadPolicyModelCommand implements CliCommand {
         if ( loadRes.isSuccessful() ) {
             rnr.println("Model '%s' loaded", loadRes.getModel().getMetadata().getTitle());
             rnr.setModel( loadRes.getModel() );
+            rnr.restart();
         } else {
             rnr.printWarning("Failed to load model: ");
         }

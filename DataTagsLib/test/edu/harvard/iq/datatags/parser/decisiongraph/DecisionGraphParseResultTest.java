@@ -14,6 +14,7 @@ import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParseResult;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
@@ -234,6 +235,40 @@ public class DecisionGraphParseResultTest {
 
         String code = "[ask: {text: Should I?} {answers: {yes:[>end-yes< end]}}][>end-no< end]";
         DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
+
+        normalize(actual);
+        normalize(expected);
+
+        expected.nodes().forEach(n -> assertEquals(n, actual.getNode(n.getId())));
+        actual.nodes().forEach(n -> assertEquals(n, expected.getNode(n.getId())));
+
+        expected.equals(actual);
+        assertEquals(expected, actual);
+
+    }
+    
+    @Test
+    public void sectionTest() throws Exception {
+
+        SectionNode start = new SectionNode(nodeIdProvider.nextId());
+        start.setTitle("Section - start");
+        ToDoNode sectionStartNode = new ToDoNode("blaID", "bla bla");
+        CallNode call = new CallNode("CallID", "callid");
+        sectionStartNode.setNextNode(call);
+        start.setStartNode(sectionStartNode);
+
+        EndNode finalEndNode = new EndNode("[SYN-END]");
+        call.setNextNode(finalEndNode);
+        start.setNextNode(finalEndNode);
+
+        DecisionGraph expected = new DecisionGraph();
+        expected.add(start);
+        expected.setStart(start);
+
+        String code = "[section: {title: Section - start} [>blaID< todo: bla bla] [>CallID< call: callid]]";
+
+        final DecisionGraphParseResult parseResult = dgp.parse(code);
+        DecisionGraph actual = parseResult.compile(emptyTagSpace);
 
         normalize(actual);
         normalize(expected);

@@ -55,4 +55,14 @@ public class RuntimeEngineTracingListener implements  RuntimeEngine.Listener {
     public void statusChanged(RuntimeEngine ngn) {
         decorated.statusChanged(ngn);
     }
+
+    @Override
+    public void sectionStarted(RuntimeEngine ngn, Node node) {
+        decorated.sectionStarted(ngn, node);
+    }
+
+    @Override
+    public void sectionEnded(RuntimeEngine ngn, Node node) {
+        decorated.sectionEnded(ngn, node);
+    }
 }

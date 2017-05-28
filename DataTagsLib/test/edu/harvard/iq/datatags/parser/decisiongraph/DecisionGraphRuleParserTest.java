@@ -6,9 +6,11 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstInfoSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNodeHead;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTextSubNode;
@@ -150,6 +152,38 @@ public class DecisionGraphRuleParserTest {
         Parser<AstRejectNode> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.REJECT_NODE );
         String rejectText = "unfortunately, we cannot accept your dataset. You're likely breaching §7.6.1(ii) of BANANAA. Can we ask why?";
         assertEquals(new AstRejectNode(null, rejectText), sut.parse("[reject: " + rejectText + "]") );
+    }
+    
+    @Test
+    public void sectionNodeNoId() {
+        Parser<List<? extends AstNode>> bodyParser = 
+                Parsers.or( DecisionGraphRuleParser.END_NODE, DecisionGraphRuleParser.TODO_NODE).many().cast();
+        Parser<AstSectionNode> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.sectionNode(bodyParser) );
+        assertEquals(new AstSectionNode(null, new AstInfoSubNode("bla bla"),
+                                        asList(new AstTodoNode(null, "bla"))),
+                    sut.parse("[ section: {title: bla bla}\n[todo: bla] ]") );
+        assertEquals(new AstSectionNode(null,
+                                        asList(new AstTodoNode(null, "bla"))),
+                    sut.parse("[ section: \n\n [todo: bla]\n\n\n ]") );
+        assertEquals(new AstSectionNode(null, new AstInfoSubNode("bla bla"),
+                                        asList(new AstTodoNode(null, "bla"))),
+                    sut.parse("[section:{title: bla bla}[todo: bla]]") );
+    }
+    
+    @Test
+    public void sectionNodeWithId() {
+        Parser<List<? extends AstNode>> bodyParser = 
+                Parsers.or( DecisionGraphRuleParser.END_NODE, DecisionGraphRuleParser.TODO_NODE).many().cast();
+        Parser<AstSectionNode> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.sectionNode(bodyParser) );
+        assertEquals(new AstSectionNode("id", new AstInfoSubNode("bla bla"),
+                                        asList(new AstTodoNode(null, "bla"))),
+                    sut.parse("[>id< section: {title: bla bla}\n[todo: bla] ]") );
+        assertEquals(new AstSectionNode("id",
+                                        asList(new AstTodoNode(null, "bla"))),
+                    sut.parse("[>id<section: \n\n [todo: bla]\n\n\n ]") );
+        assertEquals(new AstSectionNode("id", new AstInfoSubNode("bla bla"),
+                                        asList(new AstTodoNode(null, "bla"))),
+                    sut.parse("[>id<section:{title: bla bla}[todo: bla]]") );
     }
     
     @Test
@@ -413,6 +447,23 @@ public class DecisionGraphRuleParserTest {
                                + "    {yes: [end]} "
                                + "    {no: [>no-end< end]} "
                                + "}]"));
+    }
+    
+    @Test
+    public void sectionNodeTest() {
+        Parser<List<? extends AstNode>> bodyParser = 
+                Parsers.or( DecisionGraphRuleParser.END_NODE, DecisionGraphRuleParser.TODO_NODE).many().cast();
+        Parser<AstSectionNode> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.sectionNode(bodyParser));
+        
+        assertEquals( new AstSectionNode("id", 
+                                     new AstInfoSubNode("TO-DO List"),
+                                     asList( new AstTodoNode(null, "first thing"), 
+                                             new AstTodoNode(null, "second thing"))),
+                      sut.parse( "[>id< section:"
+                               + " {title: TO-DO List} "
+                               + "  [todo: first thing]"
+                               + "   [todo: second thing] "
+                               + "]"));
     }
     
     @Test

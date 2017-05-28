@@ -9,6 +9,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode.NullVisitor;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -103,6 +104,15 @@ public class RepeatIdValidator extends NullVisitor implements DecisionGraphAstVa
 
     @Override
     public void visitImpl(AstEndNode nd) throws DataTagsRuntimeException {
+        if (seenIds.contains(nd.getId()) && nd.getId() != null) {
+            validationMessages.put(nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
+        } else {
+            seenIds.add(nd.getId());
+        }
+    }
+    
+    @Override
+    public void visitImpl(AstSectionNode nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
             validationMessages.put(nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {

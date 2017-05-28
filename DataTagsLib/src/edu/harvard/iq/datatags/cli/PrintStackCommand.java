@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.cli;
 
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import java.util.Deque;
 import java.util.List;
 
@@ -22,11 +23,13 @@ public class PrintStackCommand implements CliCommand {
 
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception {
-        final Deque<CallNode> stack = rnr.getEngine().getStack();
+        final Deque<ThroughNode> stack = rnr.getEngine().getStack();
+        BriefNodePrinter BNP = new BriefNodePrinter(rnr);
         if ( stack.isEmpty() ) {
             rnr.printMsg("Stack is empty.");
         } else {
-            stack.forEach( cn -> rnr.println("[>%s< call: %s]", cn.getId(), cn.getCalleeNodeId()));
+//            stack.forEach( cn -> rnr.println("[>%s< call: %s]", cn.getId(), cn.getCalleeNodeId()));
+              stack.forEach(cn -> cn.accept(BNP));
         }
                 
     }

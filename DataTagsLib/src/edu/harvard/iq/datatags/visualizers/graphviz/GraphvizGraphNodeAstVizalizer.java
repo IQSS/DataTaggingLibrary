@@ -8,6 +8,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
@@ -186,6 +187,12 @@ public class GraphvizGraphNodeAstVizalizer extends GraphvizVisualizer {
                     .fillColor("#FFAAAA")
                     .shape(GvNode.Shape.hexagon).label(nodeLabel(node.getId(), "reject\n" + node.getReason())).gv());
         });
+        
+        setNodeTypeHandler(AstSectionNode.class, (AstSectionNode node, int depth) -> {
+            nodes.add(node(sanitizeId(node.getId()))
+                    .fillColor("#FFAAAA")
+                    .shape(GvNode.Shape.folder).label(nodeLabel(node.getId(), "section\n" + node.getInfo())).gv());
+        });
 
     }
 
@@ -250,6 +257,13 @@ public class GraphvizGraphNodeAstVizalizer extends GraphvizVisualizer {
 
             @Override
             public void visitImpl(AstEndNode nd) throws DataTagsRuntimeException {
+                if (nd.getId() == null) {
+                    nd.setId(nodeIdProvider.nextId());
+                }
+            }
+            
+            @Override
+            public void visitImpl(AstSectionNode nd) throws DataTagsRuntimeException {
                 if (nd.getId() == null) {
                     nd.setId(nodeIdProvider.nextId());
                 }

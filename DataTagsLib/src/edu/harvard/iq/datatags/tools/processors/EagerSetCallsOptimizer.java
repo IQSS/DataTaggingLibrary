@@ -10,6 +10,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.types.SlotType;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
@@ -273,6 +274,11 @@ public class EagerSetCallsOptimizer implements DecisionGraphProcessor {
             public Conclusion visit(ConsiderNode nd) throws DataTagsRuntimeException {
                 System.out.println("IN CONSIDER NODE");
                 return null; // TODO support this as well. Should be pretty close to [ask].
+            }
+            
+            @Override
+            public Conclusion visit(SectionNode nd) throws DataTagsRuntimeException {
+                return null;
             }
         };
 

@@ -52,6 +52,4 @@ public class ToDoNode extends ThroughNode {
                 ? equalsAsNode(other) : false;
     }
     
-    
-    
 }

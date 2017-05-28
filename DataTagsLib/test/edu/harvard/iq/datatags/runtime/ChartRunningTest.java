@@ -14,6 +14,7 @@ import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.*;
 import static edu.harvard.iq.util.DecisionGraphHelper.*;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.Test;
 
 /**

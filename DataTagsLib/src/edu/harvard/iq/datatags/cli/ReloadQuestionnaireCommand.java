@@ -21,8 +21,11 @@ public class ReloadQuestionnaireCommand implements CliCommand {
 
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception  {
+        System.out.println("Reloading...");
         LoadPolicyModelCommand loadCmd = new LoadPolicyModelCommand();
-        loadCmd.execute(rnr, Arrays.asList(rnr.getModel().getMetadata().getMetadataFile().toString()));
+        String modelPath = rnr.getModel().getMetadata().getMetadataFile().toString();
+        rnr.println("Reloading %s", modelPath);
+        loadCmd.execute(rnr, Arrays.asList(modelPath));
     }
     
 }
