@@ -15,7 +15,7 @@ import edu.harvard.iq.datatags.tools.RepeatIdValidator;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidCallNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVizalizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVisualizer;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -54,7 +54,7 @@ public class DecisionGraphValidations {
             DecisionGraphParser dgParser = new DecisionGraphParser();
             DecisionGraphParseResult res = dgParser.parse(source);
             List<? extends AstNode> refs = res.getNodes();
-            GraphvizGraphNodeAstVizalizer viz = new GraphvizGraphNodeAstVizalizer(refs);
+            GraphvizGraphNodeAstVisualizer viz = new GraphvizGraphNodeAstVisualizer(refs);
             Path outfile = chartFile.resolveSibling(chartFile.getFileName().toString() + "-ast.gv");
             System.out.println("Writing: " + outfile);
             viz.vizualize(outfile);

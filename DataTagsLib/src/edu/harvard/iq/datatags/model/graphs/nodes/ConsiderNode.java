@@ -17,11 +17,11 @@ public class ConsiderNode extends Node {
 
     private final List<ConsiderAnswer> answers = new LinkedList<>();
     private final Map<ConsiderAnswer, Node> nextNodeByAnswer = new HashMap<>();
-    private final Node _elseNode;
+    private final Node elseNode;
 
-    public ConsiderNode(String id, Node elseNode) {
+    public ConsiderNode(String id, Node anElseNode) {
         super(id);
-        _elseNode = elseNode;
+        elseNode = anElseNode;
 
     }
 
@@ -52,7 +52,7 @@ public class ConsiderNode extends Node {
 
 
     public Node getElseNode() {
-        return _elseNode;
+        return elseNode;
     }
 
     public List<ConsiderAnswer> getAnswers() {
@@ -91,7 +91,7 @@ public class ConsiderNode extends Node {
         if (!Objects.equals(this.nextNodeByAnswer, other.nextNodeByAnswer)) {
             return false;
         }
-        if (!Objects.equals(this._elseNode, other._elseNode)) {
+        if (!Objects.equals(this.elseNode, other.elseNode)) {
             return false;
         }
 

@@ -1,101 +1,114 @@
 package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
+import edu.harvard.iq.datatags.io.PolicyModelDataParser;
+import edu.harvard.iq.datatags.model.PolicyModel;
+import edu.harvard.iq.datatags.model.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
-import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
+import edu.harvard.iq.datatags.parser.PolicyModelLoadResult;
+import edu.harvard.iq.datatags.parser.PolicyModelLoader;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetClusteredVisualizer;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetF11Visualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphClusteredVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphF11Visualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpacePathsVizualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpaceVisualizer;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVizalizer;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
  * Compiles and visualizes a tag space and a decision graph.
+ *
  * @author michael
  */
 public class DecisionGraphCompiling {
-    public static void main(String[] args) {
+
+    public static void main(String[] args) throws Exception {
         DecisionGraphCompiling fcc = new DecisionGraphCompiling();
         try {
             fcc.go(args);
         } catch (IOException ex) {
-            System.out.println("Error reading file: " + ex.getMessage() );
+            System.out.println("Error reading file: " + ex.getMessage());
             System.out.println("Trace:");
             ex.printStackTrace(System.out);
-            
+
         } catch (BadSetInstructionException ex) {
             TagValueLookupResult badRes = ex.getBadResult();
-            
-            if ( badRes != null ) {
+
+            if (badRes != null) {
                 System.out.println("Bad Set instruction: " + ex.getMessage());
-                badRes.accept( new BadSetInstructionPrinter() );
+                badRes.accept(new BadSetInstructionPrinter());
             }
-            System.out.println("Error in [set] node: " + ex.getMessage() );
-            System.out.println("offending Set node: " + ex.getOffendingNode() );
-            
+            System.out.println("Error in [set] node: " + ex.getMessage());
+            System.out.println("offending Set node: " + ex.getOffendingNode());
+
         } catch (DataTagsParseException ex) {
-            System.out.println("Semantic Error in data tags program: " + ex.getMessage() );
+            System.out.println("Semantic Error in data tags program: " + ex.getMessage());
             System.out.println("Trace:");
             ex.printStackTrace(System.out);
         }
     }
-    
-	public void go(String[] args) throws IOException, DataTagsParseException {
-        Path tagsFile = Paths.get(args[0]);
-        Path chartFile = Paths.get(args[1]);
-        
-        System.out.println("Reading tags: " + tagsFile );
-        System.out.println(" (full:  " + tagsFile.toAbsolutePath() + ")" );
-        
-        TagSpaceParser tagsParser = new TagSpaceParser();
-        CompoundSlot baseType = tagsParser.parse(readAll(tagsFile)).buildType("DataTags").get();
-        
-        GraphvizTagSpaceVisualizer tagViz = new GraphvizTagSpaceVisualizer(baseType);
-        Path tagsOutPath = tagsFile.resolveSibling(tagsFile.getFileName().toString() + ".gv");
-        System.out.println("Writing " + tagsOutPath );
-		tagViz.vizualize( tagsOutPath );
-        
-        System.out.println("Reading chart: " + chartFile );
-        System.out.println(" (full:  " + chartFile.toAbsolutePath() + ")" );
-        
-        String source = readAll(chartFile);
-        
-        DecisionGraphParser dgParser = new DecisionGraphParser();
-        DecisionGraphParseResult parsedGraph = dgParser.parse(source);
-        
-        GraphvizGraphNodeAstVizalizer viz = new GraphvizGraphNodeAstVizalizer(parsedGraph.getNodes());
-        Path outfile = chartFile.resolveSibling( chartFile.getFileName().toString() + "-ast.gv" );
-        System.out.println("Writing: " + outfile );
-        viz.vizualize( outfile );
-        
-        DecisionGraph dg = parsedGraph.compile(baseType);
-		
-        GraphvizChartSetClusteredVisualizer fcsViz = new GraphvizChartSetClusteredVisualizer();
-        outfile = chartFile.resolveSibling( chartFile.getFileName().toString() + "-fcs.gv" );
-        System.out.println("Writing: " + outfile );
-		fcsViz.setDecisionGraph(dg);
-        fcsViz.vizualize( outfile );
-        
-        GraphvizChartSetF11Visualizer f11Viz = new GraphvizChartSetF11Visualizer();
-        outfile = chartFile.resolveSibling( chartFile.getFileName().toString() + "-f11.gv" );
-        System.out.println("Writing: " + outfile );
-		f11Viz.setDecisionGraph(dg);
-        f11Viz.vizualize( outfile );
 
-    }
-    
-    private String readAll( Path p ) throws IOException {
-        return new String(Files.readAllBytes(p), StandardCharsets.UTF_8);
+    public void go(String[] args) throws Exception {
+        Path modelFile = Paths.get(args[0]);
+        
+        System.out.println("Loading " + modelFile);
+        
+        PolicyModelDataParser pmdParser = new PolicyModelDataParser();
+        PolicyModelData readResult = pmdParser.read(modelFile);
+        PolicyModelLoadResult loadRes = PolicyModelLoader.verboseLoader().load(readResult);
+
+        if (loadRes.isSuccessful()) {
+            System.out.printf("Model '%s' loaded\n", loadRes.getModel().getMetadata().getTitle());
+        } else {
+            System.out.println("Failed to load model: ");
+        }
+
+        if (!loadRes.getMessages().isEmpty()) {
+            System.out.println("Load Messages");
+            loadRes.getMessages().forEach(m -> System.out.println(m.getLevel() + "   " + m.getMessage()));
+        }
+        
+        if ( !loadRes.isSuccessful() ) {
+            System.exit(1);
+        }
+        
+        PolicyModel model = loadRes.getModel();
+        
+        GraphvizTagSpaceVisualizer tagViz = new GraphvizTagSpaceVisualizer(model.getSpaceRoot());
+        Path tagsOutPath = modelFile.resolveSibling(modelFile.getFileName().toString() + ".ps-plain.gv");
+        System.out.println("Writing " + tagsOutPath);
+        tagViz.vizualize(tagsOutPath);
+        
+        GraphvizTagSpacePathsVizualizer tagPViz = new GraphvizTagSpacePathsVizualizer(model.getSpaceRoot());
+        tagsOutPath = modelFile.resolveSibling(modelFile.getFileName().toString() + ".ps-paths.gv");
+        System.out.println("Writing " + tagsOutPath);
+        tagPViz.vizualize(tagsOutPath);
+
+        // AST Visualizer
+        GraphvizGraphNodeAstVisualizer viz = new GraphvizGraphNodeAstVisualizer(loadRes.getDecisionGraphAst());
+        Path outfile = modelFile.resolveSibling(modelFile.getFileName().toString() + "-ast.gv");
+        System.out.println("Writing: " + outfile);
+        viz.vizualize(outfile);
+
+
+        DecisionGraph dg = model.getDecisionGraph();
+
+        GraphvizDecisionGraphClusteredVisualizer fcsViz = new GraphvizDecisionGraphClusteredVisualizer();
+        outfile = modelFile.resolveSibling(modelFile.getFileName().toString() + ".dg.gv");
+        System.out.println("Writing: " + outfile);
+        fcsViz.setDecisionGraph(dg);
+        fcsViz.vizualize(outfile);
+
+        GraphvizDecisionGraphF11Visualizer f11Viz = new GraphvizDecisionGraphF11Visualizer();
+        outfile = modelFile.resolveSibling(modelFile.getFileName().toString() + ".dg-f11.gv");
+        System.out.println("Writing: " + outfile);
+        f11Viz.setDecisionGraph(dg);
+        f11Viz.vizualize(outfile);
+
     }
 
 }

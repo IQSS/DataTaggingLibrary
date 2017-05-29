@@ -159,7 +159,15 @@ public class UnreachableNodeValidator extends VoidVisitor implements DecisionGra
     
     @Override
     public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-        
+        if (!reachedNodeIds.contains(nd.getId())) {
+            reachedNodeIds.add(nd.getId());
+        }
+        if (!reachedNodeIds.contains(nd.getStartNode().getId())) {
+            nd.getStartNode().accept(this);
+        }
+        if (!reachedNodeIds.contains(nd.getNextNode().getId())) {
+            nd.getNextNode().accept(this);
+        }
     }
     
 }

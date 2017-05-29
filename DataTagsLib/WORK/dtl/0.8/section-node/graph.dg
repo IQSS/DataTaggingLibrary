@@ -6,6 +6,12 @@
   }
 ]
 [todo: specify mice]
+[section:
+  {title: Add frogs}
+  [todo: Add frog 1]
+  [todo: Add frog 2]
+]
+[set: Rice=Full]
 [end]
 
 [>dogs< section:

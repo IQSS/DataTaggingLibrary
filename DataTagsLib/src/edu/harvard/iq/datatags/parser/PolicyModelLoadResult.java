@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.parser;
 
 import edu.harvard.iq.datatags.model.PolicyModel;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,8 @@ public class PolicyModelLoadResult {
     private final List<ValidationMessage> messages = new ArrayList<>();
     
     private PolicyModel model;
+    
+    private List<? extends AstNode> decisionGraphAst;
 
     public boolean isSuccessful() {
         return messages.stream().noneMatch( m->m.getLevel()==ValidationMessage.Level.ERROR );
@@ -40,4 +43,13 @@ public class PolicyModelLoadResult {
     public void addMessage( ValidationMessage msg ){
         messages.add(msg);
     }
+
+    public List<? extends AstNode> getDecisionGraphAst() {
+        return decisionGraphAst;
+    }
+
+    public void setDecisionGraphAst(List<? extends AstNode> decisionGraphAst) {
+        this.decisionGraphAst = decisionGraphAst;
+    }
+    
 }

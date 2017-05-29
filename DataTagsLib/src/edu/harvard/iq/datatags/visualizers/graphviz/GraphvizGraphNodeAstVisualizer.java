@@ -27,7 +27,7 @@ import java.util.Map;
  *
  * @author Michael Bar-Sinai
  */
-public class GraphvizGraphNodeAstVizalizer extends GraphvizVisualizer {
+public class GraphvizGraphNodeAstVisualizer extends GraphvizVisualizer {
 
     private final List<? extends AstNode> nodeList;
 
@@ -43,7 +43,7 @@ public class GraphvizGraphNodeAstVizalizer extends GraphvizVisualizer {
 
     int nextId = 0;
 
-    public GraphvizGraphNodeAstVizalizer(List<? extends AstNode> aNodeList) {
+    public GraphvizGraphNodeAstVisualizer(List<? extends AstNode> aNodeList) {
         nodeList = aNodeList;
         addIds(nodeList, new AstNodeIdProvider());
         initMap();
@@ -191,7 +191,10 @@ public class GraphvizGraphNodeAstVizalizer extends GraphvizVisualizer {
         setNodeTypeHandler(AstSectionNode.class, (AstSectionNode node, int depth) -> {
             nodes.add(node(sanitizeId(node.getId()))
                     .fillColor("#FFAAAA")
-                    .shape(GvNode.Shape.folder).label(nodeLabel(node.getId(), "section\n" + node.getInfo())).gv());
+                    .shape(GvNode.Shape.folder).label(nodeLabel(node.getId(), "section\n" + node.getInfo().getText())).gv());
+            
+            edges.add(edge(sanitizeId(node.getId()), sanitizeId(node.getStartNode().get(0).getId())).label("section\\nbody").gv());
+            visualizeNodeList(node.getStartNode(), depth);
         });
 
     }

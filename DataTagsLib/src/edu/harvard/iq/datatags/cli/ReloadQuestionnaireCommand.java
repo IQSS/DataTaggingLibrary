@@ -16,12 +16,11 @@ public class ReloadQuestionnaireCommand implements CliCommand {
 
     @Override
     public String description() {
-        return "Reloads the questionnaire. Current interview is terminated.";
+        return "Reloads the questionnaire. Current interview is terminated.";    
     }
 
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception  {
-        System.out.println("Reloading...");
         LoadPolicyModelCommand loadCmd = new LoadPolicyModelCommand();
         String modelPath = rnr.getModel().getMetadata().getMetadataFile().toString();
         rnr.println("Reloading %s", modelPath);

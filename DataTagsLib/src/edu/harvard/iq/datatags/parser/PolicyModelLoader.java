@@ -108,6 +108,7 @@ public class PolicyModelLoader {
         
         try { 
             DecisionGraphParseResult decisionGraphParseRes = new DecisionGraphParser().parse(data.getDecisionGraphPath());
+            res.setDecisionGraphAst(decisionGraphParseRes.getNodes());
             
             dgAstValidators.stream().flatMap( v -> v.validate(decisionGraphParseRes.getNodes()).stream())
                                     .forEach(res::addMessage);
@@ -122,7 +123,7 @@ public class PolicyModelLoader {
                     dg = new YesNoAnswersSorter(false).process(dg);
                     break;
             }
-            final DecisionGraph fdg = dg; // let the lambdas below compile 
+            final DecisionGraph fdg = dg; // lets the lambdas below compile 
             dgValidators.stream().flatMap( v->v.validate(fdg).stream() ).forEach(res::addMessage);
             
             for ( DecisionGraphProcessor dgp : postProcessors ) {

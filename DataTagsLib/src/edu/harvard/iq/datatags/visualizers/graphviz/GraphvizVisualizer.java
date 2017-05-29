@@ -19,7 +19,6 @@ public abstract class GraphvizVisualizer {
 	protected final Pattern whitespace = Pattern.compile("\\s|-");
     
     private final Map<Character, String> idEncodeMap = new HashMap<>();
-    protected String decisionGraphName = "DecisionGraph";
     
     public GraphvizVisualizer(){
         String idChars = ".,/~?!()@#$%^&*_+-[] ";
@@ -59,7 +58,7 @@ public abstract class GraphvizVisualizer {
 	protected abstract void printBody( BufferedWriter out ) throws IOException;
 	
 	void printHeader(BufferedWriter out) throws IOException {
-		out.write("digraph " + getDecisionGraphName() + " {");
+		out.write("digraph decisionGraph {");
 		out.newLine();
 		out.write("edge [fontname=\"Helvetica\" fontsize=\"10\"]");
 		out.newLine();
@@ -136,14 +135,5 @@ public abstract class GraphvizVisualizer {
 
         return out.toString();
     }
-
-    public void setDecisionGraphName(String aName) {
-        this.decisionGraphName = aName;
-    }
-    
-    public String getDecisionGraphName() {
-        return decisionGraphName;
-    }
-    
     
 }

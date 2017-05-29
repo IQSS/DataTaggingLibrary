@@ -1,8 +1,8 @@
 package edu.harvard.iq.datatags.cli;
 
 import edu.harvard.iq.datatags.visualizers.graphviz.AbstractGraphvizDecisionGraphVisualizer;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetClusteredVisualizer;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizChartSetF11Visualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphClusteredVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphF11Visualizer;
 import java.awt.Desktop;
 import java.io.OutputStreamWriter;
 import java.nio.file.Path;
@@ -43,7 +43,7 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
         ProcessBuilder pb = new ProcessBuilder(pathToDot.toString(), "-T" + fileExtension);
         
         Set<String> argSet = args.stream().map(s->s.toLowerCase()).collect(toSet());
-        AbstractGraphvizDecisionGraphVisualizer viz = argSet.contains("-style=f11") ? new GraphvizChartSetF11Visualizer(argSet.contains("-show-ends")) : new GraphvizChartSetClusteredVisualizer();
+        AbstractGraphvizDecisionGraphVisualizer viz = argSet.contains("-style=f11") ? new GraphvizDecisionGraphF11Visualizer(argSet.contains("-show-ends")) : new GraphvizDecisionGraphClusteredVisualizer();
         viz.setDecisionGraph(rnr.getModel().getDecisionGraph());
         
         Process gv = pb.start();

@@ -108,12 +108,12 @@ public class GraphvizTagSpacePathsVizualizer extends GraphvizVisualizer {
 		}
         out.write( node("start")
                 .fillColor("transparent")
-                .label("DataTags")
+                .label(sanitizeId(topLevel.getName()))
                 .shape(GvNode.Shape.none)
                 .fontColor("#008800")
                 .fontSize(16)
                 .gv() );
-        out.write( edge("start", "DataTags")
+        out.write( edge("start", sanitizeId(topLevel.getName()))
                     .color("#008800")
                     .penwidth(4)
                     .gv());

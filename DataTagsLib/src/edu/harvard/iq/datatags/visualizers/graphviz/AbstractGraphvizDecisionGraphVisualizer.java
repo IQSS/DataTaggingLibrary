@@ -76,69 +76,79 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
     /**
      * Finds all the nodes that are the head of a subroutine/section, to the extent we
      * have those (we currently don't).
-     * @param fc the FlowChart we search in
+     * @param dg the FlowChart we search in
      * @return Set of all nodes to draw subcharts from.
      */
-    protected Set<Node> findSubchartHeades(DecisionGraph fc) {
+    protected Set<Node> findSubchartHeades(DecisionGraph dg) {
         final Set<Node> candidates = new HashSet<>();
-        for (Node n : fc.nodes()) {
+        for (Node n : dg.nodes()) {
             candidates.add(n);
         }
-        for (Node n : fc.nodes()) {
+        
+        Node.VoidVisitor remover = new Node.VoidVisitor() {
+            @Override
+            public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
+                nd.getAnswers().stream().map( nd::getNodeFor )
+                               .forEach( ansNode -> { 
+                                   candidates.remove(ansNode); 
+                                   ansNode.accept(this);
+                               });
+            }
+
+            @Override
+            public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
+                nd.getAnswers().stream().map( nd::getNodeFor )
+                               .forEach( ansNode -> { 
+                                   candidates.remove(ansNode); 
+                                   ansNode.accept(this);
+                               });
+                if ( nd.getElseNode() != null ) {
+                    candidates.remove(nd.getElseNode());
+                    nd.getElseNode().accept(this);
+                }
+            }
+
+            @Override
+            public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
+                candidates.remove(nd.getNextNode());
+                nd.getNextNode().accept(this);
+                
+                candidates.remove(nd.getStartNode());
+                nd.getStartNode().accept(this);
+            }
+
+            /// Through nodes - remove next node, and then proceed using it
+            @Override
+            public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
+                candidates.remove(nd.getNextNode());
+                nd.getNextNode().accept(this);
+            }
+
+            @Override
+            public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
+                candidates.remove(nd.getNextNode());
+                nd.getNextNode().accept(this);
+            }
+
+            @Override
+            public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
+                candidates.remove(nd.getNextNode());
+                nd.getNextNode().accept(this);
+            }
+            
+            /// Terminal nodes - Nothing to do.
+            @Override
+            public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
+            }
+
+            @Override
+            public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
+            }
+        };
+        
+        for (Node n : dg.nodes()) {
             if (candidates.contains(n)) {
-                n.accept(new Node.VoidVisitor() {
-                    @Override
-                    public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
-                        for (Answer n : nd.getAnswers()) {
-                            Node answerNode = nd.getNodeFor(n);
-                            candidates.remove(answerNode);
-                            answerNode.accept(this);
-                        }
-                    }
-
-                    @Override
-                    public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
-                        for (ConsiderAnswer n : nd.getAnswers()) {
-                            Node answerNode = nd.getNodeFor(n);
-                            candidates.remove(answerNode);
-                            answerNode.accept(this);
-                        }
-                        candidates.remove(nd.getElseNode());
-                        nd.getElseNode().accept(this);
-                    }
-
-                    @Override
-                    public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
-                        candidates.remove(nd.getNextNode());
-                        nd.getNextNode().accept(this);
-                    }
-
-                    @Override
-                    public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-                    }
-
-                    @Override
-                    public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
-                        candidates.remove(nd.getNextNode());
-                        nd.getNextNode().accept(this);
-                    }
-
-                    @Override
-                    public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
-                        candidates.remove(nd.getNextNode());
-                        nd.getNextNode().accept(this);
-                    }
-
-                    @Override
-                    public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
-                    }
-                    
-                    @Override
-                    public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-                        candidates.remove(nd.getNextNode());
-                        nd.getNextNode().accept(this);
-                    }
-                });
+                n.accept( remover );
             }
         }
         return candidates;
