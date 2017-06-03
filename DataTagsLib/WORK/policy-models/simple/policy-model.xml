@@ -1,0 +1,10 @@
+<policy-model>
+  <title>Simple Model</title>
+  <version>0.1</version>
+  <date>2017-05-29</date>
+  <keywords>Burrito, food, Simple</keywords>
+  <model answers-order="yes-first">
+    <space root="BurritoLunch">definitions.ts</space>
+    <graph>make-burrito.dg</graph>
+  </model>
+</policy-model>

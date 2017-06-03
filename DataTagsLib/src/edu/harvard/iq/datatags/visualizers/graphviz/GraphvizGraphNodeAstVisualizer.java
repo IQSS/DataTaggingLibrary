@@ -4,6 +4,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
@@ -15,13 +16,13 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Visualizes the AST of a decision graph.
@@ -96,16 +97,19 @@ public class GraphvizGraphNodeAstVisualizer extends GraphvizVisualizer {
         }
         visualizeNodeList(node.getSubGraph(), depth);
     }
+    
+    void writeAnswerNode(String nodeId, String ansNodeId, AstConsiderAnswerSubNode node, int depth) {
+        nodes.add(node(ansNodeId).label(nodeLabel(null, "opt")).gv());
+        if (!node.getSubGraph().isEmpty()) {
+            edges.add(edge(ansNodeId, sanitizeId(node.getSubGraph().get(0).getId())).label("impl").gv());
+        }
+        visualizeNodeList(node.getSubGraph(), depth);
+    }
 
     private void initMap() {
 
         setNodeTypeHandler(AstAskNode.class, (AstAskNode node, int depth) -> {
             final String gvNodeId = sanitizeId(node.getId());
-            // consider node
-            nodes.add(node(gvNodeId)
-                    .label(nodeLabel(node.getId(), "consider\n"))
-                    .fillColor("#BBBBFF")
-                    .gv());
             // ask node
             nodes.add(node(gvNodeId)
                     .label(nodeLabel(node.getId(), "ask\n"))
@@ -134,6 +138,22 @@ public class GraphvizGraphNodeAstVisualizer extends GraphvizVisualizer {
             }
         });
 
+        setNodeTypeHandler(AstConsiderNode.class, (AstConsiderNode node, int depth) -> {
+            String gvNodeId = sanitizeId(node.getId());
+            AtomicInteger cnt = new AtomicInteger();
+            // consider node
+            nodes.add(node(gvNodeId)
+                    .label(nodeLabel(node.getId(), "consider\n"))
+                    .shape(GvNode.Shape.egg)
+                    .fillColor("#AFAFFA")
+                    .gv());
+            node.getAnswers().forEach( answerNode -> {
+                String ansNodeId = gvNodeId + "_ans_" + cnt.incrementAndGet();
+                edges.add(edge(gvNodeId, ansNodeId).label(answerNode.getAnswerText()).gv());
+                writeAnswerNode(gvNodeId, ansNodeId, answerNode, depth);
+            });
+        });
+        
         setNodeTypeHandler(AstCallNode.class, (AstCallNode node, int depth) -> {
             nodes.add(node(sanitizeId(node.getId()))
                     .shape(GvNode.Shape.cds)
@@ -179,6 +199,7 @@ public class GraphvizGraphNodeAstVisualizer extends GraphvizVisualizer {
                     .shape(GvNode.Shape.note)
                     .label(nodeLabel(node.getId(), "todo\n" + node.getTodoText())).gv());
         });
+        
 
         setNodeTypeHandler(AstRejectNode.class, (AstRejectNode node, int depth) -> {
             nodes.add(node(sanitizeId(node.getId()))

@@ -16,6 +16,7 @@ import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVisualiz
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpacePathsVizualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpaceVisualizer;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -60,6 +61,8 @@ public class DecisionGraphCompiling {
         PolicyModelDataParser pmdParser = new PolicyModelDataParser();
         PolicyModelData readResult = pmdParser.read(modelFile);
         PolicyModelLoadResult loadRes = PolicyModelLoader.verboseLoader().load(readResult);
+        
+        modelFile = readResult.getMetadataFile();
 
         if (loadRes.isSuccessful()) {
             System.out.printf("Model '%s' loaded\n", loadRes.getModel().getMetadata().getTitle());
@@ -77,7 +80,6 @@ public class DecisionGraphCompiling {
         }
         
         PolicyModel model = loadRes.getModel();
-        
         GraphvizTagSpaceVisualizer tagViz = new GraphvizTagSpaceVisualizer(model.getSpaceRoot());
         Path tagsOutPath = modelFile.resolveSibling(modelFile.getFileName().toString() + ".ps-plain.gv");
         System.out.println("Writing " + tagsOutPath);

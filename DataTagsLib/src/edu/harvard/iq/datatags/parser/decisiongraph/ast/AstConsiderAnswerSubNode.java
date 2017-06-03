@@ -32,8 +32,10 @@ public class AstConsiderAnswerSubNode {
         return assignments;
     }
 	public String getAnswerText() {
-		return answerList.toString()+assignments.toString();
+        return ( answerList != null ) ? answerList.toString()
+                                      : assignments.toString();
 	}
+    
     @Override
     public int hashCode() {
         int hash = 7;

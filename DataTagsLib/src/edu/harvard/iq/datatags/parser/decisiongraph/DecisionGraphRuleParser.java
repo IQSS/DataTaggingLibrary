@@ -177,7 +177,7 @@ public class DecisionGraphRuleParser {
                 nodeStructurePart(":"),
                 bodyParser,
                 nodeStructurePart("}"),
-                (_s, answer, _c, body, _e) -> new AstConsiderAnswerSubNode(answer, body));
+                (_s, answers, _c, body, _e) -> new AstConsiderAnswerSubNode(answers, body));
 
     }
 

@@ -76,6 +76,9 @@ public class PolicyModelDataParser {
     
     public PolicyModelData read(Path pathToXml) throws PolicyModelLoadingException {
         try {
+            if ( Files.isDirectory(pathToXml)) {
+                pathToXml = pathToXml.resolve("policy-model.xml");
+            }
             return read( Files.readAllLines(pathToXml, StandardCharsets.UTF_8).stream().collect(joining("\n")),
                     pathToXml );
         } catch (IOException ex) {

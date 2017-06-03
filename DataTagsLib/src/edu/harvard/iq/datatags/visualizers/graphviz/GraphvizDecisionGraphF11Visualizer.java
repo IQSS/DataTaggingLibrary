@@ -14,14 +14,10 @@ import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
-import edu.harvard.iq.datatags.tools.ReachableNodesCollector;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -33,9 +29,9 @@ import java.util.Set;
 public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecisionGraphVisualizer {
     
     private static final String NODE_FILL_COLOR = "#3B8298";
+        
+    /** Fill color for the "no" answer node. */
     private static final String NO_NODE_FILL_COLOR = "#515151";
-    
-    private PrintWriter out;
     
     private boolean showEndNodes = false;
     
@@ -53,18 +49,19 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
         public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
 
             out.println(node(nodeId(nd))
-                    .label(idLabel(nd) + "consider\n")
+                    .label(idLabel(nd) + "when")
                     .gv());
+            int ansNodeCount=0;
             for (ConsiderAnswer ans : nd.getAnswers()) {
                 StringBuilder label = new StringBuilder();
-                for (SlotType tt : ans.getAnswer().getNonEmptySubSlotTypes()) {
+                ans.getAnswer().getNonEmptySubSlotTypes().forEach( tt -> 
                     label.append(tt.getName())
                             .append("=")
                             .append(ans.getAnswer().get(tt).accept(valueNamer))
-                            .append("\n");
-                }
-                String ansId = nodeId(nd) + "_" + sanitizeId(ans.getAnswerText());
-                out.println( answerNodeGv(ansId, ans.getAnswerText()) );
+                            .append("\n")
+                );
+                String ansId = nodeId(nd) + "_" + (++ansNodeCount);
+                out.println( considerAnswerNodeGv(ansId, label.toString()) );
                 out.println( edge(nodeId(nd), ansId).arrowhead(GvEdge.ArrowType.None).gv() );
                 Node nextNode = nd.getNodeFor(ans);
                 if ( showEndNodes || !(nextNode instanceof EndNode) ) {
@@ -74,7 +71,7 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
             }
             if ( nd.getElseNode() != null ) {
                 String elseId = nodeId(nd)+"_ELSE";
-                out.println( answerNodeGv(elseId, "else") );
+                out.println( considerAnswerNodeGv(elseId, "else") );
                 out.println( edge(nodeId(nd), elseId).arrowhead(GvEdge.ArrowType.None).gv() );
                 
                 Node nextNode = nd.getElseNode();
@@ -109,6 +106,13 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
 			}
 		}
         
+        
+        private String considerAnswerNodeGv( String nodeId, String ans ) {
+            return node(nodeId).label(wrap(ans))
+                    .fontColor("white")
+                    .fillColor(NO_NODE_FILL_COLOR)
+                    .gv();
+        }
         
         private String answerNodeGv( String nodeId, String ans ) {
             String answerText = ans.toLowerCase();

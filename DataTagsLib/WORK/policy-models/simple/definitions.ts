@@ -2,7 +2,7 @@
 Simple questionnaire, for tool testing
 *>
 
-DataTags: consists of Bag , Burrito, Extras.
+BurritoLunch: consists of Bag , Burrito, Extras.
 Bag: one of plastic, banana_leaf, paper.
 Burrito: consists of Wrap , Main , Side.
 Wrap: one of corn , full_grain , wheat.

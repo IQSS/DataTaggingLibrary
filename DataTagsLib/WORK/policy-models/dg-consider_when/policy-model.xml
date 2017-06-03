@@ -1,0 +1,10 @@
+<policy-model>
+  <title>Consider/When Sample Model</title>
+  <version>0.1</version>
+  <date>2017-05-29</date>
+  <keywords>tutorial, consider, when</keywords>
+  <model answers-order="yes-first">
+    <space root="DataTags">definitions.ts</space>
+    <graph>questionnaire.dg</graph>
+  </model>
+</policy-model>
