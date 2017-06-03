@@ -115,7 +115,7 @@ public class DecisionGraphParseResult {
         return product;
     }
 
-    /**
+    /** 
      * Compiles the list of nodes to an executable node structure. Note that the
      * node list has to make semantic sense - any nodes that follow a
      * terminating node (in the top-level list) will be ignored.

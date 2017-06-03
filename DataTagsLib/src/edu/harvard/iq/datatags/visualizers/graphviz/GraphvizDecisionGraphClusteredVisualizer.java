@@ -8,23 +8,14 @@ import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.graphs.Answer;
-import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
-import edu.harvard.iq.datatags.tools.ReachableNodesCollector;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Given a {@link DecisionGraph}, instances of this class create gravphviz files
@@ -34,18 +25,7 @@ import java.util.TreeSet;
  */
 public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDecisionGraphVisualizer {
 
-    private class NodePainter extends Node.VoidVisitor {
-
-        PrintWriter out;
-        
-        Set<String> visitedIds = new TreeSet<>();
-        
-        private void advanceTo( Node nd ) {
-            if ( ! visitedIds.contains(nd.getId()) ) {
-                visitedIds.add(nd.getId());
-                nd.accept(this);
-            }
-        }
+    private class NodePainter extends AbstractGraphvizDecisionGraphVisualizer.AbstracctNodePainter {
         
         @Override
         public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
@@ -54,17 +34,18 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
                     .shape(GvNode.Shape.egg)
                     .label(idLabel(nd) + "consider\n")
                     .gv());
-            for (ConsiderAnswer ans : nd.getAnswers()) {
+            nd.getAnswers().forEach( ans -> {
                 StringBuilder label = new StringBuilder();
-                for (SlotType tt : ans.getAnswer().getNonEmptySubSlotTypes()) {
+                ans.getAnswer().getNonEmptySubSlotTypes().forEach( tt -> {
                     label.append(tt.getName())
                             .append("=")
                             .append(ans.getAnswer().get(tt).accept(valueNamer))
                             .append("\n");
-                }
+                });
                 advanceTo(nd.getNodeFor(ans));
                 out.println(edge(nodeId(nd), nodeId(nd.getNodeFor(ans))).tailLabel(label.toString()).gv());
-            }
+            });
+            
             if ( nd.getElseNode() != null ) {
                 advanceTo(nd.getElseNode());
                 out.println(edge(nodeId(nd), nodeId(nd.getElseNode())).tailLabel("else").gv());
@@ -122,12 +103,12 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
             StringBuilder label = new StringBuilder();
             label.append(idLabel(nd))
                     .append("Set\n");
-            for (SlotType tt : nd.getTags().getNonEmptySubSlotTypes()) {
+            nd.getTags().getNonEmptySubSlotTypes().forEach( tt -> {
                 label.append(tt.getName())
                         .append("=")
                         .append(nd.getTags().get(tt).accept(valueNamer))
                         .append("\n");
-            }
+            });
             out.println(node(nodeId(nd))
                     .fillColor("#AADDAA")
                     .shape(GvNode.Shape.rect)
@@ -172,13 +153,10 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
             
         }
 
-        private String idLabel(Node nd) {
-            return nd.getId().startsWith("[#") ? "" : nd.getId() + "\\n";
-        }
     }
 
     @Override
-    void printHeader(BufferedWriter bOut) throws IOException {
+    void printHeader(PrintWriter bOut) throws IOException {
         PrintWriter out = new PrintWriter(bOut, true);
         out.println("digraph decisionGraph {");
         out.println("graph [fontname=\"Courier\" concentrate=true compound=true]");
@@ -194,13 +172,12 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
     }
 
     @Override
-    protected void printBody(BufferedWriter out) throws IOException {
+    protected void printBody(PrintWriter out) throws IOException {
         printChart(theGraph, new PrintWriter(out, true));
-        out.write(edge("start", nodeId(theGraph.getStart()))
+        out.println(edge("start", nodeId(theGraph.getStart()))
                 .color("#008800")
                 .penwidth(4)
                 .gv());
-        out.newLine();
     }
 
     void printChart(DecisionGraph fc, PrintWriter wrt) throws IOException {
@@ -212,15 +189,13 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
         NodePainter np = new NodePainter();
         np.out = wrt;
         
-        for (Node chartHead : subchartHeads) {
+        subchartHeads.forEach( chartHead -> {
             System.out.println("Subchart: " + sanitizeId(chartHead.getId()));
             wrt.println("subgraph cluster_toplevel" + sanitizeId(chartHead.getId()) + " {");
             wrt.println(String.format("label=\"%s\"; color=\"#AABBDD\"; labeljust=\"l\"", sanitizeTitle(chartHead.getId())));
-
             chartHead.accept(np);
-
             wrt.println("}");
-        }
+        });
 
 
         wrt.println("}");

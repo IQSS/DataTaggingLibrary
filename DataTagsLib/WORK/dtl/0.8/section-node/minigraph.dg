@@ -1,0 +1,15 @@
+[ask:
+  {text: Do the dogs first?}
+  {answers:
+      {yes: [todo: Call dogs]}
+      {no: [todo: call cats]}
+  }
+]
+[todo: specify mice]
+[section:
+  {title: Add frogs}
+  [todo: Add frog 1]
+  [todo: Add frog 2]
+]
+[set: Rice=Full]
+[end]

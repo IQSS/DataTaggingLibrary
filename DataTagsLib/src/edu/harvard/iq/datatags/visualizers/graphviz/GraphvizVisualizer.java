@@ -3,6 +3,7 @@ package edu.harvard.iq.datatags.visualizers.graphviz;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -48,29 +49,24 @@ public abstract class GraphvizVisualizer {
 	 * @throws IOException
 	 */
 	public void visualize(Writer out) throws IOException {
-		BufferedWriter bOut = (out instanceof BufferedWriter) ? (BufferedWriter) out : new BufferedWriter(out);
+		PrintWriter bOut = (out instanceof PrintWriter) ? (PrintWriter) out : new PrintWriter(out);
 		printHeader(bOut);
 		printBody(bOut);
 		printFooter(bOut);
 		bOut.flush();
 	}
 	
-	protected abstract void printBody( BufferedWriter out ) throws IOException;
+	protected abstract void printBody( PrintWriter out ) throws IOException;
 	
-	void printHeader(BufferedWriter out) throws IOException {
-		out.write("digraph decisionGraph {");
-		out.newLine();
-		out.write("edge [fontname=\"Helvetica\" fontsize=\"10\"]");
-		out.newLine();
-		out.write("node [fillcolor=\"lightgray\" style=\"filled\" fontname=\"Helvetica\" fontsize=\"10\"]");
-		out.newLine();
-		out.write("rankdir=LR");
-		out.newLine();
+	void printHeader(PrintWriter out) throws IOException {
+		out.println("digraph decisionGraph {");
+		out.println("edge [fontname=\"Helvetica\" fontsize=\"10\"]");
+		out.println("node [fillcolor=\"lightgray\" style=\"filled\" fontname=\"Helvetica\" fontsize=\"10\"]");
+		out.println("rankdir=LR");
 	}
 
-	void printFooter(BufferedWriter out) throws IOException {
-		out.write("}");
-		out.newLine();
+	void printFooter(PrintWriter out) throws IOException {
+		out.println("}");
 	}
 
 	protected String humanTitle(DecisionGraph ent) {

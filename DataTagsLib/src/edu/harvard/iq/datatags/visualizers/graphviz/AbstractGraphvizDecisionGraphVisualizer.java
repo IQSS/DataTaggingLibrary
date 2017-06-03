@@ -1,7 +1,5 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.model.graphs.Answer;
-import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
@@ -19,10 +17,12 @@ import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Base class for {@link DecisionGraph} visualizers, that use Graphviz.
@@ -32,6 +32,27 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
 
     protected final Map<Character, String> idEncodeMap = new HashMap<>();
     protected DecisionGraph theGraph;
+    
+    Set<String> visitedIds = new TreeSet<>();
+        
+    
+    protected abstract class AbstracctNodePainter extends Node.VoidVisitor {
+        PrintWriter out;
+        
+        Set<String> visitedIds = new TreeSet<>();
+        
+        protected void advanceTo( Node nd ) {
+            if ( ! visitedIds.contains(nd.getId()) ) {
+                visitedIds.add(nd.getId());
+                nd.accept(this);
+            }
+        }
+
+        protected String idLabel(Node nd) {
+            return nd.getId().startsWith("[#") ? "" : nd.getId() + "\\n";
+        }
+    }
+    
     protected final TagValue.Visitor<String> valueNamer = new TagValue.Visitor<String>() {
         @Override
         public String visitToDoValue(ToDoValue v) {
@@ -72,7 +93,7 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
             return sb.toString();
         }
     };
-
+        
     /**
      * Finds all the nodes that are the head of a subroutine/section, to the extent we
      * have those (we currently don't).

@@ -17,6 +17,7 @@ import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,17 +51,14 @@ public class GraphvizGraphNodeAstVisualizer extends GraphvizVisualizer {
     }
 
     @Override
-    protected void printBody(BufferedWriter out) throws IOException {
+    protected void printBody(PrintWriter out) throws IOException {
         visualizeNodeList(nodeList, 0);
-        for (String node : nodes) {
-            out.write(node);
-            out.newLine();
-        }
-        out.newLine();
-        for (String edge : edges) {
-            out.write(edge);
-            out.newLine();
-        }
+        nodes.forEach((node) -> {
+            out.println(node);
+        });
+        edges.forEach((edge) -> {
+            out.println(edge);
+        });
     }
 
     void visualizeNodeList(List<? extends AstNode> list, int depth) {
