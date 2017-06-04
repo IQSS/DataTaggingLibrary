@@ -15,7 +15,7 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
  * Prints nodes to the console, with minimal details.
  * @author michael
  */
-class BriefNodePrinter extends Node.VoidVisitor {
+public class BriefNodePrinter extends Node.VoidVisitor {
     
     private static final int WIDTH = 70;
     private final CliRunner rnr;

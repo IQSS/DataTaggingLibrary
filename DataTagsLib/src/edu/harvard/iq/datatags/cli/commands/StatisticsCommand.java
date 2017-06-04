@@ -1,5 +1,6 @@
-package edu.harvard.iq.datatags.cli;
+package edu.harvard.iq.datatags.cli.commands;
 
+import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.model.types.AggregateSlot;
 import edu.harvard.iq.datatags.model.types.AtomicSlot;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;

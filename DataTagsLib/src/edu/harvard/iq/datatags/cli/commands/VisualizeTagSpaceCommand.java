@@ -1,5 +1,7 @@
-package edu.harvard.iq.datatags.cli;
+package edu.harvard.iq.datatags.cli.commands;
 
+import edu.harvard.iq.datatags.cli.CliRunner;
+import edu.harvard.iq.datatags.cli.ProcessOutputDumper;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpacePathsVizualizer;
 import java.awt.Desktop;
 import java.io.OutputStreamWriter;

@@ -1,5 +1,23 @@
 package edu.harvard.iq.datatags.cli;
 
+import edu.harvard.iq.datatags.cli.commands.CurrentTagsCommand;
+import edu.harvard.iq.datatags.cli.commands.ShowNodeCommand;
+import edu.harvard.iq.datatags.cli.commands.ReloadQuestionnaireCommand;
+import edu.harvard.iq.datatags.cli.commands.ShowSlotCommand;
+import edu.harvard.iq.datatags.cli.commands.CliCommand;
+import edu.harvard.iq.datatags.cli.commands.AboutCommand;
+import edu.harvard.iq.datatags.cli.commands.RunValidationsCommand;
+import edu.harvard.iq.datatags.cli.commands.VisualizeDecisionGraphCommand;
+import edu.harvard.iq.datatags.cli.commands.AskAgainCommand;
+import edu.harvard.iq.datatags.cli.commands.OptimizeDecisionGraphCommand;
+import edu.harvard.iq.datatags.cli.commands.StatisticsCommand;
+import edu.harvard.iq.datatags.cli.commands.QuitCommand;
+import edu.harvard.iq.datatags.cli.commands.ToggleDebugMessagesCommand;
+import edu.harvard.iq.datatags.cli.commands.MatchResultToSequenceCommand;
+import edu.harvard.iq.datatags.cli.commands.VisualizeTagSpaceCommand;
+import edu.harvard.iq.datatags.cli.commands.LoadPolicyModelCommand;
+import edu.harvard.iq.datatags.cli.commands.PrintRunTraceCommand;
+import edu.harvard.iq.datatags.cli.commands.PrintStackCommand;
 import edu.harvard.iq.datatags.io.StringMapFormat;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
@@ -38,7 +56,7 @@ import org.codehaus.jparsec.Scanners;
  */
 public class CliRunner {
 
-    static final String LOGO
+    public static final String LOGO
             = "   +-------------\n"
             + "  +|             \\\n"
             + " +||             o)\n"
@@ -145,11 +163,11 @@ public class CliRunner {
         println("");
     }
 
-    void restart() {
+    public void restart() {
         ngn.restart();
     }
 
-    void dumpTagValue(TagValue val) {
+    public void dumpTagValue(TagValue val) {
         dtFormat.format(val).entrySet().forEach((e) -> {
             println("%s = %s", e.getKey(), e.getValue());
         });
@@ -249,7 +267,7 @@ public class CliRunner {
         ask.getAnswers().forEach(ans -> println(" - " + ans.getAnswerText()));
     }
 
-    void print(String format, Object... args) {
+    public void print(String format, Object... args) {
         if (System.console() != null) {
             System.console().printf(format, args);
         } else {
@@ -257,7 +275,7 @@ public class CliRunner {
         }
     }
 
-    void print(String format) {
+    public void print(String format) {
         if (System.console() != null) {
             System.console().printf(format);
         } else {
@@ -265,7 +283,7 @@ public class CliRunner {
         }
     }
 
-    void println() {
+    public void println() {
         if (System.console() != null) {
             System.console().printf("\n");
         } else {
@@ -273,7 +291,7 @@ public class CliRunner {
         }
     }
 
-    void println(String format, Object... args) {
+    public void println(String format, Object... args) {
         if (format.endsWith("\n")) {
             print(format, args);
         } else {
@@ -281,7 +299,7 @@ public class CliRunner {
         }
     }
 
-    void println(String format) {
+    public void println(String format) {
         if (format.endsWith("\n")) {
             print(format);
         } else {
@@ -295,7 +313,7 @@ public class CliRunner {
      * @param format
      * @param args
      */
-    void printMsg(String format, Object... args) {
+    public void printMsg(String format, Object... args) {
         println("# " + format, args);
     }
 
@@ -324,7 +342,7 @@ public class CliRunner {
      * @param format
      * @param args
      */
-    void printTitle(String format, Object... args) {
+    public void printTitle(String format, Object... args) {
         String msg = String.format(format, args);
 
         char[] deco = new char[msg.length()];
@@ -336,7 +354,7 @@ public class CliRunner {
         println(new String(deco));
     }
 
-    void debugPrint(String format, Object... args) {
+    public void debugPrint(String format, Object... args) {
         if ( printDebugMessages ) {
             String msg = String.format(format, args);
 

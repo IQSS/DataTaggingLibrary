@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.cli;
 
+import edu.harvard.iq.datatags.cli.commands.CliCommand;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.RuntimeEngineStatus;
 import java.util.List;

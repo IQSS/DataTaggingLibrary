@@ -1,5 +1,6 @@
-package edu.harvard.iq.datatags.cli;
+package edu.harvard.iq.datatags.cli.commands;
 
+import edu.harvard.iq.datatags.cli.CliRunner;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

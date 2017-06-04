@@ -1,5 +1,6 @@
-package edu.harvard.iq.datatags.cli;
+package edu.harvard.iq.datatags.cli.commands;
 
+import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.io.PolicyModelDataParser;
 import edu.harvard.iq.datatags.parser.PolicyModelLoadResult;
 import edu.harvard.iq.datatags.parser.PolicyModelLoader;

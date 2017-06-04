@@ -1,5 +1,6 @@
-package edu.harvard.iq.datatags.cli;
+package edu.harvard.iq.datatags.cli.commands;
 
+import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.tools.processors.EagerSetCallsOptimizer;
 import edu.harvard.iq.datatags.tools.processors.EndNodeOptimizer;
 import java.util.List;

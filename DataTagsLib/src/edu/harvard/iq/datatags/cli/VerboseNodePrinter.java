@@ -15,7 +15,7 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
  * Prints nodes to the console, with all the details.
  * @author michael
  */
-class VerboseNodePrinter extends Node.VoidVisitor {
+public class VerboseNodePrinter extends Node.VoidVisitor {
     
     private final CliRunner rnr;
 

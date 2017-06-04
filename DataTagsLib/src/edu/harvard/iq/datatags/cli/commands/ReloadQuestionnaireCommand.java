@@ -1,5 +1,6 @@
-package edu.harvard.iq.datatags.cli;
+package edu.harvard.iq.datatags.cli.commands;
 
+import edu.harvard.iq.datatags.cli.CliRunner;
 import java.util.Arrays;
 import java.util.List;
 

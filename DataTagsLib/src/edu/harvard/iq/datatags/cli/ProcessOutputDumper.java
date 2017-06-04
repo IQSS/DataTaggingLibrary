@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.cli;
 
+import edu.harvard.iq.datatags.cli.commands.VisualizeDecisionGraphCommand;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,12 +22,12 @@ public class ProcessOutputDumper {
     final InputStream in;
     final CountDownLatch latch = new CountDownLatch(1);
 
-    ProcessOutputDumper(InputStream anIn, Path outPath) throws IOException {
+    public ProcessOutputDumper(InputStream anIn, Path outPath) throws IOException {
         in = anIn;
         out = Files.newOutputStream(outPath);
     }
 
-    ProcessOutputDumper(InputStream anIn, OutputStream anOut) throws IOException {
+    public ProcessOutputDumper(InputStream anIn, OutputStream anOut) throws IOException {
         in = anIn;
         out = anOut;
     }

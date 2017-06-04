@@ -1,5 +1,8 @@
-package edu.harvard.iq.datatags.cli;
+package edu.harvard.iq.datatags.cli.commands;
 
+import edu.harvard.iq.datatags.cli.BriefNodePrinter;
+import edu.harvard.iq.datatags.cli.CliRunner;
+import edu.harvard.iq.datatags.cli.VerboseNodePrinter;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.List;

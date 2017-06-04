@@ -1,5 +1,7 @@
-package edu.harvard.iq.datatags.cli;
+package edu.harvard.iq.datatags.cli.commands;
 
+import edu.harvard.iq.datatags.cli.CliRunner;
+import edu.harvard.iq.datatags.cli.ProcessOutputDumper;
 import edu.harvard.iq.datatags.visualizers.graphviz.AbstractGraphvizDecisionGraphVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphClusteredVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphF11Visualizer;

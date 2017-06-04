@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
-import edu.harvard.iq.datatags.cli.LoadPolicyModelCommand;
+import edu.harvard.iq.datatags.cli.commands.LoadPolicyModelCommand;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
