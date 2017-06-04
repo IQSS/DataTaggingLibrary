@@ -160,12 +160,10 @@ import java.util.concurrent.atomic.AtomicInteger;
      * @return {@code true} iff there is a need to consume answers.
      */
     public boolean start() throws DataTagsRuntimeException {
-
-        if (getCurrentTags() == null) {
-            setCurrentTags(model.getSpaceRoot().createInstance());
-        }
+        setCurrentTags(model.getSpaceRoot().createInstance());
         setStatus(RuntimeEngineStatus.Running);
         listener.ifPresent(l -> l.runStarted(this));
+        
         return processNode(decisionGraph.getStart());
     }
 
@@ -177,8 +175,8 @@ import java.util.concurrent.atomic.AtomicInteger;
         listener.ifPresent(l -> l.runTerminated(this));
         setStatus(RuntimeEngineStatus.Restarting);
         stack.clear();
-        setCurrentTags(model.getSpaceRoot().createInstance());
-
+        currentNode = null;
+        
         start();
     }
 
@@ -340,6 +338,8 @@ import java.util.concurrent.atomic.AtomicInteger;
     public void setModel(PolicyModel model) {
         this.model = model;
         decisionGraph = model.getDecisionGraph();
+        listener.ifPresent( l->l.runTerminated(this) );
+        setStatus(RuntimeEngineStatus.Idle);
     }
     
 }

@@ -25,7 +25,7 @@ public class ReloadQuestionnaireCommand implements CliCommand {
         LoadPolicyModelCommand loadCmd = new LoadPolicyModelCommand();
         String modelPath = rnr.getModel().getMetadata().getMetadataFile().toString();
         rnr.println("Reloading %s", modelPath);
-        loadCmd.execute(rnr, Arrays.asList(modelPath));
+        loadCmd.execute(rnr, Arrays.asList("/dummy", modelPath));
     }
     
 }

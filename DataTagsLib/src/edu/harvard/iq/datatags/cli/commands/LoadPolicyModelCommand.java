@@ -2,9 +2,11 @@ package edu.harvard.iq.datatags.cli.commands;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.io.PolicyModelDataParser;
+import edu.harvard.iq.datatags.io.PolicyModelLoadingException;
 import edu.harvard.iq.datatags.parser.PolicyModelLoadResult;
 import edu.harvard.iq.datatags.parser.PolicyModelLoader;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -32,8 +34,8 @@ public class LoadPolicyModelCommand implements CliCommand {
         String inputString;
 
         // get the files
-        if ( args.size() == 1 ) {
-            pmPath = Paths.get(args.get(0));
+        if ( args.size() == 2 ) {
+            pmPath = Paths.get(args.get(1));
             
         } else {
             inputString = rnr.readLine("Please enter path to the policy model (file/folder): ").trim();
@@ -50,20 +52,32 @@ public class LoadPolicyModelCommand implements CliCommand {
         }
         
         PolicyModelDataParser pmdParser = new PolicyModelDataParser();
-        PolicyModelLoadResult loadRes = PolicyModelLoader.verboseLoader()
-                                                         .load(pmdParser.read(pmPath));
         
-        if ( loadRes.isSuccessful() ) {
-            rnr.println("Model '%s' loaded", loadRes.getModel().getMetadata().getTitle());
-            rnr.setModel( loadRes.getModel() );
-            rnr.restart();
-        } else {
-            rnr.printWarning("Failed to load model: ");
-        }
-        
-        if ( ! loadRes.getMessages().isEmpty() ) {
-            rnr.printTitle("Load Messages");
-            loadRes.getMessages().forEach(m->rnr.println(m.getLevel() + "   " + m.getMessage()));
+        try {
+            PolicyModelLoadResult loadRes = PolicyModelLoader.verboseLoader()
+                                                             .load(pmdParser.read(pmPath));
+
+            if ( loadRes.isSuccessful() ) {
+                rnr.println("Model '%s' loaded", loadRes.getModel().getMetadata().getTitle());
+                rnr.setModel( loadRes.getModel() );
+            } else {
+                rnr.printWarning("Failed to load model: ");
+            }
+
+            if ( ! loadRes.getMessages().isEmpty() ) {
+                rnr.printTitle("Load Messages");
+                loadRes.getMessages().forEach(m->rnr.println(m.getLevel() + "   " + m.getMessage()));
+            }
+
+            if ( loadRes.isSuccessful() ) {
+                rnr.restart();
+            }
+            
+        } catch ( PolicyModelLoadingException nsfe ) {
+            rnr.printWarning( "Error loading model: " + nsfe.getMessage() );
+            if ( rnr.getPrintDebugMessages() ) {
+                nsfe.printStackTrace(System.out);
+            }
         }
     }
 

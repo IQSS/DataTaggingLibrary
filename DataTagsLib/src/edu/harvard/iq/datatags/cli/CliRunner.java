@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.cli;
 
+import edu.harvard.iq.datatags.cli.commands.RestartCommand;
 import edu.harvard.iq.datatags.cli.commands.CurrentTagsCommand;
 import edu.harvard.iq.datatags.cli.commands.ShowNodeCommand;
 import edu.harvard.iq.datatags.cli.commands.ReloadQuestionnaireCommand;
@@ -16,6 +17,8 @@ import edu.harvard.iq.datatags.cli.commands.ToggleDebugMessagesCommand;
 import edu.harvard.iq.datatags.cli.commands.MatchResultToSequenceCommand;
 import edu.harvard.iq.datatags.cli.commands.VisualizeTagSpaceCommand;
 import edu.harvard.iq.datatags.cli.commands.LoadPolicyModelCommand;
+import edu.harvard.iq.datatags.cli.commands.NewModelCommand;
+import edu.harvard.iq.datatags.cli.commands.OpenInDesktopCommand;
 import edu.harvard.iq.datatags.cli.commands.PrintRunTraceCommand;
 import edu.harvard.iq.datatags.cli.commands.PrintStackCommand;
 import edu.harvard.iq.datatags.io.StringMapFormat;
@@ -80,7 +83,9 @@ public class CliRunner {
     private PolicyModel model;
     private RuntimeEngineTracingListener tracer;
     private final Parser<List<String>> cmdScanner = Scanners.many( c -> !Character.isWhitespace(c) ).source().sepBy( Scanners.WHITESPACES );
-
+    private boolean restartFlag = true;
+    
+    
     /**
      * A default command, in case a nonexistent command has been chosen.
      */
@@ -108,6 +113,7 @@ public class CliRunner {
                 new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
                 new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
                 new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadPolicyModelCommand(), 
+                new NewModelCommand(), new OpenInDesktopCommand(),
                 new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand(),
                 new OptimizeDecisionGraphCommand()
         ).forEach(c -> commands.put(c.command(), c));
@@ -136,13 +142,24 @@ public class CliRunner {
             
             while (true) {
                 try {
-                    if (ngn.getStatus() == RuntimeEngineStatus.Idle && ngn.start()) {
-                        while (ngn.getStatus() == RuntimeEngineStatus.Running
-                                && ngn.consume(promptUserForAnswer())) {
+                    if (restartFlag && ngn.start()) {
+                        restartFlag = false;
+                        boolean goFlag = true;
+                        while ( goFlag && ngn.getStatus() == RuntimeEngineStatus.Running) {
+                            Answer userAnswer = promptUserForAnswer();
+                            if ( userAnswer != null ) {
+                                goFlag = ngn.consume( userAnswer );
+                            } else {
+                                // this happens when, e.g. interview is restarted.
+                                goFlag = false;
+                            }
                             println("");
                         }
+                        
+                    } else {
+                        promptForCommand();
                     }
-                    promptForCommand();
+                            
                 } catch ( DataTagsRuntimeException dtre ) {
                     printWarning("Engine runtime error: %s", dtre.getMessage());
                     if ( printDebugMessages ) {
@@ -164,7 +181,14 @@ public class CliRunner {
     }
 
     public void restart() {
-        ngn.restart();
+        if ( ngn.getStatus() == RuntimeEngineStatus.Running ) {
+            tracer.runTerminated(ngn);
+            ngn.setIdle();
+        }
+        if ( tracer != null ) {
+            tracer.clear();
+        }
+        restartFlag = true;        
     }
 
     public void dumpTagValue(TagValue val) {
@@ -178,7 +202,7 @@ public class CliRunner {
         printCurrentAskNode();
 
         String ansText;
-        while ((ansText = readLine("answer (? for help): ")) != null) {
+        while ( (!restartFlag) && ((ansText = readLine("answer (? for help): ")) != null) ) {
             ansText = ansText.trim();
             if ( ansText.isEmpty() ) continue;
             
@@ -423,6 +447,7 @@ public class CliRunner {
 
     public void setModel(PolicyModel aModel) {
         model = aModel;
+        ngn.setModel(model);
     }
 
     public PolicyModel getModel() {
@@ -432,8 +457,7 @@ public class CliRunner {
     
     private class CliEngineListener implements RuntimeEngine.Listener {
 
-        public CliEngineListener() {
-        }
+        public CliEngineListener() {}
 
         @Override
         public void runStarted(RuntimeEngine ngn) {
