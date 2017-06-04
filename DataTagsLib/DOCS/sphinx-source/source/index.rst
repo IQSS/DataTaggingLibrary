@@ -1,12 +1,19 @@
 
-DataTaggingLibrary
+PolicyModels
 ===================
 
-.. image:: /img/datatags-logo-large.png
-   :align: center
+(Formerly: DataTaggingLibrary)
 
-The `DataTags`_ project aims to allow researchers to create proper dataset handling and sharing policies,
-even if they lack the required legal and technological expertise.
+
+.. .. image:: /img/datatags-logo-large.png
+..    :align: center
+
+The policyModels project aims to allow modeling policies, such as used for data handling or welfare benefits. More generally, it uses the concept os decision graphs and policy spaces to allow interactive policy-related decision, as well as policy-related tools, such as visualizations and model queries.
+
+PolicyModels started as part of the `DataTags`_ project, which aims to allow researchers to create proper dataset handling and sharing policies. To avoid confusion, the term *DataTags* now refers to the concept of creating a set of levels that detail the harm inherent to, and proper handling of, a dataset. The term *PolicyModels* refers to the modeling language and toolset covered in this guide. Describing the possible handling policies under a DataTags scheme can be done using a PolicyModels' policy space; modeling a decision process that guides the user to the appropriate tag for a give dataset can be done using a PolicyModels decision graph.
+
+*While we transition to the new naming scheme, the terms "DataTags" and "PolicyModels" are used interchangeably in this document. We're working on this.*
+
 The project is part of a the `Privacy Tools for Sharing Research Data`_ project. There are a few
 approaches for developing such system. This site uses tag spaces to describe data handling policies,
 and an imperative approach based on *decision graphs* to decide on a policy.
@@ -15,7 +22,7 @@ and an imperative approach based on *decision graphs* to decide on a policy.
 .. _Privacy Tools for Sharing Research Data: http://http://privacytools.seas.harvard.edu
 
 
-.. admonition :: Academic Reference
+.. admonition :: Academic References
 
    The DataTags concept, as well as a previous version of the code described here,
    was presented in the paper: Sharing Sensitive Data with Confidence: The Datatags System.
@@ -23,8 +30,13 @@ and an imperative approach based on *decision graphs* to decide on a policy.
    Sweeney L, Crosas M, Bar-Sinai M. Sharing Sensitive Data with Confidence: The
    Datatags System. *Technology Science.* 2015101601. October 16, 2015. http://techscience.org/a/2015101601
 
+   The technical background and mathematical concepts behind the PolicyModels language are described in
 
-A decision graph is a graph (in the mathematical sense) with different type of nodes. When the
+   Bar-Sinai M, Sweeney L, Crosas M. DataTags, Data Handling Policy Spaces and the Tags Language.
+   *Proceedings of the 2016 IEEE Security and Privacy Workshops (SPW)*, May 2016, San-Jose, CA. https://doi.org/10.1109/SPW.2016.11
+
+
+A decision graph is a graph (in the mathematical sense) with nodes of various types. When the
 user goes through the interview, a *Decision Graph Engine* traverses the graph. When the engine
 reaches a node, it performs an instruction associated with it, such
 as ``ask`` (ask the user a question) or ``set``.

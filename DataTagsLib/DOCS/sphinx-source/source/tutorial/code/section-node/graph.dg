@@ -1,0 +1,36 @@
+[call:dogs]
+[call:cats]
+[>frogs< section:
+  {title: Add frogs}
+  [todo: Add frog 1]
+  [todo: Add frog 2]
+]
+[todo: specify mice]
+[end]
+
+[>dogs< section:
+  {title: Dogs!}
+  [ask:
+    {text: What type of dogs?}
+    {answers:
+      {none: }
+      {animated: [set: Dogs += Pluto]}
+      {cute: [set: Dogs += Rex, Lassie]}
+      {hounds: [set: Dogs += Pluto, Lassie]}
+    }
+  ]
+]
+[end]
+
+[>cats< section:
+  {title: Cats}
+  [ask:
+    {text: Which cats?}
+    {answers:
+      {all: [set: Cats += Tom, Garfield, Cleo]}
+      {some: [set: Cats += Tom, Garfield]}
+      {none: }
+    }
+  ]
+]
+[end]

@@ -51,8 +51,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'DataTags Decision Graphs'
-copyright = u'2015 The President and Fellows of Harvard College'
+project = u'The PolicyModels Language and Toolset'
+copyright = u'2017 The President and Fellows of Harvard College'
 author = u'Michael Bar-Sinai'
 
 # The version info for the project you're documenting, acts as replacement for
