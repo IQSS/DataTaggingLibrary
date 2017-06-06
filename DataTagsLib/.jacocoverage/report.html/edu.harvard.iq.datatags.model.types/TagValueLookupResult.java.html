@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TagValueLookupResult.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.model.types</a> &gt; <span class="el_source">TagValueLookupResult.java</span></div><h1>TagValueLookupResult.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.model.types;
+
+import edu.harvard.iq.datatags.model.values.TagValue;
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Used for reporting which slot a value should go to, and
+ * whether the value exists and is compatible with the slot.
+ */
+<span class="fc" id="L11">public abstract class TagValueLookupResult {</span>
+    
+    public interface Visitor&lt;R&gt; {
+        R visit(SlotNotFound snf);
+        R visit(ValueNotFound vnf);
+        R visit(Ambiguity amb);
+        R visit(Success scss);
+    }
+    
+    /**
+     * Convenience class for visitors that don't return anything.
+     */
+<span class="fc" id="L23">    public static abstract class VoidVisitor implements Visitor&lt;Void&gt; {</span>
+
+        @Override
+        public Void visit(SlotNotFound snf) {
+<span class="fc" id="L27">            visitImpl(snf);</span>
+<span class="fc" id="L28">            return null;</span>
+        }
+
+        @Override
+        public Void visit(ValueNotFound vnf) {
+<span class="nc" id="L33">            visitImpl(vnf);</span>
+<span class="nc" id="L34">            return null;</span>
+        }
+
+        @Override
+        public Void visit(Ambiguity amb) {
+<span class="nc" id="L39">            visitImpl(amb);</span>
+<span class="nc" id="L40">            return null;</span>
+        }
+
+        @Override
+        public Void visit(Success scss) {
+<span class="fc" id="L45">            visitImpl( scss );</span>
+<span class="fc" id="L46">            return null;</span>
+        }
+        
+        protected abstract void visitImpl(SlotNotFound snf);
+        protected abstract void visitImpl(ValueNotFound vnf);
+        protected abstract void visitImpl(Ambiguity amb);
+        protected abstract void visitImpl(Success scss);
+    }
+    
+    public interface SuccessFailVisitor&lt;R,E extends Exception&gt; {
+        R visitSuccess( Success s ) throws E;
+        R visitFailure( TagValueLookupResult s ) throws E;
+    }
+    
+    public static class SlotNotFound extends TagValueLookupResult {
+        private final String slotName;
+
+<span class="fc" id="L63">        public SlotNotFound(String aSlotName) {</span>
+<span class="fc" id="L64">            this.slotName = aSlotName;</span>
+<span class="fc" id="L65">        }</span>
+
+        public String getSlotName() {
+<span class="nc" id="L68">            return slotName;</span>
+        }
+        
+        @Override
+        public String toString() {
+<span class="nc" id="L73">            return &quot;[SlotNotFound slotName=&quot; + getSlotName() + &quot;]&quot;;</span>
+        }
+
+        @Override
+        public &lt;R&gt; R accept(Visitor&lt;R&gt; v) {
+<span class="fc" id="L78">            return v.visit(this);</span>
+        }
+    }
+    
+    public static class ValueNotFound extends TagValueLookupResult {
+        private final SlotType tagType;
+        private final String valueName;
+
+<span class="nc" id="L86">        public ValueNotFound(SlotType aTagType, String aValueName) {</span>
+<span class="nc" id="L87">            tagType = aTagType;</span>
+<span class="nc" id="L88">            valueName = aValueName;</span>
+<span class="nc" id="L89">        }</span>
+
+        public SlotType getTagType() {
+<span class="nc" id="L92">            return tagType;</span>
+        }
+
+        public String getValueName() {
+<span class="nc" id="L96">            return valueName;</span>
+        }
+        
+        @Override
+        public String toString() {
+<span class="nc" id="L101">            return &quot;[ValueNotFound valueName=&quot; + getValueName() + &quot; tagType=&quot; + getTagType() + &quot;]&quot;;</span>
+        }
+
+        @Override
+        public &lt;R&gt; R accept(Visitor&lt;R&gt; v) {
+<span class="nc" id="L106">            return v.visit(this);</span>
+        }
+    }
+    
+    public static class Ambiguity extends TagValueLookupResult {
+        private final Set&lt;TagValueLookupResult.Success&gt; possibilities;
+
+<span class="nc" id="L113">        public Ambiguity( Iterable&lt;TagValueLookupResult.Success&gt; possibilities ) {</span>
+<span class="nc" id="L114">            this.possibilities = new HashSet&lt;&gt;();</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">            for ( TagValueLookupResult.Success res : possibilities ) {</span>
+<span class="nc" id="L116">                this.possibilities.add( res );</span>
+<span class="nc" id="L117">            }</span>
+<span class="nc" id="L118">        }</span>
+
+        public Set&lt;TagValueLookupResult.Success&gt; getPossibilities() {
+<span class="nc" id="L121">            return possibilities;</span>
+        }
+
+        @Override
+        public &lt;R&gt; R accept(Visitor&lt;R&gt; v) {
+<span class="nc" id="L126">            return v.visit( this );</span>
+        }
+        
+        @Override
+        public String toString() {
+<span class="nc" id="L131">            return &quot;[Ambiguity possibilities=&quot; + getPossibilities() + &quot;]&quot;;</span>
+        }
+    }
+    
+    public static class Success extends TagValueLookupResult {
+        
+        private final TagValue value;
+
+<span class="fc" id="L139">        public Success( TagValue value ) {</span>
+<span class="fc" id="L140">            this.value = value;</span>
+<span class="fc" id="L141">        }</span>
+
+        public TagValue getValue() {
+<span class="fc" id="L144">            return value;</span>
+        }
+
+        @Override
+        public &lt;R&gt; R accept(Visitor&lt;R&gt; v) {
+<span class="fc" id="L149">            return v.visit(this);</span>
+        }
+        
+        @Override
+        public &lt;R, E extends Exception&gt; R accept( SuccessFailVisitor&lt;R,E&gt; sfv ) throws E {
+<span class="fc" id="L154">            return sfv.visitSuccess(this);</span>
+        }
+        
+        @Override
+        public String toString()  {
+<span class="nc" id="L159">            return &quot;[Success value=&quot; + getValue() + &quot;]&quot;;</span>
+        }
+        
+    }
+    
+    static public SlotNotFound SlotNotFound(String slotName) {
+<span class="fc" id="L165">        return new SlotNotFound(slotName);</span>
+    }
+
+    static public ValueNotFound ValueNotFound(SlotType tt, String valueName) {
+<span class="nc" id="L169">        return new ValueNotFound(tt, valueName);</span>
+    }
+
+    static public Success Success(TagValue val) {
+<span class="fc" id="L173">        return new Success(val);</span>
+    }
+
+    static public Ambiguity Ambiguity(Iterable&lt;TagValueLookupResult.Success&gt; r2) {
+<span class="nc" id="L177">        return new Ambiguity(r2);</span>
+    }
+    
+    public abstract &lt;R&gt; R accept( Visitor&lt;R&gt; v );
+    
+    public &lt;R, E extends Exception&gt; R accept( SuccessFailVisitor&lt;R,E&gt; sfv ) throws E {
+<span class="nc" id="L183">        return sfv.visitFailure(this);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

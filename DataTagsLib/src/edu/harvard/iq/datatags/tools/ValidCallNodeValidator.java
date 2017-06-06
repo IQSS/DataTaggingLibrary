@@ -8,6 +8,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node.VoidVisitor;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -21,20 +22,20 @@ import java.util.List;
  * 
  * @author Naomi
  */
-public class ValidCallNodeValidator extends VoidVisitor {
+public class ValidCallNodeValidator extends VoidVisitor implements DecisionGraphValidator {
     
     private final List<NodeValidationMessage> validationMessages = new LinkedList<>();
     private DecisionGraph chart;
     
     
-    public List<NodeValidationMessage> validateIdReferences( DecisionGraph dg ) {
+    @Override
+    public List<NodeValidationMessage> validate( DecisionGraph dg ) {
         chart = dg;
         for (Node aNode : chart.nodes()) {
             aNode.accept(this);
         }
         return validationMessages;
     }
-    
     
     @Override
     public void visitImpl (CallNode cn) throws DataTagsRuntimeException {
@@ -69,6 +70,11 @@ public class ValidCallNodeValidator extends VoidVisitor {
     @Override
     public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
         // do nothing
+    }
+    
+    @Override
+    public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
+        
     }
 
     

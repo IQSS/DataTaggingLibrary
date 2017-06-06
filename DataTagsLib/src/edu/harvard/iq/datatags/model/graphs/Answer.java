@@ -28,8 +28,8 @@ public class Answer {
 	
     static {
         // Initialize now, when ANSWER_POOL is there.
-        YES = get("Yes");
-        NO  = get("No");
+        YES = get("yes");
+        NO  = get("no");
     }
     
 	private Answer(String anAnswerText) {

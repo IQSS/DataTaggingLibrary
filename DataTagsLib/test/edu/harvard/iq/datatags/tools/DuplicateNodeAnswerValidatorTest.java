@@ -51,7 +51,7 @@ public class DuplicateNodeAnswerValidatorTest {
     public void validateDuplicateAnswerTest_noAnswers() throws BadSetInstructionException, DataTagsParseException {
         String code = "[todo: there are no answers here to check][end]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
-        List<ValidationMessage> duplicates = instance.validateDuplicateAnswers(refs);
+        List<ValidationMessage> duplicates = instance.validate(refs);
         assertEquals(new LinkedList<>(), duplicates);
     } 
     
@@ -62,7 +62,7 @@ public class DuplicateNodeAnswerValidatorTest {
                             + "{no: [>todo2< todo: still no duplicates]}}]"
                 + "[>end1<end]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
-        List<ValidationMessage> duplicates = instance.validateDuplicateAnswers(refs);
+        List<ValidationMessage> duplicates = instance.validate(refs);
         assertEquals(new LinkedList<>(), duplicates);
     } 
     
@@ -74,7 +74,7 @@ public class DuplicateNodeAnswerValidatorTest {
                 + "{yes: [>todo2< todo: yes there is!]}"
                 + "{no:  [>todo3< todo: this is just another answer]}}]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
-        List<ValidationMessage> actual = instance.validateDuplicateAnswers(refs);
+        List<ValidationMessage> actual = instance.validate(refs);
         // the first instruction node should be a repeat
         List<ValidationMessage> expected = Collections.singletonList(
                 new ValidationMessage(ValidationMessage.Level.WARNING,

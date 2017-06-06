@@ -1,0 +1,38 @@
+@startuml
+actor client
+participant PolicyModelDataParser as pmdp
+participant PolicyModelLoader as pml
+participant TagSpaceParser as tsp
+participant DecisionGraphCompiler as dgc
+
+client -> pmdp: read(path)
+activate pmdp
+client <- pmdp: modelData
+deactivate pmdp
+
+client -> pml : load(modelData)
+pml -> tsp: load tag space (modelData)
+activate tsp
+pml <- tsp: tagSpace
+deactivate tsp
+pml -> dgc: compile(modelData, tagSpace)
+loop while fringe not empty
+create CompilationUnit as cu
+dgc -> cu:new(path/source)
+dgc -> cu: compile(topLevelType, typeIndex, endNode, validators)
+cu  -> cu : parse
+cu  -> cu : validate AST
+cu  -> cu : buildNodes
+dgc -> cu : getImports
+dgc <-- cu : List<AstImport>
+dgc -> dgc: update fringe
+end loop
+note over dgc: all compilation units loaded
+dgc -> dgc: link
+pml <- dgc: decisionGraph
+pml -> pml: validate DG
+pml -> pml: post-process DG
+pml -> dgc: getMessages
+pml <-- dgc: messages
+pml -> client: policyModelLoadResult
+@enduml

@@ -67,14 +67,14 @@ public class UnreachableNodeValidatorTest {
                         "    {no: [>reject2< reject: This should have worked.]}}]";
         DecisionGraphParseResult parseResult = astParser.parse(code);
         decisionGraph = parseResult.compile(new CompoundSlot("","") );
-        List<NodeValidationMessage> messages = instance.validateUnreachableNodes(decisionGraph);
+        List<ValidationMessage> messages = instance.validate(decisionGraph);
         
         Set<Node> expected = Collections.<Node>emptySet();
         Set<Node> actualEntities = new HashSet<>();
         Set<NodeValidationMessage.Level> actualLevels = EnumSet.noneOf(NodeValidationMessage.Level.class);
         
-        for ( NodeValidationMessage vm : messages ) {
-            actualEntities.addAll(vm.getEntities());
+        for ( ValidationMessage vm : messages ) {
+            actualEntities.addAll(((NodeValidationMessage)vm).getEntities());
             actualLevels.add(vm.getLevel());
         }
         System.out.println("actual = " + actualEntities);
@@ -89,14 +89,14 @@ public class UnreachableNodeValidatorTest {
         String code = "[>r< end][>nr< end]";
         DecisionGraphParseResult parseResult = astParser.parse(code);
         decisionGraph = parseResult.compile(new CompoundSlot("","") );
-        List<NodeValidationMessage> messages = instance.validateUnreachableNodes(decisionGraph);
+        List<ValidationMessage> messages = instance.validate(decisionGraph);
         
         Set<Node> expected = Collections.singleton( new EndNode("nr") );
         Set<Node> actualEntities = new HashSet<>();
         Set<ValidationMessage.Level> actualLevels = EnumSet.noneOf(ValidationMessage.Level.class);
         
         messages.forEach( vm -> {
-            actualEntities.addAll(vm.getEntities());
+            actualEntities.addAll(((NodeValidationMessage)vm).getEntities());
             actualLevels.add(vm.getLevel());
         });
         
@@ -120,7 +120,7 @@ public class UnreachableNodeValidatorTest {
         DecisionGraphParseResult parseResult = astParser.parse(code);
         decisionGraph = parseResult.compile(new CompoundSlot("","") );
         
-        List<NodeValidationMessage> messages = instance.validateUnreachableNodes(decisionGraph);
+        List<ValidationMessage> messages = instance.validate(decisionGraph);
         
         Set<String> expectedEntityIds = new HashSet<>(Arrays.asList("reject4","reject3","end1","ask2"));
         
@@ -129,7 +129,9 @@ public class UnreachableNodeValidatorTest {
         
         messages.stream().forEach((vm) -> {
             actualEntitiesIds.addAll(
-                    vm.getEntities().stream().map( Node::getId ).collect(Collectors.toSet()) );
+                    ((NodeValidationMessage)vm).getEntities().stream()
+                                               .map( Node::getId )
+                                               .collect(Collectors.toSet()) );
             actualLevels.add(vm.getLevel());
         });
         

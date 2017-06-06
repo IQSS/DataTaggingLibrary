@@ -9,6 +9,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode.NullVisitor;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -21,11 +22,12 @@ import java.util.List;
  * Returns list of these nodes.
  * @author Naomi
  */
-public class DuplicateNodeAnswerValidator extends NullVisitor{
+public class DuplicateNodeAnswerValidator extends NullVisitor  implements DecisionGraphAstValidator{
     
     private List<ValidationMessage> validationMessages = new LinkedList<>();
     
-    public List<ValidationMessage> validateDuplicateAnswers(List<? extends AstNode> allRefs) {
+    @Override
+    public List<ValidationMessage> validate(List<? extends AstNode> allRefs) {
         validationMessages = new LinkedList<>();
         allRefs.stream().forEach( ref -> ref.accept(this) );
         return validationMessages;
@@ -39,8 +41,10 @@ public class DuplicateNodeAnswerValidator extends NullVisitor{
             }
             for (AstConsiderAnswerSubNode ans : noduplicates) {
                 // compare answer text, since we don't want two no answers that have different implementations
-                if (ansRef.getAnswerList().equals(ans.getAnswerList())) {
-                    validationMessages.add(new ValidationMessage(Level.WARNING, "consider node \"" + nd.getId() + "\" has duplicate answers"));
+                if ( ansRef.getAnswerList() != null && ans.getAnswerList() != null ) {
+                    if (ansRef.getAnswerList().equals(ans.getAnswerList())) {
+                        validationMessages.add(new ValidationMessage(Level.WARNING, "consider node \"" + nd.getId() + "\" has duplicate answers"));
+                    }
                 }
             }
             noduplicates.add(ansRef);
@@ -85,6 +89,11 @@ public class DuplicateNodeAnswerValidator extends NullVisitor{
 
     @Override
     public void visitImpl(AstEndNode nd) throws DataTagsRuntimeException {
+        // do nothing unless node ref is an AskNodeRef
+    }
+    
+    @Override
+    public void visitImpl(AstSectionNode nd) throws DataTagsRuntimeException {
         // do nothing unless node ref is an AskNodeRef
     }
 

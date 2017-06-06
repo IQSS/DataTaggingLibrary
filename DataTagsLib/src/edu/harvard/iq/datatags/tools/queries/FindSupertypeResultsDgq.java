@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.tools.queries;
 
+import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
@@ -9,6 +10,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
@@ -24,19 +26,19 @@ import java.util.LinkedList;
  * @author michael
  */
 public class FindSupertypeResultsDgq implements DecisionGraphQuery {
-    private final DecisionGraph subject;
+    private final PolicyModel subject;
     private final CompoundValue value;
     private GraphTraverser graphTraverser;
     
-    public FindSupertypeResultsDgq( DecisionGraph aDecisionGraph, CompoundValue aValue) {
-        subject = aDecisionGraph;
+    public FindSupertypeResultsDgq( PolicyModel aPolicyModel, CompoundValue aValue) {
+        subject = aPolicyModel;
         value = aValue;
     }
     
     public void get( DecisionGraphQuery.Listener aListener ) {
         graphTraverser = new GraphTraverser(aListener);
         aListener.started(this);
-        subject.getStart().accept(graphTraverser);
+        subject.getDecisionGraph().getStart().accept(graphTraverser);
         aListener.done(this);
     }
 
@@ -56,7 +58,7 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
         
         public GraphTraverser( DecisionGraphQuery.Listener aListener ) {
             listener = aListener;
-            valueStack.push( subject.getTopLevelType().createInstance() );
+            valueStack.push( subject.getSpaceRoot().createInstance() );
         }
         
         @Override
@@ -108,7 +110,7 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
         public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
             currentTrace.addLast(nd);
             nodeStack.push(nd);
-            subject.getNode(nd.getCalleeNodeId()).accept(this);
+            subject.getDecisionGraph().getNode(nd.getCalleeNodeId()).accept(this);
             nodeStack.pop();
             currentTrace.removeLast();
         }
@@ -140,6 +142,11 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
                 
             }
             currentTrace.removeLast();        
+        }
+        
+        @Override
+        public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{
+            
         }
         
     }

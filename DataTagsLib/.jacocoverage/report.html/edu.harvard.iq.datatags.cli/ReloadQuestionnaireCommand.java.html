@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ReloadQuestionnaireCommand.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.cli</a> &gt; <span class="el_source">ReloadQuestionnaireCommand.java</span></div><h1>ReloadQuestionnaireCommand.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.cli;
+
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
+import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
+import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
+import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
+import edu.harvard.iq.datatags.runtime.RuntimeEngineStatus;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
+/**
+ * Reloads the questionnaire. Current interview is terminated.
+ * @author michael
+ */
+<span class="nc" id="L20">public class ReloadQuestionnaireCommand implements CliCommand {</span>
+
+    @Override
+    public String command() {
+<span class="nc" id="L24">        return &quot;reload&quot;;</span>
+    }
+
+    @Override
+    public String description() {
+<span class="nc" id="L29">        return &quot;Reloads the questionnaire. Current interview is terminated.&quot;;</span>
+    }
+
+    @Override
+    public void execute(CliRunner rnr, List&lt;String&gt; args)  {
+        
+<span class="nc" id="L35">        Path tsPath = rnr.getTagSpacePath();</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        if ( ! Files.exists(tsPath) ) {</span>
+<span class="nc" id="L37">            rnr.printWarning(&quot;Tag Space file '%s' moved.&quot;, tsPath);</span>
+<span class="nc" id="L38">            return;</span>
+        }
+<span class="nc" id="L40">        Path dgPath = rnr.getDecisionGraphPath();</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        if ( ! Files.exists(dgPath) ) {</span>
+<span class="nc" id="L42">            rnr.printWarning(&quot;Decision graph file '%s' moved.&quot;, dgPath);</span>
+<span class="nc" id="L43">            return;</span>
+        }
+        
+        CompoundSlot ts;
+        try {
+<span class="nc" id="L48">            rnr.println(&quot;reloading:\n* %s\n* %s&quot;, tsPath, dgPath);</span>
+<span class="nc" id="L49">            ts = new TagSpaceParser().parse(tsPath).buildType(&quot;DataTags&quot;).get();</span>
+<span class="nc" id="L50">            DecisionGraph dg = new DecisionGraphParser().parse(dgPath).compile(ts);</span>
+<span class="nc" id="L51">            rnr.println(&quot;&quot;);</span>
+<span class="nc" id="L52">            rnr.setDecisionGraph(dg);</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">            if ( rnr.getEngine().getStatus() == RuntimeEngineStatus.Running ) {</span>
+<span class="nc" id="L54">                rnr.restart();</span>
+<span class="nc" id="L55">                rnr.printCurrentAskNode();</span>
+            } else {
+<span class="nc" id="L57">                rnr.getEngine().setIdle();</span>
+            }
+            
+<span class="nc" id="L60">        } catch (IOException ex) {</span>
+<span class="nc" id="L61">            rnr.printWarning(&quot;Error reading files: &quot; + ex.getMessage());</span>
+<span class="nc" id="L62">        } catch (SyntaxErrorException ex) {</span>
+<span class="nc" id="L63">            rnr.printWarning(&quot;Syntax error in tag space definitions: %s&quot;, ex.getMessage());</span>
+<span class="nc" id="L64">        } catch (SemanticsErrorException ex) {</span>
+<span class="nc" id="L65">            rnr.printWarning(&quot;Semantic error in tag space definitions: %s&quot;, ex.getMessage());</span>
+<span class="nc" id="L66">        } catch (DataTagsParseException ex) {</span>
+<span class="nc" id="L67">            rnr.printWarning(&quot;Error in tag decision graph: %s&quot;, ex.getMessage());</span>
+<span class="nc" id="L68">        }</span>
+        
+<span class="nc" id="L70">    }</span>
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

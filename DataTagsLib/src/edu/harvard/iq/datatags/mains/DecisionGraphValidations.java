@@ -15,7 +15,7 @@ import edu.harvard.iq.datatags.tools.RepeatIdValidator;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidCallNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVizalizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVisualizer;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -54,7 +54,7 @@ public class DecisionGraphValidations {
             DecisionGraphParser dgParser = new DecisionGraphParser();
             DecisionGraphParseResult res = dgParser.parse(source);
             List<? extends AstNode> refs = res.getNodes();
-            GraphvizGraphNodeAstVizalizer viz = new GraphvizGraphNodeAstVizalizer(refs);
+            GraphvizGraphNodeAstVisualizer viz = new GraphvizGraphNodeAstVisualizer(refs);
             Path outfile = chartFile.resolveSibling(chartFile.getFileName().toString() + "-ast.gv");
             System.out.println("Writing: " + outfile);
             viz.vizualize(outfile);
@@ -64,7 +64,7 @@ public class DecisionGraphValidations {
             
             System.out.println("Validating repeating ids");
             RepeatIdValidator riv = new RepeatIdValidator();
-            Set<ValidationMessage> repeatIdMessages = riv.validateRepeatIds(refs);
+            List<ValidationMessage> repeatIdMessages = riv.validate(refs);
             if (repeatIdMessages.size() > 0) {
                 System.out.println(repeatIdMessages);
             }
@@ -76,17 +76,15 @@ public class DecisionGraphValidations {
             System.out.println("====================");
             UnreachableNodeValidator unv = new UnreachableNodeValidator();
             System.out.println("Validating unreachable nodes");
-            List<NodeValidationMessage> unreachableNodeMessages = unv.validateUnreachableNodes(dg);
-            unreachableNodeMessages.stream().map((m) -> {
+            List<ValidationMessage> unreachableNodeMessages = unv.validate(dg);
+            unreachableNodeMessages.forEach( m -> {
                 System.out.println(m);
-                return m;
-            }).forEach((m) -> {
-                System.out.println("\t" + m.getEntities());
+                System.out.println("\t" + ((NodeValidationMessage)m).getEntities());
             });
             
             System.out.println("Validating Call nodes");
             ValidCallNodeValidator fcv = new ValidCallNodeValidator();
-            List<NodeValidationMessage> callNodeMessages = fcv.validateIdReferences(dg);
+            List<NodeValidationMessage> callNodeMessages = fcv.validate(dg);
             if (callNodeMessages.size() > 0) {
                 System.out.println(callNodeMessages);
                 System.exit(-1);

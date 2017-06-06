@@ -1,7 +1,28 @@
 package edu.harvard.iq.datatags.cli;
 
+import edu.harvard.iq.datatags.cli.commands.RestartCommand;
+import edu.harvard.iq.datatags.cli.commands.CurrentTagsCommand;
+import edu.harvard.iq.datatags.cli.commands.ShowNodeCommand;
+import edu.harvard.iq.datatags.cli.commands.ReloadQuestionnaireCommand;
+import edu.harvard.iq.datatags.cli.commands.ShowSlotCommand;
+import edu.harvard.iq.datatags.cli.commands.CliCommand;
+import edu.harvard.iq.datatags.cli.commands.AboutCommand;
+import edu.harvard.iq.datatags.cli.commands.RunValidationsCommand;
+import edu.harvard.iq.datatags.cli.commands.VisualizeDecisionGraphCommand;
+import edu.harvard.iq.datatags.cli.commands.AskAgainCommand;
+import edu.harvard.iq.datatags.cli.commands.OptimizeDecisionGraphCommand;
+import edu.harvard.iq.datatags.cli.commands.StatisticsCommand;
+import edu.harvard.iq.datatags.cli.commands.QuitCommand;
+import edu.harvard.iq.datatags.cli.commands.ToggleDebugMessagesCommand;
+import edu.harvard.iq.datatags.cli.commands.MatchResultToSequenceCommand;
+import edu.harvard.iq.datatags.cli.commands.VisualizeTagSpaceCommand;
+import edu.harvard.iq.datatags.cli.commands.LoadPolicyModelCommand;
+import edu.harvard.iq.datatags.cli.commands.NewModelCommand;
+import edu.harvard.iq.datatags.cli.commands.OpenInDesktopCommand;
+import edu.harvard.iq.datatags.cli.commands.PrintRunTraceCommand;
+import edu.harvard.iq.datatags.cli.commands.PrintStackCommand;
 import edu.harvard.iq.datatags.io.StringMapFormat;
-import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
@@ -11,6 +32,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.RuntimeEngineStatus;
@@ -19,7 +41,6 @@ import edu.harvard.iq.datatags.runtime.listeners.RuntimeEngineTracingListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +59,7 @@ import org.codehaus.jparsec.Scanners;
  */
 public class CliRunner {
 
-    static final String LOGO
+    public static final String LOGO_OLD
             = "   +-------------\n"
             + "  +|             \\\n"
             + " +||             o)\n"
@@ -52,6 +73,14 @@ public class CliRunner {
             + "               |____/ \\__,_|\\__|\\__,_||_|\\__,_|\\__, ||___/\n"
             + "                                   datatags.org|___/\n";
 
+    public static final String LOGO=
+            " ____         _  _               __  __             _        _      \n" +
+            "|  _ \\  ___  | |(_)  ___  _   _ |  \\/  |  ___    __| |  ___ | | ___ \n" +
+            "| |_) |/ _ \\ | || | / __|| | | || |\\/| | / _ \\  / _` | / _ \\| |/ __|\n" +
+            "|  __/| (_) || || || (__ | |_| || |  | || (_) || (_| ||  __/| |\\__ \\\n" +
+            "|_|    \\___/ |_||_| \\___| \\__, ||_|  |_| \\___/  \\__,_| \\___||_||___/\n" +
+            "              datatags.org|___/                                     ";
+    
     RuntimeEngine ngn = new RuntimeEngine();
     
     BufferedReader reader;
@@ -59,10 +88,12 @@ public class CliRunner {
     private final Map<String, CliCommand> commands = new HashMap<>();
     private final Map<String, String> shortcuts = new HashMap<>();
     private boolean printDebugMessages = false;
-    private Path decisionGraphPath, tagSpacePath;
+    private PolicyModel model;
     private RuntimeEngineTracingListener tracer;
     private final Parser<List<String>> cmdScanner = Scanners.many( c -> !Character.isWhitespace(c) ).source().sepBy( Scanners.WHITESPACES );
-
+    private boolean restartFlag = true;
+    
+    
     /**
      * A default command, in case a nonexistent command has been chosen.
      */
@@ -81,6 +112,12 @@ public class CliRunner {
         public void execute(CliRunner rnr, List<String> args) throws Exception {
             rnr.printMsg("Command not found");
         }
+
+        @Override
+        public boolean requiresModel() {
+            return false;
+        }
+        
     };
 
     public CliRunner() {
@@ -89,17 +126,17 @@ public class CliRunner {
                 new QuitCommand(), new ToggleDebugMessagesCommand(), new ShowNodeCommand(),
                 new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
                 new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
-                new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadQuestionnaireCommand(), 
+                new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadPolicyModelCommand(), 
+                new NewModelCommand(), new OpenInDesktopCommand(),
                 new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand(),
-                new OptimizeDecisionGraphCommand(),
-                new ToJsonCommand()
+                new OptimizeDecisionGraphCommand()
         ).forEach(c -> commands.put(c.command(), c));
         
         // shortcuts
         shortcuts.put("q", "quit" );
         shortcuts.put("i", "about" );
-        shortcuts.put("r", "restart" );
         shortcuts.put("rr","reload" );
+        shortcuts.put("r", "restart" );
         shortcuts.put("a", "ask" );
         
         if (System.console() == null) {
@@ -115,16 +152,27 @@ public class CliRunner {
         try {
             tracer = new RuntimeEngineTracingListener(new CliEngineListener());
             ngn.setListener(tracer);
-
+            
             while (true) {
                 try {
-                    if (ngn.getStatus() == RuntimeEngineStatus.Idle && ngn.start()) {
-                        while (ngn.getStatus() == RuntimeEngineStatus.Running
-                                && ngn.consume(promptUserForAnswer())) {
+                    if ( (getModel() != null) && restartFlag && ngn.start()) {
+                        restartFlag = false;
+                        boolean goFlag = true;
+                        while ( goFlag && ngn.getStatus() == RuntimeEngineStatus.Running) {
+                            Answer userAnswer = promptUserForAnswer();
+                            if ( userAnswer != null ) {
+                                goFlag = ngn.consume( userAnswer );
+                            } else {
+                                // this happens when, e.g. interview is restarted.
+                                goFlag = false;
+                            }
                             println("");
                         }
+                        
+                    } else {
+                        promptForCommand();
                     }
-                    promptForCommand();
+                            
                 } catch ( DataTagsRuntimeException dtre ) {
                     printWarning("Engine runtime error: %s", dtre.getMessage());
                     if ( printDebugMessages ) {
@@ -145,11 +193,18 @@ public class CliRunner {
         println("");
     }
 
-    void restart() {
-        ngn.restart();
+    public void restart() {
+        if ( ngn.getStatus() == RuntimeEngineStatus.Running ) {
+            tracer.runTerminated(ngn);
+            ngn.setIdle();
+        }
+        if ( tracer != null ) {
+            tracer.clear();
+        }
+        restartFlag = true;        
     }
 
-    void dumpTagValue(TagValue val) {
+    public void dumpTagValue(TagValue val) {
         dtFormat.format(val).entrySet().forEach((e) -> {
             println("%s = %s", e.getKey(), e.getValue());
         });
@@ -160,7 +215,7 @@ public class CliRunner {
         printCurrentAskNode();
 
         String ansText;
-        while ((ansText = readLine("answer (? for help): ")) != null) {
+        while ( (!restartFlag) && ((ansText = readLine("answer (? for help): ")) != null) ) {
             ansText = ansText.trim();
             if ( ansText.isEmpty() ) continue;
             
@@ -198,6 +253,9 @@ public class CliRunner {
      * state to {@link RuntimeEngineStatus#Idle}
      */
     void promptForCommand() throws IOException {
+        if ( getModel()==null ) {
+            printWarning("No model loaded! Use \\load, or \\new to create one.");
+        }
         String userChoice = readLine("Command (? for help): ");
         if ( userChoice == null ) return;
         userChoice = userChoice.trim();
@@ -209,11 +267,16 @@ public class CliRunner {
         } else {
             if ( userChoice.startsWith("\\")) {
                 userChoice = userChoice.substring(1);
-                userChoice = shortcuts.getOrDefault(userChoice, userChoice);
+                userChoice = shortcuts.getOrDefault(userChoice, userChoice); // expand abbreviations
             }
             try {
                 List<String> args = cmdScanner.parse(userChoice);
-                commands.getOrDefault(args.get(0), COMMAND_NOT_FOUND).execute(this, args);
+                CliCommand selectedCommand = commands.getOrDefault(args.get(0), COMMAND_NOT_FOUND);
+                if ( selectedCommand.requiresModel() && (getModel()==null) ) {
+                    printWarning("Connand %s requires a model. Currently, no model is loaded.", selectedCommand.command());
+                } else {
+                    selectedCommand.execute(this, args);
+                }
                 println("");
 
             } catch (Exception ex) {
@@ -249,7 +312,7 @@ public class CliRunner {
         ask.getAnswers().forEach(ans -> println(" - " + ans.getAnswerText()));
     }
 
-    void print(String format, Object... args) {
+    public void print(String format, Object... args) {
         if (System.console() != null) {
             System.console().printf(format, args);
         } else {
@@ -257,7 +320,7 @@ public class CliRunner {
         }
     }
 
-    void print(String format) {
+    public void print(String format) {
         if (System.console() != null) {
             System.console().printf(format);
         } else {
@@ -265,7 +328,7 @@ public class CliRunner {
         }
     }
 
-    void println() {
+    public void println() {
         if (System.console() != null) {
             System.console().printf("\n");
         } else {
@@ -273,7 +336,7 @@ public class CliRunner {
         }
     }
 
-    void println(String format, Object... args) {
+    public void println(String format, Object... args) {
         if (format.endsWith("\n")) {
             print(format, args);
         } else {
@@ -281,7 +344,7 @@ public class CliRunner {
         }
     }
 
-    void println(String format) {
+    public void println(String format) {
         if (format.endsWith("\n")) {
             print(format);
         } else {
@@ -295,7 +358,7 @@ public class CliRunner {
      * @param format
      * @param args
      */
-    void printMsg(String format, Object... args) {
+    public void printMsg(String format, Object... args) {
         println("# " + format, args);
     }
 
@@ -324,7 +387,7 @@ public class CliRunner {
      * @param format
      * @param args
      */
-    void printTitle(String format, Object... args) {
+    public void printTitle(String format, Object... args) {
         String msg = String.format(format, args);
 
         char[] deco = new char[msg.length()];
@@ -336,7 +399,7 @@ public class CliRunner {
         println(new String(deco));
     }
 
-    void debugPrint(String format, Object... args) {
+    public void debugPrint(String format, Object... args) {
         if ( printDebugMessages ) {
             String msg = String.format(format, args);
 
@@ -376,14 +439,6 @@ public class CliRunner {
         }
     }
 
-    public DecisionGraph getDecisionGraph() {
-        return ngn.getDecisionGraph();
-    }
-
-    public void setDecisionGraph(DecisionGraph aDecisionGraph) {
-        ngn.setDecisionGraph(aDecisionGraph);
-    }
-
     public RuntimeEngine getEngine() {
         return ngn;
     }
@@ -394,22 +449,6 @@ public class CliRunner {
 
     public boolean getPrintDebugMessages() {
         return printDebugMessages;
-    }
-
-    public Path getDecisionGraphPath() {
-        return decisionGraphPath;
-    }
-
-    public void setDecisionGraphPath(Path decisionGraphPath) {
-        this.decisionGraphPath = decisionGraphPath;
-    }
-
-    public Path getTagSpacePath() {
-        return tagSpacePath;
-    }
-
-    public void setTagSpacePath(Path tagSpacePath) {
-        this.tagSpacePath = tagSpacePath;
     }
 
     public List<Node> getTrace() {
@@ -426,11 +465,20 @@ public class CliRunner {
             return "";
         }
     } 
+
+    public void setModel(PolicyModel aModel) {
+        model = aModel;
+        ngn.setModel(model);
+    }
+
+    public PolicyModel getModel() {
+        return model;
+    }
+    
     
     private class CliEngineListener implements RuntimeEngine.Listener {
 
-        public CliEngineListener() {
-        }
+        public CliEngineListener() {}
 
         @Override
         public void runStarted(RuntimeEngine ngn) {
@@ -463,7 +511,6 @@ public class CliRunner {
 
                 @Override
                 public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
-                    printTitle("Section: " + nd.getCalleeNodeId() + "");
                 }
 
                 @Override
@@ -477,6 +524,11 @@ public class CliRunner {
                 
                 @Override
                 public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {}
+                
+                @Override
+                public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
+                printMsg("Started section " + nd.getTitle() );
+                }
             });
         }
 
@@ -498,6 +550,20 @@ public class CliRunner {
         public void runTerminated(RuntimeEngine ngn) {
             if (printDebugMessages) {
                 printMsg("Run Done");
+            }
+        }
+
+        @Override
+        public void sectionStarted(RuntimeEngine ngn, Node node) {
+            if (printDebugMessages) {
+                printMsg("Started section");
+            }
+        }
+
+        @Override
+        public void sectionEnded(RuntimeEngine ngn, Node node) {
+            if (printDebugMessages) {
+                printMsg("Finished section");
             }
         }
     }

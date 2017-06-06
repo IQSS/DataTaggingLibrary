@@ -9,9 +9,12 @@ import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.io.StringMapFormat;
+import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.*;
 import java.util.Arrays;
@@ -32,7 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author michael
  */
-public class RuntimeEngine {
+
+ public class RuntimeEngine {
 
     public interface Listener {
 
@@ -43,6 +47,10 @@ public class RuntimeEngine {
         void runTerminated(RuntimeEngine ngn);
 
         void statusChanged(RuntimeEngine ngn);
+        
+        void sectionStarted(RuntimeEngine ngn, Node node);
+        
+        void sectionEnded(RuntimeEngine ngn, Node node);
     }
 
     /**
@@ -51,10 +59,10 @@ public class RuntimeEngine {
     private static final AtomicInteger COUNTER = new AtomicInteger(0);
 
     private String id = "RuntimeEngine-" + COUNTER.incrementAndGet();
+    private PolicyModel model;
     private DecisionGraph decisionGraph;
-
     private CompoundValue currentTags;
-    private final Deque<CallNode> stack = new LinkedList<>();
+    private final Deque<ThroughNode> stack = new LinkedList<>();
     private Node currentNode;
     private RuntimeEngineStatus status = RuntimeEngineStatus.Idle;
     private Optional<Listener> listener = Optional.empty();
@@ -124,8 +132,19 @@ public class RuntimeEngine {
                 setStatus(RuntimeEngineStatus.Accept);
                 return null;
             } else {
-                return stack.pop().getNextNode();
+                ThroughNode node = stack.pop();
+                if (node instanceof SectionNode){
+                    listener.ifPresent(l -> l.sectionEnded(RuntimeEngine.this, node));
+                }
+                return node.getNextNode();
             }
+        }
+        
+        @Override
+        public Node visit(SectionNode nd) throws DataTagsRuntimeException{
+            listener.ifPresent(l -> l.sectionStarted(RuntimeEngine.this, nd));
+            stack.push(nd);
+            return nd.getStartNode();
         }
     };
 
@@ -141,26 +160,24 @@ public class RuntimeEngine {
      * @return {@code true} iff there is a need to consume answers.
      */
     public boolean start() throws DataTagsRuntimeException {
-
-        if (getCurrentTags() == null) {
-            setCurrentTags(getDecisionGraph().getTopLevelType().createInstance());
-        }
+        setCurrentTags(model.getSpaceRoot().createInstance());
         setStatus(RuntimeEngineStatus.Running);
         listener.ifPresent(l -> l.runStarted(this));
-        return processNode(getDecisionGraph().getStart());
+        
+        return processNode(decisionGraph.getStart());
     }
 
     /**
      * Terminates current run, clears the state and goes back to node 1.
      */
     public void restart() {
+        if ( model == null ) return;
         listener.ifPresent(l -> l.runTerminated(this));
         setStatus(RuntimeEngineStatus.Restarting);
         stack.clear();
-        setCurrentTags(getDecisionGraph().getTopLevelType().createInstance());
-
+        currentNode = null;
+        
         start();
-
     }
 
     /**
@@ -216,7 +233,7 @@ public class RuntimeEngine {
         }
         setStatus(snapshot.getStatus());
         currentTags = new StringMapFormat().parseCompoundValue(
-                decisionGraph.getTopLevelType(),
+                model.getSpaceRoot(),
                 snapshot.getSerializedTagValue());
         currentNode = decisionGraph.getNode(snapshot.getCurrentNodeId());
 
@@ -252,19 +269,11 @@ public class RuntimeEngine {
         this.currentTags = currentTags;
     }
 
-    public DecisionGraph getDecisionGraph() {
-        return decisionGraph;
-    }
-
-    public void setDecisionGraph(DecisionGraph decisionGraph) {
-        this.decisionGraph = decisionGraph;
-    }
-
     /**
      * @return The current stack of nodes. This is enough to know where the
      * engine is, but not what the data tags state is.
      */
-    public Deque<CallNode> getStack() {
+    public Deque<ThroughNode> getStack() {
         return stack;
     }
 
@@ -321,4 +330,16 @@ public class RuntimeEngine {
         this.status = status;
         listener.ifPresent(l -> l.statusChanged(this));
     }
+
+    public PolicyModel getModel() {
+        return model;
+    }
+
+    public void setModel(PolicyModel model) {
+        this.model = model;
+        decisionGraph = model.getDecisionGraph();
+        listener.ifPresent( l->l.runTerminated(this) );
+        setStatus(RuntimeEngineStatus.Idle);
+    }
+    
 }

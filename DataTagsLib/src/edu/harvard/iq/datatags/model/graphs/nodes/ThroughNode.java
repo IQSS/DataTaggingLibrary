@@ -30,6 +30,5 @@ public abstract class ThroughNode extends Node {
     
     public boolean hasNextNode() {
         return getNextNode() != null;
-    }
-	
+    }	
 }

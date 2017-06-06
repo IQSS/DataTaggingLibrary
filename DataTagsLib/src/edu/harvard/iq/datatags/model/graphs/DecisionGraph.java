@@ -6,6 +6,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
@@ -18,9 +19,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A single decision graph that can be traversed (e.g for execution). A compiled decision graph
- * file.
- *
+ * A single decision graph that can be traversed (e.g for execution).
+ * 
  * @author michael
  */
 public class DecisionGraph {
@@ -29,11 +29,8 @@ public class DecisionGraph {
 
     private URI source;
     private Node start;
-    private CompoundSlot topLevelType = null;
     private final Map<String, Node> nodes = new HashMap<>();
     private String id;
-
-    protected String title;
 
     public DecisionGraph() {
         this("DecisionGraph-" + INDEX.incrementAndGet());
@@ -135,6 +132,14 @@ public class DecisionGraph {
             public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
                 nodes.put(nd.getId(), nd);
             }
+            
+            public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{
+                nodes.put(nd.getId(), nd);
+                if ( nd.hasNextNode() ) {
+                    nd.getNextNode().accept(this);
+                }
+                nd.getStartNode().accept(this);
+            }
         });
         return n;
     }
@@ -157,22 +162,6 @@ public class DecisionGraph {
         return nodes.keySet();
     }
 
-    public CompoundSlot getTopLevelType() {
-        return topLevelType;
-    }
-
-    public void setTopLevelType(CompoundSlot topLevelType) {
-        this.topLevelType = topLevelType;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getId() {
         return id;
     }
@@ -185,7 +174,7 @@ public class DecisionGraph {
     public int hashCode() {
         int hash = 5;
         hash = 83 * hash + Objects.hashCode(this.id);
-        hash = 83 * hash + Objects.hashCode(this.title);
+        hash = 83 * hash + Objects.hashCode(start);
         return hash;
     }
 
@@ -204,16 +193,10 @@ public class DecisionGraph {
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
-        if (!Objects.equals(this.title, other.title)) {
-            return false;
-        }
         if (!Objects.equals(this.source, other.source)) {
             return false;
         }
         if (!Objects.equals(this.start, other.start)) {
-            return false;
-        }
-        if (!Objects.equals(this.topLevelType, other.topLevelType)) {
             return false;
         }
         return Objects.equals(this.nodes, other.nodes);

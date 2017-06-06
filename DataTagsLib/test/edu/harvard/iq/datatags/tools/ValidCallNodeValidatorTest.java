@@ -53,7 +53,7 @@ public class ValidCallNodeValidatorTest {
         String code = "[todo: There's no id here to do anything with][end]";
         parseResult = dgParser.parse(code);
         dg = parseResult.compile(new CompoundSlot("", ""));
-        List<NodeValidationMessage> messages = instance.validateIdReferences(dg);
+        List<NodeValidationMessage> messages = instance.validate(dg);
         assertEquals(new LinkedList<>(), messages);
     }
 
@@ -64,7 +64,7 @@ public class ValidCallNodeValidatorTest {
         parseResult = dgParser.parse(code);
         dg = parseResult.compile(new CompoundSlot("", ""));
         
-        List<NodeValidationMessage> messages = instance.validateIdReferences(dg);
+        List<NodeValidationMessage> messages = instance.validate(dg);
         assertEquals(new LinkedList<>(), messages);
     }
     
@@ -76,7 +76,7 @@ public class ValidCallNodeValidatorTest {
         
         parseResult = dgParser.parse(code);
         dg = parseResult.compile(new CompoundSlot("", ""));
-        List<NodeValidationMessage> actual = instance.validateIdReferences(dg);
+        List<NodeValidationMessage> actual = instance.validate(dg);
         assertEquals(ValidationMessage.Level.ERROR, actual.get(0).getLevel());
         assertTrue( actual.get(0).getMessage().contains("invalid-node") );
     }

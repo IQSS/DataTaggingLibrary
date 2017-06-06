@@ -1,0 +1,42 @@
+[ask:
+  {text: Do the dogs first?}
+  {answers:
+      {yes: [call: dogs][call: cats]}
+      {no: [call: cats][call:dogs]}
+  }
+]
+[todo: specify mice]
+[section:
+  {title: Add frogs}
+  [todo: Add frog 1]
+  [todo: Add frog 2]
+]
+[set: Rice=Full]
+[end]
+
+[>dogs< section:
+  {title: Dogs!}
+  [ask:
+    {text: What type of dogs?}
+    {answers:
+      {none: }
+      {animated: [set: Dogs += Pluto]}
+      {cute: [set: Dogs += Rex, Lassie]}
+      {hounds: [set: Dogs += Pluto, Lassie]}
+    }
+  ]
+]
+[end]
+
+[>cats< section:
+  {title: Cats}
+  [ask:
+    {text: What cats?}
+    {answers:
+      {all: [set: Cats += Tom, Shmil, Mitzi]}
+      {some: [set: Cats += Tom, Shmil]}
+      {none: }
+    }
+  ]
+]
+[end]

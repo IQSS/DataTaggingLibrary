@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.LinkedList;
@@ -17,21 +17,22 @@ import java.util.stream.Collectors;
  * @author Naomi
  */
 public class UnusedTagsValidator {
+    
     private final List<ValidationMessage> validationMessages = new LinkedList<>();
 
     /** 
      * Collect all used atomic values, and see which are defined in the tagspace 
      * but are not used.
      * 
-     * @param dg the decision graph to inspect.
+     * @param pm the decision graph to inspect.
      * @return A list of validation messages regarding the flow chart set.
      */
-    public List<ValidationMessage> validateUnusedTags( DecisionGraph dg ) {
+    public List<ValidationMessage> validateUnusedTags( PolicyModel pm ) {
         QuestionnaireTagValues interviewValues = new QuestionnaireTagValues();
-        Set<TagValue> usedValues = interviewValues.gatherInterviewTagValues(dg);
+        Set<TagValue> usedValues = interviewValues.gatherInterviewTagValues(pm.getDecisionGraph());
         
         AllTagValues allValues = new AllTagValues();
-        Set<TagValue> definedValues = allValues.gatherAllTagValues(dg);
+        Set<TagValue> definedValues = allValues.gatherAllTagValues(pm.getSpaceRoot());
         
         definedValues.removeAll(usedValues);
         

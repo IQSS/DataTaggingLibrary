@@ -1,5 +1,7 @@
 package edu.harvard.iq.util;
 
+import edu.harvard.iq.datatags.model.PolicyModel;
+import edu.harvard.iq.datatags.model.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
@@ -37,9 +39,9 @@ public class DecisionGraphHelper {
 		AskNode last = retVal.add( new AskNode( id + "_1" ) );
 		retVal.setStart( last );
 		for ( int count=0; count<length-1; count++ ) {
-			last = last.setNodeFor(Answer.YES, retVal.add(new AskNode(id + "_" + (count+2))));
+			last = last.addAnswer(Answer.YES, retVal.add(new AskNode(id + "_" + (count+2))));
 		}
-		last.setNodeFor(Answer.YES, new EndNode( id + "_END") );
+		last.addAnswer(Answer.YES, new EndNode( id + "_END") );
 		return retVal;
 	}
 	
@@ -81,11 +83,16 @@ public class DecisionGraphHelper {
 	}
     
 	public static void assertExecutionTrace(DecisionGraph dg, Iterable<Answer> answers, Iterable<String> expectedIds, boolean logToStdOut) {
-		if ( dg.getTopLevelType() == null ) {
-            dg.setTopLevelType(new CompoundSlot("placeholder","") );
-        }
         RuntimeEngine ngn = new RuntimeEngine();
-		ngn.setDecisionGraph(dg);
+        PolicyModelData md = new PolicyModelData();
+        md.setTitle("assertExecutionTrace Model");
+        
+        PolicyModel model = new PolicyModel();
+        model.setMetadata(md);
+        model.setSpaceRoot(new CompoundSlot("",""));
+        model.setDecisionGraph(dg);
+        
+		ngn.setModel(model);
 		RuntimeEngineTracingListener l = ngn.setListener(
 											new RuntimeEngineTracingListener( 
 													logToStdOut ? new RuntimeEnginePrintStreamListener()

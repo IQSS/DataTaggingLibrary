@@ -53,8 +53,8 @@ public class RepeatIdValidatorTest {
                       "[call: ferpaCompliance ]\n" +
                       "[call: govRecsCompliance ]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
-        Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
-        assertEquals(Collections.emptySet(), messages);
+        List<ValidationMessage> messages = instance.validate(refs);
+        assertEquals(Collections.emptyList(), messages);
     }
     
     @Test
@@ -63,8 +63,8 @@ public class RepeatIdValidatorTest {
                       "[>medicalRecordsCompliance< call: ppraCompliance]" +
                       "[>MR2< call: ppraCompliance]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
-        Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
-        assertEquals(Collections.emptySet(), messages);
+        List<ValidationMessage> messages = instance.validate(refs);
+        assertEquals(Collections.emptyList(), messages);
     }
     
     @Test
@@ -73,8 +73,8 @@ public class RepeatIdValidatorTest {
                       "[>medicalRecordsCompliance< call: ppraCompliance]" +
                       "[>personalData< call: ppraCompliance]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
-        Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
-        Set<ValidationMessage> expected = Collections.singleton(new ValidationMessage(Level.ERROR, "Duplicate node id: \"personalData\"."));
+        List<ValidationMessage> messages = instance.validate(refs);
+        List<ValidationMessage> expected = Collections.singletonList(new ValidationMessage(Level.ERROR, "Duplicate node id: \"personalData\"."));
         assertEquals(expected, messages);
     }
     
@@ -91,11 +91,10 @@ public class RepeatIdValidatorTest {
                 + "    {text: is this a repeat?}"
                 + "    {answers: {yes: [>todo1< todo: yes.]}}]";
         List<? extends AstNode> refs = dgParser.parse(code).getNodes();
-        Set<ValidationMessage> messages = instance.validateRepeatIds(refs);
-        assertEquals(new HashSet<>( 
-                Arrays.asList(new ValidationMessage(Level.ERROR, "Duplicate node id: \"repeat\"."),
-                               new ValidationMessage(Level.ERROR, "Duplicate node id: \"todo1\"."))),
-                messages);
+        List<ValidationMessage> messages = instance.validate(refs);
+        assertEquals( Arrays.asList(new ValidationMessage(Level.ERROR, "Duplicate node id: \"repeat\"."),
+                               new ValidationMessage(Level.ERROR, "Duplicate node id: \"todo1\".")),
+                      messages);
     }
 
     

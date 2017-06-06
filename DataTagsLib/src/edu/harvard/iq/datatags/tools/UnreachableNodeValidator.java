@@ -13,6 +13,7 @@ import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.HashSet;
@@ -26,9 +27,9 @@ import java.util.Set;
  * node.
  * @author Naomi
  */
-public class UnreachableNodeValidator extends VoidVisitor {
+public class UnreachableNodeValidator extends VoidVisitor implements DecisionGraphValidator {
     
-    private final List<NodeValidationMessage> validationMessages = new LinkedList<>();
+    private final List<ValidationMessage> validationMessages = new LinkedList<>();
     private final Set<String> reachedNodeIds = new HashSet<>();
     private DecisionGraph flowChart = new DecisionGraph();
     
@@ -38,7 +39,8 @@ public class UnreachableNodeValidator extends VoidVisitor {
      * @param dg The graph we validate.
      * @return WARNING messages showing the unreachable nodes.
      */
-    public List<NodeValidationMessage> validateUnreachableNodes( DecisionGraph dg ) {
+    @Override
+    public List<ValidationMessage> validate( DecisionGraph dg ) {
         Set<String> flowChartNodeIds = new HashSet<>();
         flowChartNodeIds.addAll( dg.nodeIds() );
 
@@ -47,11 +49,11 @@ public class UnreachableNodeValidator extends VoidVisitor {
         flowChartNodeIds.removeAll(reachedNodeIds);
 
         if (!flowChartNodeIds.isEmpty()) {
-            for (String nodeId : flowChartNodeIds) {
+            flowChartNodeIds.forEach((nodeId) -> {
                 validationMessages.add(new NodeValidationMessage(Level.WARNING,
-                                                "Node \"" + nodeId + "\" is unreachable.",
-                                                dg.getNode(nodeId)));
-            }
+                        "Node \"" + nodeId + "\" is unreachable.",
+                        dg.getNode(nodeId)));
+            });
         }
         
         return validationMessages;
@@ -152,6 +154,19 @@ public class UnreachableNodeValidator extends VoidVisitor {
     public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
         if (!reachedNodeIds.contains(nd.getId())) {
             reachedNodeIds.add(nd.getId());
+        }
+    }
+    
+    @Override
+    public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
+        if (!reachedNodeIds.contains(nd.getId())) {
+            reachedNodeIds.add(nd.getId());
+        }
+        if (!reachedNodeIds.contains(nd.getStartNode().getId())) {
+            nd.getStartNode().accept(this);
+        }
+        if (!reachedNodeIds.contains(nd.getNextNode().getId())) {
+            nd.getNextNode().accept(this);
         }
     }
     

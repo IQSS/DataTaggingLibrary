@@ -26,6 +26,4 @@ The to-do questionnaire. Note that ``todo`` nodes can be used as ``call`` destin
   Visualization of the todo tag space. The structure is known, but the details aren't.
 
 
-
-
-This completes the types of nodes Tags currently has to offer. The last tutorial will look into a :doc:`why the order of values in a slot matters<value-order>`.
+As models grow, there's a need to arrange the nodes in some logical grouping. Our :doc:`next section<section>` covers the ``[section]`` node, that does just that.

@@ -20,4 +20,12 @@ public class RuntimeEngineSilentListener implements RuntimeEngine.Listener {
 
     @Override
     public void statusChanged(RuntimeEngine ngn) {}
+
+    @Override
+    public void sectionStarted(RuntimeEngine ngn, Node node) {
+    }
+
+    @Override
+    public void sectionEnded(RuntimeEngine ngn, Node node) {
+    }
 }

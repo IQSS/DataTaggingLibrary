@@ -33,6 +33,10 @@ public class RuntimeEngineTracingListener implements  RuntimeEngine.Listener {
 	public List<String> getVisitedNodeIds() {
         return visitedNodes.stream().map( n -> n.getId() ).collect( Collectors.toList() );
 	}
+    
+    public void clear() {
+        visitedNodes.clear();
+    }
 	
 	@Override
 	public void runStarted(RuntimeEngine ngn) {
@@ -54,5 +58,15 @@ public class RuntimeEngineTracingListener implements  RuntimeEngine.Listener {
     @Override
     public void statusChanged(RuntimeEngine ngn) {
         decorated.statusChanged(ngn);
+    }
+
+    @Override
+    public void sectionStarted(RuntimeEngine ngn, Node node) {
+        decorated.sectionStarted(ngn, node);
+    }
+
+    @Override
+    public void sectionEnded(RuntimeEngine ngn, Node node) {
+        decorated.sectionEnded(ngn, node);
     }
 }

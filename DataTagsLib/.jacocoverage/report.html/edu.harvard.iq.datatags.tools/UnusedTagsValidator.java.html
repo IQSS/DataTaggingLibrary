@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>UnusedTagsValidator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.tools</a> &gt; <span class="el_source">UnusedTagsValidator.java</span></div><h1>UnusedTagsValidator.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.tools;
+
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+/**
+ * Checks that all tag values are used in set nodes.
+ * 
+ * Returns a WARNING and the name of the tag type
+ * containing the unused tag value.
+ * 
+ * @author Naomi
+ */
+<span class="nc" id="L19">public class UnusedTagsValidator {</span>
+<span class="nc" id="L20">    private final List&lt;ValidationMessage&gt; validationMessages = new LinkedList&lt;&gt;();</span>
+
+    /** 
+     * Collect all used atomic values, and see which are defined in the tagspace 
+     * but are not used.
+     * 
+     * @param dg the decision graph to inspect.
+     * @return A list of validation messages regarding the flow chart set.
+     */
+    public List&lt;ValidationMessage&gt; validateUnusedTags( DecisionGraph dg ) {
+<span class="nc" id="L30">        QuestionnaireTagValues interviewValues = new QuestionnaireTagValues();</span>
+<span class="nc" id="L31">        Set&lt;TagValue&gt; usedValues = interviewValues.gatherInterviewTagValues(dg);</span>
+        
+<span class="nc" id="L33">        AllTagValues allValues = new AllTagValues();</span>
+<span class="nc" id="L34">        Set&lt;TagValue&gt; definedValues = allValues.gatherAllTagValues(dg);</span>
+        
+<span class="nc" id="L36">        definedValues.removeAll(usedValues);</span>
+        
+<span class="nc" id="L38">        validationMessages.addAll( </span>
+<span class="nc" id="L39">                definedValues.stream().map(</span>
+<span class="nc" id="L40">                        unused -&gt; new ValidationMessage(Level.WARNING, unused.toString())).collect(Collectors.toList()));</span>
+        
+<span class="nc" id="L42">        return validationMessages;</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

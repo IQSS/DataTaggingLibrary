@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GraphvizVisualizer.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;DataTagsLib&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">edu.harvard.iq.datatags.visualizers.graphviz</a> &gt; <span class="el_source">GraphvizVisualizer.java</span></div><h1>GraphvizVisualizer.java</h1><pre class="source lang-java linenums">package edu.harvard.iq.datatags.visualizers.graphviz;
+
+import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+/**
+ * Base class for GraphViz visualizers. Contains mainly utility methods.
+ * @author michael
+ */
+public abstract class GraphvizVisualizer {
+<span class="fc" id="L19">	protected final Pattern whitespace = Pattern.compile(&quot;\\s|-&quot;);</span>
+    
+<span class="fc" id="L21">    private final Map&lt;Character, String&gt; idEncodeMap = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L22">    protected String decisionGraphName = &quot;DecisionGraph&quot;;</span>
+    
+<span class="fc" id="L24">    public GraphvizVisualizer(){</span>
+<span class="fc" id="L25">        String idChars = &quot;.,/~?!()@#$%^&amp;*_+-[] &quot;;</span>
+        
+<span class="fc" id="L27">        idChars.chars().forEach( intChar -&gt; {</span>
+<span class="fc" id="L28">            Character src = (char)intChar;</span>
+<span class="fc" id="L29">            String dest = &quot;_&quot; + String.format(&quot;%02d&quot;, idChars.indexOf(intChar));</span>
+<span class="fc" id="L30">            idEncodeMap.put(src, dest);</span>
+<span class="fc" id="L31">        });</span>
+        
+<span class="fc" id="L33">    }</span>
+    
+	/**
+	 * Convenience method to write to a file.
+	 * @param outputFile
+	 * @throws IOException
+	 */
+	public void vizualize(Path outputFile) throws IOException {
+<span class="nc" id="L41">		try (final BufferedWriter out = Files.newBufferedWriter(outputFile, StandardCharsets.UTF_8)) {</span>
+<span class="nc" id="L42">			visualize(out);</span>
+<span class="nc bnc" id="L43" title="All 8 branches missed.">		}</span>
+<span class="nc" id="L44">	}</span>
+
+	/**
+	 * Writes the representation to the output stream
+	 * @param out
+	 * @throws IOException
+	 */
+	public void visualize(Writer out) throws IOException {
+<span class="nc bnc" id="L52" title="All 2 branches missed.">		BufferedWriter bOut = (out instanceof BufferedWriter) ? (BufferedWriter) out : new BufferedWriter(out);</span>
+<span class="nc" id="L53">		printHeader(bOut);</span>
+<span class="nc" id="L54">		printBody(bOut);</span>
+<span class="nc" id="L55">		printFooter(bOut);</span>
+<span class="nc" id="L56">		bOut.flush();</span>
+<span class="nc" id="L57">	}</span>
+	
+	protected abstract void printBody( BufferedWriter out ) throws IOException;
+	
+	void printHeader(BufferedWriter out) throws IOException {
+<span class="nc" id="L62">		out.write(&quot;digraph &quot; + getDecisionGraphName() + &quot; {&quot;);</span>
+<span class="nc" id="L63">		out.newLine();</span>
+<span class="nc" id="L64">		out.write(&quot;edge [fontname=\&quot;Helvetica\&quot; fontsize=\&quot;10\&quot;]&quot;);</span>
+<span class="nc" id="L65">		out.newLine();</span>
+<span class="nc" id="L66">		out.write(&quot;node [fillcolor=\&quot;lightgray\&quot; style=\&quot;filled\&quot; fontname=\&quot;Helvetica\&quot; fontsize=\&quot;10\&quot;]&quot;);</span>
+<span class="nc" id="L67">		out.newLine();</span>
+<span class="nc" id="L68">		out.write(&quot;rankdir=LR&quot;);</span>
+<span class="nc" id="L69">		out.newLine();</span>
+<span class="nc" id="L70">	}</span>
+
+	void printFooter(BufferedWriter out) throws IOException {
+<span class="nc" id="L73">		out.write(&quot;}&quot;);</span>
+<span class="nc" id="L74">		out.newLine();</span>
+<span class="nc" id="L75">	}</span>
+
+	protected String humanTitle(DecisionGraph ent) {
+<span class="nc bnc" id="L78" title="All 2 branches missed.">		return (ent.getTitle() != null) ? ent.getTitle() : ent.getId();</span>
+	}
+
+	String sanitizeTitle(String s) {
+<span class="nc" id="L82">		return s.replaceAll(&quot;\&quot;&quot;, &quot;\\\&quot;&quot;);</span>
+	}
+	
+    /**
+     * Makes sure the id contains only identifier characters, and is still unique.
+     * Needed since .dg allows some characters in node ids, that graphviz does not.
+     * @param s the .dg language id.
+     * @return a graphviz-acceptable id.
+     */
+	String sanitizeId(String s) {
+<span class="fc" id="L92">		StringBuilder sb = new StringBuilder();</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        for ( int i=0; i&lt;s.length(); i++ ) {</span>
+<span class="fc" id="L94">            sb.append( idEncodeMap.getOrDefault( s.charAt(i), s.substring(i,i+1)) );</span>
+        }
+<span class="fc" id="L96">        return sb.toString();</span>
+	}
+
+    public String wrap( String source ) {
+<span class="nc" id="L100">        return wrapAt( source, 40 );</span>
+    }
+    
+    public String wrapAt( String source, int width ) {
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if ( source==null ) return &quot;&quot;;</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        if ( source.length() &lt;= width ) return source;</span>
+        
+<span class="fc" id="L107">        StringBuilder out = new StringBuilder();</span>
+<span class="fc" id="L108">        char[] input = source.toCharArray();</span>
+        
+<span class="fc" id="L110">        int lastIdx = 0;</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        for ( int i=0; i&lt;input.length; i++ ) {</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">            if ( input[i] == '\n' ) {</span>
+<span class="fc" id="L113">                out.append(input, lastIdx, i-lastIdx);</span>
+<span class="fc" id="L114">                lastIdx = i;</span>
+            } else {
+<span class="fc bfc" id="L116" title="All 2 branches covered.">                if ( i - lastIdx == width ) {</span>
+<span class="fc" id="L117">                    int cutPoint = i;</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">                    while ( cutPoint &gt; lastIdx ) {</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">                        if ( input[cutPoint]==' ' ) break;</span>
+<span class="fc" id="L120">                        cutPoint--;</span>
+                    }
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">                    if ( cutPoint == lastIdx ) {</span>
+<span class="nc" id="L123">                        out.append( input, lastIdx, i-lastIdx );</span>
+<span class="nc" id="L124">                        out.append(&quot;\n&quot;);</span>
+<span class="nc" id="L125">                        lastIdx = i;</span>
+                    } else {
+<span class="fc" id="L127">                        out.append( input, lastIdx, cutPoint-lastIdx );</span>
+<span class="fc" id="L128">                        out.append(&quot;\n&quot;);</span>
+<span class="fc" id="L129">                        i = cutPoint+1;</span>
+<span class="fc" id="L130">                        lastIdx = cutPoint+1;</span>
+                    }
+                }
+            }
+        }
+<span class="fc" id="L135">        out.append( input, lastIdx, input.length-lastIdx);</span>
+
+<span class="fc" id="L137">        return out.toString();</span>
+    }
+
+    public void setDecisionGraphName(String aName) {
+<span class="nc" id="L141">        this.decisionGraphName = aName;</span>
+<span class="nc" id="L142">    }</span>
+    
+    public String getDecisionGraphName() {
+<span class="nc" id="L145">        return decisionGraphName;</span>
+    }
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

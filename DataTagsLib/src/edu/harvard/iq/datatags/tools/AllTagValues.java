@@ -1,6 +1,5 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.AggregateSlot;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.types.AtomicSlot;
@@ -19,8 +18,8 @@ import java.util.Set;
 public class AllTagValues extends VoidVisitor {
     private final Set<TagValue> definedTagValues = new HashSet<>();
     
-    public Set<TagValue> gatherAllTagValues( DecisionGraph dg ) {
-        dg.getTopLevelType().accept(this);
+    public Set<TagValue> gatherAllTagValues( CompoundSlot cs ) {
+        cs.accept(this);
         return definedTagValues;
     }
 

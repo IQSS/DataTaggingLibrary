@@ -9,10 +9,12 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode.NullVisitor;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +27,15 @@ import java.util.TreeMap;
  *
  * @author Naomi
  */
-public class RepeatIdValidator extends NullVisitor {
+public class RepeatIdValidator extends NullVisitor implements DecisionGraphAstValidator {
 
     private final Set<String> seenIds = new HashSet<>();
     private final Map<String, ValidationMessage> validationMessages = new TreeMap<>();
 
-    public Set<ValidationMessage> validateRepeatIds(List<? extends AstNode> refs) {
+    @Override
+    public List<ValidationMessage> validate(List<? extends AstNode> refs) {
         refs.stream().forEach(ref -> ref.accept(this));
-        return new HashSet<>(validationMessages.values());
+        return new ArrayList(validationMessages.values());
     }
 
     @Override
@@ -101,6 +104,15 @@ public class RepeatIdValidator extends NullVisitor {
 
     @Override
     public void visitImpl(AstEndNode nd) throws DataTagsRuntimeException {
+        if (seenIds.contains(nd.getId()) && nd.getId() != null) {
+            validationMessages.put(nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
+        } else {
+            seenIds.add(nd.getId());
+        }
+    }
+    
+    @Override
+    public void visitImpl(AstSectionNode nd) throws DataTagsRuntimeException {
         if (seenIds.contains(nd.getId()) && nd.getId() != null) {
             validationMessages.put(nd.getId(), new ValidationMessage(Level.ERROR, "Duplicate node id: \"" + nd.getId() + "\"."));
         } else {

@@ -6,6 +6,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -14,7 +15,7 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
  * Prints nodes to the console, with all the details.
  * @author michael
  */
-class VerboseNodePrinter extends Node.VoidVisitor {
+public class VerboseNodePrinter extends Node.VoidVisitor {
     
     private final CliRunner rnr;
 
@@ -83,6 +84,14 @@ class VerboseNodePrinter extends Node.VoidVisitor {
     @Override
     public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
         rnr.printTitle("Node >%s<: [end]", nd.getId());
+        rnr.println();
+    }
+    
+    @Override
+    public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
+        rnr.printTitle("Node >%s<: [Section]", nd.getId());
+        rnr.print(nd.getTitle());
+        rnr.print("Starting at node: %s", nd.getStartNode().getId());
         rnr.println();
     }
     
