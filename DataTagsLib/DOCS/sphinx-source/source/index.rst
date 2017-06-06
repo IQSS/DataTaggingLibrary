@@ -10,6 +10,8 @@ PolicyModels
 
 The policyModels project aims to allow modeling policies, such as used for data handling or welfare benefits. More generally, it uses the concept os decision graphs and policy spaces to allow interactive policy-related decision, as well as policy-related tools, such as visualizations and model queries.
 
+.. tip:: Want to take this language for a spin? :doc:`Here's how<take-for-spin>`.
+
 PolicyModels started as part of the `DataTags`_ project, which aims to allow researchers to create proper dataset handling and sharing policies. To avoid confusion, the term *DataTags* now refers to the concept of creating a set of levels that detail the harm inherent to, and proper handling of, a dataset. The term *PolicyModels* refers to the modeling language and toolset covered in this guide. Describing the possible handling policies under a DataTags scheme can be done using a PolicyModels' policy space; modeling a decision process that guides the user to the appropriate tag for a give dataset can be done using a PolicyModels decision graph.
 
 *While we transition to the new naming scheme, the terms "DataTags" and "PolicyModels" are used interchangeably in this document. We're working on this.*
@@ -35,15 +37,15 @@ and an imperative approach based on *decision graphs* to decide on a policy.
    Bar-Sinai M, Sweeney L, Crosas M. DataTags, Data Handling Policy Spaces and the Tags Language.
    *Proceedings of the 2016 IEEE Security and Privacy Workshops (SPW)*, May 2016, San-Jose, CA. https://doi.org/10.1109/SPW.2016.11
 
+   When using DataTags/PolicyModels in scholarly work, please consider citing the appropriate paper from above.
+
 
 A decision graph is a graph (in the mathematical sense) with nodes of various types. When the
 user goes through the interview, a *Decision Graph Engine* traverses the graph. When the engine
 reaches a node, it performs an instruction associated with it, such
 as ``ask`` (ask the user a question) or ``set``.
 
-.. tip:: Want to take this language for a spin? :doc:`Here's how<take-for-spin>`.
-
-Tag spaces are also described by a domain specific language.
+Policy spaces are also described by a domain specific language.
 
 This site documents those two languages, and some language-related tools.
 

@@ -34,7 +34,6 @@ import static java.util.stream.Collectors.toList;
 public class NewModelCommand extends AbstractCliCommand {
     
     private PolicyModelData data;
-    private String folderName;
     
     private final Pattern fieldDetector = Pattern.compile("\\$\\{[_A-Z]*\\}");
     
