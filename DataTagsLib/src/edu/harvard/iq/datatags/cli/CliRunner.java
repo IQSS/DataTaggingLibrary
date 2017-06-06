@@ -59,7 +59,7 @@ import org.codehaus.jparsec.Scanners;
  */
 public class CliRunner {
 
-    public static final String LOGO
+    public static final String LOGO_OLD
             = "   +-------------\n"
             + "  +|             \\\n"
             + " +||             o)\n"
@@ -73,6 +73,14 @@ public class CliRunner {
             + "               |____/ \\__,_|\\__|\\__,_||_|\\__,_|\\__, ||___/\n"
             + "                                   datatags.org|___/\n";
 
+    public static final String LOGO=
+            " ____         _  _               __  __             _        _      \n" +
+            "|  _ \\  ___  | |(_)  ___  _   _ |  \\/  |  ___    __| |  ___ | | ___ \n" +
+            "| |_) |/ _ \\ | || | / __|| | | || |\\/| | / _ \\  / _` | / _ \\| |/ __|\n" +
+            "|  __/| (_) || || || (__ | |_| || |  | || (_) || (_| ||  __/| |\\__ \\\n" +
+            "|_|    \\___/ |_||_| \\___| \\__, ||_|  |_| \\___/  \\__,_| \\___||_||___/\n" +
+            "              datatags.org|___/                                     ";
+    
     RuntimeEngine ngn = new RuntimeEngine();
     
     BufferedReader reader;
@@ -104,6 +112,12 @@ public class CliRunner {
         public void execute(CliRunner rnr, List<String> args) throws Exception {
             rnr.printMsg("Command not found");
         }
+
+        @Override
+        public boolean requiresModel() {
+            return false;
+        }
+        
     };
 
     public CliRunner() {
@@ -138,11 +152,10 @@ public class CliRunner {
         try {
             tracer = new RuntimeEngineTracingListener(new CliEngineListener());
             ngn.setListener(tracer);
-            ngn.setModel(model);
             
             while (true) {
                 try {
-                    if (restartFlag && ngn.start()) {
+                    if ( (getModel() != null) && restartFlag && ngn.start()) {
                         restartFlag = false;
                         boolean goFlag = true;
                         while ( goFlag && ngn.getStatus() == RuntimeEngineStatus.Running) {
@@ -240,6 +253,9 @@ public class CliRunner {
      * state to {@link RuntimeEngineStatus#Idle}
      */
     void promptForCommand() throws IOException {
+        if ( getModel()==null ) {
+            printWarning("No model loaded! Use \\load, or \\new to create one.");
+        }
         String userChoice = readLine("Command (? for help): ");
         if ( userChoice == null ) return;
         userChoice = userChoice.trim();
@@ -251,11 +267,16 @@ public class CliRunner {
         } else {
             if ( userChoice.startsWith("\\")) {
                 userChoice = userChoice.substring(1);
-                userChoice = shortcuts.getOrDefault(userChoice, userChoice);
+                userChoice = shortcuts.getOrDefault(userChoice, userChoice); // expand abbreviations
             }
             try {
                 List<String> args = cmdScanner.parse(userChoice);
-                commands.getOrDefault(args.get(0), COMMAND_NOT_FOUND).execute(this, args);
+                CliCommand selectedCommand = commands.getOrDefault(args.get(0), COMMAND_NOT_FOUND);
+                if ( selectedCommand.requiresModel() && (getModel()==null) ) {
+                    printWarning("Connand %s requires a model. Currently, no model is loaded.", selectedCommand.command());
+                } else {
+                    selectedCommand.execute(this, args);
+                }
                 println("");
 
             } catch (Exception ex) {

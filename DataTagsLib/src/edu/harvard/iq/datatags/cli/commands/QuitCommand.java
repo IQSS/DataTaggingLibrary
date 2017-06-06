@@ -24,4 +24,9 @@ public class QuitCommand implements CliCommand {
         System.exit(0);
     }
     
+    @Override
+    public boolean requiresModel() {
+        return false;
+    }
+    
 }

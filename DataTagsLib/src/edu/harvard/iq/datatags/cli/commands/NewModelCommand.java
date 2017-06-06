@@ -43,7 +43,12 @@ public class NewModelCommand extends AbstractCliCommand {
                 "Create a new policy model. Usage: new [-q] [path-to-model-folder]\n"
               + "-q: quick creation, no questions asked. Model created in current folder.");
     }
-
+    
+    @Override
+    public boolean requiresModel() {
+        return false;
+    }
+    
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception {
         

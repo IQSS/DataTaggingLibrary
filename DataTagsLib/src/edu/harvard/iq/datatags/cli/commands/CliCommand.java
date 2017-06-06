@@ -20,6 +20,11 @@ public interface CliCommand {
     String description();
     
     /**
+     * @return {@code true} iff the command requires the CliRunner to have a model loaded.
+     */
+    default boolean requiresModel() { return true; }
+    
+    /**
      * Actually do stuff.
      * @param rnr the runner on which we operate.
      * @param args Method arguments supplied by the user. Similar to C/Java, argument 0

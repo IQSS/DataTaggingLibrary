@@ -6,7 +6,6 @@ import edu.harvard.iq.datatags.io.PolicyModelLoadingException;
 import edu.harvard.iq.datatags.parser.PolicyModelLoadResult;
 import edu.harvard.iq.datatags.parser.PolicyModelLoader;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -28,6 +27,11 @@ public class LoadPolicyModelCommand implements CliCommand {
         return "Loads a policy model.";
     }
 
+    @Override
+    public boolean requiresModel() {
+        return false;
+    }
+    
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception {
         Path pmPath;
