@@ -2,7 +2,7 @@ package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
@@ -24,7 +24,7 @@ public class ValidCallNodeValidatorTest {
     ValidCallNodeValidator instance;
     DecisionGraphParser dgParser;
     DecisionGraph dg;
-    DecisionGraphParseResult parseResult;
+    DecisionGraphCompiler parseResult;
     
     public ValidCallNodeValidatorTest() {
     }

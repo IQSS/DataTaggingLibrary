@@ -9,15 +9,16 @@ import java.util.Objects;
  */
 public class CallNode extends ThroughNode {
 	
-	private String calleeNodeId;
+	private Node calleeNode;
+    
 	
 	public CallNode(String id) {
 		super(id);
 	}
 
-	public CallNode(String id, String calleeNodeId ) {
+	public CallNode(String id, Node calleeNode ) {
 		super(id);
-		this.calleeNodeId = calleeNodeId;
+		this.calleeNode = calleeNode;
 	}
 	
 	@Override
@@ -25,18 +26,18 @@ public class CallNode extends ThroughNode {
 		return vr.visit(this);
 	}
 	
-	public String getCalleeNodeId() {
-		return calleeNodeId;
+	public Node getCalleeNode() {
+		return calleeNode;
 	}
 
-    public void setCalleeNodeId(String calleeNodeId) {
-        this.calleeNodeId = calleeNodeId;
+    public void setCalleeNode(Node calleeNode) {
+        this.calleeNode = calleeNode;
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.calleeNodeId);
+        hash = 97 * hash + Objects.hashCode(this.calleeNode);
         return hash;
     }
 
@@ -52,7 +53,7 @@ public class CallNode extends ThroughNode {
             return false;
         }
         final CallNode other = (CallNode) obj;
-        if (!Objects.equals(this.calleeNodeId, other.calleeNodeId)) {
+        if (!Objects.equals(this.calleeNode, other.calleeNode)) {
             return false;
         }
         return Objects.equals(getId(), other.getId());
@@ -60,7 +61,7 @@ public class CallNode extends ThroughNode {
 
     @Override
     protected String toStringExtras() {
-        return "callee:" + getCalleeNodeId();
+        return "callee:" + getCalleeNode();
     }
 	
     

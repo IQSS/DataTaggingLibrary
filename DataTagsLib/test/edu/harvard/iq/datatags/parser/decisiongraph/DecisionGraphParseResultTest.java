@@ -14,6 +14,7 @@ import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
+import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParseResult;
@@ -77,7 +78,7 @@ public class DecisionGraphParseResultTest {
         TagSpaceParseResult parse = new TagSpaceParser().parse(typeDef);
         CompoundSlot topType = parse.buildType("top").get();
 
-        DecisionGraphParseResult res = new DecisionGraphParseResult(Collections.emptyList());
+        DecisionGraphCompiler res = new DecisionGraphCompiler(Collections.emptyList());
 
         res.buildTypeIndex(topType);
 
@@ -103,12 +104,14 @@ public class DecisionGraphParseResultTest {
     public void todoCallEndTest() throws Exception {
 
         ToDoNode start = new ToDoNode(nodeIdProvider.nextId(), "this and that");
-        start.setNextNode(new CallNode(nodeIdProvider.nextId(), "ghostbusters")).setNextNode(new EndNode(nodeIdProvider.nextId()));
+        start.setNextNode(new CallNode(nodeIdProvider.nextId(), new ToDoNode("ghostbusters", "bla")))
+                .setNextNode(new ToDoNode("ghostbusters", "bla"))
+                .setNextNode(new EndNode(nodeIdProvider.nextId()));
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
         expected.setStart(start);
 
-        String code = "[todo: this and that][call: ghostbusters][end]";
+        String code = "[todo: this and that][call: ghostbusters][>ghostbusters< todo: bla][end]";
         DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
 
         normalize(actual);
@@ -126,12 +129,14 @@ public class DecisionGraphParseResultTest {
     public void todoCallRejectTest() throws Exception {
 
         ToDoNode start = new ToDoNode(nodeIdProvider.nextId(), "this and that");
-        start.setNextNode(new CallNode(nodeIdProvider.nextId(), "ghostbusters")).setNextNode(new RejectNode(nodeIdProvider.nextId(), "obvious."));
+        start.setNextNode(new CallNode(nodeIdProvider.nextId(), new ToDoNode("ghostbusters", "bla"))).
+                setNextNode(new ToDoNode("ghostbusters", "bla")).
+                setNextNode(new RejectNode(nodeIdProvider.nextId(), "obvious."));
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
         expected.setStart(start);
 
-        String code = "[todo: this and that][call: ghostbusters][reject: obvious.]";
+        String code = "[todo: this and that][call: ghostbusters][>ghostbusters< todo: bla][reject: obvious.]";
         DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
 
         normalize(actual);
@@ -148,8 +153,8 @@ public class DecisionGraphParseResultTest {
     @Test
     public void considerTest() throws Exception {
         EndNode finalEndNode = new EndNode("2");
-        final CallNode whyNotCallNode = new CallNode("wnc", "duh");
-        final CallNode whyNotCallNode2 = new CallNode("wnc2", "duh2");
+        final CallNode whyNotCallNode = new CallNode("wnc", new ToDoNode("duh", "bla"));
+        final CallNode whyNotCallNode2 = new CallNode("wnc2", new ToDoNode("duh2", "bla"));
         whyNotCallNode.setNextNode(finalEndNode);
         AtomicSlot t2Items = new AtomicSlot("Subject", "");
         AggregateSlot t2 = new AggregateSlot("Subject", "", t2Items);
@@ -166,6 +171,8 @@ public class DecisionGraphParseResultTest {
         DecisionGraph expected = new DecisionGraph();
         expected.add(whyNotCallNode);
         expected.add(start);
+        expected.add(new ToDoNode("duh", "bla"));
+        expected.add(new ToDoNode("duh2", "bla"));
 
         expected.setStart(start);
 
@@ -177,6 +184,8 @@ public class DecisionGraphParseResultTest {
                 + "    }\n"
                 + "   { else: [>wnc< call: duh]}\n"
                 + "]\n"
+                + "[>duh< todo: bla]"
+                + "[>duh2< todo: bla]"
                 + "[>2< end]";
 
         DecisionGraph actual = dgp.parse(code).compile(ct);
@@ -195,9 +204,10 @@ public class DecisionGraphParseResultTest {
     public void askTest() throws Exception {
 
         AskNode start = new AskNode(nodeIdProvider.nextId());
+        ToDoNode callTodo = new ToDoNode("duh", "bla");
         start.setText("why?");
         start.addAnswer(Answer.get("dunno"), new EndNode("de"));
-        final CallNode whyNotCallNode = new CallNode("wnc", "duh");
+        final CallNode whyNotCallNode = new CallNode("wnc", callTodo);
         start.addAnswer(Answer.get("why not"), whyNotCallNode);
 
         EndNode finalEndNode = new EndNode(nodeIdProvider.nextId());
@@ -206,8 +216,9 @@ public class DecisionGraphParseResultTest {
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
         expected.setStart(start);
+        expected.add(callTodo);
 
-        String code = "[ask: {text: why?} {answers: {dunno:[>de< end]} {why not:[>wnc< call: duh]}}][end]";
+        String code = "[ask: {text: why?} {answers: {dunno:[>de< end]} {why not:[>wnc< call: duh]}}][>duh< todo: bla][end]";
         DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
 
         normalize(actual);
@@ -251,23 +262,25 @@ public class DecisionGraphParseResultTest {
     public void sectionTest() throws Exception {
 
         SectionNode start = new SectionNode(nodeIdProvider.nextId());
+        ToDoNode callTodo = new ToDoNode("callid", "bla");
         start.setTitle("Section - start");
         ToDoNode sectionStartNode = new ToDoNode("blaID", "bla bla");
-        CallNode call = new CallNode("CallID", "callid");
+        CallNode call = new CallNode("CallID",callTodo);
         sectionStartNode.setNextNode(call);
         start.setStartNode(sectionStartNode);
+//        start.setNextNode(callTodo);
 
         EndNode finalEndNode = new EndNode("[SYN-END]");
         call.setNextNode(finalEndNode);
-        start.setNextNode(finalEndNode);
+        start.setNextNode(callTodo).setNextNode(finalEndNode);
 
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
         expected.setStart(start);
 
-        String code = "[section: {title: Section - start} [>blaID< todo: bla bla] [>CallID< call: callid]]";
+        String code = "[section: {title: Section - start} [>blaID< todo: bla bla] [>CallID< call: callid]][>callid< todo: bla]";
 
-        final DecisionGraphParseResult parseResult = dgp.parse(code);
+        final DecisionGraphCompiler parseResult = dgp.parse(code);
         DecisionGraph actual = parseResult.compile(emptyTagSpace);
 
         normalize(actual);

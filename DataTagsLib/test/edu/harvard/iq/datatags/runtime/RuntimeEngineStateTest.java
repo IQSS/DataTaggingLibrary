@@ -11,6 +11,7 @@ import static edu.harvard.iq.datatags.model.graphs.Answer.NO;
 import static edu.harvard.iq.datatags.model.graphs.Answer.YES;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.runtime.listeners.RuntimeEngineSilentListener;
@@ -37,7 +38,7 @@ public class RuntimeEngineStateTest {
         AskNode n2 = (AskNode) dg.getNode(chartId + "_2");
         ConsiderNode consider = n2.addAnswer(NO, dg.add(new ConsiderNode("1", null)));
         CallNode caller = consider.setNodeFor(ConsiderAnswer.get(tags), dg.add(new CallNode("Caller")));
-        caller.setCalleeNodeId(chartId + "_1");
+        caller.setCalleeNode(new ToDoNode(chartId + "_1", ""));
         caller.setNextNode(new EndNode("CallerEnd"));
 
         List<Answer> answers = C.list(YES, NO,

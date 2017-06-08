@@ -11,6 +11,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
@@ -466,6 +467,10 @@ public class CliRunner {
                 public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
                 printMsg("Started section " + nd.getTitle() );
                 }
+                
+                @Override 
+                public void visitImpl(ImportNode nd) throws DataTagsRuntimeException{}
+                
             });
         }
 

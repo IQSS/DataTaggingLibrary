@@ -4,8 +4,7 @@ import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
@@ -104,36 +103,23 @@ public class PolicyModelLoader {
         if ( spaceRoot == null ) return res;
         
         // load decision graph
-        DecisionGraph dg;
-        
-        try { 
-            DecisionGraphParseResult decisionGraphParseRes = new DecisionGraphParser().parse(data.getDecisionGraphPath());
-            
-            dgAstValidators.stream().flatMap( v -> v.validate(decisionGraphParseRes.getNodes()).stream())
-                                    .forEach(res::addMessage);
-            
-            dg = decisionGraphParseRes.compile(spaceRoot);
-            switch ( data.getAnswerTransformationMode() ) {
-                case Verbatim: break;
-                case YesFirst:
-                    dg = new YesNoAnswersSorter(true).process(dg);
-                    break;
-                case YesLast:
-                    dg = new YesNoAnswersSorter(false).process(dg);
-                    break;
-            }
-            final DecisionGraph fdg = dg; // let the lambdas below compile 
-            dgValidators.stream().flatMap( v->v.validate(fdg).stream() ).forEach(res::addMessage);
-            
-            for ( DecisionGraphProcessor dgp : postProcessors ) {
-                dg = dgp.process(dg);
-            }
-            
-            model.setDecisionGraph(dg);
-            
-        } catch (IOException ex) {
-            Logger.getLogger(PolicyModelLoader.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        DecisionGraphCompiler decisionGraphCompiler = new DecisionGraphCompiler();
+        DecisionGraph dg = decisionGraphCompiler.compile(spaceRoot, data, dgAstValidators);
+        switch ( data.getAnswerTransformationMode() ) {
+            case Verbatim: break;
+            case YesFirst:
+                dg = new YesNoAnswersSorter(true).process(dg);
+                break;
+            case YesLast:
+                dg = new YesNoAnswersSorter(false).process(dg);
+                break;
         }
+        final DecisionGraph fdg = dg; // let the lambdas below compile
+        dgValidators.stream().flatMap( v->v.validate(fdg).stream() ).forEach(res::addMessage);
+        for ( DecisionGraphProcessor dgp : postProcessors ) {
+            dg = dgp.process(dg);
+        }
+        model.setDecisionGraph(dg);
             
         return res;
     }

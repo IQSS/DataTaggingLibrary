@@ -4,6 +4,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
@@ -70,7 +71,7 @@ class VerboseNodePrinter extends Node.VoidVisitor {
     @Override
     public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
         rnr.printTitle("Node >%s<: [call]", nd.getId());
-        rnr.print("Calls node >%s<.", nd.getCalleeNodeId());
+        rnr.print("Calls node >%s<.", nd.getCalleeNode());
         rnr.println();
     }
 
@@ -95,4 +96,8 @@ class VerboseNodePrinter extends Node.VoidVisitor {
         rnr.println();
     }
     
+    @Override
+    public void visitImpl(ImportNode nd) throws DataTagsRuntimeException {
+        rnr.printTitle("#import %s as %s", nd.getPath(), nd.getName());
+    }
 }

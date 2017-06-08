@@ -8,6 +8,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
@@ -110,7 +111,7 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
         public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
             currentTrace.addLast(nd);
             nodeStack.push(nd);
-            subject.getDecisionGraph().getNode(nd.getCalleeNodeId()).accept(this);
+            nd.getCalleeNode().accept(this);
             nodeStack.pop();
             currentTrace.removeLast();
         }
@@ -146,7 +147,10 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
         
         @Override
         public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{
-            
+        }
+        
+        @Override
+        public void visitImpl(ImportNode nd) throws DataTagsRuntimeException{
         }
         
     }

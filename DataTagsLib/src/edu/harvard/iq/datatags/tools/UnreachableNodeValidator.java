@@ -12,6 +12,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -124,8 +125,8 @@ public class UnreachableNodeValidator extends VoidVisitor implements DecisionGra
         if (!reachedNodeIds.contains(nd.getId())) {
             reachedNodeIds.add(nd.getId());
         }
-        if (!reachedNodeIds.contains(nd.getCalleeNodeId()) && flowChart.getNode(nd.getCalleeNodeId()) != null) {
-            flowChart.getNode(nd.getCalleeNodeId()).accept(this);
+        if (!reachedNodeIds.contains(nd.getCalleeNode()) && nd.getCalleeNode() != null) {
+            nd.getCalleeNode().accept(this);
         }
         if (!reachedNodeIds.contains(nd.getNextNode().getId())) {
             nd.getNextNode().accept(this);
@@ -159,7 +160,17 @@ public class UnreachableNodeValidator extends VoidVisitor implements DecisionGra
     
     @Override
     public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-        
+        if (!reachedNodeIds.contains(nd.getId())) {
+            reachedNodeIds.add(nd.getId());
+        }
+        if (!reachedNodeIds.contains(nd.getStartNode().getId())){
+            nd.getStartNode().accept(this);
+        }
+        if (!reachedNodeIds.contains(nd.getNextNode().getId())) {
+            nd.getNextNode().accept(this);
+        }
     }
+    
+    public void visitImpl(ImportNode nd) throws DataTagsRuntimeException{}
     
 }

@@ -4,6 +4,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
@@ -45,7 +46,7 @@ class BriefNodePrinter extends Node.VoidVisitor {
 
     @Override
     public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
-        rnr.println("[>%s< call: %s]", nd.getId(), nd.getCalleeNodeId());
+        rnr.println("[>%s< call: %s]", nd.getId(), nd.getCalleeNode());
     }
 
     @Override
@@ -61,6 +62,11 @@ class BriefNodePrinter extends Node.VoidVisitor {
     @Override
     public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
         rnr.println("[>%s< section]", nd.getId());
+    }
+    
+    @Override 
+    public void visitImpl(ImportNode nd) throws DataTagsRuntimeException{
+        rnr.println("#import %s as %s", nd.getPath(), nd.getName());
     }
     
 }

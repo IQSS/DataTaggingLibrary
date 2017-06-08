@@ -5,6 +5,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node.VoidVisitor;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
@@ -39,7 +40,7 @@ public class ValidCallNodeValidator extends VoidVisitor implements DecisionGraph
     
     @Override
     public void visitImpl (CallNode cn) throws DataTagsRuntimeException {
-        if ( chart.getNode(cn.getCalleeNodeId()) == null) {
+        if ( chart.getNode(cn.getCalleeNode().getId()) == null) {
             validationMessages.add(new NodeValidationMessage(Level.ERROR, "Call node \"" + cn + "\" calls nonexistent node."));
         }
     }
@@ -74,6 +75,11 @@ public class ValidCallNodeValidator extends VoidVisitor implements DecisionGraph
     
     @Override
     public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
+        
+    }
+    
+    @Override
+    public void visitImpl(ImportNode nd) throws DataTagsRuntimeException {
         
     }
 

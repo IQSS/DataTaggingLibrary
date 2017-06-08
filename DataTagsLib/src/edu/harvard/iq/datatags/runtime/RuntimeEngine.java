@@ -13,6 +13,7 @@ import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
@@ -116,7 +117,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         public Node visit(CallNode nd) throws DataTagsRuntimeException {
             stack.push(nd);
             // Dynamic linking to the destination node.
-            Node calleeNode = decisionGraph.getNode(nd.getCalleeNodeId());
+            Node calleeNode = decisionGraph.getNode(nd.getCalleeNode().getId());
             if (calleeNode == null) {
                 setStatus(RuntimeEngineStatus.Error);
                 throw new MissingNodeException(RuntimeEngine.this, nd);
@@ -145,6 +146,11 @@ import java.util.concurrent.atomic.AtomicInteger;
             listener.ifPresent(l -> l.sectionStarted(RuntimeEngine.this, nd));
             stack.push(nd);
             return nd.getStartNode();
+        }
+        
+        @Override
+        public Node visit(ImportNode nd) throws DataTagsRuntimeException{
+            return null; //TODO
         }
     };
 

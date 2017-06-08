@@ -4,7 +4,7 @@ import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
@@ -65,7 +65,7 @@ public class UnreachableNodeValidatorTest {
                         "  {answers:\n" +
                         "    {yes: [>reject1< reject: Good it works.]}\n" +
                         "    {no: [>reject2< reject: This should have worked.]}}]";
-        DecisionGraphParseResult parseResult = astParser.parse(code);
+        DecisionGraphCompiler parseResult = astParser.parse(code);
         decisionGraph = parseResult.compile(new CompoundSlot("","") );
         List<ValidationMessage> messages = instance.validate(decisionGraph);
         
@@ -87,7 +87,7 @@ public class UnreachableNodeValidatorTest {
     @Test
     public void validateUnreachableNodesTest_minimal() throws BadSetInstructionException, DataTagsParseException {
         String code = "[>r< end][>nr< end]";
-        DecisionGraphParseResult parseResult = astParser.parse(code);
+        DecisionGraphCompiler parseResult = astParser.parse(code);
         decisionGraph = parseResult.compile(new CompoundSlot("","") );
         List<ValidationMessage> messages = instance.validate(decisionGraph);
         
@@ -117,7 +117,7 @@ public class UnreachableNodeValidatorTest {
                         "  }\n" +
                         "]\n" +
                         "[>end1< end]";
-        DecisionGraphParseResult parseResult = astParser.parse(code);
+        DecisionGraphCompiler parseResult = astParser.parse(code);
         decisionGraph = parseResult.compile(new CompoundSlot("","") );
         
         List<ValidationMessage> messages = instance.validate(decisionGraph);

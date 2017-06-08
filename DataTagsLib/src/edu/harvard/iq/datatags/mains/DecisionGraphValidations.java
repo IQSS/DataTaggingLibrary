@@ -4,11 +4,10 @@ import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.tools.NodeValidationMessage;
 import edu.harvard.iq.datatags.tools.RepeatIdValidator;
@@ -52,7 +51,7 @@ public class DecisionGraphValidations {
             String source = readAll(chartFile);
 
             DecisionGraphParser dgParser = new DecisionGraphParser();
-            DecisionGraphParseResult res = dgParser.parse(source);
+            DecisionGraphCompiler res = dgParser.parse(source);
             List<? extends AstNode> refs = res.getNodes();
             GraphvizGraphNodeAstVizalizer viz = new GraphvizGraphNodeAstVizalizer(refs);
             Path outfile = chartFile.resolveSibling(chartFile.getFileName().toString() + "-ast.gv");

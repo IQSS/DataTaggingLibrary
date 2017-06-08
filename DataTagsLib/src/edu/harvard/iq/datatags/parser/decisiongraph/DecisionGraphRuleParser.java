@@ -9,6 +9,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstInfoSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNodeHead;
@@ -18,6 +19,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTextSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
 import java.util.ArrayList;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
@@ -199,7 +201,6 @@ public class DecisionGraphRuleParser {
                 bodyParser,
                 nodeStructurePart("}"),
                 (_s, answer, _c, body, _e) -> new AstConsiderAnswerSubNode(answer, body));
-
     }
     
     // -------------------------------
@@ -298,18 +299,29 @@ public class DecisionGraphRuleParser {
                 (head, answers, elseNode, _e) -> new AstConsiderNode(head.getId(), null, answers, elseNode));
     }
     
+    final static Parser<AstImport> IMPORT = Parsers.sequence(
+            nodeStructurePart("#"),
+            nodeHead("import"),
+            textbodyUpTo("as"),
+            nodeStructurePart("as"),
+            textbodyUpTo("\n"),
+            ( _s, head, path, _a, name) -> new AstImport(path, name));
+    
     
 
     // -------------------------------
     // Program-level parsers.
     // -------------------------------
-    final static Parser<List<? extends AstNode>> graphParser() {
+    final static Parser<ParsedFile> graphParser() {
         Parser.Reference<List<? extends AstNode>> nodeListParserRef = Parser.newReference();
-        Parser<? extends AstNode> singleAstNode = Parsers.or(END_NODE, CALL_NODE, TODO_NODE, REJECT_NODE, SET_NODE,
+        Parser<? extends AstNode> singleAstNode = Parsers.or(END_NODE, CALL_NODE, TODO_NODE, REJECT_NODE, SET_NODE, 
                 askNode(nodeListParserRef.lazy()), considerNode(nodeListParserRef.lazy()), whenNode(nodeListParserRef.lazy()), sectionNode(nodeListParserRef.lazy()));
         Parser<List<? extends AstNode>> nodeSequence = singleAstNode.many().cast();
         nodeListParserRef.set(nodeSequence);
+        Parser<ParsedFile> documentBodyParser = Parsers.sequence(IMPORT.many(),
+                                                                 nodeSequence,
+                                                                 (is,ns)->new ParsedFile(ns, is));
 
-        return nodeSequence;
+        return documentBodyParser;
     }
 }

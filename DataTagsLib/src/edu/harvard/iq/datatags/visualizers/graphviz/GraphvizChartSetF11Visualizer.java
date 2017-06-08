@@ -12,6 +12,7 @@ import edu.harvard.iq.datatags.model.types.SlotType;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ReachableNodesCollector;
@@ -131,7 +132,7 @@ public class GraphvizChartSetF11Visualizer extends AbstractGraphvizDecisionGraph
 		@Override
 		public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
-						.label( idLabel(nd) + nd.getCalleeNodeId())
+						.label( idLabel(nd) + nd.getCalleeNode())
 						.shape(GvNode.Shape.cds)
 						.fillColor("#BBBBFF")
 						.gv() );
@@ -208,6 +209,9 @@ public class GraphvizChartSetF11Visualizer extends AbstractGraphvizDecisionGraph
                 edges.add( edge(nodeId(nd), nodeId(nd.getNextNode())).gv() );
             }
         }
+        
+        @Override
+        public void visitImpl(ImportNode nd) throws DataTagsRuntimeException{}
 		
         private String idLabel( Node nd ) {
             return nd.getId().startsWith("[#") ? "" : nd.getId()+"\\n";

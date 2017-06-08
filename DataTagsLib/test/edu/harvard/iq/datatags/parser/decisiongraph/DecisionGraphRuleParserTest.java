@@ -6,6 +6,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstInfoSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNodeHead;
@@ -15,6 +16,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTextSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
 import java.util.Arrays;
 import static java.util.Arrays.asList;
 import java.util.Collections;
@@ -311,6 +313,14 @@ public class DecisionGraphRuleParserTest {
     }
     
     @Test
+    public void importNode() {
+        Parser<AstImport> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.IMPORT );
+        
+        assertEquals( new AstImport("C://User", "pp"),   sut.parse("#import C://User as pp\n") );
+        assertEquals( new AstImport("C://file with space", "FS"), sut.parse("#import C://file with space as FS") );
+    }
+    
+    @Test
     public void termsSubNode() {
         Parser<List<AstTermSubNode>> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.TERMS_SUBNODE );
         
@@ -392,7 +402,7 @@ public class DecisionGraphRuleParserTest {
                 new AstEndNode(null)
         );
 
-        Parser<List<? extends AstNode>> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.graphParser());
+        Parser<ParsedFile> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.graphParser());
 
         assertEquals(expected, sut.parse(program));
     }
@@ -412,7 +422,7 @@ public class DecisionGraphRuleParserTest {
                 new AstEndNode(null)
         );
 
-        Parser<List<? extends AstNode>> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.graphParser());
+        Parser<ParsedFile> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.graphParser());
 
         assertEquals(expected, sut.parse(program));
     }
@@ -493,7 +503,7 @@ public class DecisionGraphRuleParserTest {
                 new AstEndNode(null)
         );
         
-        Parser<List<? extends AstNode>> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.graphParser() );
+        Parser<ParsedFile> sut = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.graphParser() );
         
         assertEquals( expected, sut.parse(program) );
     }

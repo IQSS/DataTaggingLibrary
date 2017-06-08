@@ -12,6 +12,7 @@ import edu.harvard.iq.datatags.model.types.SlotType;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.ReachableNodesCollector;
@@ -85,7 +86,7 @@ public class GraphvizChartSetClusteredVisualizer extends AbstractGraphvizDecisio
 		@Override
 		public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
 			nodes.add( node(nodeId(nd))
-						.label( idLabel(nd) + nd.getCalleeNodeId())
+						.label( idLabel(nd) + nd.getCalleeNode())
 						.shape(GvNode.Shape.cds)
 						.fillColor("#BBBBFF")
 						.gv() );
@@ -157,6 +158,9 @@ public class GraphvizChartSetClusteredVisualizer extends AbstractGraphvizDecisio
                     edges.add( edge(nodeId(nd), nodeId(nd.getStartNode())).gv() );
                     targets.add( nd.getStartNode() );
                 }
+                
+                @Override
+                public void visitImpl(ImportNode nd) throws DataTagsRuntimeException{}
 		
         private String idLabel( Node nd ) {
             return nd.getId().startsWith("[#") ? "" : nd.getId()+"\\n";

@@ -8,6 +8,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import static edu.harvard.iq.datatags.model.graphs.Answer.*;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
@@ -102,7 +103,7 @@ public class ChartRunningTest {
 
         AskNode n2 = (AskNode) rec.getNode(chartId + "_2");
         CallNode caller = n2.addAnswer(NO, rec.add(new CallNode("Caller")));
-        caller.setCalleeNodeId(chartId + "_1");
+        caller.setCalleeNode(new ToDoNode(chartId + "_1", ""));
         caller.setNextNode(new EndNode("CallerEnd"));
 
         assertExecutionTrace(rec,
@@ -127,7 +128,7 @@ public class ChartRunningTest {
 
         AskNode n2 = (AskNode) rec.getNode(chartId + "_2");
         CallNode caller = n2.addAnswer(NO, rec.add(new CallNode("Caller")));
-        caller.setCalleeNodeId(chartId + "_1");
+        caller.setCalleeNode(new ToDoNode(chartId + "_1", ""));
         caller.setNextNode(new EndNode("CallerEnd"));
 
         assertExecutionTrace(rec,
@@ -160,9 +161,9 @@ public class ChartRunningTest {
         DecisionGraph subB = linearYesChart("sub_b", 3);
         DecisionGraph subC = linearYesChart("sub_c", 3);
 
-        CallNode start = main.add(new CallNode("1", "sub_a_1"));
-        start.setNextNode(main.add(new CallNode("2", "sub_b_1")))
-                .setNextNode(main.add(new CallNode("3", "sub_c_1")))
+        CallNode start = main.add(new CallNode("1", new ToDoNode("sub_a_1", "")));
+        start.setNextNode(main.add(new CallNode("2", new ToDoNode("sub_b_1", ""))))
+                .setNextNode(main.add(new CallNode("3",new ToDoNode("sub_c_1", ""))))
                 .setNextNode(main.add(new EndNode("END")));
         main.add(subA.getStart());
         main.add(subB.getStart());

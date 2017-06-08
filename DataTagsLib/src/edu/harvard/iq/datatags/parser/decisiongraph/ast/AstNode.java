@@ -28,6 +28,7 @@ public abstract class AstNode {
         T visit(AstTodoNode astNode);
         
         T visit (AstSectionNode astNode);
+
     }
 
     public static abstract class NullVisitor implements Visitor<Void> {
@@ -97,7 +98,7 @@ public abstract class AstNode {
         public abstract void visitImpl(AstEndNode nd) throws DataTagsRuntimeException;
         
         public abstract void visitImpl(AstSectionNode nd) throws DataTagsRuntimeException;
-
+        
     }
 
     private String id;

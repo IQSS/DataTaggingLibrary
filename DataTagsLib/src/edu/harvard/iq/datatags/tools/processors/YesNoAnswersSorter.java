@@ -6,6 +6,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
@@ -97,6 +98,9 @@ public class YesNoAnswersSorter implements DecisionGraphProcessor {
             
             @Override
             public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {}
+            
+            @Override
+            public void visitImpl(ImportNode nd) throws DataTagsRuntimeException {}
         };
         
         for ( Node nd : fcs.nodes() ) {

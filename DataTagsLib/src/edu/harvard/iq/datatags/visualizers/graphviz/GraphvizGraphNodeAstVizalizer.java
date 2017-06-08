@@ -6,6 +6,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
@@ -268,6 +269,8 @@ public class GraphvizGraphNodeAstVizalizer extends GraphvizVisualizer {
                     nd.setId(nodeIdProvider.nextId());
                 }
             }
+            
+           
         };
 
         nodes.forEach(n -> n.accept(idSupplier));
