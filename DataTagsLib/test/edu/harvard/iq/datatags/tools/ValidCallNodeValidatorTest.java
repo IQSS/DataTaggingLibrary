@@ -1,11 +1,13 @@
 package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.After;
@@ -22,7 +24,6 @@ import org.junit.Test;
 public class ValidCallNodeValidatorTest {
     
     ValidCallNodeValidator instance;
-    DecisionGraphParser dgParser;
     DecisionGraph dg;
     DecisionGraphCompiler parseResult;
     
@@ -39,7 +40,6 @@ public class ValidCallNodeValidatorTest {
     
     @Before
     public void setUp() {
-        dgParser = new DecisionGraphParser();
         instance = new ValidCallNodeValidator();
     }
     
@@ -51,8 +51,9 @@ public class ValidCallNodeValidatorTest {
     @Test
     public void validateIdReferencesTest_noId() throws BadSetInstructionException, DataTagsParseException {
         String code = "[todo: There's no id here to do anything with][end]";
-        parseResult = dgParser.parse(code);
-        dg = parseResult.compile(new CompoundSlot("", ""));
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(new CompoundSlot("", ""), new EndNode("[SYN-END]"), new ArrayList<>());
+        dg = cu.getDecisionGraph();
         List<NodeValidationMessage> messages = instance.validate(dg);
         assertEquals(new LinkedList<>(), messages);
     }
@@ -61,8 +62,9 @@ public class ValidCallNodeValidatorTest {
     public void validateIdReferencesTest_validId() throws BadSetInstructionException, DataTagsParseException {
         String code = "[call: ppraCompliance ]" +
                       "[>ppraCompliance< ask:{text: This should work!} {answers: {yes:[end]}}][end]";
-        parseResult = dgParser.parse(code);
-        dg = parseResult.compile(new CompoundSlot("", ""));
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(new CompoundSlot("", ""), new EndNode("[SYN-END]"), new ArrayList<>());
+        dg = cu.getDecisionGraph();
         
         List<NodeValidationMessage> messages = instance.validate(dg);
         assertEquals(new LinkedList<>(), messages);
@@ -73,9 +75,9 @@ public class ValidCallNodeValidatorTest {
         String code = "[>invalid-node< call: ferpaCompliance ]" +
                       "[>ppraCompliance< ask:{text: This shouldn't work.}{answers: {yes:[end]}}]" +
                       "[end]";
-        
-        parseResult = dgParser.parse(code);
-        dg = parseResult.compile(new CompoundSlot("", ""));
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(new CompoundSlot("", ""), new EndNode("[SYN-END]"), new ArrayList<>());
+        dg = cu.getDecisionGraph();
         List<NodeValidationMessage> actual = instance.validate(dg);
         assertEquals(ValidationMessage.Level.ERROR, actual.get(0).getLevel());
         assertTrue( actual.get(0).getMessage().contains("invalid-node") );

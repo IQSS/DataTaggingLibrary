@@ -5,7 +5,6 @@ import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node.VoidVisitor;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
@@ -78,10 +77,6 @@ public class ValidCallNodeValidator extends VoidVisitor implements DecisionGraph
         
     }
     
-    @Override
-    public void visitImpl(ImportNode nd) throws DataTagsRuntimeException {
-        
-    }
 
     
 }

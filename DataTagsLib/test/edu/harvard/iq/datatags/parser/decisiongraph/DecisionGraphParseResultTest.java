@@ -14,7 +14,6 @@ import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
-import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParseResult;
@@ -23,7 +22,7 @@ import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +40,8 @@ import org.junit.Test;
 public class DecisionGraphParseResultTest {
 
     private final CompoundSlot emptyTagSpace = new CompoundSlot("", "");
-    private DecisionGraphParser dgp;
     private AstNodeIdProvider nodeIdProvider;
+    private EndNode endNode;
 
     public DecisionGraphParseResultTest() {
     }
@@ -57,8 +56,9 @@ public class DecisionGraphParseResultTest {
 
     @Before
     public void setUp() {
-        dgp = new DecisionGraphParser();
         nodeIdProvider = new AstNodeIdProvider();
+        endNode = new EndNode("[SYN-END]");
+        
     }
 
     @After
@@ -78,7 +78,7 @@ public class DecisionGraphParseResultTest {
         TagSpaceParseResult parse = new TagSpaceParser().parse(typeDef);
         CompoundSlot topType = parse.buildType("top").get();
 
-        DecisionGraphCompiler res = new DecisionGraphCompiler(Collections.emptyList());
+        DecisionGraphCompiler res = new DecisionGraphCompiler();
 
         res.buildTypeIndex(topType);
 
@@ -112,7 +112,13 @@ public class DecisionGraphParseResultTest {
         expected.setStart(start);
 
         String code = "[todo: this and that][call: ghostbusters][>ghostbusters< todo: bla][end]";
-        DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(emptyTagSpace, endNode ,new ArrayList<>());
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
+        dgc.put("main path",cu);
+        dgc.linkage();
+        
+        DecisionGraph actual = cu.getDecisionGraph();
 
         normalize(actual);
         normalize(expected);
@@ -137,7 +143,11 @@ public class DecisionGraphParseResultTest {
         expected.setStart(start);
 
         String code = "[todo: this and that][call: ghostbusters][>ghostbusters< todo: bla][reject: obvious.]";
-        DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
+        
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(emptyTagSpace, endNode ,new ArrayList<>());
+        
+        DecisionGraph actual = cu.getDecisionGraph();
 
         normalize(actual);
         normalize(expected);
@@ -188,7 +198,10 @@ public class DecisionGraphParseResultTest {
                 + "[>duh2< todo: bla]"
                 + "[>2< end]";
 
-        DecisionGraph actual = dgp.parse(code).compile(ct);
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(ct, endNode ,new ArrayList<>());
+        
+        DecisionGraph actual = cu.getDecisionGraph();
 
         normalize(actual);
         normalize(expected);
@@ -219,7 +232,10 @@ public class DecisionGraphParseResultTest {
         expected.add(callTodo);
 
         String code = "[ask: {text: why?} {answers: {dunno:[>de< end]} {why not:[>wnc< call: duh]}}][>duh< todo: bla][end]";
-        DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(emptyTagSpace, endNode ,new ArrayList<>());
+        
+        DecisionGraph actual = cu.getDecisionGraph();
 
         normalize(actual);
         normalize(expected);
@@ -245,7 +261,10 @@ public class DecisionGraphParseResultTest {
         expected.setStart(start);
 
         String code = "[ask: {text: Should I?} {answers: {yes:[>end-yes< end]}}][>end-no< end]";
-        DecisionGraph actual = dgp.parse(code).compile(emptyTagSpace);
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(emptyTagSpace, endNode ,new ArrayList<>());
+        
+        DecisionGraph actual = cu.getDecisionGraph();
 
         normalize(actual);
         normalize(expected);
@@ -280,8 +299,10 @@ public class DecisionGraphParseResultTest {
 
         String code = "[section: {title: Section - start} [>blaID< todo: bla bla] [>CallID< call: callid]][>callid< todo: bla]";
 
-        final DecisionGraphCompiler parseResult = dgp.parse(code);
-        DecisionGraph actual = parseResult.compile(emptyTagSpace);
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(emptyTagSpace, finalEndNode,new ArrayList<>());
+        
+        DecisionGraph actual = cu.getDecisionGraph();
 
         normalize(actual);
         normalize(expected);
@@ -324,7 +345,11 @@ public class DecisionGraphParseResultTest {
         expected.setStart(start);
         expected.setId("loremIpsum");
         String code = "[set: t1=a; t2 += b,c][end]";
-        DecisionGraph actual = dgp.parse(code).compile(ct);
+        
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(emptyTagSpace, endNode ,new ArrayList<>());
+        
+        DecisionGraph actual = cu.getDecisionGraph();
         actual.setId("loremIpsum"); // prevent a false negative over chart id.
 
         expected.nodes().forEach(n -> assertEquals(n, actual.getNode(n.getId())));
@@ -357,9 +382,11 @@ public class DecisionGraphParseResultTest {
         expected.set(mid2);
 
         String dgCode = "[set: mid1=B; bottom1=W; bottom2+=S,D,F][end]";
-        DecisionGraph dg = new DecisionGraphParser().parse(dgCode).compile(ts);
-
-        CompoundValue actual = ((SetNode) dg.getStart()).getTags();
+        
+        CompilationUnit cu = new CompilationUnit(dgCode);
+        cu.compile(ts, new EndNode("[SYN-END]"),new ArrayList<>());
+        
+        CompoundValue actual = ((SetNode) cu.getDecisionGraph().getStart()).getTags();
 
         assertEquals(expected, actual);
     }
@@ -386,9 +413,11 @@ public class DecisionGraphParseResultTest {
         expected.set(mid2);
 
         String dgCode = "[set: bottom1=W; bottom2+=S,D,F][end]";
-        DecisionGraph dg = new DecisionGraphParser().parse(dgCode).compile(ts);
-
-        CompoundValue actual = ((SetNode) dg.getStart()).getTags();
+        
+        CompilationUnit cu = new CompilationUnit(dgCode);
+        cu.compile(ts, new EndNode("[SYN-END]"),new ArrayList<>());
+        
+        CompoundValue actual = ((SetNode) cu.getDecisionGraph().getStart()).getTags();
 
         assertEquals(expected, actual);
     }
@@ -410,9 +439,11 @@ public class DecisionGraphParseResultTest {
         expected.set(mid2);
 
         String dgCode = "[set: mid1=B; bottom1=W][end]";
-        DecisionGraph dg = new DecisionGraphParser().parse(dgCode).compile(ts);
-
-        CompoundValue actual = ((SetNode) dg.getStart()).getTags();
+        
+        CompilationUnit cu = new CompilationUnit(dgCode);
+        cu.compile(ts, new EndNode("[SYN-END]"),new ArrayList<>());
+        
+        CompoundValue actual = ((SetNode) cu.getDecisionGraph().getStart()).getTags();
 
         assertEquals(expected, actual);
     }
@@ -433,9 +464,10 @@ public class DecisionGraphParseResultTest {
         expected.set(mid2);
 
         String dgCode = "[set: bottom1=W][end]";
-        DecisionGraph dg = new DecisionGraphParser().parse(dgCode).compile(ts);
-
-        CompoundValue actual = ((SetNode) dg.getStart()).getTags();
+        CompilationUnit cu = new CompilationUnit(dgCode);
+        cu.compile(ts, new EndNode("[SYN-END]"),new ArrayList<>());
+        
+        CompoundValue actual = ((SetNode) cu.getDecisionGraph().getStart()).getTags();
 
         assertEquals(expected, actual);
     }

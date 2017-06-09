@@ -120,15 +120,24 @@ public class CompilationUnit {
         fullyQualifiedSlotName = aFullyQualifiedSlotName;
         topLevelType = aTopLevelType;
         endAll = globalEndNode;
+        product = new DecisionGraph();
         parse();
         
         astValidators.stream().flatMap( v -> v.validate(parsedFile.getAstNodes()).stream())
                                     .forEach(validationMessages::add);
         
         startNode = buildNodes(parsedFile.getAstNodes(), endAll);
+        product.setStart(product.getNode(C.head(parsedFile.getAstNodes()).getId()));
         
     }
 
+    public void compile(CompoundSlot aTopLevelType, EndNode globalEndNode, 
+            List<DecisionGraphAstValidator> astValidators) throws DataTagsParseException
+    {
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
+        Map<List<String>, List<String>> aFullyQualifiedSlotName = dgc.buildTypeIndex(aTopLevelType);
+        compile(aFullyQualifiedSlotName, aTopLevelType, globalEndNode, astValidators);
+    }    
     private SlotType findSlot(List<String> astSlot, CompoundValue topValue, SetNodeValueBuilder valueBuilder) {
         SlotType slot;
 

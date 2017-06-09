@@ -10,6 +10,8 @@ import edu.harvard.iq.datatags.parser.PolicyModelLoadResult;
 import edu.harvard.iq.datatags.parser.PolicyModelLoader;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphClusteredVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphF11Visualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpacePathsVizualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpaceVisualizer;
 import java.io.IOException;
@@ -96,7 +98,7 @@ public class DecisionGraphCompiling {
         DecisionGraph dg = model.getDecisionGraph();
 
         GraphvizDecisionGraphClusteredVisualizer fcsViz = new GraphvizDecisionGraphClusteredVisualizer();
-        outfile = modelFile.resolveSibling(modelFile.getFileName().toString() + ".dg.gv");
+        Path outfile = modelFile.resolveSibling(modelFile.getFileName().toString() + ".dg.gv");
         System.out.println("Writing: " + outfile);
         fcsViz.setDecisionGraph(dg);
         fcsViz.vizualize(outfile);

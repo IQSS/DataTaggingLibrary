@@ -1,10 +1,7 @@
-/*
- *  (C) Michael Bar-Sinai
- */
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -35,7 +32,7 @@ public class GraphvizVisualizerTest {
     public void setUp() {
         sut = new GraphvizVisualizer(){
             @Override
-            protected void printBody(BufferedWriter out) throws IOException {
+            protected void printBody(PrintWriter out) throws IOException {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
         };

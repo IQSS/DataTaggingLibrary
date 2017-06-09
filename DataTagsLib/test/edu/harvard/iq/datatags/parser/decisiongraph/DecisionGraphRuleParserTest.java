@@ -315,8 +315,7 @@ public class DecisionGraphRuleParserTest {
     @Test
     public void importNode() {
         Parser<AstImport> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.IMPORT );
-        
-        assertEquals( new AstImport("C://User", "pp"),   sut.parse("#import C://User as pp\n") );
+        assertEquals( new AstImport("C://User ", "pp"),   sut.parse("#import C://User as pp") );
         assertEquals( new AstImport("C://file with space", "FS"), sut.parse("#import C://file with space as FS") );
     }
     

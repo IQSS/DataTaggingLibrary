@@ -6,12 +6,14 @@ package edu.harvard.iq.datatags.tools.processors;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
+import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
@@ -48,7 +50,9 @@ public class YesNoAnswersSorterTest {
     @Test
     public void testSortYesFirstSame() throws Exception {
 
-        DecisionGraph dgOriginal = new DecisionGraphParser().parse(YES_FIRST_CODE).compile(ts);
+        CompilationUnit cu = new CompilationUnit(YES_FIRST_CODE);
+        cu.compile(ts, new EndNode("[SYN-END]"), new ArrayList<>());
+        DecisionGraph dgOriginal = cu.getDecisionGraph();
         
         Node originalYes = dgOriginal.getNode("y");
         Node originalNo  = dgOriginal.getNode("n");
@@ -65,7 +69,9 @@ public class YesNoAnswersSorterTest {
     @Test
     public void testSortYesFirstChange() throws Exception {
 
-        DecisionGraph dgOriginal = new DecisionGraphParser().parse(YES_LAST_CODE).compile(ts);
+        CompilationUnit cu = new CompilationUnit(YES_LAST_CODE);
+        cu.compile(ts, new EndNode("[SYN-END]"), new ArrayList<>());
+        DecisionGraph dgOriginal = cu.getDecisionGraph();
         
         Node originalYes = dgOriginal.getNode("y");
         Node originalNo  = dgOriginal.getNode("n");
@@ -82,7 +88,9 @@ public class YesNoAnswersSorterTest {
     @Test
     public void testSortNoFirstSame() throws Exception {
 
-        DecisionGraph dgOriginal = new DecisionGraphParser().parse(YES_LAST_CODE).compile(ts);
+        CompilationUnit cu = new CompilationUnit(YES_LAST_CODE);
+        cu.compile(ts, new EndNode("[SYN-END]"), new ArrayList<>());
+        DecisionGraph dgOriginal = cu.getDecisionGraph();
         
         Node originalYes = dgOriginal.getNode("y");
         Node originalNo  = dgOriginal.getNode("n");
@@ -99,8 +107,10 @@ public class YesNoAnswersSorterTest {
     
     @Test
     public void testSortNoFirstChange() throws Exception {
-
-        DecisionGraph dgOriginal = new DecisionGraphParser().parse(YES_FIRST_CODE).compile(ts);
+        
+        CompilationUnit cu = new CompilationUnit(YES_FIRST_CODE);
+        cu.compile(ts, new EndNode("[SYN-END]"), new ArrayList<>());
+        DecisionGraph dgOriginal = cu.getDecisionGraph();
         
         Node originalYes = dgOriginal.getNode("y");
         Node originalNo  = dgOriginal.getNode("n");

@@ -4,13 +4,11 @@ import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URI;
 import java.util.HashMap;
@@ -143,13 +141,6 @@ public class DecisionGraph {
                 nd.getStartNode().accept(this);
             }
             
-            @Override
-            public void visitImpl(ImportNode nd) throws DataTagsRuntimeException{
-                nodes.put(nd.getId(), nd);
-                if ( nd.hasNextNode() ) {
-                    nd.getNextNode().accept(this);
-                }
-            }
         });
         return n;
     }

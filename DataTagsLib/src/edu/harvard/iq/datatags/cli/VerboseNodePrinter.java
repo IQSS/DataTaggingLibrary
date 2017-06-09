@@ -4,7 +4,6 @@ import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
@@ -16,7 +15,7 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
  * Prints nodes to the console, with all the details.
  * @author michael
  */
-class VerboseNodePrinter extends Node.VoidVisitor {
+public class VerboseNodePrinter extends Node.VoidVisitor {
     
     private final CliRunner rnr;
 
@@ -96,8 +95,4 @@ class VerboseNodePrinter extends Node.VoidVisitor {
         rnr.println();
     }
     
-    @Override
-    public void visitImpl(ImportNode nd) throws DataTagsRuntimeException {
-        rnr.printTitle("#import %s as %s", nd.getPath(), nd.getName());
-    }
 }

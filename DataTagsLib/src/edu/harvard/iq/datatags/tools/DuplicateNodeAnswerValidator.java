@@ -42,8 +42,10 @@ public class DuplicateNodeAnswerValidator extends NullVisitor  implements Decisi
             }
             for (AstConsiderAnswerSubNode ans : noduplicates) {
                 // compare answer text, since we don't want two no answers that have different implementations
-                if (ansRef.getAnswerList().equals(ans.getAnswerList())) {
-                    validationMessages.add(new ValidationMessage(Level.WARNING, "consider node \"" + nd.getId() + "\" has duplicate answers"));
+                if ( ansRef.getAnswerList() != null && ans.getAnswerList() != null ) {
+                    if (ansRef.getAnswerList().equals(ans.getAnswerList())) {
+                        validationMessages.add(new ValidationMessage(Level.WARNING, "consider node \"" + nd.getId() + "\" has duplicate answers"));
+                    }
                 }
             }
             noduplicates.add(ansRef);

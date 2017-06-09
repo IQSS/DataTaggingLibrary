@@ -73,55 +73,58 @@ public class PolicyModelLoader {
     }
     
     public PolicyModelLoadResult load( PolicyModelData data ) throws DataTagsParseException {
-        
-        // Setup result
-        PolicyModelLoadResult res = new PolicyModelLoadResult();
-        PolicyModel model = new PolicyModel();
-        model.setMetadata(data);
-        res.setModel(model);
-        
-        // Load space root.
-        CompoundSlot spaceRoot = null;
         try {
-            TagSpaceParseResult spaceParseRes = new TagSpaceParser().parse(data.getPolicySpacePath());
-            spaceRoot = spaceParseRes.buildType(data.getRootTypeName()).orElse(null);
-            if ( spaceRoot == null ) {
-                res.addMessage( new ValidationMessage(Level.ERROR, "Type '" + data.getRootTypeName() + "', used as policy space root, is not defined. ") );
-                return res;
+            // Setup result
+            PolicyModelLoadResult res = new PolicyModelLoadResult();
+            PolicyModel model = new PolicyModel();
+            model.setMetadata(data);
+            res.setModel(model);
+            
+            // Load space root.
+            CompoundSlot spaceRoot = null;
+            try {
+                TagSpaceParseResult spaceParseRes = new TagSpaceParser().parse(data.getPolicySpacePath());
+                spaceRoot = spaceParseRes.buildType(data.getRootTypeName()).orElse(null);
+                if ( spaceRoot == null ) {
+                    res.addMessage( new ValidationMessage(Level.ERROR, "Type '" + data.getRootTypeName() + "', used as policy space root, is not defined. ") );
+                    return res;
+                }
+                model.setSpaceRoot(spaceRoot);
+                
+            } catch (IOException ex) {
+                res.addMessage( new ValidationMessage(Level.ERROR, "Cannot load policy space: " + ex.getMessage()));
+                
+            } catch (SyntaxErrorException ex) {
+                res.addMessage( new ValidationMessage(Level.ERROR, "Syntax error in policy space: " + ex.getMessage()));
+                
+            } catch (SemanticsErrorException ex) {
+                res.addMessage( new ValidationMessage(Level.ERROR, "Semantic error in policy space: " + ex.getMessage()));
             }
-            model.setSpaceRoot(spaceRoot);
+            if ( spaceRoot == null ) return res;
             
+            // load decision graph
+            DecisionGraphCompiler decisionGraphCompiler = new DecisionGraphCompiler();
+            DecisionGraph dg = decisionGraphCompiler.compile(spaceRoot, data, dgAstValidators);
+            switch ( data.getAnswerTransformationMode() ) {
+                case Verbatim: break;
+                case YesFirst:
+                    dg = new YesNoAnswersSorter(true).process(dg);
+                    break;
+                case YesLast:
+                    dg = new YesNoAnswersSorter(false).process(dg);
+                    break;
+            }
+            final DecisionGraph fdg = dg; // let the lambdas below compile
+            dgValidators.stream().flatMap( v->v.validate(fdg).stream() ).forEach(res::addMessage);
+            for ( DecisionGraphProcessor dgp : postProcessors ) {
+                dg = dgp.process(dg);
+            }
+            model.setDecisionGraph(dg);
+            
+            return res;
         } catch (IOException ex) {
-            res.addMessage( new ValidationMessage(Level.ERROR, "Cannot load policy space: " + ex.getMessage()));
-            
-        } catch (SyntaxErrorException ex) {
-            res.addMessage( new ValidationMessage(Level.ERROR, "Syntax error in policy space: " + ex.getMessage()));
-
-        } catch (SemanticsErrorException ex) {
-            res.addMessage( new ValidationMessage(Level.ERROR, "Semantic error in policy space: " + ex.getMessage()));
+            throw new DataTagsParseException(null, "Error reading file: " + ex.getMessage(), ex);
         }
-        if ( spaceRoot == null ) return res;
-        
-        // load decision graph
-        DecisionGraphCompiler decisionGraphCompiler = new DecisionGraphCompiler();
-        DecisionGraph dg = decisionGraphCompiler.compile(spaceRoot, data, dgAstValidators);
-        switch ( data.getAnswerTransformationMode() ) {
-            case Verbatim: break;
-            case YesFirst:
-                dg = new YesNoAnswersSorter(true).process(dg);
-                break;
-            case YesLast:
-                dg = new YesNoAnswersSorter(false).process(dg);
-                break;
-        }
-        final DecisionGraph fdg = dg; // let the lambdas below compile
-        dgValidators.stream().flatMap( v->v.validate(fdg).stream() ).forEach(res::addMessage);
-        for ( DecisionGraphProcessor dgp : postProcessors ) {
-            dg = dgp.process(dg);
-        }
-        model.setDecisionGraph(dg);
-            
-        return res;
     }
     
     public void add( DecisionGraphAstValidator vld ) {

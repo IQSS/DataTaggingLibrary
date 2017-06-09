@@ -10,12 +10,12 @@ import static edu.harvard.iq.datatags.model.graphs.Answer.*;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
+import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.*;
 import static edu.harvard.iq.util.DecisionGraphHelper.*;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import org.junit.Test;
 
 /**
@@ -91,7 +91,11 @@ public class ChartRunningTest {
     @Test
     public void chartWithCall() throws DataTagsParseException {
         String code = "[>a< todo:a][>b< todo:a][>c< call:n][>e<end][>n< end]";
-        DecisionGraph chart = new DecisionGraphParser().parse(code).compile(new CompoundSlot("", ""));
+        
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(new CompoundSlot("", ""), new EndNode("[SYN-END]") ,new ArrayList<>());
+        
+        DecisionGraph chart = cu.getDecisionGraph();
 
         assertExecutionTrace(chart, Arrays.asList("a", "b", "c", "n", "e"), false);
     }

@@ -2,6 +2,7 @@ package edu.harvard.iq.datatags.parser.decisiongraph;
 
 import edu.harvard.iq.datatags.model.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.types.AggregateSlot;
@@ -15,9 +16,11 @@ import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +47,8 @@ public class DecisionGraphCompiler {
 
     private CompoundSlot topLevelType;
 
-    private Map<Path, CompilationUnit> pathToCU = new HashMap<>();
+    private Map<String, CompilationUnit> pathToCU = new HashMap<>();
+
     private Node startNode;
     
     
@@ -63,37 +67,102 @@ public class DecisionGraphCompiler {
         buildTypeIndex(tagSpace);
 
         List<AstImport> needToVisit = new ArrayList();
-        CompilationUnit cu = new CompilationUnit(modelData.getDecisionGraphPath());
-        cu.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
-        startNode = cu.getStartNode();
-        needToVisit.addAll(cu.getParsedFile().getImports());
-        pathToCU.put( modelData.getDecisionGraphPath(), cu );
+        CompilationUnit firstCU = new CompilationUnit(modelData.getDecisionGraphPath());
+        firstCU.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
+        startNode = firstCU.getStartNode();
+        needToVisit.addAll(firstCU.getParsedFile().getImports());
+        pathToCU.put( modelData.getDecisionGraphPath().toString(), firstCU );
         while (! needToVisit.isEmpty()){
             AstImport astImport = needToVisit.remove(0);
-            CompilationUnit compilationUnit = new CompilationUnit(astImport.getPath());
-            needToVisit.addAll(compilationUnit.getParsedFile().getImports());
-            pathToCU.put( modelData.getDecisionGraphPath(), compilationUnit );
+            if (! pathToCU.containsKey(astImport.getPath())){
+                CompilationUnit compilationUnit = new CompilationUnit(Paths.get(astImport.getPath()));
+                needToVisit.addAll(compilationUnit.getParsedFile().getImports());
+                pathToCU.put(astImport.getPath(), compilationUnit );
+            }
         }
         
         //Static Linking Pass
-        pathToCU.forEach((path, compilationUnit) ->
-                                    compilationUnit.getCallToCalleeID().forEach((call, callee) -> 
-                                    call.chars())
-        );
-       
-//Static Linking Pass
-//            for (String callId : callToCalleeID.keySet()){
-//               CallNode callNode = (CallNode) product.getNode(callId);
-//               Node calleeNode = product.getNode( callToCalleeID.get(callId) );
-//               callNode.setCalleeNode(calleeNode);
-//            }
-            
-       
+        for (String path: pathToCU.keySet()){
+            CompilationUnit cu = pathToCU.get(path);
+            List<AstImport> imports = cu.getParsedFile().getImports();
+            Map<String, String> callToCallee = cu.getCallToCalleeID();
+            String calleeCuPath = null;
+            Boolean foundCallee = false;
+            for(String call: callToCallee.keySet()){
+                if (callToCallee.get(call).contains(">")){ //If the callee is from another compilation unit
+                    String calleeCuName = callToCallee.get(call).split(">")[0]; //Take the cu in cu>id from callee
+                    String calleeName = callToCallee.get(call).split(">")[1];
+                    for (AstImport ai: imports){
+                        if (ai.getName().equals(calleeCuName)){
+                            calleeCuPath = ai.getPath();
+                            foundCallee = true;
+                            break;
+                        }
+                    }
+                    if (foundCallee){
+                        CompilationUnit calleeCU = pathToCU.get(calleeCuPath);
+                        Node calleeNode = calleeCU.getDecisionGraph().getNode(calleeName);
+                        CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
+                        callNode.setCalleeNode(calleeNode);
+                    }
+                    else{
+                        //TODO: Exception
+                    }
+                }
+                else{
+                    Node calleeNode = cu.getDecisionGraph().getNode( callToCallee.get(call) );
+                    CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
+                    callNode.setCalleeNode(calleeNode);
+                }
+            }
+        }
         
-        return pathToCU.get(modelData.getDecisionGraphPath()).getDecisionGraph();
+        return pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
     }
 
-
+    public CompilationUnit put(String key, CompilationUnit value) {
+        return pathToCU.put(key, value);
+    }
+    
+    public DecisionGraph linkage() throws DataTagsParseException, IOException {
+        
+        for (String path: pathToCU.keySet()){
+            CompilationUnit cu = pathToCU.get(path);
+            List<AstImport> imports = cu.getParsedFile().getImports();
+            Map<String, String> callToCallee = cu.getCallToCalleeID();
+            String calleeCuPath = null;
+            Boolean foundCallee = false;
+            for(String call: callToCallee.keySet()){
+                if (callToCallee.get(call).contains(">")){ //If the callee is from another compilation unit
+                    String calleeCuName = callToCallee.get(call).split(">")[0]; //Take the cu in cu>id from callee
+                    String calleeName = callToCallee.get(call).split(">")[1];
+                    for (AstImport ai: imports){
+                        if (ai.getName().equals(calleeCuName)){
+                            calleeCuPath = ai.getPath();
+                            foundCallee = true;
+                            break;
+                        }
+                    }
+                    if (foundCallee){
+                        CompilationUnit calleeCU = pathToCU.get(calleeCuPath);
+                        Node calleeNode = calleeCU.getDecisionGraph().getNode(calleeName);
+                        CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
+                        callNode.setCalleeNode(calleeNode);
+                    }
+                    else{
+                        //TODO: Exception
+                    }
+                }
+                else{
+                    Node calleeNode = cu.getDecisionGraph().getNode( callToCallee.get(call) );
+                    CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
+                    callNode.setCalleeNode(calleeNode);
+                }
+            }
+        }
+        return pathToCU.get("main path").getDecisionGraph();
+    }
+    
     /**
      * Maps all unique slot suffixes to their fully qualified version. That is,
      * if we have:
@@ -116,7 +185,7 @@ public class DecisionGraphCompiler {
      *
      * @param topLevel the top level type to build from.
      */
-    void buildTypeIndex(CompoundSlot topLevel) {
+    Map<List<String>, List<String>> buildTypeIndex(CompoundSlot topLevel) {
         topLevelType = topLevel;
 
         List<List<String>> fullyQualifiedNames = new LinkedList<>();
@@ -174,6 +243,7 @@ public class DecisionGraphCompiler {
 
         ambiguous.forEach(newEntries::remove);
         fullyQualifiedSlotName.putAll(newEntries);
+        return fullyQualifiedSlotName;
     }
 
 }

@@ -1,0 +1,39 @@
+[todo: started graph.]
+[ask:
+  {text: Are you a vegeterian?}
+  {answers:
+    {yes: [set: Main=tofu] }
+    {no: [>ft< ask:
+      {text: Beef?}
+      {answers:
+        {yes: [set: Main=beef]}
+      }
+    ]}
+  }
+]
+[>default-main< set: Main=chicken] <-- default
+[>sides< ask:
+  {text: Which Offer?}
+  {answers:
+    {the works:
+      [set: Wrap=wheat; Side+=rice,corn,guacamole,cream,cheese ]
+      [set: Bag=paper]
+    }
+    {minimal:
+      [set: Wrap=full_grain; Side+=rice]
+    }
+    {health nut:
+      [set: Wrap=full_grain; Side+=rice,corn]
+    }
+  }
+]
+<*
+[>extras< ask:
+  {text: How 'bout some extras? }
+  {answers:
+    {ask: [set: Extras=ask]}
+    {set: [set: Extras=set]}
+    {get: [set: Extras=get]}
+  }
+]
+*>

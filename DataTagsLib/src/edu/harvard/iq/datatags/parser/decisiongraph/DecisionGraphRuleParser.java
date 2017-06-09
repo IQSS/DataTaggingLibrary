@@ -179,7 +179,7 @@ public class DecisionGraphRuleParser {
                 nodeStructurePart(":"),
                 bodyParser,
                 nodeStructurePart("}"),
-                (_s, answer, _c, body, _e) -> new AstConsiderAnswerSubNode(answer, body));
+                (_s, answers, _c, body, _e) -> new AstConsiderAnswerSubNode(answers, body));
 
     }
 
@@ -305,7 +305,7 @@ public class DecisionGraphRuleParser {
             textbodyUpTo("as"),
             nodeStructurePart("as"),
             textbodyUpTo("\n"),
-            ( _s, head, path, _a, name) -> new AstImport(path, name));
+            (_s, head, path, _a, name) -> new AstImport(path, name));
     
     
 

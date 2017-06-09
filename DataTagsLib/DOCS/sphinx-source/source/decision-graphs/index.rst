@@ -1,7 +1,7 @@
 :doc:`Home <../index>`
 
-Decision Graphs
-===============
+Decision Graphs Language Reference
+==================================
 
 The decision graph part of a questionnaire is composed of nodes. During the interview, the tagging engine is traversing the nodes of the decision graph. There are a few types of nodes, most of them are associated with an instruction to the engine. Nodes can have IDs. Currently, node ids are useful for referencing them from other nodes. In the future, the ids will also be used for localization.
 
@@ -55,3 +55,4 @@ Throughout the execution, the engine keeps a single value of the top-level type 
    end-node
    reject-node
    todo-node
+   section-node

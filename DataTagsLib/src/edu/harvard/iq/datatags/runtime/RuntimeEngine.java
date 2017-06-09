@@ -13,7 +13,6 @@ import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.ImportNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
@@ -148,10 +147,6 @@ import java.util.concurrent.atomic.AtomicInteger;
             return nd.getStartNode();
         }
         
-        @Override
-        public Node visit(ImportNode nd) throws DataTagsRuntimeException{
-            return null; //TODO
-        }
     };
 
     public CompoundValue getCurrentTags() {
@@ -166,12 +161,10 @@ import java.util.concurrent.atomic.AtomicInteger;
      * @return {@code true} iff there is a need to consume answers.
      */
     public boolean start() throws DataTagsRuntimeException {
-
-        if (getCurrentTags() == null) {
-            setCurrentTags(model.getSpaceRoot().createInstance());
-        }
+        setCurrentTags(model.getSpaceRoot().createInstance());
         setStatus(RuntimeEngineStatus.Running);
         listener.ifPresent(l -> l.runStarted(this));
+        
         return processNode(decisionGraph.getStart());
     }
 
@@ -183,8 +176,8 @@ import java.util.concurrent.atomic.AtomicInteger;
         listener.ifPresent(l -> l.runTerminated(this));
         setStatus(RuntimeEngineStatus.Restarting);
         stack.clear();
-        setCurrentTags(model.getSpaceRoot().createInstance());
-
+        currentNode = null;
+        
         start();
     }
 
@@ -346,6 +339,8 @@ import java.util.concurrent.atomic.AtomicInteger;
     public void setModel(PolicyModel model) {
         this.model = model;
         decisionGraph = model.getDecisionGraph();
+        listener.ifPresent( l->l.runTerminated(this) );
+        setStatus(RuntimeEngineStatus.Idle);
     }
     
 }

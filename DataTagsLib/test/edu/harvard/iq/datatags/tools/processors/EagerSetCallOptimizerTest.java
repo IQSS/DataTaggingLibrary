@@ -4,9 +4,10 @@ import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.*;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
+import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
+import java.util.ArrayList;
 import org.junit.*;
 
 import static org.junit.Assert.assertTrue;
@@ -23,8 +24,13 @@ public class EagerSetCallOptimizerTest {
     private void compareAndTest(String dgCodeOriginal, String dgCodeOpt) throws DataTagsParseException {
         CompoundSlot ts = new TagSpaceParser().parse(tsCode).buildType("DataTags").get();
 
-        DecisionGraph dgOriginal = new DecisionGraphParser().parse(dgCodeOriginal).compile(ts);
-        DecisionGraph dgOptimized = new DecisionGraphParser().parse(dgCodeOpt).compile(ts);
+        CompilationUnit cu = new CompilationUnit(dgCodeOriginal);
+        cu.compile(ts, new EndNode("[SYN-END]") ,new ArrayList<>());
+        DecisionGraph dgOriginal = cu.getDecisionGraph();
+
+        cu = new CompilationUnit(dgCodeOpt);
+        cu.compile(ts, new EndNode("[SYN-END]") ,new ArrayList<>());
+        DecisionGraph dgOptimized = cu.getDecisionGraph();
 
         assertFalse(compareDgs(dgOriginal.getStart(), dgOptimized.getStart()));
 

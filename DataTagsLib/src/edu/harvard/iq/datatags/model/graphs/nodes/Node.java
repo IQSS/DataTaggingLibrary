@@ -29,7 +29,6 @@ public abstract class Node {
 
         R visit(EndNode nd) throws DataTagsRuntimeException;
         
-        R visit(ImportNode nd) throws DataTagsRuntimeException;
     }
 
     public static abstract class VoidVisitor implements Visitor<Void> {
@@ -82,11 +81,6 @@ public abstract class Node {
             return null;
         }
         
-        @Override
-        public Void visit(ImportNode nd) throws DataTagsRuntimeException {
-            visitImpl(nd);
-            return null;
-        }
 
         public abstract void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException;
 
@@ -104,7 +98,6 @@ public abstract class Node {
 
         public abstract void visitImpl(EndNode nd) throws DataTagsRuntimeException;
         
-        public abstract void visitImpl(ImportNode nd) throws DataTagsRuntimeException;
     }
 
     private final String id;

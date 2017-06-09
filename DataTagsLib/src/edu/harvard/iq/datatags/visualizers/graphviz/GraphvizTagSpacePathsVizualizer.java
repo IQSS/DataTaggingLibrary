@@ -8,8 +8,8 @@ import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
-import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,14 +26,13 @@ public class GraphvizTagSpacePathsVizualizer extends GraphvizVisualizer {
 	}
 
 	@Override
-	void printHeader(BufferedWriter out) throws IOException {
+	void printHeader(PrintWriter out) throws IOException {
 		super.printHeader(out);
-//		out.write("graph [overlap=true ranksep=3]");
-		out.newLine();
+		out.println();
 	}
 	
 	@Override
-	protected void printBody( BufferedWriter out ) throws IOException {
+	protected void printBody( PrintWriter out ) throws IOException {
 		
 		final List<String> nodes = new LinkedList<>();
 		final List<String> edges = new LinkedList<>();
@@ -98,26 +97,24 @@ public class GraphvizTagSpacePathsVizualizer extends GraphvizVisualizer {
 		};
 
 		topLevel.accept(typePainter);
-		for ( String s : nodes ) {
-			out.write(s);
-			out.newLine();
-		}
-		for ( String s : edges ) {
-			out.write(s);
-			out.newLine();
-		}
-        out.write( node("start")
+        nodes.forEach((s) -> {
+            out.println(s);
+        });
+        edges.forEach((s) -> {
+            out.println(s);
+        });
+        out.println( node("start")
                 .fillColor("transparent")
-                .label("DataTags")
+                .label(sanitizeId(topLevel.getName()))
                 .shape(GvNode.Shape.none)
                 .fontColor("#008800")
                 .fontSize(16)
                 .gv() );
-        out.write( edge("start", "DataTags")
+        out.println( edge("start", sanitizeId(topLevel.getName()))
                     .color("#008800")
                     .penwidth(4)
                     .gv());
-        out.write("{rank=source; start}");
+        out.println("{rank=source; start}");
 	}
 	
 }
