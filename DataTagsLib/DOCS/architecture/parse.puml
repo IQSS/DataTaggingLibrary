@@ -15,7 +15,7 @@ pml -> tsp: load tag space (modelData)
 activate tsp
 pml <- tsp: tagSpace
 deactivate tsp
-pml -> dgc: compile(modelData, tagSpace)
+pml -> dgc: compile(modelData, tagSpace, validators)
 loop while fringe not empty
 create CompilationUnit as cu
 dgc -> cu:new(path/source)

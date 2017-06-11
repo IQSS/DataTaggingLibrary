@@ -26,6 +26,7 @@ public class PolicyModelData {
         YesLast
     }
     private String title;
+    private String subTitle;
     private String version;
     private String doi;
     private String rootTypeName;
@@ -133,6 +134,14 @@ public class PolicyModelData {
 
     public AnswerTransformationMode getAnswerTransformationMode() {
         return answerTransformationMode;
+    }
+
+    public String getSubTitle() {
+        return subTitle;
+    }
+
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
     }
     
 }

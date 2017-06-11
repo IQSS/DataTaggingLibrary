@@ -1,5 +1,6 @@
 <policy-model>
   <title>${TITLE}</title>
+  <subtitle></subtitle>
   <version>0.1</version>
   <date>${DATE}</date>
   <!-- 

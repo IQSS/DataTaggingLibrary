@@ -1,0 +1,5 @@
+yes:Indeed.
+no:Nah!
+none:Not a single one
+animated: cartoonish
+cute: 🐶

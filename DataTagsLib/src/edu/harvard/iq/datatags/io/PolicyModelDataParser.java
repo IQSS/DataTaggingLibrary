@@ -168,6 +168,10 @@ public class PolicyModelDataParser {
                 case "title":
                     model.setTitle(chars());
                     break;
+                
+                case "subtitle":
+                    model.setSubTitle(chars());
+                    break;
                     
                 case "version":
                     model.setVersion(chars());

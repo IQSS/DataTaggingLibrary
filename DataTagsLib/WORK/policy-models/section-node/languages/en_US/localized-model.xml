@@ -1,0 +1,11 @@
+<localized-model>
+  <title>Sample Model with Section</title>
+  <subtitle>A sample models that sports a section node.</subtitle>
+  <version doi="xyz">0.4</version>
+  <keywords>Eng Keyword1, Eng Keyword2</keywords><!-- suggested keywords list here. -->
+  <authors>
+    <person orcid="123-2345-67890">
+      <name>Dane Joe</name>
+    </person>
+  </authors>
+</localized-model>
