@@ -17,7 +17,7 @@ public class ParsedFile {
     List<? extends AstNode> astNodes;
     List<AstImport> imports;
 
-    public ParsedFile(List<? extends AstNode> astNodes, List<AstImport> imports) {
+    public ParsedFile(List<AstImport> imports, List<? extends AstNode> astNodes) {
         this.astNodes = astNodes;
         this.imports = imports;
     }
