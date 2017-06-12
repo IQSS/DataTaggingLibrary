@@ -1,8 +1,11 @@
-Base: This is the base of the policy space. It can hold ay describable policy.
+# Base
+This is the base of the policy space. It can hold any describable policy.
 
-Base/Cats: This slot deals with which cats should be included.
+# Base/Cats
+This slot deals with which cats should be included.
 
-Base/Dogs: This slot describes which dogs should join.
+# Base/Dogs
+This slot describes which dogs should join.
 
 Base/Rice: This slot will contain which type of rice is used.
 
@@ -26,3 +29,11 @@ Base/Rice/White:
 White rice is like [Brown rice](http://rice.com?type=brown), but peeled.
 
 Base/Rice/Full: Full rice for half the price. Nice!
+
+# Decision:
+* Text is markdown.
+* Tag names are either full or non-ambiguous
+* Content of text for type goes all the way until next type/EOF
+* Type starts by either:
+  * New line with type path, ":"
+  * New line with "# typePath " EOL.
