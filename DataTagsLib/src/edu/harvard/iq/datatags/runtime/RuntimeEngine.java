@@ -116,7 +116,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         public Node visit(CallNode nd) throws DataTagsRuntimeException {
             stack.push(nd);
             // Dynamic linking to the destination node.
-            Node calleeNode = decisionGraph.getNode(nd.getCalleeNode().getId());
+            Node calleeNode = nd.getCalleeNode();
             if (calleeNode == null) {
                 setStatus(RuntimeEngineStatus.Error);
                 throw new MissingNodeException(RuntimeEngine.this, nd);

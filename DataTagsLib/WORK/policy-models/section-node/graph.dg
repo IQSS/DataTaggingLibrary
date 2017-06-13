@@ -1,2 +1,3 @@
-#import C://pp.dg as pp
-[todo: bla]
+[#import pp:C:\Users\user\Desktop\DataTagging\DataTaggingLibrary - import\DataTaggingLibrary\DataTagsLib\WORK\policy-models\section-node\pp.dg]
+
+[call: pp>first]

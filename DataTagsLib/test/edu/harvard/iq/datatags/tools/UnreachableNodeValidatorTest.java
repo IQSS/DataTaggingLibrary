@@ -5,8 +5,10 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,7 +55,7 @@ public class UnreachableNodeValidatorTest {
 
     
     @Test
-    public void validateUnreachableNodesTest_reachableNodes() throws DataTagsParseException {
+    public void validateUnreachableNodesTest_reachableNodes() throws DataTagsParseException, IOException {
         String code = "[>ask1< ask: {text: Will this work?}\n" +
                         "  {answers:\n" +
                         "    {yes: [call:shouldWork]}}]\n" +
@@ -67,7 +69,9 @@ public class UnreachableNodeValidatorTest {
         CompilationUnit cu = new CompilationUnit(code);
         cu.compile(new CompoundSlot("", ""), new EndNode("[SYN-END]"), new ArrayList<>());
         decisionGraph = cu.getDecisionGraph();
-        
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
+        dgc.put("main path",cu);
+        dgc.linkage();
         List<ValidationMessage> messages = instance.validate(decisionGraph);
         
         Set<Node> expected = Collections.<Node>emptySet();

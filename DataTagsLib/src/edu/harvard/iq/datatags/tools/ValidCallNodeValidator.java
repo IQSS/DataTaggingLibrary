@@ -39,7 +39,7 @@ public class ValidCallNodeValidator extends VoidVisitor implements DecisionGraph
     
     @Override
     public void visitImpl (CallNode cn) throws DataTagsRuntimeException {
-        if ( chart.getNode(cn.getCalleeNode().getId()) == null) {
+        if ( cn.getCalleeNode() == null) {
             validationMessages.add(new NodeValidationMessage(Level.ERROR, "Call node \"" + cn + "\" calls nonexistent node."));
         }
     }

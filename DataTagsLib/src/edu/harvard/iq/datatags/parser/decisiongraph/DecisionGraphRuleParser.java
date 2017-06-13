@@ -323,7 +323,7 @@ public class DecisionGraphRuleParser {
         nodeListParserRef.set(nodeSequence);
 
         return Parsers.or(
-                Parsers.sequence(IMPORT.many(),nodeSequence,(is,ns)->new ParsedFile(is, ns)),
+                Parsers.sequence(IMPORT,nodeSequence,(is,ns)->new ParsedFile(is, ns)),
                 nodeSequence.map( nodeList -> new ParsedFile(Collections.<AstImport>emptyList(), nodeList))
         );
         

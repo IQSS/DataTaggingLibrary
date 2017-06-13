@@ -5,6 +5,7 @@
  */
 package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -20,6 +21,11 @@ public class ParsedFile {
     public ParsedFile(List<AstImport> imports, List<? extends AstNode> astNodes) {
         this.astNodes = astNodes;
         this.imports = imports;
+    }
+    
+    public ParsedFile(AstImport imports, List<? extends AstNode> astNodes) {
+        this.astNodes = astNodes;
+        this.imports = Arrays.asList(imports);
     }
 
     public boolean add(AstImport e) {

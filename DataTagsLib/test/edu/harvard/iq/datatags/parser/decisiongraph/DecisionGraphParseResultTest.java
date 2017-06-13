@@ -146,7 +146,9 @@ public class DecisionGraphParseResultTest {
         
         CompilationUnit cu = new CompilationUnit(code);
         cu.compile(emptyTagSpace, endNode ,new ArrayList<>());
-        
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
+        dgc.put("main path",cu);
+        dgc.linkage();
         DecisionGraph actual = cu.getDecisionGraph();
 
         normalize(actual);
@@ -200,7 +202,9 @@ public class DecisionGraphParseResultTest {
 
         CompilationUnit cu = new CompilationUnit(code);
         cu.compile(ct, endNode ,new ArrayList<>());
-        
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
+        dgc.put("main path",cu);
+        dgc.linkage();
         DecisionGraph actual = cu.getDecisionGraph();
 
         normalize(actual);
@@ -234,7 +238,9 @@ public class DecisionGraphParseResultTest {
         String code = "[ask: {text: why?} {answers: {dunno:[>de< end]} {why not:[>wnc< call: duh]}}][>duh< todo: bla][end]";
         CompilationUnit cu = new CompilationUnit(code);
         cu.compile(emptyTagSpace, endNode ,new ArrayList<>());
-        
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
+        dgc.put("main path",cu);
+        dgc.linkage();
         DecisionGraph actual = cu.getDecisionGraph();
 
         normalize(actual);
@@ -301,7 +307,9 @@ public class DecisionGraphParseResultTest {
 
         CompilationUnit cu = new CompilationUnit(code);
         cu.compile(emptyTagSpace, finalEndNode,new ArrayList<>());
-        
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
+        dgc.put("main path",cu);
+        dgc.linkage();
         DecisionGraph actual = cu.getDecisionGraph();
 
         normalize(actual);
@@ -346,8 +354,9 @@ public class DecisionGraphParseResultTest {
         expected.setId("loremIpsum");
         String code = "[set: t1=a; t2 += b,c][end]";
         
+        
         CompilationUnit cu = new CompilationUnit(code);
-        cu.compile(emptyTagSpace, endNode ,new ArrayList<>());
+        cu.compile(ct, endNode ,new ArrayList<>());
         
         DecisionGraph actual = cu.getDecisionGraph();
         actual.setId("loremIpsum"); // prevent a false negative over chart id.

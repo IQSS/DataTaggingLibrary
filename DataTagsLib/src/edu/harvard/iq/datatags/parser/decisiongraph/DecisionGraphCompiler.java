@@ -13,6 +13,9 @@ import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
+import edu.harvard.iq.datatags.tools.DecisionGraphValidator;
+import edu.harvard.iq.datatags.tools.NodeValidationMessage;
+import edu.harvard.iq.datatags.tools.ValidationMessage;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -76,6 +79,7 @@ public class DecisionGraphCompiler {
             AstImport astImport = needToVisit.remove(0);
             if (! pathToCU.containsKey(astImport.getPath())){
                 CompilationUnit compilationUnit = new CompilationUnit(Paths.get(astImport.getPath()));
+                compilationUnit.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
                 needToVisit.addAll(compilationUnit.getParsedFile().getImports());
                 pathToCU.put(astImport.getPath(), compilationUnit );
             }
@@ -106,7 +110,7 @@ public class DecisionGraphCompiler {
                         callNode.setCalleeNode(calleeNode);
                     }
                     else{
-                        //TODO: Exception
+                        //TODO: valid
                     }
                 }
                 else{
@@ -150,7 +154,7 @@ public class DecisionGraphCompiler {
                         callNode.setCalleeNode(calleeNode);
                     }
                     else{
-                        //TODO: Exception
+                        
                     }
                 }
                 else{
