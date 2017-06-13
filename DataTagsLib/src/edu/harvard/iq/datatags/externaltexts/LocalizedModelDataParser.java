@@ -1,5 +1,6 @@
-package edu.harvard.iq.datatags.io;
+package edu.harvard.iq.datatags.externaltexts;
 
+import edu.harvard.iq.datatags.io.*;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.metadata.AuthorData;
 import edu.harvard.iq.datatags.model.metadata.GroupAuthorData;
@@ -30,72 +31,60 @@ import org.xml.sax.XMLReader;
  *
  * @author michael
  */
-public class PolicyModelDataParser {
+public class LocalizedModelDataParser {
 
-    private static final Map<String, PolicyModelData.AnswerTransformationMode> ANSWERS_ORDER_MAP = new HashMap<>();
-
-    static {
-        ANSWERS_ORDER_MAP.put("yes-first", PolicyModelData.AnswerTransformationMode.YesFirst);
-        ANSWERS_ORDER_MAP.put("yes-last", PolicyModelData.AnswerTransformationMode.YesLast);
-        ANSWERS_ORDER_MAP.put("verbatim", PolicyModelData.AnswerTransformationMode.Verbatim);
-    }
-
-    PolicyModelData model;
+    String language;
+    LocalizedModelData model;
     AuthorData currentAuthor;
     ModelReference currentReference;
 
+    public LocalizedModelDataParser(String language) {
+        this.language = language;
+    }
+
+    
     /**
      * Reads the XML in {@code xml} into a model.
      * @param xml The content of the policy-model.xml file.
-     * @param pathToXml the path to policy-model.xml
      * @return The policy model, parsed.
-     * @throws PolicyModelLoadingException
+     * @throws LocalizationException
      */   
-    public PolicyModelData read(String xml, Path pathToXml) throws PolicyModelLoadingException {
+    public LocalizedModelData read(String xml) throws LocalizationException {
         try {
-            model = new PolicyModelData();
-            model.setMetadataFile(pathToXml);
+            model = new LocalizedModelData();
             
             SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
             XMLReader reader = parser.getXMLReader();
             
-            reader.setContentHandler(new PolicyModelContentHandler(pathToXml));
+            reader.setContentHandler(new LocalizedModelContentHandler());
             try (StringReader sr = new StringReader(xml) ) {
                 reader.parse(new InputSource(sr));
             }
+            
             return model;
             
         } catch (IOException ex) {
-            throw new PolicyModelLoadingException(pathToXml, "Cannot read model: " + ex.getLocalizedMessage(), ex);
+            throw new LocalizationException(language, "Cannot read localization: " + ex.getLocalizedMessage(), ex);
         } catch (ParserConfigurationException ex) {
-            throw new PolicyModelLoadingException(pathToXml, "Cannot load model due to parse configuration error: " + ex.getLocalizedMessage(), ex);
+            throw new LocalizationException(language, "Cannot load localization due to parse configuration error: " + ex.getLocalizedMessage(), ex);
         } catch (SAXException ex) {
-            throw new PolicyModelLoadingException(pathToXml, "Error parsing model XML: " + ex.getLocalizedMessage(), ex);
+            throw new LocalizationException(language, "Error parsing localization XML: " + ex.getLocalizedMessage(), ex);
         }
     }
     
-    public PolicyModelData read(Path pathToXml) throws PolicyModelLoadingException {
+    public LocalizedModelData read(Path pathToXml) throws LocalizationException {
         try {
-            if ( Files.isDirectory(pathToXml)) {
-                pathToXml = pathToXml.resolve("policy-model.xml");
-            }
-            return read( Files.readAllLines(pathToXml, StandardCharsets.UTF_8).stream().collect(joining("\n")),
-                    pathToXml );
+            return read( Files.readAllLines(pathToXml, StandardCharsets.UTF_8).stream().collect(joining("\n")) );
         } catch (IOException ex) {
-            throw new PolicyModelLoadingException(pathToXml, "Cannot read model: " + ex.getLocalizedMessage(), ex);
+            throw new LocalizationException(language, "Cannot read localization: " + ex.getLocalizedMessage(), ex);
         }
     }
     
     
-    class PolicyModelContentHandler implements ContentHandler {
+    class LocalizedModelContentHandler implements ContentHandler {
 
-        Path xmlFilePath;
         StringBuilder sb = new StringBuilder();
         Locator docLoc;
-
-        public PolicyModelContentHandler(Path xmlFilePath) {
-            this.xmlFilePath = xmlFilePath;
-        }
         
         @Override
         public void setDocumentLocator(Locator locator) {
@@ -111,10 +100,6 @@ public class PolicyModelDataParser {
         @Override
         public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
             switch (qName) {
-                case "version":
-                    model.setDoi(atts.getValue("doi"));
-                    break;
-
                 case "person":
                     PersonAuthorData pad = new PersonAuthorData();
                     pad.setOrcid(atts.getValue("orcid"));
@@ -125,29 +110,6 @@ public class PolicyModelDataParser {
                 case "group":
                     currentAuthor = new GroupAuthorData();
                     model.add(currentAuthor);
-                    break;
-
-                case "model":
-                    String answerOrderValue = atts.getValue("answers-order");
-                    if (answerOrderValue == null || answerOrderValue.trim().isEmpty()) {
-                        // default value
-                        model.setAnswerTransformationMode(PolicyModelData.AnswerTransformationMode.YesFirst);
-                    } else {
-                        PolicyModelData.AnswerTransformationMode mode = ANSWERS_ORDER_MAP.get(answerOrderValue.trim().toLowerCase());
-                        if (mode == null) {
-                            throw new SAXException("Illegal value for attribute 'answers-order' of node 'model': " + answerOrderValue);
-                        }
-                        model.setAnswerTransformationMode(mode);
-
-                    }
-                    break;
-
-                case "space":
-                    String rootSlotName = atts.getValue("root");
-                    if (rootSlotName == null || rootSlotName.trim().isEmpty()) {
-                        throw new SAXException("Node 'space' must specify a valid root for the policy space.");
-                    }
-                    model.setRootTypeName(rootSlotName);
                     break;
 
                 case "reference":
@@ -171,25 +133,12 @@ public class PolicyModelDataParser {
                     model.setSubTitle(chars());
                     break;
                     
-                case "version":
-                    model.setVersion(chars());
-                    break;
-                    
                 case "keywords":
                     Arrays.stream(sb.toString().split(","))
                             .map(w->w.trim().toLowerCase())
                             .forEach(model::addKeyword);
                     break;
                   
-                case "date":
-                    tmpStr = chars();
-                    String[] comps = tmpStr.split("-");
-                    model.setReleaseDate(LocalDate.of(
-                                 Integer.parseInt(comps[0]),
-                                 Integer.parseInt(comps[1]),
-                                 Integer.parseInt(comps[2])));
-                    break;
-                    
                 case "name":
                     currentAuthor.setName(chars());
                     break;
@@ -204,16 +153,6 @@ public class PolicyModelDataParser {
                     
                 case "contact":
                     ((GroupAuthorData)currentAuthor).setContact(chars());
-                    break;
-                    
-                case "space":
-                    tmpStr = chars();
-                    model.setPolicySpacePath(xmlFilePath.resolveSibling(tmpStr));
-                    break;
-                
-                case "graph":
-                    tmpStr = chars();
-                    model.setDecisionGraphPath(xmlFilePath.resolveSibling(tmpStr));
                     break;
                     
                 case "reference":

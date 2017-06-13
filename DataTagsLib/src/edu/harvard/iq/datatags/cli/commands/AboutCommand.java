@@ -2,7 +2,7 @@ package edu.harvard.iq.datatags.cli.commands;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.model.PolicyModel;
-import edu.harvard.iq.datatags.model.PolicyModelData;
+import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import java.util.List;
 
 /**

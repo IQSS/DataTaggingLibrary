@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.cli.commands;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
-import edu.harvard.iq.datatags.model.PolicyModelData;
+import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.metadata.AuthorData;
 import edu.harvard.iq.datatags.model.metadata.GroupAuthorData;
 import edu.harvard.iq.datatags.model.metadata.PersonAuthorData;

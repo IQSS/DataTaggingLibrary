@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.model;
 
+import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 

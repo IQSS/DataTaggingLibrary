@@ -52,7 +52,7 @@ public class DecisionGraphTerminalParser {
 
     static final Parser<Tokens.Fragment> NODE_ID = Parsers.between(
             Scanners.among(">"),
-            Patterns.among(".,/~?!()@#$%^&*_+-").or(Patterns.range('a', 'z'))
+            Patterns.among(".:,/~?!()@#$%^&*_+-").or(Patterns.range('a', 'z'))
             .or(Patterns.range('A', 'Z')).or(Patterns.range('0', '9')).many1()
             .toScanner(Tags.NODE_ID.toString()).source(),
             Scanners.among("<")).map(s -> Tokens.fragment(s, Tags.NODE_ID));

@@ -3,7 +3,7 @@ package edu.harvard.iq.datatags.mains;
 import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
 import edu.harvard.iq.datatags.io.PolicyModelDataParser;
 import edu.harvard.iq.datatags.model.PolicyModel;
-import edu.harvard.iq.datatags.model.PolicyModelData;
+import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.parser.PolicyModelLoadResult;

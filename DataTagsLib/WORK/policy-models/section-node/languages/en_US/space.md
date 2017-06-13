@@ -29,11 +29,3 @@ Base/Rice/White:
 White rice is like [Brown rice](http://rice.com?type=brown), but peeled.
 
 Base/Rice/Full: Full rice for half the price. Nice!
-
-# Decision:
-* Text is markdown.
-* Tag names are either full or non-ambiguous
-* Content of text for type goes all the way until next type/EOF
-* Type starts by either:
-  * New line with type path, ":"
-  * New line with "# typePath " EOL.
