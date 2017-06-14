@@ -305,12 +305,12 @@ public class DecisionGraphRuleParser {
                 nodeStructurePart("["),
                 nodeStructurePart("#import"),
                 Terminals.fragment( Tag.IDENTIFIER ),
-                (_open, _import, localId) -> localId
+                nodeStructurePart(":"),
+                (_open, _import, localId, _colon) -> localId
             ),
-            nodeStructurePart(":"),
             textbodyUpTo("]"),
             nodeStructurePart("]"),
-            (localId, _colon, path, _close) -> new AstImport(path, localId));
+            (localId, path, _close) -> new AstImport(path, localId));
     
     // -------------------------------
     // Program-level parsers.
@@ -322,10 +322,7 @@ public class DecisionGraphRuleParser {
         Parser<List<? extends AstNode>> nodeSequence = singleAstNode.many().cast();
         nodeListParserRef.set(nodeSequence);
 
-        return Parsers.or(
-                Parsers.sequence(IMPORT,nodeSequence,(is,ns)->new ParsedFile(is, ns)),
-                nodeSequence.map( nodeList -> new ParsedFile(Collections.<AstImport>emptyList(), nodeList))
-        );
+        return Parsers.sequence(IMPORT.optional().many(), nodeSequence,(is,ns)->new ParsedFile(is, ns));
         
     }
 }

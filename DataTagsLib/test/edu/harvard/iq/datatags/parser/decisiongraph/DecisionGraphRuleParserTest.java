@@ -17,13 +17,13 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTextSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
+import edu.harvard.iq.datatags.parser.tagspace.ast.ToDoAstSlot;
 import java.util.Arrays;
 import static java.util.Arrays.asList;
 import java.util.Collections;
 import java.util.List;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
-import org.codehaus.jparsec.Tokens.Fragment;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
@@ -507,5 +507,36 @@ public class DecisionGraphRuleParserTest {
 
         assertEquals(expected, sut.parse(program).getAstNodes());
     }
-
+    
+    
+    @Test
+    public void parsedFileTest_singleImport() {
+        String program = "[#import somefile: C://somefile]\n" +
+                         "[todo: something]";
+        Parser<ParsedFile> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.graphParser());
+        
+        List<AstImport> imports = Arrays.asList( new AstImport("C://somefile", "somefile"));
+        List<AstNode> nodes = Arrays.asList( new AstTodoNode(null, "something") );
+        
+        ParsedFile actual = sut.parse(program);
+        
+        assertEquals( imports, actual.getImports() );
+        assertEquals( nodes, actual.getAstNodes()  );
+    }
+    
+    @Test
+    public void parsedFileTest_doubleImport() {
+        String program = "[#import somefile: C://somefile]\n" +
+                         "[#import someOtherFile: C://somefile2]\n" +
+                         "[todo: something]";
+        Parser<ParsedFile> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.graphParser());
+        
+        List<AstImport> imports = Arrays.asList( new AstImport("C://somefile", "somefile"), new AstImport("C://somefile2", "someOtherFile"));
+        List<AstNode> nodes = Arrays.asList( new AstTodoNode(null, "something") );
+        
+        ParsedFile actual = sut.parse(program);
+        
+        assertEquals( imports, actual.getImports() );
+        assertEquals( nodes, actual.getAstNodes()  );
+    }
 }
