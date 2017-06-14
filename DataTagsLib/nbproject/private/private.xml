@@ -5,18 +5,19 @@
         <group/>
         <group name="Everyday"/>
         <group name="DataTags">
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/externaltexts/LocalizedModelData.java</file>
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/test/edu/harvard/iq/datatags/externaltexts/LocalizedModelDataParserTest.java</file>
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/io/PolicyModelLoadingException.java</file>
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/externaltexts/FileFormats.java</file>
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/externaltexts/Localization.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/externaltexts/FileFormat.java</file>
             <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/model/metadata/ModelReference.java</file>
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/model/metadata/PolicyModelData.java</file>
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/test/edu/harvard/iq/datatags/externaltexts/LocalizationLoaderTest.java</file>
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/externaltexts/LocalizationLoader.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/externaltexts/Localization.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/io/PolicyModelLoadingException.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/externaltexts/LocalizedModelData.java</file>
             <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/model/metadata/BaseModelData.java</file>
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/externaltexts/LocalizationException.java</file>
             <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/test/edu/harvard/iq/datatags/io/PolicyModelDataParserTest.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/externaltexts/LocalizationLoader.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/test/edu/harvard/iq/datatags/externaltexts/LocalizationLoaderTest.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/model/metadata/PolicyModelData.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/externaltexts/LocalizationException.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/test/edu/harvard/iq/datatags/externaltexts/LocalizedModelDataParserTest.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/test/edu/harvard/iq/JParserGames.java</file>
         </group>
     </open-files>
 </project-private>
