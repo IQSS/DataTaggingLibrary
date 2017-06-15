@@ -15,11 +15,9 @@ import edu.harvard.iq.datatags.tools.DecisionGraphValidator;
 import edu.harvard.iq.datatags.tools.DuplicateNodeAnswerValidator;
 import edu.harvard.iq.datatags.tools.RepeatIdValidator;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
-import edu.harvard.iq.datatags.tools.ValidCallNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import edu.harvard.iq.datatags.tools.processors.YesNoAnswersSorter;
 import java.io.IOException;
-import java.util.logging.Logger;
 import static edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import edu.harvard.iq.datatags.tools.processors.DecisionGraphProcessor;
 import edu.harvard.iq.datatags.tools.processors.EndNodeOptimizer;
@@ -51,7 +49,6 @@ public class PolicyModelLoader {
         res.add( new RepeatIdValidator() );
         
         res.add( new UnreachableNodeValidator() );
-        res.add( new ValidCallNodeValidator() );
         
         return res;
     }
@@ -65,7 +62,6 @@ public class PolicyModelLoader {
         res.add( new DuplicateNodeAnswerValidator() );
         res.add( new RepeatIdValidator() );
         
-        res.add( new ValidCallNodeValidator() );
         
         res.add( new EndNodeOptimizer() );
         
@@ -105,6 +101,9 @@ public class PolicyModelLoader {
             // load decision graph
             DecisionGraphCompiler decisionGraphCompiler = new DecisionGraphCompiler();
             DecisionGraph dg = decisionGraphCompiler.compile(spaceRoot, data, dgAstValidators);
+            decisionGraphCompiler.getMessages().forEach((message) ->
+                    res.addMessage(message));
+            
             switch ( data.getAnswerTransformationMode() ) {
                 case Verbatim: break;
                 case YesFirst:

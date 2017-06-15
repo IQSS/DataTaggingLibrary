@@ -15,7 +15,6 @@ import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
 import edu.harvard.iq.datatags.tools.NodeValidationMessage;
 import edu.harvard.iq.datatags.tools.RepeatIdValidator;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
-import edu.harvard.iq.datatags.tools.ValidCallNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVisualizer;
 import java.io.IOException;
@@ -86,13 +85,6 @@ public class DecisionGraphValidations {
                 System.out.println("\t" + ((NodeValidationMessage)m).getEntities());
             });
             
-            System.out.println("Validating Call nodes");
-            ValidCallNodeValidator fcv = new ValidCallNodeValidator();
-            List<NodeValidationMessage> callNodeMessages = fcv.validate(dg);
-            if (callNodeMessages.size() > 0) {
-                System.out.println(callNodeMessages);
-                System.exit(-1);
-            }
 
             
             

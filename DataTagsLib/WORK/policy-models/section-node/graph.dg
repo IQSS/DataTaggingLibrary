@@ -1,3 +1,6 @@
 [#import pp:C:\Users\user\Desktop\DataTagging\DataTaggingLibrary - import\DataTaggingLibrary\DataTagsLib\WORK\policy-models\section-node\pp.dg]
+[#import pt:C:\Users\user\Desktop\DataTagging\DataTaggingLibrary - import\DataTaggingLibrary\DataTagsLib\WORK\policy-models\section-node\second.dg]
 
-[call: pp>first]
+
+[call: p>f]
+[call: pt>second]

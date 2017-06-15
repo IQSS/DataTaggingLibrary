@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.parser.decisiongraph;
 
+import static edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import edu.harvard.iq.datatags.model.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
@@ -13,23 +14,17 @@ import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
-import edu.harvard.iq.datatags.tools.DecisionGraphValidator;
-import edu.harvard.iq.datatags.tools.NodeValidationMessage;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The resultant AST from parsing decision graph code. Can create an actual decision
@@ -52,6 +47,9 @@ public class DecisionGraphCompiler {
 
     private Map<String, CompilationUnit> pathToCU = new HashMap<>();
 
+    private List<ValidationMessage> messages = new ArrayList<>();
+
+    
     private Node startNode;
     
     
@@ -91,7 +89,7 @@ public class DecisionGraphCompiler {
             List<AstImport> imports = cu.getParsedFile().getImports();
             Map<String, String> callToCallee = cu.getCallToCalleeID();
             String calleeCuPath = null;
-            Boolean foundCallee = false;
+            Boolean foundCalleeCU = false;
             for(String call: callToCallee.keySet()){
                 if (callToCallee.get(call).contains(">")){ //If the callee is from another compilation unit
                     String calleeCuName = callToCallee.get(call).split(">")[0]; //Take the cu in cu>id from callee
@@ -99,18 +97,24 @@ public class DecisionGraphCompiler {
                     for (AstImport ai: imports){
                         if (ai.getName().equals(calleeCuName)){
                             calleeCuPath = ai.getPath();
-                            foundCallee = true;
+                            foundCalleeCU = true;
                             break;
                         }
                     }
-                    if (foundCallee){
+                    if (foundCalleeCU){
                         CompilationUnit calleeCU = pathToCU.get(calleeCuPath);
                         Node calleeNode = calleeCU.getDecisionGraph().getNode(calleeName);
-                        CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
-                        callNode.setCalleeNode(calleeNode);
+                        if(calleeNode != null){
+                            CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
+                            callNode.setCalleeNode(calleeNode);
+                        }
+                        else{
+                            messages.add(new ValidationMessage(Level.ERROR, "cannot find target node with id " + calleeCuName + ">" +  calleeName));
+                        }
                     }
                     else{
-                        //TODO: valid
+                        messages.add(new ValidationMessage(Level.ERROR, "cannot find target file with id " + calleeCuName));
+
                     }
                 }
                 else{
@@ -118,6 +122,7 @@ public class DecisionGraphCompiler {
                     CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
                     callNode.setCalleeNode(calleeNode);
                 }
+                foundCalleeCU = false;
             }
         }
         
@@ -248,6 +253,10 @@ public class DecisionGraphCompiler {
         ambiguous.forEach(newEntries::remove);
         fullyQualifiedSlotName.putAll(newEntries);
         return fullyQualifiedSlotName;
+    }
+
+    public List<ValidationMessage> getMessages() {
+        return messages;
     }
 
 }

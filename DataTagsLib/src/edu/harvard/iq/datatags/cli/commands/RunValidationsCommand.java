@@ -4,7 +4,6 @@ import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.tools.NodeValidationMessage;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
 import edu.harvard.iq.datatags.tools.UnusedTagsValidator;
-import edu.harvard.iq.datatags.tools.ValidCallNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import java.util.List;
 
@@ -31,16 +30,7 @@ public class RunValidationsCommand implements CliCommand {
         List<NodeValidationMessage> nvms;
 
         rnr.print("Validating call nodes");
-        ValidCallNodeValidator vcnv = new ValidCallNodeValidator();
-        nvms = vcnv.validate( rnr.getModel().getDecisionGraph() );
-        if ( nvms.isEmpty() ) {
-            rnr.println(" [ok]");
-        } else {
-            rnr.println(" [error]");
-            rnr.println("Invalid call nodes found:");
-            // The validation messages will only have a single node - the invalid call node.
-            nvms.forEach( w -> rnr.println(" - %s", w.getEntities().iterator().next()) );
-        }
+
         
         rnr.print("Checking for unreachable nodes");
         UnreachableNodeValidator unv = new UnreachableNodeValidator();
