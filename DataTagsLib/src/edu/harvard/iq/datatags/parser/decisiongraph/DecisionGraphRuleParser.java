@@ -1,6 +1,5 @@
 package edu.harvard.iq.datatags.parser.decisiongraph;
 
-import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphTerminalParser.Tags;
 import static edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphTerminalParser.nodeStructurePart;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;

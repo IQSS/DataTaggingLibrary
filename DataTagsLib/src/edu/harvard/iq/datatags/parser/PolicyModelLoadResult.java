@@ -10,6 +10,7 @@ import java.util.List;
  * The result of reading a model. As there are many possible errors and warnings,
  * this class collects them. This class also has a {@link PolicyModel} field, but
  * as it may be only partially loaded, please consult {@link #isSuccessful()}
+ * 
  * @author michael
  */
 public class PolicyModelLoadResult {

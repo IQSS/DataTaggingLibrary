@@ -1,7 +1,5 @@
 package edu.harvard.iq.datatags.externaltexts;
 
-import edu.harvard.iq.datatags.io.*;
-import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.metadata.AuthorData;
 import edu.harvard.iq.datatags.model.metadata.GroupAuthorData;
 import edu.harvard.iq.datatags.model.metadata.ModelReference;
@@ -10,11 +8,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import static java.nio.file.Files.readAllLines;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import static java.util.stream.Collectors.joining;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;

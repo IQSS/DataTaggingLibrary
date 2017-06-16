@@ -10,5 +10,10 @@
 * Tag names are either full or non-ambiguous
 * Content of text for type goes all the way until next type/EOF
 * Type starts by either:
-  * New line with type path, ":"
+  * New line with type path, ":" (no spaces between line start and ":")
   * New line with "# typePath " EOL.
+
+# node data
+* Files are in `nodes/` folder
+* Only `.txt` and `.md`/`.mdown` files are considered.
+* Internally, files are always considered MarkDown (since text is really a markdown form).
