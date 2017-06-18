@@ -40,21 +40,33 @@ This graph contains two ``set`` nodes, each one setting the value of a different
 
 ``Greeting`` is a different story. Being an atomic slot, it can only contain a single value. Thus, if is had any value in it, the ``set`` node in line 1 may remove is and put ``hello`` instead. There are cases when this ``set`` instruction will be ignored; we'll get to this :doc:`later <value-order>`.
 
+------------------
+Model Description
+------------------
+
+Last step before running the model: create the policy model metadata file. This is an XML file defining which file defines the policy space and which one defines the main decision graph. Additionally, this file contains metadata describing the title, authors, references, etc. By convension, this file is called ``policy-model.xml``, but it can have any name (:download:`policy-model.xml<code/hello-world/policy-model.xml>`).
+
+.. include :: code/hello-world/policy-model.xml
+   :code:
+   :number-lines:
+
 ---------
 Runtime!
 ---------
 
 Now, let's run the questionnaire. In the console, type the following::
 
-  java -jar DataTagsLib path/to/hello-world.ts path/to/hello-world.dg
+  java -jar DataTagsLib path/to/policy-model.xml
 
 or just::
 
   java -jar DataTagsLib
 
-and pass the parameters to the CliRunner when it prompts you.
+and provide the path to ``policy-model.xml`` when CliRunner prompts you.
 
 .. tip:: On most systems, dragging a file to the terminal's window will type its absolute path in the prompt.
+
+.. tip:: If the model description file is indeed called ``policy-model.xml``, it is enough to provide the path to the model's directory. CliRunner will find the description file automatically. 
 
 The system traverses the graph and setting the slot values like so:
 

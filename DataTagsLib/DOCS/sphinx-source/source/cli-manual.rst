@@ -92,5 +92,8 @@ trace
 visualize-ts, visualize-dg
   Create a visualization of the tag space (-ts) and the decision graph (-dg). Requires `Graphviz`_. Use the flag ``-style=f11`` to create a visualization using an alternative style, developed for `Force11`_'s decision trees working group. The default file type for the visualization is PDF. However, it is possible to use other formats by specifying a filename with a different suffix when prompted for a filename. For example, naming a file ``myDecisionGraph.svg`` would make CliRunner generate the visualization in SVG format.
 
+loc-create
+  Creates a localization of the current model. CliRunner creates localization files with default and placeholder values that the model developer can edit using any text editor.
+
 .. _Graphviz: http://www.graphviz.org
 .. _Force11: https://www.force11.org

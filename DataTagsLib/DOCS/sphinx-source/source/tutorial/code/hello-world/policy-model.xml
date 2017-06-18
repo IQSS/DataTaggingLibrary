@@ -1,0 +1,7 @@
+<policy-model>
+  <title>Hello World</title>
+  <model>
+    <space root="DataTags">hello-world.ts</space>
+    <graph>hello-world.dg</graph>
+  </model>
+</policy-model>

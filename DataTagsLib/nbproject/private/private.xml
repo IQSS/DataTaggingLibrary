@@ -5,7 +5,15 @@
         <group/>
         <group name="Everyday"/>
         <group name="DataTags">
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/externaltexts/Localization.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/PolicyModelLoader.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/tagspace/TagSpaceTerminalParser.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/cli/CliRunner.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/io/FileUtils.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/cli/commands/AboutCommand.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/PolicyModelLoadResult.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/mains/PolicyModelCliRunner.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/externaltexts/LocalizationLoader.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/tagspace/TagSpaceRuleParser.java</file>
         </group>
     </open-files>
 </project-private>
