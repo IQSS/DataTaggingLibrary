@@ -3,6 +3,9 @@ package edu.harvard.iq.datatags.model;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import java.nio.file.Path;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * The Main reason we're here - a model of a policy. Holds metadata, decision graph,
@@ -15,7 +18,9 @@ public class PolicyModel {
     private PolicyModelData metadata;
     private CompoundSlot spaceRoot;
     private DecisionGraph decisionGraph;
-
+    private final Set<String> localizations = new TreeSet<>();
+    
+    
     public PolicyModelData getMetadata() {
         return metadata;
     }
@@ -39,6 +44,19 @@ public class PolicyModel {
     public void setDecisionGraph(DecisionGraph decisionGraph) {
         this.decisionGraph = decisionGraph;
     }
+    
+    public void addLocalization( String locName ) {
+        localizations.add(locName);
+    }
+
+    public Set<String> getLocalizations() {
+        return localizations;
+    }
+    
+    public Path getDirectory() {
+        return ( metadata.getMetadataFile() != null ) ? metadata.getMetadataFile().getParent() : null;
+    }
+    
     
     @Override
     public String toString() {

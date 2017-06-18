@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Loads a policy model to the CliRunner.
@@ -72,7 +74,15 @@ public class LoadPolicyModelCommand implements CliCommand {
                 rnr.printTitle("Load Messages");
                 loadRes.getMessages().forEach(m->rnr.println(m.getLevel() + "   " + m.getMessage()));
             }
-
+            
+            Set<String> localizations = loadRes.getModel().getLocalizations();
+            if ( localizations.size() > 0 ) {
+                AtomicInteger cnt = new AtomicInteger();
+                rnr.println("Found the following localizations:");
+                localizations.stream()
+                        .forEach( s->rnr.println("%d) %s", cnt.incrementAndGet(), s ));
+            }
+            
             if ( loadRes.isSuccessful() ) {
                 rnr.restart();
             }

@@ -1,5 +1,7 @@
 package edu.harvard.iq.datatags.parser;
 
+import edu.harvard.iq.datatags.externaltexts.LocalizationLoader;
+import static edu.harvard.iq.datatags.io.FileUtils.ciResolve;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
@@ -24,6 +26,8 @@ import java.util.logging.Logger;
 import static edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import edu.harvard.iq.datatags.tools.processors.DecisionGraphProcessor;
 import edu.harvard.iq.datatags.tools.processors.EndNodeOptimizer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -132,9 +136,21 @@ public class PolicyModelLoader {
             model.setDecisionGraph(dg);
             
         } catch (IOException ex) {
-            Logger.getLogger(PolicyModelLoader.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            res.addMessage( new ValidationMessage(Level.ERROR, "IO error while reading graph: " + ex.getMessage()));
         }
-            
+        
+        Path localizations;
+        try {
+            localizations = ciResolve(data.getMetadataFile().getParent(), LocalizationLoader.LOCALIZATION_DIRECTORY_NAME);
+            if ( localizations != null ) {
+                Files.list(localizations).filter(Files::isDirectory)
+                                         .map(p->p.getFileName().toString())
+                                         .forEach(res.getModel()::addLocalization);
+            }
+        } catch (IOException ex) {
+            res.addMessage( new ValidationMessage(Level.WARNING, "IO Error reading localizations: " + ex.getMessage()));
+        }
+        
         return res;
     }
     

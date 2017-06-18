@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.parser;
 
+import java.util.ArrayList;
+import java.util.List;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The result of reading a model. As there are many possible errors and warnings,

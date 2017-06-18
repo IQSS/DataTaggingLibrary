@@ -1,7 +1,0 @@
-<-- Top answers
-yes:Indeed.
-no:Nah!
-none:Not a single one
-<-- Some more rare ones.
-animated: cartoonish
-cute: 🐶

@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import static java.nio.file.Files.readAllLines;
 import java.nio.file.Path;
 import java.util.Arrays;
 import static java.util.stream.Collectors.joining;

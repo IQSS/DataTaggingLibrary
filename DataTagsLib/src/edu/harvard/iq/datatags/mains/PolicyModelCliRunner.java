@@ -2,7 +2,6 @@ package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.cli.commands.LoadPolicyModelCommand;
-import edu.harvard.iq.datatags.cli.commands.NewModelCommand;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

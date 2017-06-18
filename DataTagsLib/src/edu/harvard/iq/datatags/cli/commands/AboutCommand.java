@@ -43,6 +43,10 @@ public class AboutCommand implements CliCommand {
             rnr.println("  title: %s", metadata.getTitle() );
             rnr.println("version: %s", metadata.getVersion() );
             rnr.println("     at: %s", metadata.getMetadataFile().getParent() );
+            if ( ! model.getLocalizations().isEmpty() ) {
+                rnr.println("Localizations:");
+                model.getLocalizations().forEach(lName -> rnr.println("* " + lName));
+            }
         }
         rnr.println("Engine status: %s", rnr.getEngine().getStatus());
         

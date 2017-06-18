@@ -27,10 +27,12 @@ import java.util.stream.Stream;
  * @author michael
  */
 public class LocalizationLoader {
-    public static String ANSWERS_FILENAME="answers.txt";
-    public static String LOCALIZED_METADATA_FILENAME="localized-model.xml";
-    public static String NODE_DIRECTORY_NAME="nodes";
-    public static String SPACE_DATA_FILENAME="space.md";
+    
+    public static final String LOCALIZATION_DIRECTORY_NAME = "languages";
+    public static final String ANSWERS_FILENAME="answers.txt";
+    public static final String LOCALIZED_METADATA_FILENAME="localized-model.xml";
+    public static final String NODE_DIRECTORY_NAME="nodes";
+    public static final String SPACE_DATA_FILENAME="space.md";
     
     private final List<ValidationMessage> messages = new ArrayList<>();
     
