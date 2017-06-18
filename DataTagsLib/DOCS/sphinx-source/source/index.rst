@@ -56,7 +56,8 @@ This site documents those two languages, and some language-related tools.
 .. _GitHub Repository: https://github.com/IQSS/DataTaggingLibrary
 .. _computer science department at the Ben-Gurion University of the Negev, Israel: http://in.bgu.ac.il/en/natural_science/cs/Pages/default.aspx
 
-Contents:
+What's Here:
+------------------
 
 .. toctree::
    :glob:
@@ -68,12 +69,13 @@ Contents:
    tutorial/index
    decision-graphs/index
    tag-spaces/index
+   policy-model.rst
    cli-manual
    terms
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`search`
