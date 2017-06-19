@@ -3,7 +3,7 @@
 Policy Model Description File
 ==============================
 
-The policy model description file provides metadata about the policy model. Most of the metadata is optional, and so there is no need to provide external details (such as release date or DOI) before they are available. By convension, the model descriptio file is called ``policy-model.xml``. This convension allows CliRunner to automatically detect the model description file in a policy model folder.
+The policy model description file provides metadata about the policy model. Most of the metadata is optional, and so there is no need to provide external details (such as release date or DOI) before they are available. By convension, the model description file is called ``policy-model.xml``. This convension allows CliRunner to automatically detect the model description file in a policy model folder.
 
 Minimal Description Example
 -----------------------------

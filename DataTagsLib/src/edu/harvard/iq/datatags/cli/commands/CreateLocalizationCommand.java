@@ -13,6 +13,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
+import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.types.AggregateSlot;
 import edu.harvard.iq.datatags.model.types.AtomicSlot;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
@@ -21,11 +22,16 @@ import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.datatags.util.StringHelper.nonEmpty;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -34,14 +40,20 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import java.util.stream.Stream;
 
 /**
  * A command that creates a localization
  * @author michael
  */
 public class CreateLocalizationCommand extends AbstractCliCommand {
+    
+    private final Pattern fieldDetector = Pattern.compile("\\$\\{[_A-Z]*\\}");
     
     private String localizationName = null;
     private Path localizationPath = null;
@@ -60,6 +72,7 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
             return;
         }
         
+        createLocalizedModel(rnr);
         createAnswersFile(rnr);
         createReadmeFile(rnr);
         createPolicySpace(rnr);
@@ -277,5 +290,63 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
             Logger.getLogger(CreateLocalizationCommand.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    private void createLocalizedModel(CliRunner rnr) throws IOException {
+        rnr.print(" - Creating "+LocalizationLoader.LOCALIZED_METADATA_FILENAME+" file");
+        
+        try ( InputStream rIn=getClass().getResourceAsStream("localized-model-template.xml");
+              BufferedReader rdr = new BufferedReader(new InputStreamReader(rIn)) 
+        ) {
+            List<String> xmlTemplate = new ArrayList<>(50);  
+            String line;
+            while ( (line=rdr.readLine()) != null ) {
+                xmlTemplate.add(line);
+            }
+            PolicyModelData data = rnr.getModel().getMetadata();
+            
+            rnr.print(".");
+            Stream<String> processedLines = xmlTemplate.stream().flatMap(s->processSingleLine(s, data).stream());
+            
+            rnr.print(".");
+            Files.write(localizationPath.resolve(LocalizationLoader.LOCALIZED_METADATA_FILENAME),
+                        processedLines.collect(toList()));
+        }
+        
+        rnr.println("..Done");
+    }
     
+    List<String> processSingleLine(String in, PolicyModelData data) {
+        String out = in;
+        boolean go = true;
+        
+        while ( go ) {
+            Matcher matcher = fieldDetector.matcher(out);
+            if ( matcher.find() ) {
+                String group = matcher.group();
+                String fieldName = group.substring(2,group.length()-1);
+                
+                switch ( fieldName ) {
+                    case "TITLE": 
+                        out = out.replace(group, data.getTitle() );
+                        break;
+                    case "SUBTITLE":
+                        out = out.replace(group, data.getSubTitle() != null ? data.getSubTitle() : "");
+                        break;
+                    case "KEYWORDS":
+                        out = out.replace(group, data.getKeywords().stream().collect(joining(", ")));
+                        break;
+                    case "AUTHORS":
+                        AuthorToXml a2x = new AuthorToXml(matcher.start());
+                        List<String> outList = new ArrayList<>();
+                        data.getAuthors().forEach( ad -> 
+                            outList.addAll(ad.accept(a2x)) );
+                        return outList;
+                }
+                
+            } else {
+                go = false;
+            }
+        }
+        return Collections.singletonList(out);
+    }
 }

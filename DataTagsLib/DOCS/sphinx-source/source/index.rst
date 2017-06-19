@@ -49,20 +49,20 @@ Policy spaces are also described by a domain specific language.
 
 This site documents those two languages, and some language-related tools.
 
-.. note:: The code for this project is open source, and available at a `GitHub Repository`_. The code and this site were developed by Michael Bar-Sinai, through an affiliation with the `Institute for Quantitative Social Science`_ and the `Data Privacy Lab`_ at Harvard University, with the help of students from US REU programs and the `computer science department at the Ben-Gurion University of the Negev, Israel`_.
+.. note:: The code for this project is open source, and available at a `GitHub Repository`_. The code and this site were developed by the `Institute for Quantitative Social Science`_ and the `Data Privacy Lab`_ at Harvard University, with the help of students from US REU programs and the `computer science department at the Ben-Gurion University of the Negev, Israel`_.
 
 .. _Institute for Quantitative Social Science: http://iq.harvard.edu
 .. _Data Privacy Lab: http://dataprivacylab.org
 .. _GitHub Repository: https://github.com/IQSS/DataTaggingLibrary
 .. _computer science department at the Ben-Gurion University of the Negev, Israel: http://in.bgu.ac.il/en/natural_science/cs/Pages/default.aspx
 
-What's Here:
-------------------
+What's Here
+--------------
 
 .. toctree::
    :glob:
    :titlesonly:
-   :maxdepth: 5
+   :maxdepth: 1
 
    language-general
    take-for-spin
@@ -70,7 +70,9 @@ What's Here:
    decision-graphs/index
    tag-spaces/index
    policy-model.rst
+   folder-layout
    cli-manual
+   localizations
    terms
 
 

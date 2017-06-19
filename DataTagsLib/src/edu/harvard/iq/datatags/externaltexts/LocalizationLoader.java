@@ -131,7 +131,9 @@ public class LocalizationLoader {
             String[] comps = fileName.split("\\.");
             if ( comps.length > 1 ) {
                 fileName = fileName.substring(0, fileName.length()-comps[comps.length-1].length()-1);
-                retVal.addNodeText(fileName, readAll(path));
+                if ( (!comps[comps.length].equals("txt")) || !retVal.getNodeText(fileName).isPresent() ) {
+                    retVal.addNodeText(fileName, readAll(path));
+                }
             }
         });
     }
