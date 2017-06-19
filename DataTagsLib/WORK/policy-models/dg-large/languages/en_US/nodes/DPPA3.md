@@ -1,0 +1,1 @@
+Is disclosure of the personal information required by the Driver's Privacy Protection Act? Disclosure is required, among other reasons, in connection with matters of motor vehicle or driver safety and theft; motor vehicle emissions; motor vehicle product alterations, recalls, or advisories; and performance monitoring of motor vehicles and dealers by motor vehicle manufacturers.

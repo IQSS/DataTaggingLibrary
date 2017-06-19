@@ -1,0 +1,1 @@
+Were the data collected by a federal agency or a researcher under contract with or with funds from a federal agency?

@@ -1,0 +1,4 @@
+Does the school in which the information was collected receive any funds from the US Department of Education?
+
+### Terms
+* *Funds from the US Department of Education*: This means funds provided for any purpose by the US Department of Education to the elementary or secondary school in which the data were collected. It includes any funds provided by grant, cooperative agreement, contract, subgrant, or subcontract to the institution. The funds, alternatively, may have been provided to students attending the institution. For instance, the funds may have been paid to the institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program. Note that all public schools receive such funds, though most private and parochial schools at the elementary and secondary levels do not receive such funding.

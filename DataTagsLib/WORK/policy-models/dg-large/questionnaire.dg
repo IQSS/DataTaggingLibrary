@@ -1,5 +1,4 @@
 <*
-
  This questionnaire covers Medical, government records and educational data.
  For more info, go to http://datatags.org.
  Created by:
@@ -7,6 +6,7 @@
  * Berkman Ctr. for Interner and Society (Alexandra Wood, David O'Brien, clinical students)
  * IQSS (Mercè Crosas, Michael Bar-Sinai)
 
+ NOT TO BE USED AS A LEGAL ADVICE
 *>
 [ask:
 	{text: Do the data concern living persons?}

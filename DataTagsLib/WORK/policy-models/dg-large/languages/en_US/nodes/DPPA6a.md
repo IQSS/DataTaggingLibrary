@@ -1,0 +1,1 @@
+Was the obtained consent limited in any way, such as purpose, duration, parties that may receive the data?

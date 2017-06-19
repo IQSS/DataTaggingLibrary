@@ -1,0 +1,4 @@
+Do any of the substance abuse records contain patient identifying information, or information that would identify a patient as an alcohol or drug abuser either directly or by reference to other publicly available information?
+
+### Terms
+* *Patient identifying information*: This means the name, address, Social Security number, fingerprints, photograph, or similar information by which the identity of a patient can be determined with reasonable accuracy and speed either directly or by reference to other publicly available information. The term does not include a number assigned to a patient by a program, if that number does not consist of, or contain numbers, such as a Social Security, or driver’s license number, which could be used to identify a patient with reasonable accuracy and speed from sources external to the program.
