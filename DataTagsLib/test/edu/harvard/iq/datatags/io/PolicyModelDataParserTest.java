@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.io;
 
-import edu.harvard.iq.datatags.model.PolicyModelData;
+import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.metadata.GroupAuthorData;
 import edu.harvard.iq.datatags.model.metadata.ModelReference;
 import edu.harvard.iq.datatags.model.metadata.PersonAuthorData;

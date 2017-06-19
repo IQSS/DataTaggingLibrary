@@ -2,7 +2,7 @@ package edu.harvard.iq.datatags.cli.commands;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.model.PolicyModel;
-import edu.harvard.iq.datatags.model.PolicyModelData;
+import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import java.util.List;
 
 /**
@@ -43,6 +43,10 @@ public class AboutCommand implements CliCommand {
             rnr.println("  title: %s", metadata.getTitle() );
             rnr.println("version: %s", metadata.getVersion() );
             rnr.println("     at: %s", metadata.getMetadataFile().getParent() );
+            if ( ! model.getLocalizations().isEmpty() ) {
+                rnr.println("Localizations:");
+                model.getLocalizations().forEach(lName -> rnr.println("* " + lName));
+            }
         }
         rnr.println("Engine status: %s", rnr.getEngine().getStatus());
         

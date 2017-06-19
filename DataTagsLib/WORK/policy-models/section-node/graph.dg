@@ -1,12 +1,16 @@
-[ask:
+[>q-order< ask:
   {text: Do the dogs first?}
+  {terms:
+    {frogs: Referring to the section pertaining to dogs.}
+    {first: Before the section regarding the cats.}
+  }
   {answers:
       {yes: [call: dogs][call: cats]}
       {no: [call: cats][call:dogs]}
   }
 ]
 [todo: specify mice]
-[section:
+[>sec-frogs< section:
   {title: Add frogs}
   [todo: Add frog 1]
   [todo: Add frog 2]
@@ -16,7 +20,7 @@
 
 [>dogs< section:
   {title: Dogs!}
-  [ask:
+  [>q-dogType< ask:
     {text: What type of dogs?}
     {answers:
       {none: }
@@ -30,7 +34,7 @@
 
 [>cats< section:
   {title: Cats}
-  [ask:
+  [>q:cats:group< ask:
     {text: What cats?}
     {answers:
       {all: [set: Cats += Tom, Shmil, Mitzi]}

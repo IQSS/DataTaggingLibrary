@@ -10,6 +10,10 @@ public class AstNodeIdProvider {
    
     private int nextId = 1;
     
+    public static boolean isAutoId( String anId ) {
+        return anId!=null && ( anId.startsWith("[#") && anId.endsWith("]"));
+    }
+    
     public String nextId() {
         return "[#" + nextId++ + "]";
     }

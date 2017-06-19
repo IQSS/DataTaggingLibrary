@@ -29,7 +29,6 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
         
         @Override
         public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
-
             out.println(node(nodeId(nd))
                     .shape(GvNode.Shape.egg)
                     .label(idLabel(nd) + "consider\n")

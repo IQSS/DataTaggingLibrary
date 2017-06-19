@@ -10,6 +10,7 @@ import edu.harvard.iq.datatags.cli.commands.AboutCommand;
 import edu.harvard.iq.datatags.cli.commands.RunValidationsCommand;
 import edu.harvard.iq.datatags.cli.commands.VisualizeDecisionGraphCommand;
 import edu.harvard.iq.datatags.cli.commands.AskAgainCommand;
+import edu.harvard.iq.datatags.cli.commands.CreateLocalizationCommand;
 import edu.harvard.iq.datatags.cli.commands.OptimizeDecisionGraphCommand;
 import edu.harvard.iq.datatags.cli.commands.StatisticsCommand;
 import edu.harvard.iq.datatags.cli.commands.QuitCommand;
@@ -129,7 +130,7 @@ public class CliRunner {
                 new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadPolicyModelCommand(), 
                 new NewModelCommand(), new OpenInDesktopCommand(),
                 new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand(),
-                new OptimizeDecisionGraphCommand()
+                new CreateLocalizationCommand(), new OptimizeDecisionGraphCommand()
         ).forEach(c -> commands.put(c.command(), c));
         
         // shortcuts

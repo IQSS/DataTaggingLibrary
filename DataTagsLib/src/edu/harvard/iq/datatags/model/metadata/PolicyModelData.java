@@ -1,13 +1,7 @@
-package edu.harvard.iq.datatags.model;
+package edu.harvard.iq.datatags.model.metadata;
 
-import edu.harvard.iq.datatags.model.metadata.AuthorData;
-import edu.harvard.iq.datatags.model.metadata.ModelReference;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * This class contains data about a policy model. This includes paths to the 
@@ -15,7 +9,7 @@ import java.util.TreeSet;
  * 
  * @author michael
  */
-public class PolicyModelData {
+public class PolicyModelData extends BaseModelData {
    
     public enum AnswerTransformationMode {
         /** Do not change answers */
@@ -25,24 +19,13 @@ public class PolicyModelData {
         /** Yes answers appear last (Yes/No nodes only)*/
         YesLast
     }
-    private String title;
     private String version;
     private String doi;
     private String rootTypeName;
     private LocalDate releaseDate;
     private Path metadataFile, policySpacePath, decisionGraphPath;
-    private final List<AuthorData> authors = new ArrayList<>();
-    private final List<ModelReference> references = new ArrayList<>();
-    private final Set<String> keywords = new TreeSet<>();
     private AnswerTransformationMode answerTransformationMode = AnswerTransformationMode.YesFirst;
         
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public String getVersion() {
         return version;
@@ -92,32 +75,6 @@ public class PolicyModelData {
         this.decisionGraphPath = decisionGraphPath;
     }
 
-    public List<ModelReference> getReferences() {
-        return references;
-    }
-    
-    public ModelReference add(ModelReference r) {
-        references.add(r);
-        return r;
-    }
-    
-    public List<AuthorData> getAuthors() {
-        return authors;
-    }
-    
-    public AuthorData add( AuthorData ad ) {
-        authors.add(ad);
-        return ad;
-    }
-
-    public Set<String> getKeywords() {
-        return keywords;
-    }
-    
-    public String addKeyword( String aKeyword ) {
-        keywords.add(aKeyword);
-        return aKeyword;
-    }
 
     public String getRootTypeName() {
         return rootTypeName;
@@ -134,5 +91,6 @@ public class PolicyModelData {
     public AnswerTransformationMode getAnswerTransformationMode() {
         return answerTransformationMode;
     }
+
     
 }

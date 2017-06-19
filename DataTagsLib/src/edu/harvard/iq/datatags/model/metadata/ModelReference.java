@@ -1,6 +1,5 @@
 package edu.harvard.iq.datatags.model.metadata;
 
-import edu.harvard.iq.datatags.model.PolicyModelData;
 import java.util.Objects;
 
 /**

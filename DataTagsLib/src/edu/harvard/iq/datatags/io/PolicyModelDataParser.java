@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.io;
 
-import edu.harvard.iq.datatags.model.PolicyModelData;
+import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.metadata.AuthorData;
 import edu.harvard.iq.datatags.model.metadata.GroupAuthorData;
 import edu.harvard.iq.datatags.model.metadata.ModelReference;
@@ -103,12 +103,10 @@ public class PolicyModelDataParser {
         }
 
         @Override
-        public void startDocument() throws SAXException {
-        }
+        public void startDocument() throws SAXException {}
 
         @Override
-        public void endDocument() throws SAXException {
-        }
+        public void endDocument() throws SAXException {}
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
@@ -167,6 +165,10 @@ public class PolicyModelDataParser {
             switch( qName ) {
                 case "title":
                     model.setTitle(chars());
+                    break;
+                
+                case "subtitle":
+                    model.setSubTitle(chars());
                     break;
                     
                 case "version":

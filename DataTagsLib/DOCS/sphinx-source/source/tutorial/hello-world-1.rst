@@ -4,14 +4,15 @@
 Hello, World! v1.0
 ==================
 
-Let's start with a simple "hello, world!" questionnaire. A questionnaire consists of two components:
+Let's start with a simple "hello, world!" questionnaire. A questionnaire consists of three components:
 
-* Tag Space: Defines the tags the questionnaire can assign, and their possible values. The tag space is defined in a separate file, normally with a ``.ts`` suffix.
-* Decision Graph: Describes a decision graph. Nodes carry instruction to a runtime engine, that traverse the graph along its edges. Decision graph files often have a ``.dg`` suffix.
+* **Policy Space**: Defines the tags the questionnaire can assign, and their possible values.
+* **Decision Graph**: Describes a decision graph. A decision graph is made of node of various types. Each node carries instruction to a runtime engine, that traverse the graph along its edges. Decision graph files often have a ``.dg`` suffix.
+* **Policy model definition file**: A file that references both above files, and may contain additional metadata.
 
----------
-Tag Space
----------
+------------
+Policy Space
+------------
 
 This being a "hello world" program, we need tags to allow us to greet the world (:download:`hello-world.ts <code/hello-world/hello-world.ts>`):
 
@@ -19,26 +20,48 @@ This being a "hello world" program, we need tags to allow us to greet the world 
 
    DataTags: consists of Greeting, Subject.
    Greeting: one of ignore, hi, hello, _hug_.
-   Subject: some of World, Planet, Moon, UnrecognizedOrbitingObject.
+   Subject: some of world, planet, moon, unrecognizedOrbitingObject.
 
 
-Line 1 defines the ``DataTags`` :doc:`/tag-spaces/compound-slot`. Currently, the top-level slot must be called *DataTags*. As defined in *hello-world.ts*, ``DataTags`` has two sub-slots: ``Greeting`` and ``Subject``.
-``Greeting`` is an :doc:`/tag-spaces/atomic-slot` - it is defined using ``one of``. It can be empty, or contain ``ignore``, ``hi``, ``hello``, or ``congratulations``. The order in which those terms are defined is important; we'll get to this later.
-``Subject`` is what we greet. Since we're not limited to one - it makes sense to say "hello" to the world AND the moon - ``Subject`` is an :doc:`/tag-spaces/aggregate-slot`, defined using ``some of``.
+Line 1 defines the ``DataTags`` :doc:`/tag-spaces/compound-slot`. As defined in *hello-world.ts*, ``DataTags`` has two sub-slots: ``Greeting`` and ``Subject``.
+``Greeting`` is an :doc:`/tag-spaces/atomic-slot` - it is defined using ``one of``. Atomic slot can be empty, or contain one of the values defined for them. Here, ``Greeting`` can be empty, or contain ``ignore``, ``hi``, ``hello``, or ``_hug_``. The order in which those terms are defined is important; we'll get to this later.
+``Subject`` is what we greet. Since we're not limited to one - it makes sense to say "hello" to the world AND the moon - ``Subject`` is an :doc:`/tag-spaces/aggregate-slot`, defined using ``some of``. Aggregate slots can hold zero or more values defined for them. The definition order for aggregate slots does not matter.
+
+Note that slots can only hold values that are part of their definition. It is an error to assign ``world`` to ``Greeting``, or to add ``_hug_`` to ``unrecognizedOrbitingObject``.
 
 
 ----------------
 Decision Graph
 ----------------
 
-Now that we have a tag space, we can create a process to decide on a specific tag within that space - that's what the Decision Graph file is for. Our mission is clear: we need to final tags to have ``hello`` in ``Greeting``, and ``world`` in ``Subject``. Here is the graph (:download:`hello-world.dg <code/hello-world/hello-world.dg>`)::
+Now that we have a policy space, we can create a process to decide on a specific policy within that space - that's what the Decision Graph file is for. Our mission is clear: we need the final policy to have ``hello`` in ``Greeting``, and ``world`` in ``Subject``. A decision graph is made of *nodes* of different types. The node type decides what the runtime engine will do when it arrives at the node. There are nodes for setting the values in slots, nodes for prompting users for answers, etc. Nodes are written between square brackets (``[`` and ``]``). They may have an id (written between ``>`` and ``<``), they always have a type, and they may have a body, which may contain other nodes.
+
+.. code ::
+
+  [type]
+  [>id< type]
+  [>id< type: body]
+
+
+
+For this program, we need to set the ``Greeting`` slot to hold the ``hello`` value, and to add the ``world`` value to the ``Subject`` slot. We will use two ``set`` node to achieve this, like so (:download:`hello-world.dg <code/hello-world/hello-world.dg>`)::
 
 [set: Greeting=hello]
 [set: Subject+=world]
 
-This graph contains two ``set`` nodes, each one setting the value of a different slot. Note that since ``Subject`` contains a collection of values, the Tags language uses ``+=`` rather than ``=``. If ``Subject`` contained other values, these values will not change when going through the ``set`` node.
+This graph contains two ``set`` nodes, each one setting the value of a different slot. Note that since ``Subject`` contains a collection of values, we use ``+=`` rather than ``=``. If ``Subject`` contained other values, these values will not change when going through the ``set`` node.
 
 ``Greeting`` is a different story. Being an atomic slot, it can only contain a single value. Thus, if is had any value in it, the ``set`` node in line 1 may remove is and put ``hello`` instead. There are cases when this ``set`` instruction will be ignored; we'll get to this :doc:`later <value-order>`.
+
+------------------
+Model Description
+------------------
+
+Last step before running the model: create the policy model metadata file. This is an XML file defining which file defines the policy space and which one defines the main decision graph. Additionally, this file contains metadata describing the title, authors, references, etc. By convension, this file is called ``policy-model.xml``, but it can have any name (:download:`policy-model.xml<code/hello-world/policy-model.xml>`).
+
+.. include :: code/hello-world/policy-model.xml
+   :code:
+   :number-lines:
 
 ---------
 Runtime!
@@ -46,15 +69,17 @@ Runtime!
 
 Now, let's run the questionnaire. In the console, type the following::
 
-  java -jar DataTagsLib path/to/hello-world.ts path/to/hello-world.dg
+  java -jar DataTagsLib path/to/policy-model.xml
 
 or just::
 
   java -jar DataTagsLib
 
-and pass the parameters to the CliRunner when it prompts you.
+and provide the path to ``policy-model.xml`` when CliRunner prompts you.
 
 .. tip:: On most systems, dragging a file to the terminal's window will type its absolute path in the prompt.
+
+.. tip:: If the model description file is indeed called ``policy-model.xml``, it is enough to provide the path to the model's directory. CliRunner will find the description file automatically.
 
 The system traverses the graph and setting the slot values like so:
 

@@ -5,10 +5,11 @@
 Aggregate Slot
 ===============
 
-A slot that contains a set of values from its *item type*. Aggregate slots can be used to logically group multiple binary dimensions. They are defined using the ``some of`` keyword.
+A slot that contains a set of values from its *item type*. Aggregate slots can be used to logically group multiple :doc:`atomic-slot`\s that have only yes/no values. They are defined using the ``some of`` keyword.
 Below is a definition of an aggregate slot describing the different possible types of data subjects, that might be harmed if the dataset is misused::
 
-  ProtectedDataSubjects: some of livingPersons, deadPeople, endangeredSpecies, rareMinerals.
+  ProtectedDataSubjects: some of livingPersons, deadPeople,
+                                 endangeredSpecies, rareMinerals.
 
 Semantically, this is equivalent of creating four atomic slots::
 

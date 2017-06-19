@@ -1,0 +1,7 @@
+<policy-model>
+  <title>Can I Make My Data Open</title>
+  <model>
+    <space root="Base">definitions.ts</space>
+    <graph>graph.dg</graph>
+  </model>
+</policy-model>
