@@ -100,7 +100,7 @@ public abstract class Node {
         
     }
 
-    private final String id;
+    private String id;
 
     public Node(String anId) {
         id = anId;
@@ -132,4 +132,9 @@ public abstract class Node {
         return Objects.equals(getId(), otherNode.getId());
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    
 }

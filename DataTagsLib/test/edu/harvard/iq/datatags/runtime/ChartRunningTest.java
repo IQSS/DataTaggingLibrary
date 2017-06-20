@@ -111,7 +111,7 @@ public class ChartRunningTest {
 
         AskNode n2 = (AskNode) rec.getNode(chartId + "_2");
         CallNode caller = n2.addAnswer(NO, rec.add(new CallNode("Caller")));
-        caller.setCalleeNode(new ToDoNode(chartId + "_1", ""));
+        caller.setCalleeNode(rec.getStart()); //put the first node
         caller.setNextNode(new EndNode("CallerEnd"));
 
         assertExecutionTrace(rec,

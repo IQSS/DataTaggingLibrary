@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +85,95 @@ public class DecisionGraphCompiler {
         }
         
         //Static Linking Pass
+        Map<String, Map<Node,String>> nodeIdToNodeAndCU = new HashMap<String, Map<Node,String>>();
+
+        for (String path: pathToCU.keySet()){
+            CompilationUnit cu = pathToCU.get(path);
+            List<AstImport> imports = cu.getParsedFile().getImports();
+            Map<String, String> callToCallee = cu.getCallToCalleeID();
+            String calleeCuPath = null;
+            Boolean foundCalleeCU = false;
+            for(String call: callToCallee.keySet()){
+                if (callToCallee.get(call).contains(">")){ //If the callee is from another compilation unit
+                    String calleeCuName = callToCallee.get(call).split(">")[0]; //Take the cu in cu>id from callee
+                    String calleeName = callToCallee.get(call).split(">")[1];
+                    for (AstImport ai: imports){
+                        if (ai.getName().equals(calleeCuName)){
+                            calleeCuPath = ai.getPath();
+                            foundCalleeCU = true;
+                            break;
+                        }
+                    }
+                    if (foundCalleeCU){
+                        CompilationUnit calleeCU = pathToCU.get(calleeCuPath);
+                        Node calleeNode = calleeCU.getDecisionGraph().getNode(calleeName);
+                        if(calleeNode != null){
+                            CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
+                            callNode.setCalleeNode(calleeNode);
+                            if(nodeIdToNodeAndCU.containsKey(calleeName)){
+                                Map<Node,String> nodeNcu = nodeIdToNodeAndCU.get(calleeName);
+                                nodeNcu.put(calleeNode, calleeCuName);
+                                nodeIdToNodeAndCU.put(calleeName, nodeNcu);
+                            }
+                            else{
+                                Map<Node,String> nodeNcu = new Hashtable<Node, String>();
+                                nodeNcu.put(calleeNode, calleeCuName);
+                                nodeIdToNodeAndCU.put(calleeName, nodeNcu);
+                            }
+                            
+                        }
+                        else{
+                            messages.add(new ValidationMessage(Level.ERROR, "cannot find target node with id " + calleeCuName + ">" +  calleeName));
+                        }
+                    }
+                    else{
+                        messages.add(new ValidationMessage(Level.ERROR, "cannot find target file with id " + calleeCuName));
+
+                    }
+                }
+                else{
+                    Node calleeNode = cu.getDecisionGraph().getNode( callToCallee.get(call) );
+                    CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
+                    callNode.setCalleeNode(calleeNode);
+                }
+                foundCalleeCU = false;
+            }
+        }
+        
+//        Change IDs
+        Iterable<Node> mainNodes = pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph().nodes();
+        for(Node node: mainNodes){
+            if(nodeIdToNodeAndCU.containsKey(node.getId())){
+                Map<Node,String> nodeNcu = nodeIdToNodeAndCU.get(node.getId());
+                nodeNcu.put(node, "$main");
+                nodeIdToNodeAndCU.put(node.getId(), nodeNcu);
+            }
+        }
+        for(String nodeID: nodeIdToNodeAndCU.keySet()){
+            Map<Node,String> nodes = nodeIdToNodeAndCU.get(nodeID);
+            if (nodes.size() > 1){
+                for (Node node: nodes.keySet()){
+                    String cuName = nodes.get(node);
+                    node.setId(cuName + ">" + node.getId());
+                }
+            }
+        }
+        DecisionGraph dg = pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
+        for (String nodeID: nodeIdToNodeAndCU.keySet()){
+            for(Node node: nodeIdToNodeAndCU.get(nodeID).keySet()){
+                if(dg.getNode(node.getId()) == null)
+                    dg.add(node);
+            }
+        }
+        return pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
+    }
+
+    public CompilationUnit put(String key, CompilationUnit value) {
+        return pathToCU.put(key, value);
+    }
+    
+    public DecisionGraph linkage() throws DataTagsParseException, IOException {
+        
         for (String path: pathToCU.keySet()){
             CompilationUnit cu = pathToCU.get(path);
             List<AstImport> imports = cu.getParsedFile().getImports();
@@ -126,49 +216,7 @@ public class DecisionGraphCompiler {
             }
         }
         
-        return pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
-    }
-
-    public CompilationUnit put(String key, CompilationUnit value) {
-        return pathToCU.put(key, value);
-    }
-    
-    public DecisionGraph linkage() throws DataTagsParseException, IOException {
         
-        for (String path: pathToCU.keySet()){
-            CompilationUnit cu = pathToCU.get(path);
-            List<AstImport> imports = cu.getParsedFile().getImports();
-            Map<String, String> callToCallee = cu.getCallToCalleeID();
-            String calleeCuPath = null;
-            Boolean foundCallee = false;
-            for(String call: callToCallee.keySet()){
-                if (callToCallee.get(call).contains(">")){ //If the callee is from another compilation unit
-                    String calleeCuName = callToCallee.get(call).split(">")[0]; //Take the cu in cu>id from callee
-                    String calleeName = callToCallee.get(call).split(">")[1];
-                    for (AstImport ai: imports){
-                        if (ai.getName().equals(calleeCuName)){
-                            calleeCuPath = ai.getPath();
-                            foundCallee = true;
-                            break;
-                        }
-                    }
-                    if (foundCallee){
-                        CompilationUnit calleeCU = pathToCU.get(calleeCuPath);
-                        Node calleeNode = calleeCU.getDecisionGraph().getNode(calleeName);
-                        CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
-                        callNode.setCalleeNode(calleeNode);
-                    }
-                    else{
-                        
-                    }
-                }
-                else{
-                    Node calleeNode = cu.getDecisionGraph().getNode( callToCallee.get(call) );
-                    CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
-                    callNode.setCalleeNode(calleeNode);
-                }
-            }
-        }
         return pathToCU.get("main path").getDecisionGraph();
     }
     

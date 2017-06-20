@@ -148,6 +148,7 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
             @Override
             public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
                 candidates.remove(nd.getNextNode());
+//                candidates.remove(nd.getCalleeNode());
                 nd.getNextNode().accept(this);
             }
 

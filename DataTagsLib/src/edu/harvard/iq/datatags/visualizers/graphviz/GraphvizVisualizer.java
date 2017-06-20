@@ -22,7 +22,7 @@ public abstract class GraphvizVisualizer {
     private final Map<Character, String> idEncodeMap = new HashMap<>();
     
     public GraphvizVisualizer(){
-        String idChars = ".,/~?!()@#$%^&*_+-[] =";
+        String idChars = ".,/~?!()@#$%^&*_+-[] >=";
         
         idChars.chars().forEach( intChar -> {
             Character src = (char)intChar;
