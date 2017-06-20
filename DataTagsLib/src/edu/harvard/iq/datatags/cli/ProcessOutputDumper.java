@@ -21,15 +21,18 @@ public class ProcessOutputDumper {
     final OutputStream out;
     final InputStream in;
     final CountDownLatch latch = new CountDownLatch(1);
+    private final boolean closeStream;
 
     public ProcessOutputDumper(InputStream anIn, Path outPath) throws IOException {
         in = anIn;
         out = Files.newOutputStream(outPath);
+        closeStream = true;
     }
 
     public ProcessOutputDumper(InputStream anIn, OutputStream anOut) throws IOException {
         in = anIn;
         out = anOut;
+        closeStream = false;
     }
 
     public void await() throws InterruptedException {
@@ -48,6 +51,13 @@ public class ProcessOutputDumper {
                     }
                 } catch (IOException ex) {
                     Logger.getLogger(VisualizeDecisionGraphCommand.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            if ( closeStream ) {
+                try {
+                    out.close();
+                } catch (IOException ex) {
+                    System.err.println("Error closing file.");
                 }
             }
             latch.countDown();
