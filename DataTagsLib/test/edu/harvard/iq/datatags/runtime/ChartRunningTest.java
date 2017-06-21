@@ -136,7 +136,7 @@ public class ChartRunningTest {
 
         AskNode n2 = (AskNode) rec.getNode(chartId + "_2");
         CallNode caller = n2.addAnswer(NO, rec.add(new CallNode("Caller")));
-        caller.setCalleeNode(new ToDoNode(chartId + "_1", ""));
+        caller.setCalleeNode(rec.getStart());
         caller.setNextNode(new EndNode("CallerEnd"));
 
         assertExecutionTrace(rec,
@@ -169,9 +169,9 @@ public class ChartRunningTest {
         DecisionGraph subB = linearYesChart("sub_b", 3);
         DecisionGraph subC = linearYesChart("sub_c", 3);
 
-        CallNode start = main.add(new CallNode("1", new ToDoNode("sub_a_1", "")));
-        start.setNextNode(main.add(new CallNode("2", new ToDoNode("sub_b_1", ""))))
-                .setNextNode(main.add(new CallNode("3",new ToDoNode("sub_c_1", ""))))
+        CallNode start = main.add(new CallNode("1",subA.getStart()));
+        start.setNextNode(main.add(new CallNode("2", subB.getStart())))
+                .setNextNode(main.add(new CallNode("3",subC.getStart())))
                 .setNextNode(main.add(new EndNode("END")));
         main.add(subA.getStart());
         main.add(subB.getStart());

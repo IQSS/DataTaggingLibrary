@@ -2,10 +2,13 @@ package edu.harvard.iq.datatags.model;
 
 import edu.harvard.iq.datatags.model.metadata.AuthorData;
 import edu.harvard.iq.datatags.model.metadata.ModelReference;
+import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -35,6 +38,7 @@ public class PolicyModelData {
     private final List<ModelReference> references = new ArrayList<>();
     private final Set<String> keywords = new TreeSet<>();
     private AnswerTransformationMode answerTransformationMode = AnswerTransformationMode.YesFirst;
+    private Map<String, CompilationUnit> pathToCU = new HashMap<>();
         
     public String getTitle() {
         return title;
@@ -133,6 +137,10 @@ public class PolicyModelData {
 
     public AnswerTransformationMode getAnswerTransformationMode() {
         return answerTransformationMode;
+    }
+
+    public void putAll(Map<? extends String, ? extends CompilationUnit> m) {
+        pathToCU.putAll(m);
     }
     
 }

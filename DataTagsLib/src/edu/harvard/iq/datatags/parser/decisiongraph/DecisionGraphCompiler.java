@@ -165,6 +165,7 @@ public class DecisionGraphCompiler {
                     dg.add(node);
             }
         }
+        modelData.putAll(pathToCU);
         return pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
     }
 

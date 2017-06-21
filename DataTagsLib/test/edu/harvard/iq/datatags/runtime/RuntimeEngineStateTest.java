@@ -38,7 +38,7 @@ public class RuntimeEngineStateTest {
         AskNode n2 = (AskNode) dg.getNode(chartId + "_2");
         ConsiderNode consider = n2.addAnswer(NO, dg.add(new ConsiderNode("1", null)));
         CallNode caller = consider.setNodeFor(ConsiderAnswer.get(tags), dg.add(new CallNode("Caller")));
-        caller.setCalleeNode(new ToDoNode(chartId + "_1", ""));
+        caller.setCalleeNode(dg.getStart());
         caller.setNextNode(new EndNode("CallerEnd"));
 
         List<Answer> answers = C.list(YES, NO,
