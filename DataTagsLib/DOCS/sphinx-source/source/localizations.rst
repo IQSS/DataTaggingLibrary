@@ -36,11 +36,13 @@ Policy Space
 Policy space texts are stored in a file named ``space.md``. It consists of a list of slot and value names, followed by tehir descriptive texts.
 
 * Slot/value descriptions starts by either:
-  * New line with type path, ":" (no spaces between line start and ":")
-  * New line with "# typePath " EOL.
+
+  * New line with type path, ``:`` (no spaces between line start and ``:``)
+  * New line with ``# typePath`` EOL.
+
 * Slot/value names are either full or non-ambiguous
 * The localization text is markdown.
-* Can have line comments (```<--``)
+* Can have line comments (``<--``)
 * Content of text for type goes all the way until next type/EOF
 
 Below is an example of a ``space.md`` file:

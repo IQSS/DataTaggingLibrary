@@ -194,7 +194,7 @@ public class DecisionGraphRuleParser {
                 (_s, _name, _c, answers, _e) -> answers);
     }
 
-    final static Parser<AstConsiderAnswerSubNode> WhenAnswerSubNode(Parser<List<? extends AstNode>> bodyParser) {
+    final static Parser<AstConsiderAnswerSubNode> whenAnswerSubNode(Parser<List<? extends AstNode>> bodyParser) {
         return Parsers.sequence(
                 nodeStructurePart("{"),
                 Parsers.or(ATOMIC_ASSIGNMENT_SLOT, AGGREGATE_ASSIGNMENT_SLOT).sepBy(nodeStructurePart(";")),
@@ -288,13 +288,12 @@ public class DecisionGraphRuleParser {
     }
 
     final static Parser<AstConsiderNode> whenNode(Parser<List<? extends AstNode>> bodyParser) {
-        return Parsers.sequence(
-                Parsers.sequence(
+        return Parsers.sequence(Parsers.sequence(
                         nodeStructurePart("["),
                         nodeHead("when"),
                         nodeStructurePart(":"),
                         (_s, h, _c) -> h),
-                WhenAnswerSubNode(bodyParser).until(Parsers.or(ELSE_SUBGRAPH(bodyParser),nodeStructurePart("]"))),
+                whenAnswerSubNode(bodyParser).until(Parsers.or(ELSE_SUBGRAPH(bodyParser),nodeStructurePart("]"))),
                 ELSE_SUBGRAPH(bodyParser).optional(),
                 nodeStructurePart("]"),
                 (head, answers, elseNode, _e) -> new AstConsiderNode(head.getId(), null, answers, elseNode));

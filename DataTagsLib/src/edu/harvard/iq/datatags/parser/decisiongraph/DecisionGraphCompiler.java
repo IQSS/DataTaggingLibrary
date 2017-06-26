@@ -29,7 +29,6 @@ import java.util.Set;
 /**
  * The resultant AST from parsing decision graph code. Can create an actual decision
  * graph, when provided with a tag space (i.e a @{link CompoundType} instance).
- * Also provides access to the AST, via {@link #getNodes()}.
  *
  * @author michael
  */

@@ -36,7 +36,7 @@ public class TagSpaceParseResult {
     private Set<String> duplicateSlotNames;
     private URI source;
     
-    class MissingSlotException extends RuntimeException {
+    static class MissingSlotException extends RuntimeException {
         private final String missingSlotName;
         private final String definingSlot;
         MissingSlotException( String aMissingSlotName, String aDefiningSlot ) {

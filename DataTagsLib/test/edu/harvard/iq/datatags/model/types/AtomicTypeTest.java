@@ -50,8 +50,6 @@ public class AtomicTypeTest {
 		
 		AtomicValue v1 = instance.registerValue("1", null);
 		AtomicValue v2 = instance.registerValue("2", null);
-		AtomicValue v3 = instance.registerValue("3", null);
-		
 		
 		assertEquals( "value instances shouldbe reused", v1, instance.valueOf("1") );
 		assertEquals( "value instances shouldbe reused", v2, instance.valueOf("2") );
