@@ -70,7 +70,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
         @Override
         public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
             out.println(node(nodeId(nd))
-                    .label(idLabel(nd) + nd.getCalleeNodeId())
+                    .label(idLabel(nd) + nd.getCalleeNode().getId())
                     .shape(GvNode.Shape.cds)
                     .fillColor("#BBBBFF")
                     .gv());

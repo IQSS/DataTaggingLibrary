@@ -97,6 +97,7 @@ public class YesNoAnswersSorter implements DecisionGraphProcessor {
             
             @Override
             public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {}
+            
         };
         
         for ( Node nd : fcs.nodes() ) {

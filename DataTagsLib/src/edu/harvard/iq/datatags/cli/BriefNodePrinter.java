@@ -45,7 +45,7 @@ public class BriefNodePrinter extends Node.VoidVisitor {
 
     @Override
     public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
-        rnr.println("[>%s< call: %s]", nd.getId(), nd.getCalleeNodeId());
+        rnr.println("[>%s< call: %s]", nd.getId(), nd.getCalleeNode());
     }
 
     @Override
@@ -62,5 +62,6 @@ public class BriefNodePrinter extends Node.VoidVisitor {
     public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
         rnr.println("[>%s< section]", nd.getId());
     }
+    
     
 }

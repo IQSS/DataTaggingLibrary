@@ -124,8 +124,8 @@ public class UnreachableNodeValidator extends VoidVisitor implements DecisionGra
         if (!reachedNodeIds.contains(nd.getId())) {
             reachedNodeIds.add(nd.getId());
         }
-        if (!reachedNodeIds.contains(nd.getCalleeNodeId()) && flowChart.getNode(nd.getCalleeNodeId()) != null) {
-            flowChart.getNode(nd.getCalleeNodeId()).accept(this);
+        if (!reachedNodeIds.contains(nd.getCalleeNode()) && nd.getCalleeNode() != null) {
+            nd.getCalleeNode().accept(this);
         }
         if (!reachedNodeIds.contains(nd.getNextNode().getId())) {
             nd.getNextNode().accept(this);
@@ -169,5 +169,6 @@ public class UnreachableNodeValidator extends VoidVisitor implements DecisionGra
             nd.getNextNode().accept(this);
         }
     }
+    
     
 }

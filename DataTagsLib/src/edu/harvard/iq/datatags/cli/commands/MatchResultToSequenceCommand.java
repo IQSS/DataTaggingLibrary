@@ -3,18 +3,19 @@ package edu.harvard.iq.datatags.cli.commands;
 import edu.harvard.iq.datatags.cli.BriefNodePrinter;
 import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.model.graphs.Answer;
-import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
+import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.tools.queries.DecisionGraphQuery;
 import edu.harvard.iq.datatags.tools.queries.FindSupertypeResultsDgq;
 import edu.harvard.iq.datatags.tools.queries.RunTrace;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,8 +40,10 @@ public class MatchResultToSequenceCommand implements CliCommand {
         String tagValueExpression = "[>x< set: " + String.join(" ", C.tail(args)) + "]";
         rnr.debugPrint( tagValueExpression );
         try {
-            DecisionGraph dg = new DecisionGraphParser().parse(tagValueExpression).compile(rnr.getModel().getSpaceRoot());
-            SetNode sn = (SetNode) dg.getNode("x");
+            CompilationUnit cu = new CompilationUnit(tagValueExpression);
+            cu.compile(rnr.getModel().getSpaceRoot(), new EndNode("SYN-END"), new ArrayList<>());
+//            DecisionGraph dg = new DecisionGraphParser().parse(tagValueExpression).compile(rnr.getModel().getSpaceRoot());
+            SetNode sn = (SetNode) cu.getDecisionGraph().getNode("x");
 
             FindSupertypeResultsDgq query = new FindSupertypeResultsDgq(rnr.getModel(), sn.getTags());
             

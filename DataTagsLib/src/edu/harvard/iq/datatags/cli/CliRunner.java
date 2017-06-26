@@ -530,6 +530,7 @@ public class CliRunner {
                 public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
                 printMsg("Started section " + nd.getTitle() );
                 }
+                
             });
         }
 

@@ -280,6 +280,7 @@ public class EagerSetCallsOptimizer implements DecisionGraphProcessor {
             public Conclusion visit(SectionNode nd) throws DataTagsRuntimeException {
                 return null;
             }
+            
         };
 
         Node startNode = fcs.getStart();

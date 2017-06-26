@@ -85,6 +85,7 @@ public class EndNodeOptimizer implements DecisionGraphProcessor {
             @Override 
             public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{} 
             
+            
             private void visitThroughNode( ThroughNode nd) {
                 if ( shouldReplace(nd.getNextNode()) ) {
                     fcs.remove(nd.getNextNode());

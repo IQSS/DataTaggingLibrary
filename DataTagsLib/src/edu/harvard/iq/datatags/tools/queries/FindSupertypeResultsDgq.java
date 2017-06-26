@@ -110,7 +110,7 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
         public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
             currentTrace.addLast(nd);
             nodeStack.push(nd);
-            subject.getDecisionGraph().getNode(nd.getCalleeNodeId()).accept(this);
+            nd.getCalleeNode().accept(this);
             nodeStack.pop();
             currentTrace.removeLast();
         }
@@ -146,8 +146,8 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
         
         @Override
         public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{
-            
         }
+        
         
     }
     

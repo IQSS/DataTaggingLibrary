@@ -13,8 +13,8 @@ public class MissingNodeException extends LinkageException {
 	private String nodeId;
 
 	public MissingNodeException(RuntimeEngine engine, CallNode caller) {
-		super( caller, engine, String.format("Node id '%s' does not exist. Called from node '%s'", caller.getCalleeNodeId(), caller.getId()) );
-		nodeId = caller.getCalleeNodeId();
+		super( caller, engine, String.format("Node id '%s' does not exist. Called from node '%s'", caller.getCalleeNode(), caller.getId()) );
+		nodeId = caller.getCalleeNode().getId();
 	}
 	
 	public String getNodeId() {

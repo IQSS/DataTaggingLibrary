@@ -78,4 +78,5 @@ public class ReachableNodesCollector extends Node.VoidVisitor {
         collection.add(nd);
         nd.getNextNode().accept(this);
     }
+    
 }

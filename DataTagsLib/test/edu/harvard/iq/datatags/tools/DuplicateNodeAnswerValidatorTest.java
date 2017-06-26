@@ -1,11 +1,13 @@
 package edu.harvard.iq.datatags.tools;
 
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +25,6 @@ import org.junit.Test;
 public class DuplicateNodeAnswerValidatorTest {
     
     DuplicateNodeAnswerValidator instance;
-    DecisionGraphParser dgParser;
     DecisionGraph dg;
     
     public DuplicateNodeAnswerValidatorTest() {
@@ -40,7 +41,6 @@ public class DuplicateNodeAnswerValidatorTest {
     @Before
     public void setUp() {
         instance = new DuplicateNodeAnswerValidator();
-        dgParser = new DecisionGraphParser();
     }
     
     @After
@@ -50,7 +50,9 @@ public class DuplicateNodeAnswerValidatorTest {
     @Test
     public void validateDuplicateAnswerTest_noAnswers() throws BadSetInstructionException, DataTagsParseException {
         String code = "[todo: there are no answers here to check][end]";
-        List<? extends AstNode> refs = dgParser.parse(code).getNodes();
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(new CompoundSlot("", ""), new EndNode("[SYN-END]"), new ArrayList<>());
+        List<? extends AstNode> refs = cu.getParsedFile().getAstNodes();
         List<ValidationMessage> duplicates = instance.validate(refs);
         assertEquals(new LinkedList<>(), duplicates);
     } 
@@ -61,7 +63,9 @@ public class DuplicateNodeAnswerValidatorTest {
                 + "{answers: {yes: [>todo1< todo: no duplicates]}"
                             + "{no: [>todo2< todo: still no duplicates]}}]"
                 + "[>end1<end]";
-        List<? extends AstNode> refs = dgParser.parse(code).getNodes();
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(new CompoundSlot("", ""), new EndNode("[SYN-END]"), new ArrayList<>());
+        List<? extends AstNode> refs = cu.getParsedFile().getAstNodes();
         List<ValidationMessage> duplicates = instance.validate(refs);
         assertEquals(new LinkedList<>(), duplicates);
     } 
@@ -73,7 +77,9 @@ public class DuplicateNodeAnswerValidatorTest {
                 + "{yes: [>todo1< todo: there's a duplicate!]}"
                 + "{yes: [>todo2< todo: yes there is!]}"
                 + "{no:  [>todo3< todo: this is just another answer]}}]";
-        List<? extends AstNode> refs = dgParser.parse(code).getNodes();
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(new CompoundSlot("", ""), new EndNode("[SYN-END]"), new ArrayList<>());
+        List<? extends AstNode> refs = cu.getParsedFile().getAstNodes();
         List<ValidationMessage> actual = instance.validate(refs);
         // the first instruction node should be a repeat
         List<ValidationMessage> expected = Collections.singletonList(

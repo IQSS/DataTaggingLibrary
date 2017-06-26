@@ -133,7 +133,7 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
 		@Override
 		public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
 			out.println( node(nodeId(nd))
-						.label( idLabel(nd) + nd.getCalleeNodeId())
+						.label( idLabel(nd) + nd.getCalleeNode().getId())
 						.shape(GvNode.Shape.cds)
 						.fillColor("#BBBBFF")
 						.gv() );
@@ -222,6 +222,7 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
                 out.println(edge(nodeId(nd.getStartNode()), nodeId(nd.getNextNode())).gv()+" [ltail=cluster_section_" + nodeId(nd) + "]");
             }
         }
+        
 		
 	}
 	

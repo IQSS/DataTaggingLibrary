@@ -1,7 +1,10 @@
 package edu.harvard.iq.datatags.model.metadata;
 
+import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class contains data about a policy model. This includes paths to the 
@@ -25,6 +28,7 @@ public class PolicyModelData extends BaseModelData {
     private LocalDate releaseDate;
     private Path metadataFile, policySpacePath, decisionGraphPath;
     private AnswerTransformationMode answerTransformationMode = AnswerTransformationMode.YesFirst;
+    private final Map<String, CompilationUnit> pathToCU = new HashMap<>();
         
 
     public String getVersion() {
@@ -92,5 +96,8 @@ public class PolicyModelData extends BaseModelData {
         return answerTransformationMode;
     }
 
+    public void addCompilationUnitMapping(Map<? extends String, ? extends CompilationUnit> m) {
+        pathToCU.putAll(m);
+    }
     
 }

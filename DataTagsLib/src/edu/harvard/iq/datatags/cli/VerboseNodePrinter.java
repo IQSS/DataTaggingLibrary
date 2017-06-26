@@ -70,7 +70,7 @@ public class VerboseNodePrinter extends Node.VoidVisitor {
     @Override
     public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
         rnr.printTitle("Node >%s<: [call]", nd.getId());
-        rnr.print("Calls node >%s<.", nd.getCalleeNodeId());
+        rnr.print("Calls node >%s<.", nd.getCalleeNode());
         rnr.println();
     }
 

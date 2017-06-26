@@ -8,6 +8,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstInfoSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNodeHead;
@@ -17,12 +18,15 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTextSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
 import org.codehaus.jparsec.Terminals;
+import org.codehaus.jparsec.Tokens.Tag;
 
 /**
  * Parses the terminals of a decision graph code into an AST.
@@ -70,7 +74,7 @@ public class DecisionGraphRuleParser {
     
     final static Parser<String> textbodyUpTo( String terminatingNodePart ) {
         List<Parser<?>> parsers = new ArrayList<>();
-        parsers.add( Terminals.fragment(Tags.TEXT_BODY ) );
+        parsers.add( Terminals.fragment(Tags.TEXT_BODY) );
         parsers.add( Terminals.identifier() );
         DecisionGraphTerminalParser.NODE_STRUCTURE_TOKENS.stream()
                 .filter( t -> ! t.equals(terminatingNodePart) )
@@ -169,7 +173,8 @@ public class DecisionGraphRuleParser {
                 (_s, _t, _c, elseNode, _e) -> elseNode
         );
     }
-     final static Parser<AstConsiderAnswerSubNode> considerAnswerSubNode(Parser<List<? extends AstNode>> bodyParser) {
+    
+    final static Parser<AstConsiderAnswerSubNode> considerAnswerSubNode(Parser<List<? extends AstNode>> bodyParser) {
         return Parsers.sequence(
                 nodeStructurePart("{"),
                 Terminals.identifier().sepBy(nodeStructurePart(",")),
@@ -177,7 +182,6 @@ public class DecisionGraphRuleParser {
                 bodyParser,
                 nodeStructurePart("}"),
                 (_s, answers, _c, body, _e) -> new AstConsiderAnswerSubNode(answers, body));
-
     }
 
     final static Parser<List<AstConsiderAnswerSubNode>> considerAnswersSubNode(Parser<List<? extends AstNode>> bodyParser) {
@@ -198,7 +202,6 @@ public class DecisionGraphRuleParser {
                 bodyParser,
                 nodeStructurePart("}"),
                 (_s, answer, _c, body, _e) -> new AstConsiderAnswerSubNode(answer, body));
-
     }
     
     // -------------------------------
@@ -297,18 +300,29 @@ public class DecisionGraphRuleParser {
                 (head, answers, elseNode, _e) -> new AstConsiderNode(head.getId(), null, answers, elseNode));
     }
     
+    final static Parser<AstImport> IMPORT = Parsers.sequence(
+            Parsers.sequence(
+                nodeStructurePart("["),
+                nodeStructurePart("#import"),
+                Terminals.fragment( Tag.IDENTIFIER ),
+                nodeStructurePart(":"),
+                (_open, _import, localId, _colon) -> localId
+            ),
+            textbodyUpTo("]"),
+            nodeStructurePart("]"),
+            (localId, path, _close) -> new AstImport(path, localId));
     
-
     // -------------------------------
     // Program-level parsers.
     // -------------------------------
-    final static Parser<List<? extends AstNode>> graphParser() {
+    final static Parser<ParsedFile> graphParser() {
         Parser.Reference<List<? extends AstNode>> nodeListParserRef = Parser.newReference();
-        Parser<? extends AstNode> singleAstNode = Parsers.or(END_NODE, CALL_NODE, TODO_NODE, REJECT_NODE, SET_NODE,
+        Parser<? extends AstNode> singleAstNode = Parsers.or(END_NODE, CALL_NODE, TODO_NODE, REJECT_NODE, SET_NODE, 
                 askNode(nodeListParserRef.lazy()), considerNode(nodeListParserRef.lazy()), whenNode(nodeListParserRef.lazy()), sectionNode(nodeListParserRef.lazy()));
         Parser<List<? extends AstNode>> nodeSequence = singleAstNode.many().cast();
         nodeListParserRef.set(nodeSequence);
 
-        return nodeSequence;
+        return Parsers.sequence(IMPORT.optional().many(), nodeSequence,(is,ns)->new ParsedFile(is, ns));
+        
     }
 }

@@ -12,11 +12,9 @@ import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphClusteredVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphF11Visualizer;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpacePathsVizualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpaceVisualizer;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -91,16 +89,16 @@ public class DecisionGraphCompiling {
         tagPViz.vizualize(tagsOutPath);
 
         // AST Visualizer
-        GraphvizGraphNodeAstVisualizer viz = new GraphvizGraphNodeAstVisualizer(loadRes.getDecisionGraphAst());
-        Path outfile = modelFile.resolveSibling(modelFile.getFileName().toString() + "-ast.gv");
-        System.out.println("Writing: " + outfile);
-        viz.vizualize(outfile);
+//        GraphvizGraphNodeAstVisualizer viz = new GraphvizGraphNodeAstVisualizer(loadRes.getDecisionGraphAst());
+//        Path outfile = modelFile.resolveSibling(modelFile.getFileName().toString() + "-ast.gv");
+//        System.out.println("Writing: " + outfile);
+//        viz.vizualize(outfile);
 
 
         DecisionGraph dg = model.getDecisionGraph();
 
         GraphvizDecisionGraphClusteredVisualizer fcsViz = new GraphvizDecisionGraphClusteredVisualizer();
-        outfile = modelFile.resolveSibling(modelFile.getFileName().toString() + ".dg.gv");
+        Path outfile = modelFile.resolveSibling(modelFile.getFileName().toString() + ".dg.gv");
         System.out.println("Writing: " + outfile);
         fcsViz.setDecisionGraph(dg);
         fcsViz.vizualize(outfile);

@@ -1,5 +1,7 @@
 package edu.harvard.iq.datatags.model.graphs.nodes;
 
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
 
@@ -9,15 +11,15 @@ import java.util.Objects;
  */
 public class CallNode extends ThroughNode {
 	
-	private String calleeNodeId;
-	
+	private Node calleeNode;
+    
 	public CallNode(String id) {
 		super(id);
 	}
 
-	public CallNode(String id, String calleeNodeId ) {
+	public CallNode(String id, Node calleeNode ) {
 		super(id);
-		this.calleeNodeId = calleeNodeId;
+		this.calleeNode = calleeNode;
 	}
 	
 	@Override
@@ -25,18 +27,18 @@ public class CallNode extends ThroughNode {
 		return vr.visit(this);
 	}
 	
-	public String getCalleeNodeId() {
-		return calleeNodeId;
+	public Node getCalleeNode() {
+		return calleeNode;
 	}
 
-    public void setCalleeNodeId(String calleeNodeId) {
-        this.calleeNodeId = calleeNodeId;
+    public void setCalleeNode(Node calleeNode) {
+        this.calleeNode = calleeNode;
     }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.calleeNodeId);
+        int hash = 7;
+        hash = 79 * hash + hashCallee(this.calleeNode);
         return hash;
     }
 
@@ -52,15 +54,64 @@ public class CallNode extends ThroughNode {
             return false;
         }
         final CallNode other = (CallNode) obj;
-        if (!Objects.equals(this.calleeNodeId, other.calleeNodeId)) {
+        if (!Objects.equals(this.calleeNode, other.calleeNode)) {
             return false;
         }
-        return Objects.equals(getId(), other.getId());
+        return true;
+    }
+
+    
+
+    private Integer hashCallee(Node nd){
+        if (nd != null){
+            nd.accept(new Node.Visitor<Integer>() {
+                @Override
+                public Integer visit(ConsiderNode nd) throws DataTagsRuntimeException {
+                    return nd.hashCode();
+                }
+
+                @Override
+                public Integer visit(AskNode nd) throws DataTagsRuntimeException {
+                    return nd.hashCode();         
+                }
+
+                @Override
+                public Integer visit(SetNode nd) throws DataTagsRuntimeException {
+                    return nd.hashCode();
+                }
+
+                @Override
+                public Integer visit(SectionNode nd) throws DataTagsRuntimeException {
+                    return nd.hashCode();
+                }
+
+                @Override
+                public Integer visit(RejectNode nd) throws DataTagsRuntimeException {
+                    return nd.hashCode();  
+                }
+
+                @Override
+                public Integer visit(CallNode nd) throws DataTagsRuntimeException {
+                    return nd.hashCode(); 
+                }
+
+                @Override
+                public Integer visit(ToDoNode nd) throws DataTagsRuntimeException {
+                    return nd.hashCode();
+                }
+
+                @Override
+                public Integer visit(EndNode nd) throws DataTagsRuntimeException {
+                    return nd.hashCode();
+                }
+            });
+        }
+        return 0;
     }
 
     @Override
     protected String toStringExtras() {
-        return "callee:" + getCalleeNodeId();
+        return "callee:" + getCalleeNode();
     }
 	
     

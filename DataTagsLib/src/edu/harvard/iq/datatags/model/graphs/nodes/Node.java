@@ -28,6 +28,7 @@ public abstract class Node {
         R visit(ToDoNode nd) throws DataTagsRuntimeException;
 
         R visit(EndNode nd) throws DataTagsRuntimeException;
+        
     }
 
     public static abstract class VoidVisitor implements Visitor<Void> {
@@ -79,6 +80,7 @@ public abstract class Node {
             visitImpl(nd);
             return null;
         }
+        
 
         public abstract void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException;
 
@@ -98,7 +100,7 @@ public abstract class Node {
         
     }
 
-    private final String id;
+    private String id;
 
     public Node(String anId) {
         id = anId;
@@ -130,4 +132,9 @@ public abstract class Node {
         return Objects.equals(getId(), otherNode.getId());
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    
 }

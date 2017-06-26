@@ -9,7 +9,6 @@ import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URI;
 import java.util.HashMap;
@@ -133,6 +132,7 @@ public class DecisionGraph {
                 nodes.put(nd.getId(), nd);
             }
             
+            @Override
             public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{
                 nodes.put(nd.getId(), nd);
                 if ( nd.hasNextNode() ) {
@@ -140,6 +140,7 @@ public class DecisionGraph {
                 }
                 nd.getStartNode().accept(this);
             }
+            
         });
         return n;
     }

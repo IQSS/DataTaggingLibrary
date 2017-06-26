@@ -2,18 +2,19 @@ package edu.harvard.iq.datatags.mains;
 
 import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
+import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
+import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
 import edu.harvard.iq.datatags.tools.NodeValidationMessage;
 import edu.harvard.iq.datatags.tools.RepeatIdValidator;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
-import edu.harvard.iq.datatags.tools.ValidCallNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVisualizer;
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -51,9 +53,10 @@ public class DecisionGraphValidations {
 
             String source = readAll(chartFile);
 
-            DecisionGraphParser dgParser = new DecisionGraphParser();
-            DecisionGraphParseResult res = dgParser.parse(source);
-            List<? extends AstNode> refs = res.getNodes();
+            CompilationUnit cu = new CompilationUnit(source);
+            cu.compile(baseType, new EndNode("[SYN-END]"), new ArrayList<>());
+            List<? extends AstNode> refs = cu.getParsedFile().getAstNodes();
+            
             GraphvizGraphNodeAstVisualizer viz = new GraphvizGraphNodeAstVisualizer(refs);
             Path outfile = chartFile.resolveSibling(chartFile.getFileName().toString() + "-ast.gv");
             System.out.println("Writing: " + outfile);
@@ -69,7 +72,7 @@ public class DecisionGraphValidations {
                 System.out.println(repeatIdMessages);
             }
             
-            DecisionGraph dg = res.compile(baseType);
+            DecisionGraph dg = cu.getDecisionGraph();
 
             System.out.println();
             System.out.println("Semantic validations");
@@ -82,13 +85,6 @@ public class DecisionGraphValidations {
                 System.out.println("\t" + ((NodeValidationMessage)m).getEntities());
             });
             
-            System.out.println("Validating Call nodes");
-            ValidCallNodeValidator fcv = new ValidCallNodeValidator();
-            List<NodeValidationMessage> callNodeMessages = fcv.validate(dg);
-            if (callNodeMessages.size() > 0) {
-                System.out.println(callNodeMessages);
-                System.exit(-1);
-            }
 
             
             

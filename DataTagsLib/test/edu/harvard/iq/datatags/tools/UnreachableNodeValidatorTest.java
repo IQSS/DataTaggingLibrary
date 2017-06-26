@@ -4,10 +4,12 @@ import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParseResult;
+import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -29,7 +31,6 @@ import org.junit.Test;
 public class UnreachableNodeValidatorTest {
     
     UnreachableNodeValidator instance;
-    DecisionGraphParser astParser;
     DecisionGraph decisionGraph;
     
     public UnreachableNodeValidatorTest() {
@@ -46,7 +47,6 @@ public class UnreachableNodeValidatorTest {
     @Before
     public void setUp() {
         instance = new UnreachableNodeValidator();
-        astParser = new DecisionGraphParser();
     }
     
     @After
@@ -55,7 +55,7 @@ public class UnreachableNodeValidatorTest {
 
     
     @Test
-    public void validateUnreachableNodesTest_reachableNodes() throws DataTagsParseException {
+    public void validateUnreachableNodesTest_reachableNodes() throws DataTagsParseException, IOException {
         String code = "[>ask1< ask: {text: Will this work?}\n" +
                         "  {answers:\n" +
                         "    {yes: [call:shouldWork]}}]\n" +
@@ -65,8 +65,13 @@ public class UnreachableNodeValidatorTest {
                         "  {answers:\n" +
                         "    {yes: [>reject1< reject: Good it works.]}\n" +
                         "    {no: [>reject2< reject: This should have worked.]}}]";
-        DecisionGraphParseResult parseResult = astParser.parse(code);
-        decisionGraph = parseResult.compile(new CompoundSlot("","") );
+        
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(new CompoundSlot("", ""), new EndNode("[SYN-END]"), new ArrayList<>());
+        decisionGraph = cu.getDecisionGraph();
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
+        dgc.put("main path",cu);
+        dgc.linkage();
         List<ValidationMessage> messages = instance.validate(decisionGraph);
         
         Set<Node> expected = Collections.<Node>emptySet();
@@ -87,8 +92,11 @@ public class UnreachableNodeValidatorTest {
     @Test
     public void validateUnreachableNodesTest_minimal() throws BadSetInstructionException, DataTagsParseException {
         String code = "[>r< end][>nr< end]";
-        DecisionGraphParseResult parseResult = astParser.parse(code);
-        decisionGraph = parseResult.compile(new CompoundSlot("","") );
+        
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(new CompoundSlot("", ""), new EndNode("[SYN-END]"), new ArrayList<>());
+        decisionGraph = cu.getDecisionGraph();
+        
         List<ValidationMessage> messages = instance.validate(decisionGraph);
         
         Set<Node> expected = Collections.singleton( new EndNode("nr") );
@@ -117,9 +125,11 @@ public class UnreachableNodeValidatorTest {
                         "  }\n" +
                         "]\n" +
                         "[>end1< end]";
-        DecisionGraphParseResult parseResult = astParser.parse(code);
-        decisionGraph = parseResult.compile(new CompoundSlot("","") );
         
+        CompilationUnit cu = new CompilationUnit(code);
+        cu.compile(new CompoundSlot("", ""), new EndNode("[SYN-END]"), new ArrayList<>());
+        decisionGraph = cu.getDecisionGraph();
+                
         List<ValidationMessage> messages = instance.validate(decisionGraph);
         
         Set<String> expectedEntityIds = new HashSet<>(Arrays.asList("reject4","reject3","end1","ask2"));

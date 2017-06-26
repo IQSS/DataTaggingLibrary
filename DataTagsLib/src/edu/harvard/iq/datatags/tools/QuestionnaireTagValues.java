@@ -74,6 +74,7 @@ public class QuestionnaireTagValues extends VoidVisitor {
         // do nothing
     }
     
+    
 }
 
 class ValueCollector implements TagValue.Visitor<Set<AtomicValue>> {
