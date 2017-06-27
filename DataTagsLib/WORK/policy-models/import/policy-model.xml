@@ -1,0 +1,16 @@
+<policy-model>
+  <title>Sample Model with Section</title>
+  <subtitle>See how to logically group nodes</subtitle>
+  <version doi="xyz">0.4</version>
+  <date>2017-05-29</date>
+  <keywords>policy model, section, nodes</keywords><!-- suggested keywords list here. -->
+  <authors>
+    <person orcid="123-2345-67890">
+      <name>Dane Joe</name>
+    </person>
+  </authors>
+  <model answers-order="yes-first">
+    <space root="Base">definitions.ts</space>
+    <graph>graph.dg</graph>
+  </model>
+</policy-model>

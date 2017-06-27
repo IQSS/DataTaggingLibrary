@@ -47,6 +47,7 @@ public class UnreachableNodeValidator extends VoidVisitor implements DecisionGra
         flowChart = dg;
         dg.getStart().accept(this);
         flowChartNodeIds.removeAll(reachedNodeIds);
+        flowChartNodeIds.remove("[SYN-END]");
 
         if (!flowChartNodeIds.isEmpty()) {
             flowChartNodeIds.forEach((nodeId) -> {
@@ -125,6 +126,7 @@ public class UnreachableNodeValidator extends VoidVisitor implements DecisionGra
             reachedNodeIds.add(nd.getId());
         }
         if (!reachedNodeIds.contains(nd.getCalleeNode()) && nd.getCalleeNode() != null) {
+            reachedNodeIds.add(nd.getCalleeNode().getId());
             nd.getCalleeNode().accept(this);
         }
         if (!reachedNodeIds.contains(nd.getNextNode().getId())) {
