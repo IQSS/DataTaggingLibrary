@@ -3,8 +3,11 @@ package edu.harvard.iq.datatags.externaltexts;
 import edu.harvard.iq.datatags.io.FileUtils;
 import static edu.harvard.iq.datatags.io.FileUtils.ciResolve;
 import static edu.harvard.iq.datatags.io.FileUtils.readAll;
+import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.PolicySpaceIndex;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import edu.harvard.iq.datatags.util.NumberedString;
 import java.io.IOException;
@@ -12,59 +15,64 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 /**
- * Loads a localization from a localization direcotry into a {@link Localization}
- * object.
- * 
+ * Loads a localization from a localization directory into a 
+ * {@link Localization} object.
  * 
  * @author michael
  */
 public class LocalizationLoader {
     
     public static final String LOCALIZATION_DIRECTORY_NAME = "languages";
-    public static final String ANSWERS_FILENAME="answers.txt";
-    public static final String LOCALIZED_METADATA_FILENAME="localized-model.xml";
-    public static final String NODE_DIRECTORY_NAME="nodes";
-    public static final String SPACE_DATA_FILENAME="space.md";
+    public static final String ANSWERS_FILENAME = "answers.txt";
+    public static final String LOCALIZED_METADATA_FILENAME = "localized-model.xml";
+    public static final String NODE_DIRECTORY_NAME = "nodes";
+    public static final String SPACE_DATA_FILENAME = "space.md";
     
     private final List<ValidationMessage> messages = new ArrayList<>();
     
-    public Localization load( CompoundSlot baseSlot, Path sourceDirectory ) throws IOException, LocalizationException {
-        if ( ! Files.isDirectory(sourceDirectory) ) {
-            throw new IllegalArgumentException(String.format("Cannot load localization from '%s' - it is not a directory", 
-                                               sourceDirectory.toString()));
-        }
-        Localization retVal = new Localization(sourceDirectory.getFileName().toString());
+    public Localization load( PolicyModel model, String localizationName ) throws IOException, LocalizationException {
+        messages.clear();
+        Path baseLocalizationPath = model.getMetadata().getModelDirectoryPath();
+        Path localizationPath = baseLocalizationPath.resolve(LOCALIZATION_DIRECTORY_NAME)
+                                                    .resolve(localizationName);
         
-        Path answersFilePath = ciResolve(sourceDirectory, ANSWERS_FILENAME);
+        if ( ! Files.exists(localizationPath) ) {
+            throw new LocalizationException(localizationName,
+                    String.format("Localization directory '%s' does not exist.", localizationPath.toAbsolutePath()));
+        }
+        if ( ! Files.isDirectory(localizationPath) ) {
+            throw new LocalizationException(localizationName,
+                    String.format("Expecting a directory at '%s'.", localizationPath.toAbsolutePath()));
+        }
+                
+        Localization retVal = new Localization(localizationName);
+        
+        Path answersFilePath = ciResolve(localizationPath, ANSWERS_FILENAME);
         if ( answersFilePath != null ) {
             loadAnswers( Files.lines(answersFilePath, StandardCharsets.UTF_8), retVal );
         }
         
-        Path modelLocalizationPath = ciResolve(sourceDirectory, LOCALIZED_METADATA_FILENAME);
+        Path modelLocalizationPath = ciResolve(localizationPath, LOCALIZED_METADATA_FILENAME);
         if ( modelLocalizationPath != null ) {
             LocalizedModelDataParser lmdp = new LocalizedModelDataParser(retVal.getLanguage());
             retVal.setLocalizedModelData(lmdp.read(modelLocalizationPath));
         }
         
-        loadReadmes( retVal, sourceDirectory );
+        loadReadmes( retVal, localizationPath );
         
-        Path spacePath = ciResolve(sourceDirectory, SPACE_DATA_FILENAME);
+        Path spacePath = ciResolve(localizationPath, SPACE_DATA_FILENAME);
         if ( spacePath != null ) {
-            loadTagspaceData( retVal, baseSlot, spacePath );
+            loadTagspaceData( retVal, model.getSpaceRoot(), spacePath );
         }
                 
-        Path nodeDirectoryPath = ciResolve(sourceDirectory, NODE_DIRECTORY_NAME);
-        if ( nodeDirectoryPath != null ) {
-            loadNodeData( retVal, nodeDirectoryPath );
-        }
+        loadNodeData( retVal, model );
         
         return retVal;
     }
@@ -120,21 +128,46 @@ public class LocalizationLoader {
         }
     }
 
-    private void loadNodeData(Localization retVal, Path nodeDirectoryPath) throws IOException {
-        final Set<String> fileExtensions = new TreeSet<>(Arrays.asList(".txt", ".md", ".mdown"));
-        Files.find(nodeDirectoryPath, 0, (p,_opts)-> {
-            String[] comps = p.getFileName().toString().toLowerCase().split("\\.");
-            return fileExtensions.contains(comps[comps.length-1]);
-                    
-        }).forEach( path -> {
-            String fileName = path.getFileName().toString();
-            String[] comps = fileName.split("\\.");
-            if ( comps.length > 1 ) {
-                fileName = fileName.substring(0, fileName.length()-comps[comps.length-1].length()-1);
-                if ( (!comps[comps.length].equals("txt")) || !retVal.getNodeText(fileName).isPresent() ) {
-                    retVal.addNodeText(fileName, readAll(path));
-                }
+    private void loadNodeData(Localization loc, PolicyModel model) throws IOException {
+        
+        // collect node direcotry paths for all compilation units
+        Map<String, CompilationUnit> compilationUnitPaths = model.getMetadata().getCompilationUnitPaths();
+        Map<String, Path> compilationUnitNodeDirectories = new HashMap<>();
+        compilationUnitPaths.forEach( (id, cu)->{
+            // find the node directory path
+            Path cuNodesPath = cu.getSourcePath();
+            
+            while ( cuNodesPath != null && !Files.exists(cuNodesPath.resolveSibling(LOCALIZATION_DIRECTORY_NAME)) ) {
+                cuNodesPath = cuNodesPath.getParent();
             }
+            if ( cuNodesPath != null ) {
+                cuNodesPath = cuNodesPath.resolveSibling(LOCALIZATION_DIRECTORY_NAME);
+                cuNodesPath = cuNodesPath.resolve(loc.getLanguage()).resolve(NODE_DIRECTORY_NAME);
+                if ( Files.exists(cuNodesPath) ) {
+                    compilationUnitNodeDirectories.put(id, cuNodesPath);
+                } else {
+                    messages.add( new ValidationMessage(ValidationMessage.Level.WARNING, "Could not find '" + loc.getLanguage() + "/nodes' directory for compilation unit '" + cu.getSourcePath() + "'"));
+                }
+            } else {
+                messages.add( new ValidationMessage(ValidationMessage.Level.WARNING, "Could not find 'languages' directory for compilation unit '" + cu.getSourcePath() + "'"));
+            }
+        });
+        
+        // load nodes that have localization ids.
+        model.getDecisionGraph().nodeIds().forEach( id -> {
+           String[] comps = id.split(">");
+           String cuID = (comps.length==1) ? DecisionGraphCompiler.MAIN_CU_ID : comps[1];
+           String nodeName = (comps.length==1) ? comps[1] : comps[2];
+           Path cuNodesPath = compilationUnitNodeDirectories.get(cuID);
+           if ( cuNodesPath != null ) {
+               for ( String ext : new String[]{".md", ".mdown", ".txt"}) {
+                   Path attempt = cuNodesPath.resolve(nodeName + ext);
+                   if ( Files.exists(attempt) ) {
+                       loc.addNodeText(id, readAll(attempt));
+                       break;
+                   }
+               }
+           }
         });
     }
 
@@ -145,6 +178,5 @@ public class LocalizationLoader {
     public boolean isHasErrors() {
         return messages.stream().anyMatch(vm->vm.getLevel()==ValidationMessage.Level.ERROR);
     }
-    
     
 }

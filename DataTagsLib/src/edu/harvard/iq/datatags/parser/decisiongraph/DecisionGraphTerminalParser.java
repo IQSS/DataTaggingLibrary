@@ -56,7 +56,7 @@ public class DecisionGraphTerminalParser {
             .source().map(s -> Tokens.fragment(s, Tags.KEYWORD));
 
     static final Parser<String> NODE_ID_VALUE = 
-            Patterns.among(".,/~?!()@#$%^&*_+-")
+            Patterns.among(".,/~?!()@:#$%^&*_+-")
                     .or(Patterns.range('a', 'z'))
                     .or(Patterns.range('A', 'Z'))
                     .or(Patterns.range('0', '9'))

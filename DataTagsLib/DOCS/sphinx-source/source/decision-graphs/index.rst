@@ -8,7 +8,7 @@ The decision graph part of a questionnaire is composed of nodes. During the inte
 Node Structure
 --------------
 
-A node declaration is surrounded by ``[`` and ``]``. It has a head, which contain its type and possibly an ID. It may have a body, in which case the body and the head will be separated by ``:``. It may also have sub-nodes, surrounded by ``{`` and ``}``. A node id may contain digits, letters, and any of the characters ``.,/~?!()@#$%^&*_+-``. Here are some node example::
+A node declaration is surrounded by ``[`` and ``]``. It has a head, which contain its type and possibly an ID. It may have a body, in which case the body and the head will be separated by ``:``. It may also have sub-nodes, surrounded by ``{`` and ``}``. A node id may contain digits, letters, and any of the characters ``.,/~?!()@:#$%^&*_+-``. Here are some node example::
 
   [end] <-- end node, no body and no id.
   [>the-end< end] <-- end node with the id "the-end"

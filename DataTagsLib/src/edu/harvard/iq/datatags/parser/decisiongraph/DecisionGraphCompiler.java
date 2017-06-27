@@ -33,7 +33,12 @@ import java.util.Set;
  * @author michael
  */
 public class DecisionGraphCompiler {
-
+    
+    /**
+     * Id of the main compilation unit (the one pointed by the {@link PolicyModelData} object.
+     */
+    public static final String MAIN_CU_ID = ">MAIN>";
+    
     EndNode endAll = new EndNode("[SYN-END]");
     
     /**
@@ -67,7 +72,7 @@ public class DecisionGraphCompiler {
         CompilationUnit firstCU = new CompilationUnit(modelData.getDecisionGraphPath());
         firstCU.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
         needToVisit.addAll(firstCU.getParsedFile().getImports());
-        pathToCU.put( modelData.getDecisionGraphPath().toString(), firstCU );
+        pathToCU.put( MAIN_CU_ID, firstCU );
         while (! needToVisit.isEmpty()){
             AstImport astImport = needToVisit.remove(0);
             if (! pathToCU.containsKey(astImport.getPath())){
@@ -135,14 +140,6 @@ public class DecisionGraphCompiler {
         }
         
         // Change IDs
-//        Iterable<Node> mainNodes = pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph().nodes();
-//        for(Node node: mainNodes){
-//            if(nodeIdToNodeAndCU.containsKey(node.getId())){
-//                Map<Node,String> nodeNcu = nodeIdToNodeAndCU.get(node.getId());
-//                nodeNcu.put(node, "$main");
-//                nodeIdToNodeAndCU.put(node.getId(), nodeNcu);
-//            }
-//        }
         for(String nodeID: nodeIdToNodeAndCU.keySet()){
             Map<Node,String> nodes = nodeIdToNodeAndCU.get(nodeID);
             for (Node node: nodes.keySet()){
@@ -150,7 +147,7 @@ public class DecisionGraphCompiler {
                 node.setId(cuName + ">" + node.getId());
             }
         }
-        DecisionGraph dg = pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
+        DecisionGraph dg = pathToCU.get(MAIN_CU_ID).getDecisionGraph();
         for (String nodeID: nodeIdToNodeAndCU.keySet()){
             for(Node node: nodeIdToNodeAndCU.get(nodeID).keySet()){
                 if(dg.getNode(node.getId()) == null)
@@ -158,7 +155,7 @@ public class DecisionGraphCompiler {
             }
         }
         modelData.addCompilationUnitMapping(pathToCU);
-        return pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
+        return pathToCU.get(MAIN_CU_ID).getDecisionGraph();
     }
 
     public CompilationUnit put(String key, CompilationUnit value) {

@@ -78,7 +78,6 @@ public class DecisionGraph {
     public <T extends Node> T add(T n) {
         n.accept(new Node.VoidVisitor() {
 
-            
             @Override
             public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
                 nodes.put(nd.getId(), nd);

@@ -31,7 +31,9 @@ import org.xml.sax.XMLReader;
  * @author michael
  */
 public class PolicyModelDataParser {
-
+    
+    public static final String DEFAULT_FILENAME = "policy-model.xml";
+    
     private static final Map<String, PolicyModelData.AnswerTransformationMode> ANSWERS_ORDER_MAP = new HashMap<>();
 
     static {

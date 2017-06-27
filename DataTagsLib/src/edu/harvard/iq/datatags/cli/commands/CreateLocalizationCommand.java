@@ -30,8 +30,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -276,7 +274,7 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
         };
 
         rnr.getModel().getDecisionGraph().nodeIds()
-                .stream().filter( id->!AstNodeIdProvider.isAutoId(id))
+                .stream().filter( id -> (!AstNodeIdProvider.isAutoId(id)) && (!id.contains(">")) )
                 .forEach( id->rnr.getModel().getDecisionGraph().getNode(id).accept(writer) );
         
         rnr.println("..Done");
