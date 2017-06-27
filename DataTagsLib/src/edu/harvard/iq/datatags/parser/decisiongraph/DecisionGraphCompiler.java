@@ -71,7 +71,7 @@ public class DecisionGraphCompiler {
         while (! needToVisit.isEmpty()){
             AstImport astImport = needToVisit.remove(0);
             if (! pathToCU.containsKey(astImport.getPath())){
-                CompilationUnit compilationUnit = new CompilationUnit(Paths.get(astImport.getPath()));
+                CompilationUnit compilationUnit = new CompilationUnit(modelData.getDecisionGraphPath().resolveSibling(astImport.getPath()));
                 compilationUnit.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
                 needToVisit.addAll(compilationUnit.getParsedFile().getImports());
                 pathToCU.put(astImport.getPath(), compilationUnit );
@@ -108,13 +108,22 @@ public class DecisionGraphCompiler {
                                 Map<Node,String> nodeNcu = nodeIdToNodeAndCU.get(calleeName);
                                 nodeNcu.put(calleeNode, calleeCuName);
                                 nodeIdToNodeAndCU.put(calleeName, nodeNcu);
+                                for(Node innerNode: calleeCU.getDecisionGraph().nodes()){
+                                    Map<Node,String> innernNodeNcu = nodeIdToNodeAndCU.get(innerNode.getId());
+                                    innernNodeNcu.put(innerNode, calleeCuName);
+                                    nodeIdToNodeAndCU.put(innerNode.getId(), innernNodeNcu);
+                                }
                             }
                             else{
                                 Map<Node,String> nodeNcu = new HashMap<>();
                                 nodeNcu.put(calleeNode, calleeCuName);
                                 nodeIdToNodeAndCU.put(calleeName, nodeNcu);
+                                for(Node innerNode: calleeCU.getDecisionGraph().nodes()){
+                                    Map<Node,String> innernNodeNcu = new HashMap<>();
+                                    innernNodeNcu.put(innerNode, calleeCuName);
+                                    nodeIdToNodeAndCU.put(innerNode.getId(), innernNodeNcu);
+                                }
                             }
-                            
                         }
                         else{
                             messages.add(new ValidationMessage(Level.ERROR, "cannot find target node with id " + calleeCuName + ">" +  calleeName));
@@ -153,8 +162,12 @@ public class DecisionGraphCompiler {
         DecisionGraph dg = pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
         for (String nodeID: nodeIdToNodeAndCU.keySet()){
             for(Node node: nodeIdToNodeAndCU.get(nodeID).keySet()){
-                if(dg.getNode(node.getId()) == null)
-                    dg.add(node);
+                Node nodeWithoutCU = dg.getNode((node.getId().split(">")[1]));
+                if(node.equals(nodeWithoutCU)){
+                    dg.remove(nodeWithoutCU);
+                }
+                dg.add(node);
+                
             }
         }
         modelData.addCompilationUnitMapping(pathToCU);

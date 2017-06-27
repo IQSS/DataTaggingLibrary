@@ -1,0 +1,7 @@
+#!/bin/bash
+rm -f *.pdf
+ls *.gv | sed "s/\(.*\).gv/dot -Tpdf \1.gv > \1.pdf/" > doall
+source doall
+rm -f doall
+
+

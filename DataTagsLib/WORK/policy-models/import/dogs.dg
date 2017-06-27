@@ -1,0 +1,12 @@
+[>dog< section:
+  {title: Dogs!}
+  [>q-dogType< ask:
+    {text: What type of dogs?}
+    {answers:
+      {none: }
+      {animated: [>1< set: Dogs += Pluto]}
+      {cute: [>2< set: Dogs += Rex, Lassie]}
+      {hounds: [>3< set: Dogs += Pluto, Lassie]}
+    }
+  ]
+]
