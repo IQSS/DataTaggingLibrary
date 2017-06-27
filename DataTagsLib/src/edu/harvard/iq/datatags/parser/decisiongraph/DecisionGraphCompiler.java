@@ -135,21 +135,19 @@ public class DecisionGraphCompiler {
         }
         
         // Change IDs
-        Iterable<Node> mainNodes = pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph().nodes();
-        for(Node node: mainNodes){
-            if(nodeIdToNodeAndCU.containsKey(node.getId())){
-                Map<Node,String> nodeNcu = nodeIdToNodeAndCU.get(node.getId());
-                nodeNcu.put(node, "$main");
-                nodeIdToNodeAndCU.put(node.getId(), nodeNcu);
-            }
-        }
+//        Iterable<Node> mainNodes = pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph().nodes();
+//        for(Node node: mainNodes){
+//            if(nodeIdToNodeAndCU.containsKey(node.getId())){
+//                Map<Node,String> nodeNcu = nodeIdToNodeAndCU.get(node.getId());
+//                nodeNcu.put(node, "$main");
+//                nodeIdToNodeAndCU.put(node.getId(), nodeNcu);
+//            }
+//        }
         for(String nodeID: nodeIdToNodeAndCU.keySet()){
             Map<Node,String> nodes = nodeIdToNodeAndCU.get(nodeID);
-            if (nodes.size() > 1){
-                for (Node node: nodes.keySet()){
-                    String cuName = nodes.get(node);
-                    node.setId(cuName + ">" + node.getId());
-                }
+            for (Node node: nodes.keySet()){
+                String cuName = nodes.get(node);
+                node.setId(cuName + ">" + node.getId());
             }
         }
         DecisionGraph dg = pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
