@@ -3,13 +3,9 @@
 
 [>q-order< ask:
   {text: Do the dogs first?}
-  {terms:
-    {frogs: Referring to the section pertaining to dogs.}
-    {first: Before the section regarding the cats.}
-  }
   {answers:
       {yes: [call: dogs>dog][call: cats>cat]}
-      {no: [call: cats>cat][call:dogs>dog]}
+      {no:  [call: cats>cat][call:dogs>dog]}
   }
 ]
 [todo: specify mice]

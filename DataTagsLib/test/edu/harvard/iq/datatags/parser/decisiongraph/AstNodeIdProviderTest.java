@@ -42,4 +42,17 @@ public class AstNodeIdProviderTest {
         assertFalse( AstNodeIdProvider.isAutoId("#abc") );
     }
     
+    @Test
+    public void testIsAutoIdWithImport() {
+       AstNodeIdProvider sut = new AstNodeIdProvider();
+        
+        for ( int i=0; i<10; i++ ) {
+            assertTrue( AstNodeIdProvider.isAutoId("XX>" + sut.nextId()));
+        }
+        
+        assertFalse( AstNodeIdProvider.isAutoId("XX>123") );
+        assertFalse( AstNodeIdProvider.isAutoId("XX>abc") );
+        assertFalse( AstNodeIdProvider.isAutoId("XX>#abc") );
+    }
+    
 }

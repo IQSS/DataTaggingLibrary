@@ -11,7 +11,13 @@ public class AstNodeIdProvider {
     private int nextId = 1;
     
     public static boolean isAutoId( String anId ) {
-        return anId!=null && ( anId.startsWith("[#") && anId.endsWith("]"));
+        if ( anId == null ) return false;
+        String[] comps = anId.split(">");
+        if ( comps.length == 2 ) {
+            anId = comps[1];
+        }
+        return ( anId.startsWith("[#") && anId.endsWith("]"));
+        
     }
     
     public String nextId() {

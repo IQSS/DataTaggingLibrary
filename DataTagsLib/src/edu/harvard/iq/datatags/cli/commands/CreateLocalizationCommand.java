@@ -20,6 +20,7 @@ import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.types.SlotType;
 import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
+import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.datatags.util.StringHelper.nonEmpty;
 import java.io.BufferedReader;
@@ -62,6 +63,14 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
     
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception {
+        
+        if ( args.size()==1 ) {
+            localizationName = rnr.readLine("Localization name:");
+        } else {
+            localizationName = args.get(1);
+        }
+        localizationName = localizationName.trim();
+        
         // start new
         localizationPath = createLocalizationFolder(rnr);
         
@@ -89,8 +98,7 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
      * @throws IOException 
      */
     private Path createLocalizationFolder( CliRunner rnr ) throws IOException {
-        localizationName = rnr.readLine("Localization name:");
-        localizationName = localizationName.trim();
+        
         if ( localizationName.isEmpty() ) return null;
         localizationName = localizationName.replaceAll("\\\\", "_").replaceAll("/", "_");
         Path localizationsDir = rnr.getModel().getDirectory()
@@ -150,7 +158,7 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
 
     private void createPolicySpace(CliRunner rnr) throws IOException {
         rnr.print(" - Creating " + LocalizationLoader.SPACE_DATA_FILENAME + " file");
-        try ( BufferedWriter bwrt = Files.newBufferedWriter(localizationPath.resolve(LocalizationLoader.ANSWERS_FILENAME));
+        try ( BufferedWriter bwrt = Files.newBufferedWriter(localizationPath.resolve(LocalizationLoader.SPACE_DATA_FILENAME));
               PrintWriter prt = new PrintWriter(bwrt) ){
             rnr.getModel().getSpaceRoot().accept( new SlotType.VoidVisitor(){
                 
@@ -272,15 +280,15 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
             @Override
             public void visitImpl(EndNode nd) throws DataTagsRuntimeException {}
         };
-
+        
+        PolicyModelData metaData = rnr.getModel().getMetadata();
         rnr.getModel().getDecisionGraph().nodeIds()
-                .stream().filter( id -> (!AstNodeIdProvider.isAutoId(id)) && (!id.contains(">")) )
+                .stream().filter( id -> (!AstNodeIdProvider.isAutoId(id)) && isLocalNode(id, metaData) )
                 .forEach( id->rnr.getModel().getDecisionGraph().getNode(id).accept(writer) );
         
         rnr.println("..Done");
     }
 
-    
     private void createFileWithContent(Path p, String c) {
         try {
             Files.write(p, c.getBytes());
@@ -346,5 +354,28 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
             }
         }
         return Collections.singletonList(out);
+    }
+    
+    /**
+     * Find which nodes are local, that is reside within the same directory as the
+     * main decision graph.
+     * @param nodeId The id of the node we test.
+     * @param md the model metadata (needed for the compilation units)
+     * @return {@code true} iff the node came from a local file.
+     */
+    private boolean isLocalNode( String nodeId, PolicyModelData md ) {
+        String[] comps = nodeId.split(">");
+        if ( comps.length == 1 ) return true;
+        CompilationUnit compilationUnit = md.getCompilationUnits().get(comps[0]);
+        
+        if ( compilationUnit != null ) {
+            Path cuPath = compilationUnit.getSourcePath();
+            return cuPath.startsWith(md.getModelDirectoryPath());
+            
+        } else {
+            System.err.println("Nonexistant " + comps[0]);
+            System.err.println( md.getCompilationUnits().keySet());
+            return false;
+        }
     }
 }

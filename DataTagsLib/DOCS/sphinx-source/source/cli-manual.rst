@@ -43,7 +43,7 @@ Once the model is loaded, the application starts the interview. The user can typ
 
 Commands are executed by typing their name, preceded by ``\`` (e.g. ``\about`` for the "about" command). Common commands have shortcuts. These are shown, when available, in parentheses near the command name. Some commands expect parameters; these are passed after the command name, like so: ``\show-slot Name/Of/Slot``.
 
-You are encouraged to read through the list. Some useful commands are highlighted below.
+You are encouraged to read through the list. Some useful commands are highlighted below. Optional arguments appear in square brackets (``[]``).
 
 Useful Commands for Users
 --------------------------
@@ -92,7 +92,7 @@ trace
 visualize-ts, visualize-dg
   Create a visualization of the tag space (-ts) and the decision graph (-dg). Requires `Graphviz`_. Use the flag ``-style=f11`` to create a visualization using an alternative style, developed for `Force11`_'s decision trees working group. The default file type for the visualization is PDF. However, it is possible to use other formats by specifying a filename with a different suffix when prompted for a filename. For example, naming a file ``myDecisionGraph.svg`` would make CliRunner generate the visualization in SVG format.
 
-loc-create
+loc-create [localization-name]
   Creates a localization of the current model. CliRunner creates localization files with default and placeholder values that the model developer can edit using any text editor.
 
 .. _Graphviz: http://www.graphviz.org

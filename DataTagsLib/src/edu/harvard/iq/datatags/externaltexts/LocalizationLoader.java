@@ -131,7 +131,7 @@ public class LocalizationLoader {
     private void loadNodeData(Localization loc, PolicyModel model) throws IOException {
         
         // collect node direcotry paths for all compilation units
-        Map<String, CompilationUnit> compilationUnitPaths = model.getMetadata().getCompilationUnitPaths();
+        Map<String, CompilationUnit> compilationUnitPaths = model.getMetadata().getCompilationUnits();
         Map<String, Path> compilationUnitNodeDirectories = new HashMap<>();
         compilationUnitPaths.forEach( (id, cu)->{
             // find the node directory path
@@ -156,7 +156,7 @@ public class LocalizationLoader {
         // load nodes that have localization ids.
         model.getDecisionGraph().nodeIds().forEach( id -> {
            String[] comps = id.split(">");
-           String cuID = (comps.length==1) ? DecisionGraphCompiler.MAIN_CU_ID : comps[1];
+           String cuID = (comps.length==1) ? "ID-OF-MAIN-UNIT" : comps[1];  //TODO fix to use real id of unit.
            String nodeName = (comps.length==1) ? comps[1] : comps[2];
            Path cuNodesPath = compilationUnitNodeDirectories.get(cuID);
            if ( cuNodesPath != null ) {
