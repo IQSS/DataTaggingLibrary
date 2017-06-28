@@ -60,7 +60,6 @@ public class DecisionGraphCompiler {
      * @param modelData
      * @param astValidators
      * @return A ready-to-run graph.
-     * @throws DataTagsParseException
      * @throws java.io.IOException
      */
     public DecisionGraph compile(CompoundSlot tagSpace, PolicyModelData modelData,
