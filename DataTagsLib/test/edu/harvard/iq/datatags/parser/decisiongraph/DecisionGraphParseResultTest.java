@@ -126,7 +126,6 @@ public class DecisionGraphParseResultTest {
         expected.nodes().forEach(n -> assertEquals(n, actual.getNode(n.getId())));
         actual.nodes().forEach(n -> assertEquals(n, expected.getNode(n.getId())));
 
-        expected.equals(actual);
         assertEquals(expected, actual);
 
     }
@@ -157,7 +156,6 @@ public class DecisionGraphParseResultTest {
         expected.nodes().forEach(n -> assertEquals(n, actual.getNode(n.getId())));
         actual.nodes().forEach(n -> assertEquals(n, expected.getNode(n.getId())));
 
-        expected.equals(actual);
         assertEquals(expected, actual);
 
     }
@@ -213,7 +211,6 @@ public class DecisionGraphParseResultTest {
         expected.nodes().forEach(n -> assertEquals(n, actual.getNode(n.getId())));
         actual.nodes().forEach(n -> assertEquals(n, expected.getNode(n.getId())));
 
-        expected.equals(actual);
         assertEquals(expected, actual);
     }
 
@@ -249,7 +246,6 @@ public class DecisionGraphParseResultTest {
         expected.nodes().forEach(n -> assertEquals(n, actual.getNode(n.getId())));
         actual.nodes().forEach(n -> assertEquals(n, expected.getNode(n.getId())));
 
-        expected.equals(actual);
         assertEquals(expected, actual);
 
     }
@@ -278,7 +274,6 @@ public class DecisionGraphParseResultTest {
         expected.nodes().forEach(n -> assertEquals(n, actual.getNode(n.getId())));
         actual.nodes().forEach(n -> assertEquals(n, expected.getNode(n.getId())));
 
-        expected.equals(actual);
         assertEquals(expected, actual);
 
     }
@@ -318,7 +313,6 @@ public class DecisionGraphParseResultTest {
         expected.nodes().forEach(n -> assertEquals(n, actual.getNode(n.getId())));
         actual.nodes().forEach(n -> assertEquals(n, expected.getNode(n.getId())));
 
-        expected.equals(actual);
         assertEquals(expected, actual);
 
     }
@@ -364,7 +358,6 @@ public class DecisionGraphParseResultTest {
         expected.nodes().forEach(n -> assertEquals(n, actual.getNode(n.getId())));
         actual.nodes().forEach(n -> assertEquals(n, expected.getNode(n.getId())));
 
-        expected.equals(actual);
         assertEquals(expected, actual);
 
     }

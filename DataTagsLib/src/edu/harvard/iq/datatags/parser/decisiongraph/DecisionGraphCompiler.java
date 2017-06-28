@@ -18,7 +18,6 @@ import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +34,7 @@ import org.codehaus.jparsec.error.ParserException;
  * @author michael
  */
 public class DecisionGraphCompiler {
-
+     
     EndNode endAll = new EndNode("[SYN-END]");
     
     /**
@@ -104,7 +103,7 @@ public class DecisionGraphCompiler {
             String calleeCuPath = null;
             Boolean foundCalleeCU = false;
             for(String call: callToCallee.keySet()){
-                if (callToCallee.get(call).contains(">")){ //If the callee is from another compilation unit
+                if ( callToCallee.get(call).contains(">") ) { //If the callee is from another compilation unit
                     String calleeCuName = callToCallee.get(call).split(">")[0]; //Take the cu in cu>id from callee
                     String calleeName = callToCallee.get(call).split(">")[1];
                     for (AstImport ai: imports){
@@ -115,7 +114,7 @@ public class DecisionGraphCompiler {
                             break;
                         }
                     }
-                    if (foundCalleeCU){
+                    if ( foundCalleeCU ) {
                         CompilationUnit calleeCU = pathToCU.get(calleeCuPath);
                         Node calleeNode = calleeCU.getDecisionGraph().getNode(calleeName);
                         if(calleeNode != null){
@@ -130,28 +129,23 @@ public class DecisionGraphCompiler {
                                     innernNodeNcu.put(innerNode, calleeCuName);
                                     nodeIdToNodeAndCU.put(innerNode.getId(), innernNodeNcu);
                                 }
-                            }
-                            else{
+                            } else {
                                 Map<Node,String> nodeNcu = new HashMap<>();
                                 nodeNcu.put(calleeNode, calleeCuName);
                                 nodeIdToNodeAndCU.put(calleeName, nodeNcu);
-                                for(Node innerNode: calleeCU.getDecisionGraph().nodes()){
+                                for ( Node innerNode: calleeCU.getDecisionGraph().nodes() ) {
                                     Map<Node,String> innernNodeNcu = new HashMap<>();
                                     innernNodeNcu.put(innerNode, calleeCuName);
                                     nodeIdToNodeAndCU.put(innerNode.getId(), innernNodeNcu);
                                 }
                             }
-                        }
-                        else{
+                        } else {
                             messages.add(new ValidationMessage(Level.ERROR, "cannot find target node with id " + calleeCuName + ">" +  calleeName));
                         }
-                    }
-                    else{
+                    } else {
                         messages.add(new ValidationMessage(Level.ERROR, "cannot find target file with id " + calleeCuName));
-
                     }
-                }
-                else{
+                } else {
                     Node calleeNode = cu.getDecisionGraph().getNode( callToCallee.get(call) );
                     CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
                     callNode.setCalleeNode(calleeNode);
@@ -161,14 +155,6 @@ public class DecisionGraphCompiler {
         }
         
         // Change IDs
-//        Iterable<Node> mainNodes = pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph().nodes();
-//        for(Node node: mainNodes){
-//            if(nodeIdToNodeAndCU.containsKey(node.getId())){
-//                Map<Node,String> nodeNcu = nodeIdToNodeAndCU.get(node.getId());
-//                nodeNcu.put(node, "$main");
-//                nodeIdToNodeAndCU.put(node.getId(), nodeNcu);
-//            }
-//        }
         for(String nodeID: nodeIdToNodeAndCU.keySet()){
             Map<Node,String> nodes = nodeIdToNodeAndCU.get(nodeID);
             for (Node node: nodes.keySet()){

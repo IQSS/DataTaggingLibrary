@@ -158,7 +158,6 @@ public abstract class TagValueLookupResult {
         public String toString()  {
             return "[Success value=" + getValue() + "]";
         }
-        
     }
     
     static public SlotNotFound SlotNotFound(String slotName) {

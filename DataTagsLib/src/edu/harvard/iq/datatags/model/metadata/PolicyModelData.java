@@ -63,6 +63,10 @@ public class PolicyModelData extends BaseModelData {
         this.metadataFile = metadataFile;
     }
     
+    public Path getModelDirectoryPath() {
+        return metadataFile.getParent();
+    }
+    
     public Path getPolicySpacePath() {
         return policySpacePath;
     }
@@ -98,6 +102,10 @@ public class PolicyModelData extends BaseModelData {
 
     public void addCompilationUnitMapping(Map<? extends String, ? extends CompilationUnit> m) {
         nameToCU.putAll(m);
+    }
+
+    public Map<String, CompilationUnit> getCompilationUnits() {
+        return pathToCU;
     }
     
 }

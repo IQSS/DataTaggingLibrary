@@ -50,7 +50,7 @@ public class LoadPolicyModelCommand implements CliCommand {
         
         if ( Files.isDirectory(pmPath) ) {
             // try to find the policy-model.xml in the folder
-            pmPath = pmPath.resolve("policy-model.xml");
+            pmPath = pmPath.resolve(PolicyModelDataParser.DEFAULT_FILENAME);
         }
         
         if ( ! Files.exists(pmPath) ) {
