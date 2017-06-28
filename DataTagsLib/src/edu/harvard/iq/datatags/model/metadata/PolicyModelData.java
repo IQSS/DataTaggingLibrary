@@ -28,7 +28,7 @@ public class PolicyModelData extends BaseModelData {
     private LocalDate releaseDate;
     private Path metadataFile, policySpacePath, decisionGraphPath;
     private AnswerTransformationMode answerTransformationMode = AnswerTransformationMode.YesFirst;
-    private final Map<String, CompilationUnit> pathToCU = new HashMap<>();
+    private final Map<String, CompilationUnit> nameToCU = new HashMap<>();
         
 
     public String getVersion() {
@@ -97,7 +97,7 @@ public class PolicyModelData extends BaseModelData {
     }
 
     public void addCompilationUnitMapping(Map<? extends String, ? extends CompilationUnit> m) {
-        pathToCU.putAll(m);
+        nameToCU.putAll(m);
     }
     
 }

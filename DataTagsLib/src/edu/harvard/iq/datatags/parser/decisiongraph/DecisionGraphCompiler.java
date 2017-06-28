@@ -13,6 +13,7 @@ import edu.harvard.iq.datatags.model.types.SlotType;
 import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
@@ -25,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.codehaus.jparsec.error.ParserException;
 
 /**
  * The resultant AST from parsing decision graph code. Can create an actual decision
@@ -45,6 +47,8 @@ public class DecisionGraphCompiler {
     private CompoundSlot topLevelType;
 
     private final Map<String, CompilationUnit> pathToCU = new HashMap<>();
+    
+    private final Map<String, CompilationUnit> nameToCU = new HashMap<>();
 
     private final List<ValidationMessage> messages = new ArrayList<>();
 
@@ -65,14 +69,26 @@ public class DecisionGraphCompiler {
 
         List<AstImport> needToVisit = new ArrayList();
         CompilationUnit firstCU = new CompilationUnit(modelData.getDecisionGraphPath());
-        firstCU.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
+        try {
+            firstCU.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
+        }
+        catch ( ParserException pe ){
+             throw new DataTagsParseException(new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),
+                    "Error parsing decision graph code: " + pe.getMessage() + " file: main file. ", pe);
+        }
         needToVisit.addAll(firstCU.getParsedFile().getImports());
         pathToCU.put( modelData.getDecisionGraphPath().toString(), firstCU );
         while (! needToVisit.isEmpty()){
             AstImport astImport = needToVisit.remove(0);
             if (! pathToCU.containsKey(astImport.getPath())){
                 CompilationUnit compilationUnit = new CompilationUnit(modelData.getDecisionGraphPath().resolveSibling(astImport.getPath()));
-                compilationUnit.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
+                try{
+                    compilationUnit.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
+                }
+                catch ( ParserException pe ){
+                    throw new DataTagsParseException(new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),
+                        "Error parsing decision graph code: " + pe.getMessage() + " file: " + astImport.getPath(), pe);
+        }
                 needToVisit.addAll(compilationUnit.getParsedFile().getImports());
                 pathToCU.put(astImport.getPath(), compilationUnit );
             }
@@ -95,6 +111,7 @@ public class DecisionGraphCompiler {
                         if (ai.getName().equals(calleeCuName)){
                             calleeCuPath = ai.getPath();
                             foundCalleeCU = true;
+                            nameToCU.put(ai.getName(),pathToCU.get(calleeCuPath));
                             break;
                         }
                     }
@@ -170,7 +187,7 @@ public class DecisionGraphCompiler {
                 
             }
         }
-        modelData.addCompilationUnitMapping(pathToCU);
+        modelData.addCompilationUnitMapping(nameToCU);
         return pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
     }
 

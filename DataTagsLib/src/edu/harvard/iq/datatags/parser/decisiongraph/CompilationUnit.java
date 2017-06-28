@@ -96,13 +96,13 @@ public class CompilationUnit {
     
     private void parse() throws DataTagsParseException{
         Parser<ParsedFile> parser = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.graphParser() );
-        try {
+//        try {
             parsedFile = parser.parse(source);
             new NodeIdAdder().addIds(parsedFile.getAstNodes());
-        } catch ( ParserException pe ) {
-            throw new DataTagsParseException(new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),
-                    "Error parsing decision graph code: " + pe.getMessage(), pe);
-        }
+//        } catch ( ParserException pe ) {
+//            throw new DataTagsParseException(new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),
+//                    "Error parsing decision graph code: " + pe.getMessage(), pe);
+//        }
     }
     
     /**
