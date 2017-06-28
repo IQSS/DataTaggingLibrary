@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 import org.codehaus.jparsec.error.ParserException;
 
 /**
@@ -63,33 +64,31 @@ public class DecisionGraphCompiler {
      * @throws java.io.IOException
      */
     public DecisionGraph compile(CompoundSlot tagSpace, PolicyModelData modelData,
-                                 List<DecisionGraphAstValidator> astValidators) throws DataTagsParseException, IOException {
+                                 List<DecisionGraphAstValidator> astValidators) throws IOException {
         buildTypeIndex(tagSpace);
 
         List<AstImport> needToVisit = new ArrayList();
         CompilationUnit firstCU = new CompilationUnit(modelData.getDecisionGraphPath());
         try {
             firstCU.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
+            needToVisit.addAll(firstCU.getParsedFile().getImports());
+            pathToCU.put( modelData.getDecisionGraphPath().toString(), firstCU );
+        } catch (DataTagsParseException ex) {
+            messages.add(new ValidationMessage(Level.ERROR, "Error parsing decision graph code at main file " + ex.getMessage()));
         }
-        catch ( ParserException pe ){
-             throw new DataTagsParseException(new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),
-                    "Error parsing decision graph code: " + pe.getMessage() + " file: main file. ", pe);
-        }
-        needToVisit.addAll(firstCU.getParsedFile().getImports());
-        pathToCU.put( modelData.getDecisionGraphPath().toString(), firstCU );
+        
         while (! needToVisit.isEmpty()){
             AstImport astImport = needToVisit.remove(0);
             if (! pathToCU.containsKey(astImport.getPath())){
                 CompilationUnit compilationUnit = new CompilationUnit(modelData.getDecisionGraphPath().resolveSibling(astImport.getPath()));
-                try{
+                try {
                     compilationUnit.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
+                    needToVisit.addAll(compilationUnit.getParsedFile().getImports());
+                    pathToCU.put(astImport.getPath(), compilationUnit );
+                } catch (DataTagsParseException ex) {
+                    messages.add(new ValidationMessage(Level.ERROR, "Error parsing decision graph code at file - " + astImport.getPath() + ":" +  ex.getMessage()));
                 }
-                catch ( ParserException pe ){
-                    throw new DataTagsParseException(new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),
-                        "Error parsing decision graph code: " + pe.getMessage() + " file: " + astImport.getPath(), pe);
-        }
-                needToVisit.addAll(compilationUnit.getParsedFile().getImports());
-                pathToCU.put(astImport.getPath(), compilationUnit );
+
             }
         }
         
@@ -162,19 +161,24 @@ public class DecisionGraphCompiler {
                 node.setId(cuName + ">" + node.getId());
             }
         }
-        DecisionGraph dg = pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
-        for (String nodeID: nodeIdToNodeAndCU.keySet()){
-            for(Node node: nodeIdToNodeAndCU.get(nodeID).keySet()){
-                Node nodeWithoutCU = dg.getNode((node.getId().split(">")[1]));
-                if(node.equals(nodeWithoutCU)){
-                    dg.remove(nodeWithoutCU);
+        if (pathToCU.get(modelData.getDecisionGraphPath().toString()) != null){
+            DecisionGraph dg = pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
+            for (String nodeID: nodeIdToNodeAndCU.keySet()){
+                for(Node node: nodeIdToNodeAndCU.get(nodeID).keySet()){
+                    Node nodeWithoutCU = dg.getNode((node.getId().split(">")[1]));
+                    if(node.equals(nodeWithoutCU)){
+                        dg.remove(nodeWithoutCU);
+                    }
+                    dg.add(node);
+
                 }
-                dg.add(node);
-                
             }
+            modelData.addCompilationUnitMapping(nameToCU);
+            return pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
         }
-        modelData.addCompilationUnitMapping(nameToCU);
-        return pathToCU.get(modelData.getDecisionGraphPath().toString()).getDecisionGraph();
+        else{
+            return null;
+        }
     }
 
     public CompilationUnit put(String key, CompilationUnit value) {

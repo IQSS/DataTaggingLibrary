@@ -105,7 +105,7 @@ public class PolicyModelData extends BaseModelData {
     }
 
     public Map<String, CompilationUnit> getCompilationUnits() {
-        return pathToCU;
+        return nameToCU;
     }
     
 }

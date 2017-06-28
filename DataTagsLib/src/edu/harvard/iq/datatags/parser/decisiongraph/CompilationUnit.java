@@ -95,14 +95,15 @@ public class CompilationUnit {
     }
     
     private void parse() throws DataTagsParseException{
-        Parser<ParsedFile> parser = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.graphParser() );
-//        try {
+        try{
+            Parser<ParsedFile> parser = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.graphParser() );
             parsedFile = parser.parse(source);
             new NodeIdAdder().addIds(parsedFile.getAstNodes());
-//        } catch ( ParserException pe ) {
-//            throw new DataTagsParseException(new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),
-//                    "Error parsing decision graph code: " + pe.getMessage(), pe);
-//        }
+        }
+        catch ( ParserException pe ){
+            throw new DataTagsParseException(new CompilationUnitLocationReference(pe.getLocation().line, pe.getLocation().column),
+                                    pe.getMessage(), pe);        
+        }
     }
     
     /**
@@ -149,7 +150,6 @@ public class CompilationUnit {
                 final CompoundValue additionPoint = valueBuilder.descend(C.tail(fullyQualifiedSlotName.get(astSlot)), topValue);
                 slot = additionPoint.getType().getTypeNamed(C.last(astSlot));
             } catch (RuntimeException re) {
-
                 throw new RuntimeException("Tag not found");
             }
         }

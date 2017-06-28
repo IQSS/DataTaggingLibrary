@@ -72,7 +72,7 @@ public class PolicyModelLoader {
         return res;
     }
     
-    public PolicyModelLoadResult load( PolicyModelData data ) throws DataTagsParseException {
+    public PolicyModelLoadResult load( PolicyModelData data ) {
         // Setup result
         PolicyModelLoadResult res = new PolicyModelLoadResult();
         PolicyModel model = new PolicyModel();
