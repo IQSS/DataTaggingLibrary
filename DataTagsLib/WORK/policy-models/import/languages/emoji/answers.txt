@@ -1,0 +1,8 @@
+all: 🐶🐱🦊🐰🐨🐷
+animated: ✏️
+cute: 😻
+hounds: 🐶
+no: ❌
+none: 🚫
+some: 🐰🦊🐻
+yes: ✅

@@ -11,6 +11,7 @@ import edu.harvard.iq.datatags.cli.commands.RunValidationsCommand;
 import edu.harvard.iq.datatags.cli.commands.VisualizeDecisionGraphCommand;
 import edu.harvard.iq.datatags.cli.commands.AskAgainCommand;
 import edu.harvard.iq.datatags.cli.commands.CreateLocalizationCommand;
+import edu.harvard.iq.datatags.cli.commands.LoadLocalizationCommand;
 import edu.harvard.iq.datatags.cli.commands.OptimizeDecisionGraphCommand;
 import edu.harvard.iq.datatags.cli.commands.StatisticsCommand;
 import edu.harvard.iq.datatags.cli.commands.QuitCommand;
@@ -128,7 +129,7 @@ public class CliRunner {
                 new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
                 new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
                 new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadPolicyModelCommand(), 
-                new NewModelCommand(), new OpenInDesktopCommand(),
+                new NewModelCommand(), new OpenInDesktopCommand(), new LoadLocalizationCommand(),
                 new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand(),
                 new CreateLocalizationCommand(), new OptimizeDecisionGraphCommand()
         ).forEach(c -> commands.put(c.command(), c));

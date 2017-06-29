@@ -107,21 +107,26 @@ public class PolicyModelLoader {
             DecisionGraph dg = decisionGraphCompiler.compile(spaceRoot, data, dgAstValidators);
             decisionGraphCompiler.getMessages().forEach(res::addMessage);
             
-            switch ( data.getAnswerTransformationMode() ) {
-                case Verbatim: break;
-                case YesFirst:
-                    dg = new YesNoAnswersSorter(true).process(dg);
-                    break;
-                case YesLast:
-                    dg = new YesNoAnswersSorter(false).process(dg);
-                    break;
+            if ( dg != null ) {
+                switch ( data.getAnswerTransformationMode() ) {
+                    case Verbatim: break;
+                    case YesFirst:
+                        dg = new YesNoAnswersSorter(true).process(dg);
+                        break;
+                    case YesLast:
+                        dg = new YesNoAnswersSorter(false).process(dg);
+                        break;
+                }
+                final DecisionGraph fdg = dg; // let the lambdas below compile
+                dgValidators.stream().flatMap( v->v.validate(fdg).stream() ).forEach(res::addMessage);
+                for ( DecisionGraphProcessor dgp : postProcessors ) {
+                    dg = dgp.process(dg);
+                }
+                model.setDecisionGraph(dg);
+                
+            } else {
+                res.addMessage( new ValidationMessage(Level.ERROR, "Failed to create decision graph; see previous errors.") );
             }
-            final DecisionGraph fdg = dg; // let the lambdas below compile
-            dgValidators.stream().flatMap( v->v.validate(fdg).stream() ).forEach(res::addMessage);
-            for ( DecisionGraphProcessor dgp : postProcessors ) {
-                dg = dgp.process(dg);
-            }
-            model.setDecisionGraph(dg);
             
             // Load localizations
             Path localizations;

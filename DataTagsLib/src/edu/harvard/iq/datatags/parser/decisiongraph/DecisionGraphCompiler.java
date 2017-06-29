@@ -35,9 +35,12 @@ import org.codehaus.jparsec.error.ParserException;
  * @author michael
  */
 public class DecisionGraphCompiler {
-     
-    EndNode endAll = new EndNode("[SYN-END]");
     
+    /** ID of the main compilation unit. */
+    public static final String MAIN_CU_ID = "<main>";
+    
+    EndNode endAll = new EndNode("[SYN-END]");
+
     /**
      * Maps a name of a slot to its fully qualified version (i.e from the top
      * type). For fully qualified names this is an identity function.
@@ -72,6 +75,7 @@ public class DecisionGraphCompiler {
             firstCU.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
             needToVisit.addAll(firstCU.getParsedFile().getImports());
             pathToCU.put( modelData.getDecisionGraphPath().toString(), firstCU );
+            nameToCU.put(MAIN_CU_ID, firstCU);
         } catch (DataTagsParseException ex) {
             messages.add(new ValidationMessage(Level.ERROR, "Error parsing decision graph code at main file " + ex.getMessage()));
         }

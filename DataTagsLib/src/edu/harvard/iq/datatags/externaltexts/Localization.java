@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * A localization of a policy model to a given language.
@@ -61,6 +62,10 @@ public class Localization {
         return answers.getOrDefault(dgAnswer, dgAnswer);
     }
     
+    public Set<String> getLocalizedAnswers() {
+        return answers.keySet();
+    }
+    
     void addAnswer( String answerText, String localizedAnswerText ) {
         answers.put(answerText, localizedAnswerText);
     }
@@ -89,6 +94,10 @@ public class Localization {
     
     public Optional<String> getNodeText(String nodeId) {
         return Optional.ofNullable(nodeText.get(nodeId));
+    }
+    
+    public Set<String> getLocalizedNodeIds() {
+        return nodeText.keySet();
     }
     
     void setPolicySpaceEntityText( List<String> path, String text ) {

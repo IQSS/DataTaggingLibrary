@@ -253,22 +253,22 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
                                                              .append("\n")
                     );
                 }
-                createFileWithContent(nodesDir.resolve(nd.getId()+".md"), sb.toString());
+                createNodeLocalizationFile(nodesDir, nd.getId(), sb.toString());
             }
 
             @Override
             public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-                createFileWithContent(nodesDir.resolve(nd.getId()+".md"), nd.getTitle());
+                createNodeLocalizationFile(nodesDir, nd.getId(), nd.getTitle());
             }
 
             @Override
             public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-                createFileWithContent(nodesDir.resolve(nd.getId()+".md"), nd.getReason());
+                createNodeLocalizationFile(nodesDir, nd.getId(), nd.getReason());
             }
 
             @Override
             public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
-                createFileWithContent(nodesDir.resolve(nd.getId()+".md"), nd.getTodoText());
+                createNodeLocalizationFile(nodesDir, nd.getId(), nd.getTodoText());
             }
 
             @Override
@@ -288,7 +288,24 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
         
         rnr.println("..Done");
     }
-
+    
+    private void createNodeLocalizationFile( Path nodesDir, String nodeId, String content ) {
+        String[] comps = nodeId.split(">");
+        if ( comps.length == 1 ) {
+            createFileWithContent(nodesDir.resolve(comps[0] + ".md"), content);
+        } else {
+            Path secFol = nodesDir.resolve(comps[0]);
+            if ( ! Files.exists(secFol) ) {
+                try {
+                    Files.createDirectories(secFol);
+                } catch (IOException ex) {
+                    Logger.getLogger(CreateLocalizationCommand.class.getName()).log(Level.SEVERE, "Error creating directory for node localizatoin", ex);
+                }
+                createFileWithContent(secFol.resolve(comps[1] + ".md"), content);
+            }
+        }
+    }
+    
     private void createFileWithContent(Path p, String c) {
         try {
             Files.write(p, c.getBytes());

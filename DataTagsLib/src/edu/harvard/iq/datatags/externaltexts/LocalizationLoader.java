@@ -156,12 +156,13 @@ public class LocalizationLoader {
         // load nodes that have localization ids.
         model.getDecisionGraph().nodeIds().forEach( id -> {
            String[] comps = id.split(">");
-           String cuID = (comps.length==1) ? "ID-OF-MAIN-UNIT" : comps[1];  //TODO fix to use real id of unit.
-           String nodeName = (comps.length==1) ? comps[1] : comps[2];
+           String cuID = (comps.length==1) ? DecisionGraphCompiler.MAIN_CU_ID : comps[0]; 
+           String nodeName = (comps.length==1) ? comps[0] : comps[1];
            Path cuNodesPath = compilationUnitNodeDirectories.get(cuID);
            if ( cuNodesPath != null ) {
                for ( String ext : new String[]{".md", ".mdown", ".txt"}) {
-                   Path attempt = cuNodesPath.resolve(nodeName + ext);
+                   Path attempt = (comps.length==1) ? cuNodesPath.resolve(nodeName + ext) 
+                                                    : cuNodesPath.resolve(comps[0]).resolve(comps[1]  + ext);
                    if ( Files.exists(attempt) ) {
                        loc.addNodeText(id, readAll(attempt));
                        break;
