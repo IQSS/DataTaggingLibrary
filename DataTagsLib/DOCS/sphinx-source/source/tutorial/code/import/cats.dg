@@ -1,0 +1,11 @@
+[>cat< section:
+  {title: Cats}
+  [>q-cats-group< ask:
+    {text: What cats?}
+    {answers:
+      {all: [>4< set: Cats += Tom, Shmil, Mitzi]}
+      {some: [>5< set: Cats += Tom, Shmil]}
+      {none: }
+    }
+  ]
+]
