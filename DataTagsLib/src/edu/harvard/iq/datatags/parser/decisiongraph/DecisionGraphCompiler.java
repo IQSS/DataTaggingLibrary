@@ -13,7 +13,6 @@ import edu.harvard.iq.datatags.model.types.SlotType;
 import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
-import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
@@ -25,8 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
-import org.codehaus.jparsec.error.ParserException;
 
 /**
  * The resultant AST from parsing decision graph code. Can create an actual decision
@@ -105,9 +102,11 @@ public class DecisionGraphCompiler {
             String calleeCuPath = null;
             Boolean foundCalleeCU = false;
             for(String call: callToCallee.keySet()){
-                if ( callToCallee.get(call).contains(">") ) { //If the callee is from another compilation unit
-                    String calleeCuName = callToCallee.get(call).split(">")[0]; //Take the cu in cu>id from callee
-                    String calleeName = callToCallee.get(call).split(">")[1];
+                if ( callToCallee.get(call).contains(">") ) { 
+                    //If the callee is from another compilation unit
+                    String[] comps = callToCallee.get(call).split(">");
+                    String calleeCuName = comps[0]; //Take the cu in cu>id from callee
+                    String calleeName = comps[1];
                     for (AstImport ai: imports){
                         if (ai.getName().equals(calleeCuName)){
                             calleeCuPath = ai.getPath();
@@ -119,17 +118,19 @@ public class DecisionGraphCompiler {
                     if ( foundCalleeCU ) {
                         CompilationUnit calleeCU = pathToCU.get(calleeCuPath);
                         Node calleeNode = calleeCU.getDecisionGraph().getNode(calleeName);
-                        if(calleeNode != null){
+                        if ( calleeNode != null ) {
                             CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
                             callNode.setCalleeNode(calleeNode);
-                            if(nodeIdToNodeAndCU.containsKey(calleeName)){
+                            if ( nodeIdToNodeAndCU.containsKey(calleeName) ) {
                                 Map<Node,String> nodeNcu = nodeIdToNodeAndCU.get(calleeName);
                                 nodeNcu.put(calleeNode, calleeCuName);
                                 nodeIdToNodeAndCU.put(calleeName, nodeNcu);
-                                for(Node innerNode: calleeCU.getDecisionGraph().nodes()){
-                                    Map<Node,String> innernNodeNcu = nodeIdToNodeAndCU.get(innerNode.getId());
-                                    innernNodeNcu.put(innerNode, calleeCuName);
-                                    nodeIdToNodeAndCU.put(innerNode.getId(), innernNodeNcu);
+                                for ( Node innerNode: calleeCU.getDecisionGraph().nodes() ) {
+                                    if ( innerNode instanceof CallNode ) {
+                                        Map<Node,String> innerNodeNcu = nodeIdToNodeAndCU.get(innerNode.getId());
+                                        innerNodeNcu.put(innerNode, calleeCuName);
+                                        nodeIdToNodeAndCU.put(innerNode.getId(), innerNodeNcu);
+                                    }
                                 }
                             } else {
                                 Map<Node,String> nodeNcu = new HashMap<>();
@@ -147,7 +148,9 @@ public class DecisionGraphCompiler {
                     } else {
                         messages.add(new ValidationMessage(Level.ERROR, "cannot find target file with id " + calleeCuName));
                     }
+                    
                 } else {
+                    // link to node within same compilation unit
                     Node calleeNode = cu.getDecisionGraph().getNode( callToCallee.get(call) );
                     CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
                     callNode.setCalleeNode(calleeNode);

@@ -7,7 +7,6 @@ import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
-import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParseResult;
@@ -24,6 +23,7 @@ import static edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import edu.harvard.iq.datatags.tools.processors.DecisionGraphProcessor;
 import edu.harvard.iq.datatags.tools.processors.EndNodeOptimizer;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -141,6 +141,8 @@ public class PolicyModelLoader {
                 res.addMessage( new ValidationMessage(Level.WARNING, "IO Error reading localizations: " + ex.getMessage()));
             }
             
+        } catch (NoSuchFileException ex) {
+            res.addMessage( new ValidationMessage(Level.ERROR, "File " + ex.getMessage() + " cannot be found."));
         } catch (IOException ex) {
             res.addMessage( new ValidationMessage(Level.ERROR, "IO error while reading graph: " + ex.getMessage()));
         }

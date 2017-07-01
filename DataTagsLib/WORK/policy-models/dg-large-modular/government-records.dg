@@ -1,0 +1,89 @@
+[>Gov1< ask:
+	{text: Were the data collected by a federal agency or a researcher under contract with or with funds from a federal agency?}
+  {answers:
+  	{yes:
+  		[>Gov2< ask:
+  			{text: Are you an employee or an agent, such as a contractor, consultant, researcher, or employee of a private organization, operating under a contract, grant, or other agreement with the agency that collected the data?}
+        {answers:
+          {yes:
+    				[>Census1< ask:
+    					{text: Were the data collected by the US Census Bureau?}
+              {answers:
+      					{yes:
+      						[>Census2< ask:
+      							{text: Were the data published by the Census Bureau?}
+                    {answers:
+        							{yes:
+        								[set: Harm=minimal; Code=green; Effort=deidentified; Transit=clear; Storage=clear; Census+=CensusPublished]}
+        							{no:
+        								[>Census3< ask:
+        									{text: Has a Census Bureau Disclosure Review Board issued an approval memorandum granting formal permission for the data to be published?}
+                          {answers:
+                            {yes:
+          										[set: Harm=minimal; Code=green; Effort=deidentified; Transit=clear; Storage=clear; Census+=CensusPublished]}
+          									{no:
+          										[reject: Possible violation of Title 13 due to failure to obtain permission from the Census Bureau to publish the Census data.]
+  		}}]}}]}}]}}] <-- Gov2
+  		[>ESRA1< ask:
+  			{text: Do the data contain information from an education research project that receives funding from the Institute of Education Sciences? Examples of funded projects are included 	on the following web sites:
+  				* National Center for Education Research [NCER] - http://ies.ed.gov/ncer/projects/
+  				* National Center for Education Evaluation and Regional Assistance [NCEE] - http://ies.ed.gov/ncee/projects/
+  				* What Works Clearinghouse [WWC] - http://ies.ed.gov/ncee/wwc/
+  				* Regional Educational Laboratory Program - http://ies.ed.gov/ncee/edlabs/index.asp
+  				* Education Resources Information Center [ERIC] - http://ies.ed.gov/ncee/projects/eric.asp
+  				* National Library of Education [NLE] - http://ies.ed.gov/ncee/projects/nle/
+  				* National Center for Special Education Research [NCSER] - http://ies.ed.gov/ncser/projects/
+  				* National Center for Education Statistics [NCES] - http://nces.ed.gov/surveys/}
+        {answers:
+    			{yes:
+    				[>ESRA2< ask:
+    					{text: Have the data been published previously, or did you submit a copy of the data to the Institute of Education Sciences (IES) Data Security Office and receive its authorization to disclose the data?}
+              {answers:
+                {no:
+                  [reject: Possible violation of ESRA due to failure to obtain authorization to disclose the data from the Institute of Education Sciences]}
+      					{yes:
+      						[>ESRA3< ask:
+      							{text: Has the IES Data Security Office limited access to the data to individuals authorized by an IES license agreement or individuals who have executed an affidavit of nondisclosure?}
+                    {answers:
+                      {yes: [set: Code=yellow; Harm=shame; Transit=encrypt; Storage=serverEncrypt; ESRA+=restricted ] }
+        							{no:  [set: Code=green; Harm=minimal; Transit=clear; Storage=clear; ESRA+=public ] }
+  		}]}}]}}]
+  		[>CIPSEA1< ask:
+  			{text: Were the data collected directly from respondents for exclusively statistical purposes under a pledge of confidentiality?}
+        {answers:
+    			{yes:
+    				[>CIPSEA2< ask:
+    					{text: Is the agency that collected the data a statistical agency or unit from this list: USDA Economic Research Service, National Agricultural Statistics Service, Bureau of Economic Analysis, Census Bureau, National Center for Education Statistics, Energy Information Administration, National Center for Health Statistics, Bureau of Justice Statistics, Bureau of Labor Statistics, Bureau of Transportation Statistics, Statistics of Income Division of the Internal Revenue Service, or NSF Division of Science Resources Statistics?}
+              {answers:
+      					{yes:
+      						[>CIPSEA3< ask:
+      							{text: Are the data being shared in identifiable form?}
+      							{terms:
+      								{Identifiable form:
+      								        Identifiable form refers to any representation of information that permits the identity of the respondent to whom the information applies to be reasonably inferred by either direct or indirect means.}}
+                    {answers:
+                      {no:  [set: CIPSEA+=deidentified] }
+                      {yes: [set: CIPSEA+=identifiable] [todo: CIPSEA DUA] }
+                    }]
+  		}}]}}]
+  		[>PA1< ask:
+  			{text:Are the data maintained by the agency in a system of records?}
+  			{terms:
+  				{System of records:
+  				    A system of records is a group of any records under the control of any agency from which information is retrieved by the name of the individual or by some identifying number, symbol, or other identifying particular assigned to the individual.}
+  				{Record:
+  				    A record is any item, collection, or grouping of information about an individual that is maintained by an agency, including, but not limited to, his education, financial transactions, medical history, and criminal or employment history, and that contains his name, or the identifying number, symbol, or other identifying particular assigned to the individual, such as a finger or voice print or a photograph.}}
+        {answers:
+          {yes:
+    				[>PA2< ask:
+    					{text: Do the data contain personally identifiable information?}
+    					{terms:
+    						{Personally identifiable information:
+    						      Any information about an individual that can be used to distinguish or trace an individual's identity - such as name, address, or Social Security number - either by itself or in combination with any other information that is linked or linkable to an individual, such as medical, educational, financial, criminal or employment history.}}
+              {answers:
+                {yes: [set: PrivacyAct+=identifiable] [todo: Privacy Act DUA] }
+      					{no:  [set: PrivacyAct+=deidentified] }
+      }]}}]
+  } <-- Gov1/yes
+}] <-- Gov1
+[end]

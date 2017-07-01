@@ -1,0 +1,93 @@
+[>start< ask:
+  {text: Do the data contain information collected from students in a survey or assessment concerning any of the following eight categories?
+          * Political affiliations or beliefs of a student or a student’s parents;
+          * Mental or psychological problems of a student or a student’s family;
+          * Sex behavior or attitudes;
+          * Illegal, anti-social, self-incriminating, or demeaning behavior;
+          * Critical appraisals of other individuals with whom respondents have close family relationships;
+          * Legally recognized privileged or analogous relationships, such as those of lawyers, physicians, or members of the clergy;
+          * Religious practices, affiliations, or beliefs of a student or a student’s parent; or
+          * Income, other than that required by law to determine eligibility for participation in a program or for receiving financial assistance under such program.}
+  {terms:
+    {Survey or assessment: Refers to any academic or non-academic survey, assessment, analysis, or evaluation.
+                         It also includes any psychiatric or psychological examination, test, or treatment that is designed to
+                         elicit information about attitudes, habits, traits, opinions, beliefs or feelings and is not directly
+                         related to academic instruction.}}
+  {answers:
+   {yes:
+    [>ppra2a< ask:
+      {text: Do the data from the survey or assessment contain any personally identifiable information about a student? Personally identifiable information about a student includes, but is not limited to, the following categories of information:
+        * A student’s name
+        * The name of a student’s parent or other family members
+        * The address of a student or a student’s family
+        * Other direct identifiers, defined as information that relates specifically to an individual, such as a student’s Social Security number, student number, other identifying number or code, telephone number, e-mail address, or biometric record
+        * Other indirect identifiers defined as information that can be combined with other information to identify specific individuals, such as the student’s gender, race, religion, date of birth, place of birth, other geographic indicator, weight, mother’s maiden name, activities, employment information, education information, financial information, and other descriptors
+        * Other information that, alone or in combination, is linked or linkable to a specific student that would allow a reasonable person in the school community, who does not have personal knowledge of the relevant circumstances, to identify the student with reasonable certainty
+        * Information disclosed in response to a targeted request}
+      {terms:
+        {Deidentified information: Information that has been deidentified is considered not to contain personally identifiable information. The term deidentified is used to describe records that have enough personally identifiable information removed or obscured such that the remaining information does not identify an individual and there is no reasonable basis to believe that the information can be used to identify an individual. In making a determination that a student’s identity is not personally identifiable, both single and multiple data releases from the education records should be taken into account along with other information available from other sources.}
+        {Biometric record: Refers to a record of one or more measurable biological or behavioral characteristics that can be used for automated recognition of an individual. Examples include fingerprints; retina and iris patterns; voiceprints; DNA sequence; facial characteristics; and handwriting.}
+        {Targeted request: Refers to a request by a person who the educational agency or institution reasonably believes knows the identity of the student to whom the education record relates. For example, if there was a rumor published in the local paper that a public official was disciplined for cheating during his senior year in high school, a request to the high school for the disciplinary records of students who were caught cheating during the year the public official was a senior would be considered a targeted request.}
+      }
+      {answers:
+        {yes:
+          [set: PPRA+=protected; Code=orange; Harm=civil;
+                Transit=encrypt; Storage=serverEncrypt; Effort=identifiable]}
+        {no:
+          [set: PPRA+=protectedDeidentified; Code=green; Harm=minimal;
+                Transit=clear; Storage=clear; Effort=deidentified]}
+    }]
+    [>ppra3< ask:
+      {text:Was the survey or assessment funded, in whole or in part, by the US Department of Education?}
+      {terms:
+        {Funded by the US Department of Education: This means the survey or assessment received funds for any purpose from the US Department of Education. It includes any funds provided by grant, cooperative agreement, contract, subgrant, or subcontract to the program or institution that conducted the data collection.}}
+      {answers:
+        {yes:
+          [>ppra4< ask:
+            {text: Was written consent obtained from the parents of the students who participated in the survey or assessment, or from the students themselves if they are adults or emancipated minors, prior to the data collection?}
+            {answers:
+              {yes:
+                [set: PPRA+=consent]
+                [end]
+              }
+              {no:
+                [reject: Possible PPRA violation due to failure to obtain written consent for collection of information protected under the PPRA]}
+              {Not Sure:
+                [reject: Please ask the party that collected the data whether written consent from the parents was obtained. Dataset cannot be accepted without clarifying this issue.]}
+    }]}}] <-- ppra3
+}}] <-- ppra2
+
+[>ppra5< ask:
+  {text: Was any of the personal information in the data collected from students for the purpose of marketing or sale?}
+  {terms:
+    {Personal Information: Refers to individually identifiable information including, but not limited to:
+      * a student or parent’s first and last name,
+      * a home or other physical address, including street name and the name of the city or town,
+      * a telephone number, or
+      * a Social Security identification number.}
+    {Marketing Purpose:
+      This does not include the gathering and release of information for the following activities:
+      * College, post-secondary education, or military recruitment
+      * Book clubs, magazines, and low-cost literacy products
+      * Curriculum and instructional materials used by elementary and secondary schools
+      * Certain tests and assessments used by elementary and secondary schools
+      * Sale by students of services and products for education or school-related, fundraising activities
+      * Student recognition programs}
+    }
+    {answers:
+      {yes:
+        [set:PPRA+=marketing]}
+    }
+]
+[>ppra6< ask:
+  {text: Does the school in which the information was collected receive any funds from the US Department of Education?}
+  {terms:
+    {Funds from the US Department of Education: This means funds provided for any purpose by the US Department of Education to the elementary or secondary school in which the data were collected. It includes any funds provided by grant, cooperative agreement, contract, subgrant, or subcontract to the institution. The funds, alternatively, may have been provided to students attending the institution. For instance, the funds may have been paid to the institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program. Note that all public schools receive such funds, though most private and parochial schools at the elementary and secondary levels do not receive such funding.}}
+  {answers:
+    {yes:
+      [>ppra7< ask:
+        {text: Were parents provided with notice and an opportunity to opt out of the collection and disclosure of the information?}
+        {answers:
+          {no: [reject: Possible PPRA violation due to school’s failure to provide parents with the opportunity to opt out of the data collection]}
+          {yes: [set: PPRA+=optOutProvided]}}]
+}}]

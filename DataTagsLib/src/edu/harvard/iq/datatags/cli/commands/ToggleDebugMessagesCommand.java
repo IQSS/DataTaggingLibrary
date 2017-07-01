@@ -20,6 +20,11 @@ public class ToggleDebugMessagesCommand implements CliCommand {
     }
 
     @Override
+    public boolean requiresModel() {
+        return false;
+    }
+    
+    @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception {
         rnr.setPrintDebugMessages(! rnr.getPrintDebugMessages() );
         rnr.printMsg("Debug messages %s", (rnr.getPrintDebugMessages() ? "On" : "Off"));

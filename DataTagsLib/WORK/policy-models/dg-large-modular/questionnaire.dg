@@ -1,0 +1,94 @@
+<*
+ This questionnaire covers Medical, government records and educational data.
+ For more info, go to http://datatags.org.
+ Created by:
+ * The Data Privacy Lab @ Harvard (Latanya Sweeney, Sean Hooley)
+ * Berkman Ctr. for Interner and Society (Alexandra Wood, David O'Brien, clinical students)
+ * IQSS (Mercè Crosas, Michael Bar-Sinai)
+
+ NOT TO BE USED AS A LEGAL ADVICE
+*>
+[#import ppra:    ppra.dg    ]
+[#import medical: medical.dg ]
+[#import ferpa:   ferpa.dg   ]
+[#import dppa:    dppa.dg    ]
+[#import gov:     government-records.dg ]
+[>global-start< ask:
+	{text: Do the data concern living persons?}
+  {answers:
+    {yes:
+      [set: Code=green] <-- Explicit settings of colors is going away soon!
+      [call: medicalRecordsCompliance ]
+      [call: ppraCompliance ]
+      [call: ferpaCompliance ]
+      [call: govRecsCompliance ]
+      [todo: Arrest and Conviction Records, Bank and Financial Records,
+        Cable Television, Computer Crime,
+        Credit reporting and Investigations (including 'Credit Repair', 'Credit Clinics', Check-Cashing and Credit Cards),
+        Criminal Justice Information Systems, Electronic Surveillance (including Wiretapping, Telephone Monitoring, and Video Cameras),
+        Employment Records, Government Information on Individuals, Identity Theft,
+        Insurance Records (including use of Genetic Information), Library Records,
+        Mailing Lists (including Video rentals and Spam),
+        Special Medical Records (including HIV Testing),
+        Non-Electronic Visual Surveillance. Breast-Feeding, Polygraphing in Employment,
+        Privacy Statutes/State Constitutions (including the Right to Publicity),
+        Privileged Communications, Social Security Numbers, Student Records, Tax Records,
+        Telephone Services (including Telephone Solicitation and Caller ID),
+        Testing in Employment (including Urinalysis, Genetic and Blood Tests), Tracking Technologies,  Voter Records]}
+      {no:  [set: Code=blue; Identity=noPersonData] }
+}]
+[call: dua]
+[end]
+
+[>medicalRecordsCompliance< ask:
+	{text: Do the data contain health or medical information?}
+  {answers:
+	 {yes: [call: medical>start]}}
+ ][end]
+
+[>ppraCompliance< ask:
+  {text: Do the data contain any information collected from students in an elementary or secondary school?}
+  {terms:
+    {Elementary or secondary school: Refers to a public or private institution in the United States providing educational services or instruction to students in any of the grades from kindergarten through high school.}}
+  {answers:
+    {yes: [call: ppra>start]}
+  }
+][end]
+
+[>ferpaCompliance< ask:
+  {text: Do the data contain any information derived from records maintained by an educational agency or institution, or by a person or entity acting for the agency or institution, that receives funds from the US Department of Education?}
+  {terms:
+    {Educational agency or institution:
+      An educational agency or institution is a public or private agency or institution that provides educational services or instruction, or both, to students. This includes, but is not limited to, a primary or secondary school, college or university, school district, or state department of education.}
+    {Funds from the US Department of Education:
+       This means funds provided for any purpose, research or otherwise, by the US Department of Education to the educational agency or institution. It includes funds provided by grant, cooperative agreement, contract, subgrant, or subcontract; or funds provided to students attending the agency or institution. The funds may be paid to the institution by those students for educational purposes, such as under the Pell Grant Program and the Guaranteed Student Loan Program. This includes all public schools and a majority of private institutions, though most private and parochial schools at the elementary and secondary levels do not receive such funding.}}
+  {answers:
+    {yes: [call: ferpa>start]}
+}][end]
+
+
+[>govRecsCompliance< call: gov>Gov1]
+[call: dppa>DPPA1]
+[end]
+
+[>dua< todo: Data use agreements]
+[>duaTimeLimit< ask:
+	{text: Is there any reason why we cannot store the data indefinitely?
+	       Limiting the time a dataset could be held interferes with good science practices such as replication, and should thus be avoided whenever possible. }
+	{answers:
+    {no: [set: TimeLimit=none] }
+  	{yes:
+  		[ask:
+  			{text:For how long should we keep the data?}
+        {answers:
+          { indefinitely: [set: TimeLimit=none]  }
+          { 50 years:     [set: TimeLimit=_50yr] }
+          { 5 years:      [set: TimeLimit=_5yr]  }
+          { 1 year:       [set: TimeLimit=_1yr]  }
+}]}}]
+[>duaAdditional< ask:
+	{text: Did the data have any restrictions on sharing, e.g. stated in an agreement or policy statement?}
+  {answers:
+  	{yes: [set: ContractOrPolicy=yes]}
+  	{no:  [set: ContractOrPolicy=no]}}
+][end]

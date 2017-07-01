@@ -161,19 +161,20 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
         out.println("graph [fontname=\"Courier\" concentrate=true compound=true]");
         out.println("edge [fontname=\"Helvetica\" fontsize=\"10\"]");
         out.println("node [fillcolor=\"lightgray\" style=\"filled\" fontname=\"Helvetica\" fontsize=\"10\"]");
-        out.println(node("start")
+        out.println(node(START_NODE_NAME)
+                .label("start")
                 .fillColor("transparent")
                 .shape(GvNode.Shape.none)
                 .fontColor("#008800")
                 .fontSize(16)
                 .gv());
-        out.println("{rank=source; start}");
+        out.println("{rank=source; " + START_NODE_NAME + "}");
     }
 
     @Override
     protected void printBody(PrintWriter out) throws IOException {
         printChart(theGraph, new PrintWriter(out, true));
-        out.println(edge("start", nodeId(theGraph.getStart()))
+        out.println(edge(START_NODE_NAME, nodeId(theGraph.getStart()))
                 .color("#008800")
                 .penwidth(4)
                 .gv());

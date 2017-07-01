@@ -20,7 +20,6 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTextSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 import org.codehaus.jparsec.Parser;
@@ -309,7 +308,7 @@ public class DecisionGraphRuleParser {
             ),
             textbodyUpTo("]"),
             nodeStructurePart("]"),
-            (localId, path, _close) -> new AstImport(path, localId));
+            (localId, path, _close) -> new AstImport(path.trim(), localId.trim()));
     
     // -------------------------------
     // Program-level parsers.

@@ -16,6 +16,7 @@ import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.TagValue;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
+import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -29,7 +30,8 @@ import java.util.TreeSet;
  * @author michael
  */
 public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVisualizer {
-
+    
+    protected final static String START_NODE_NAME = "NODE___________START_";
     protected final Map<Character, String> idEncodeMap = new HashMap<>();
     protected DecisionGraph theGraph;
     
@@ -49,7 +51,7 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
         }
 
         protected String idLabel(Node nd) {
-            return nd.getId().startsWith("[#") ? "" : nd.getId() + "\\n";
+            return AstNodeIdProvider.isAutoId(nd.getId()) ? "" : nd.getId() + "\\n";
         }
     }
     
