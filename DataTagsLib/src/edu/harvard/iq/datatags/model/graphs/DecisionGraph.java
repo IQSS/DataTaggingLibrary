@@ -11,7 +11,9 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -30,6 +32,7 @@ public class DecisionGraph {
     private Node start;
     private final Map<String, Node> nodes = new HashMap<>();
     private String id;
+    private final ReachableNodesCollector nodeCollector = new ReachableNodesCollector();
 
     public DecisionGraph() {
         this("DecisionGraph-" + INDEX.incrementAndGet());
@@ -76,74 +79,17 @@ public class DecisionGraph {
      * @return the node, for call chaining.
      */
     public <T extends Node> T add(T n) {
-        n.accept(new Node.VoidVisitor() {
-
-            @Override
-            public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
-                nodes.put(nd.getId(), nd);
-                for (ConsiderAnswer ans : nd.getAnswers()) {
-                    if (nd.getNodeFor(ans) != null) {
-                        nd.getNodeFor(ans).accept(this);
-                    }
-                }
-            }
-            @Override
-            public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
-                nodes.put(nd.getId(), nd);
-                for (Answer ans : nd.getAnswers()) {
-                    if (nd.getNodeFor(ans) != null) {
-                        nd.getNodeFor(ans).accept(this);
-                    }
-                }
-            }
-
-            @Override
-            public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
-                nodes.put(nd.getId(), nd);
-                if ( nd.hasNextNode() ) {
-                    nd.getNextNode().accept(this);
-                }
-            }
-
-            @Override
-            public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
-                nodes.put(nd.getId(), nd);
-                if ( nd.hasNextNode() ) {
-                    nd.getNextNode().accept(this);
-                }
-            }
-
-            @Override
-            public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
-                nodes.put(nd.getId(), nd);
-                if ( nd.hasNextNode() ) {
-                    nd.getNextNode().accept(this);
-                }
-            }
-
-            @Override
-            public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
-                nodes.put(nd.getId(), nd);
-            }
-
-            @Override
-            public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-                nodes.put(nd.getId(), nd);
-            }
-            
-            @Override
-            public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{
-                nodes.put(nd.getId(), nd);
-                if ( nd.hasNextNode() ) {
-                    nd.getNextNode().accept(this);
-                }
-                nd.getStartNode().accept(this);
-            }
-            
-        });
+        n.accept(nodeCollector);
         return n;
     }
-
+    
+    /**
+     * Collects the 
+     */
+    public void addAllReachableNodes() {
+        getStart().accept(nodeCollector);
+    }
+    
     /**
      * Removes the passed node. Caller should validate there are no nodes in the
      * chart that reference this node.
@@ -170,6 +116,19 @@ public class DecisionGraph {
         this.id = id;
     }
 
+    /**
+     * Adds {@code prefix} to all node ids in the graph.
+     * @param prefix the prefix to add.
+     */
+    public void prefixNodeIds( String prefix ) {
+        List<Node> nodeList = new ArrayList<>(nodes.values());
+        nodeList.stream().forEachOrdered( n -> {
+            nodes.remove(n.getId());
+            n.setId( prefix + n.getId() );
+            nodes.put(n.getId(), n);
+        });
+    }
+    
     @Override
     public int hashCode() {
         int hash = 5;
@@ -200,6 +159,77 @@ public class DecisionGraph {
             return false;
         }
         return Objects.equals(this.nodes, other.nodes);
+    }
+
+    /**
+     * Adds all nodes reachable from the visited node.
+     */
+    private class ReachableNodesCollector extends Node.VoidVisitor {
+
+        public ReachableNodesCollector() {
+        }
+
+        @Override
+        public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
+            nodes.put(nd.getId(), nd);
+            nd.getAnswers().stream()
+                           .filter( ans -> (nd.getNodeFor(ans) != null))
+                           .forEachOrdered( ans -> nd.getNodeFor(ans).accept(this));
+        }
+
+        @Override
+        public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
+            nodes.put(nd.getId(), nd);
+            nd.getAnswers().stream()
+                           .filter( ans -> (nd.getNodeFor(ans) != null))
+                           .forEachOrdered( ans -> nd.getNodeFor(ans).accept(this));
+        }
+
+        @Override
+        public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
+            nodes.put(nd.getId(), nd);
+            if ( nd.hasNextNode() ) {
+                nd.getNextNode().accept(this);
+            }
+        }
+
+        @Override
+        public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
+            nodes.put(nd.getId(), nd);
+            if ( nd.hasNextNode() ) {
+                nd.getNextNode().accept(this);
+            }
+            if ( nd.getCalleeNode() != null ) {
+                nd.getCalleeNode().accept(this);
+            }
+        }
+
+        @Override
+        public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
+            nodes.put(nd.getId(), nd);
+            if ( nd.hasNextNode() ) {
+                nd.getNextNode().accept(this);
+            }
+        }
+
+        @Override
+        public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
+            nodes.put(nd.getId(), nd);
+        }
+
+        @Override
+        public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
+            nodes.put(nd.getId(), nd);
+        }
+
+        @Override
+        public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{
+            nodes.put(nd.getId(), nd);
+            if ( nd.hasNextNode() ) {
+                nd.getNextNode().accept(this);
+            }
+            nd.getStartNode().accept(this);
+        }
     }
 
 }

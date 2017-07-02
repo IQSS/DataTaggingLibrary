@@ -1,22 +1,27 @@
 package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
- *
+ * Contains a single decision graph file, in parsed form.
+ * 
  * @author mor_vilozni
  */
 public class ParsedFile {
-
  
-    List<? extends AstNode> astNodes;
-    List<AstImport> imports;
-
+    private final List<? extends AstNode> astNodes;
+    private final List<AstImport> imports;  // for validation
+    private final Map<String, String> importsById = new HashMap<>();
+    
     public ParsedFile(List<AstImport> imports, List<? extends AstNode> astNodes) {
         this.astNodes = astNodes;
         this.imports = imports;
+        imports.forEach(imp->importsById.put(imp.getName(), imp.getPath()));
     }
     
     public ParsedFile(AstImport imports, List<? extends AstNode> astNodes) {
@@ -31,17 +36,17 @@ public class ParsedFile {
     public List<? extends AstNode> getAstNodes() {
         return astNodes;
     }
-
-    public void setAstNodes(List<? extends AstNode> astNodes) {
-        this.astNodes = astNodes;
-    }
-
+ 
     public List<AstImport> getImports() {
         return imports;
     }
-
-    public void setImports(List<AstImport> imports) {
-        this.imports = imports;
+    
+    public Set<String> getimportNames() {
+        return importsById.keySet();
+    }
+    
+    public String getImportPath(String importName ) {
+        return importsById.get(importName);
     }
     
     @Override

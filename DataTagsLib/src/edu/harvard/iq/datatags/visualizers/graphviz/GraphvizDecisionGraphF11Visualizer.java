@@ -90,8 +90,8 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
                 nodeText = nodeText.substring(0,140) + "...";
             }
 			out.println( node(nodeId(nd))
-					.label( idLabel(nd) + wrap(nodeText) )
-					.gv());
+					    .label(idLabel(nd) + wrap(nodeText))
+					    .gv());
             
 			for ( Answer ans : nd.getAnswers() ) {
                 String ansId = nodeId(nd) + "_" + sanitizeId(ans.getAnswerText());
@@ -105,7 +105,6 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
                 }
 			}
 		}
-        
         
         private String considerAnswerNodeGv( String nodeId, String ans ) {
             return node(nodeId).label(wrap(ans))
@@ -163,7 +162,6 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
                 advanceTo(nd.getNextNode());
                 out.println( edge(nodeId(nd), nodeId(nd.getNextNode())).gv() );
             }
-            
 		}
 		
 		@Override
@@ -233,7 +231,8 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
         out.println("graph[splines=ortho, nodesep=1, concentrate=true compound=true]" );
 		out.println("edge [style=dotted arrowhead=open]");
 		out.println("node [shape=Mrecord fillcolor=\""+NODE_FILL_COLOR+"\" style=\"filled\" fontcolor=white color=white fontname=\"Helvetica\" fontsize=\"10\"]");
-        out.println( node("start")
+        out.println( node(START_NODE_NAME)
+                .label("Start")
                 .fillColor("transparent")
                 .shape(GvNode.Shape.none)
                 .fontColor(NODE_FILL_COLOR)
@@ -244,15 +243,13 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
 	@Override
 	protected void printBody(PrintWriter out) throws IOException {
         printChart(theGraph, out);
-        out.print( edge("start", nodeId(theGraph.getStart()))
+        out.print( edge(START_NODE_NAME, nodeId(theGraph.getStart()))
                     .color(NODE_FILL_COLOR)
                     .penwidth(1)
                     .style(GvEdge.Style.Solid)
                     .gv());
-        out.println("{rank=source; start}");
+        out.println("{rank=source; " + START_NODE_NAME + "}");
 	}
-	
-    
     
 	void printChart( DecisionGraph fc, PrintWriter wrt ) throws IOException {
 		wrt.println( "subgraph cluster_" + sanitizeId(fc.getId()) + " {");

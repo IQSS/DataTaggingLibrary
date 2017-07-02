@@ -6,6 +6,7 @@ import edu.harvard.iq.datatags.visualizers.graphviz.AbstractGraphvizDecisionGrap
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphClusteredVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphF11Visualizer;
 import java.awt.Desktop;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.util.List;
@@ -54,11 +55,18 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
         }
         
         ProcessOutputDumper dump = new ProcessOutputDumper( gv.getInputStream(), outputPath);
+        ByteArrayOutputStream errorStrm = new ByteArrayOutputStream();
+        ProcessOutputDumper errDump = new ProcessOutputDumper(gv.getErrorStream(), errorStrm);
         dump.start();
+        errDump.start();
         
         int statusCode = gv.waitFor();
         if ( statusCode != 0 ) {
             rnr.printWarning("Graphviz terminated with an error (exit code: %d)", statusCode);
+            errDump.await();
+            rnr.println("error:");
+            rnr.println( errorStrm.toString() );
+            
         } else {
             dump.await();
             rnr.println("File created at: %s", outputPath.toRealPath());
