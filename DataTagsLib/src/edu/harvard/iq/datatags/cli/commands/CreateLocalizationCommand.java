@@ -282,17 +282,20 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
         };
         
         PolicyModelData metaData = rnr.getModel().getMetadata();
-        rnr.getModel().getDecisionGraph().nodeIds()
-                .stream().filter( id -> (!AstNodeIdProvider.isAutoId(id)) && isLocalNode(id, metaData) )
-                .forEach( id->rnr.getModel().getDecisionGraph().getNode(id).accept(writer) );
+        rnr.getModel().getDecisionGraph().nodes().forEach( nd -> {
+            if ( AstNodeIdProvider.isAutoId(nd.getId()) ) return;
+            if ( ! isLocalNode(nd.getId(), metaData) ) return;
+            nd.accept(writer);
+        });
         
         rnr.println("..Done");
     }
     
     private void createNodeLocalizationFile( Path nodesDir, String nodeId, String content ) {
         String[] comps = nodeId.split(">");
+        Path nodeDir;
         if ( comps.length == 1 ) {
-            createFileWithContent(nodesDir.resolve(comps[0] + ".md"), content);
+            nodeDir = nodesDir.resolve(comps[0] + ".md");
         } else {
             Path secFol = nodesDir.resolve(comps[0]);
             if ( ! Files.exists(secFol) ) {
@@ -301,8 +304,11 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
                 } catch (IOException ex) {
                     Logger.getLogger(CreateLocalizationCommand.class.getName()).log(Level.SEVERE, "Error creating directory for node localizatoin", ex);
                 }
-                createFileWithContent(secFol.resolve(comps[1] + ".md"), content);
             }
+            nodeDir = secFol.resolve(comps[1] + ".md");
+        }
+        if ( nodeDir != null ) {
+            createFileWithContent(nodeDir, content);
         }
     }
     

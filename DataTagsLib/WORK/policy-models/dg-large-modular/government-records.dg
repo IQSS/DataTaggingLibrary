@@ -1,3 +1,7 @@
+<*
+	DISCLAIMER:
+	NOT TO BE USED AS A LEGAL ADVICE
+*>
 [>Gov1< ask:
 	{text: Were the data collected by a federal agency or a researcher under contract with or with funds from a federal agency?}
   {answers:
@@ -87,3 +91,7 @@
   } <-- Gov1/yes
 }] <-- Gov1
 [end]
+<*
+	DISCLAIMER:
+	NOT TO BE USED AS A LEGAL ADVICE
+*>

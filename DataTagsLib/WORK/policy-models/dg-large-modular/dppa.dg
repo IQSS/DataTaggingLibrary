@@ -1,31 +1,33 @@
+<*
+	DISCLAIMER:
+	NOT TO BE USED AS A LEGAL ADVICE
+*>
 [>DPPA1< ask:
 	{text: Do the data contain personal information obtained from a state department of motor vehicles?}
-	{terms:
-		{Personal information: Information that identifies an individual, including, but not limited to, an individual's photograph, Social Security number, driver identification number, name, address [not including the 5-digit ZIP code], telephone number, or medical or disability information. It does not include information on vehicular accidents, driving violations, or a driver's status (including whether the driver's license is valid, suspended, or revoked)}}
   {answers:
     {yes:
   		[>DPPA2< ask:
-  			{text: Do the department of motor vehicles records contain an individual's photograph or image, Social Security number, or medical or disability information?}
+  			{text: Do the DMV records contain PII?}
         {answers:
           {yes:
     				[>DPPA2a< ask:
-    					{text: Has express consent been obtained from each person whose photograph, Social Security number, or medical or disability information appears in the data?}
+    					{text: Did you get conscent from the data subjects?}
               {answers:
       					{yes:
       						[set: DPPA+=highlyRestricted; Code=orange; Harm=civil; Effort=identifiable; Transit=encrypt; Storage=serverEncrypt]}
       					{no:
-      						[reject: Possible violation of the DPPA due to disclosure of highly restricted personal information without the consent of the individuals in the data]
+      						[reject: DPPA violation]
           }}]}
     			{no:
     				[set: Code=yellow; Harm=shame; Effort=identifiable; Transit=encrypt; Storage=serverEncrypt]
     				[>DPPA3< ask:
-    					{text: Is disclosure of the personal information required by the Driver's Privacy Protection Act? Disclosure is required, among other reasons, in connection with matters of motor vehicle or driver safety and theft; motor vehicle emissions; motor vehicle product alterations, recalls, or advisories; and performance monitoring of motor vehicles and dealers by motor vehicle manufacturers.}
+    					{text: Is disclosure of the personal information required by the Driver's Privacy Protection Act?}
               {answers:
                 {yes:
       						[set: DPPA+=required]}
       					{no:
       						[>DPPA4< ask:
-      							{text: Is the disclosure of these records made in accordance with the driver's license record disclosure law of the state from which the records were obtained?}
+      							{text: Is the disclosure of these records made in accordance with the driver's license record disclosure law (state law)?}
                     {answers:
                       {no:
         								[reject: Possible violation of state law on disclosure of drivers' records]
@@ -62,14 +64,15 @@
             											{yes: [set: DPPA+=research]}
             											{no:
             												[>DPPA8< ask:
-            													{text: Was the personal information obtained under one of the other fourteen permissible uses for the disclosure of drivers' records, including:
-            														* for use by any government agency, or any person acting on behalf of a government agency, in carrying out its functions;
-            														* for use in connection with matters of motor vehicle or driver safety and theft; motor vehicle emissions; motor vehicle product alterations, recalls, or advisories; performance monitoring of motor vehicles, motor vehicle parts and dealers; motor vehicle market research activities, including survey research; and removal of non-owner records from the original owner records of motor vehicle manufacturers; or
-            														* for bulk distribution for surveys, marketing or solicitations if the State has obtained the express consent of the person to whom such personal information pertains.}
+            													{text: Was the personal information obtained under one of the other fourteen permissible uses for the disclosure of drivers' records?}
                                       {answers:
                                         {yes:
               														[set: DPPA+=exception]}
               													{no:
-              														[reject: possible violation of the DPPA because the depositor has not cited one of the required or permissible uses for disclosure.]}
+              														[reject: possible violation of the DPPA: depositor has not cited one of the required or permissible uses for disclosure.]}
                       }]}}]}}] <-- DPPA6
 }}]}}]}}]}}] <-- DPPA1
+<*
+	DISCLAIMER:
+	NOT TO BE USED AS A LEGAL ADVICE
+*>
