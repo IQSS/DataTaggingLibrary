@@ -1,0 +1,8 @@
+1 year: 1 year
+2 years: 2 years
+5 years: 5 years
+50 years: 50 years
+Not Sure: Not Sure
+indefinitely: indefinitely
+no: no
+yes: yes

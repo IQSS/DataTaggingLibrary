@@ -1,0 +1,2 @@
+Is there any reason why we cannot store the data indefinitely?
+			Limiting the time a dataset could be held interferes with good science practices such as replication, and should thus be avoided whenever possible. 

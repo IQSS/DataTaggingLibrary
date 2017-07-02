@@ -1,0 +1,4 @@
+Was the personal information obtained under one of the other fourteen permissible uses for the disclosure of drivers' records, including:
+            														* for use by any government agency, or any person acting on behalf of a government agency, in carrying out its functions;
+            														* for use in connection with matters of motor vehicle or driver safety and theft; motor vehicle emissions; motor vehicle product alterations, recalls, or advisories; performance monitoring of motor vehicles, motor vehicle parts and dealers; motor vehicle market research activities, including survey research; and removal of non-owner records from the original owner records of motor vehicle manufacturers; or
+            														* for bulk distribution for surveys, marketing or solicitations if the State has obtained the express consent of the person to whom such personal information pertains.

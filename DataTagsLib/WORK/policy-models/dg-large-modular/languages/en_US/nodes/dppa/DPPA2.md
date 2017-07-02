@@ -1,0 +1,1 @@
+Do the department of motor vehicles records contain an individual's photograph or image, Social Security number, or medical or disability information?

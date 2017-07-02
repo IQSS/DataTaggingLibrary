@@ -1,0 +1,1 @@
+Were the data collected by the US Census Bureau?

@@ -1,0 +1,1 @@
+Were the data collected directly from respondents for exclusively statistical purposes under a pledge of confidentiality?

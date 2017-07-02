@@ -1,0 +1,1 @@
+Were the data obtained for use in research activities?
