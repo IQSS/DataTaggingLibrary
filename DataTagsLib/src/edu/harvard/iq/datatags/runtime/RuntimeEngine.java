@@ -239,7 +239,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         currentNode = decisionGraph.getNode(snapshot.getCurrentNodeId());
 
         stack.clear();
-        snapshot.getStack().forEach((nodeId) -> stack.push((CallNode) decisionGraph.getNode(nodeId)));
+        snapshot.getStack().forEach((nodeId) -> stack.push((ThroughNode) decisionGraph.getNode(nodeId)));
 
     }
 
