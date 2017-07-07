@@ -81,7 +81,7 @@ public class Localization {
     }
     
     void addReadme( MarkupFormat fmt, String content ) {
-        readmes.put(fmt, new MarkupString(fmt,language) );
+        readmes.put(fmt, new MarkupString(fmt,content) );
     }
     
     public String getLanguage() {
