@@ -144,6 +144,7 @@ public class TagSpaceParseResult {
         public SlotType visit(AggregateAstSlot slot) {
             AtomicSlot itemType = new AtomicSlot( slot.getName() + "#item", "" );
             AggregateSlot newType = new AggregateSlot(slot.getName(), slot.getNote(), itemType );
+            itemType.setParentSlot(newType);
             
             slot.getValueDefinitions().forEach( vd -> itemType.registerValue(vd.getName(), vd.getNote()) );
             

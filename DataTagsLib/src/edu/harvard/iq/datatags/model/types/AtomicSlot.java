@@ -16,11 +16,18 @@ import java.util.TreeSet;
 public class AtomicSlot extends SlotType {
 	
 	private int nextOrdinal = 0;
-	
+    
 	private final Map<String, AtomicValue> values = new HashMap<>(); 
+    
+    private AggregateSlot parentSlot;
 
 	public AtomicSlot(String name, String note) {
+        this(name, note, null);
+    }
+    
+	public AtomicSlot(String name, String note, AggregateSlot aParentSlot ) {
 		super(name, note);
+        parentSlot = aParentSlot;
 	}
 
 	public SortedSet<AtomicValue> values() {
@@ -60,11 +67,24 @@ public class AtomicSlot extends SlotType {
             throw new IllegalArgumentException("Atomic type " + getName() + " has no value '" + name + "'");
         }
     }
+    
+    /**
+     * When an {@code this} serves as the item type of an {@link AggregateSlot},
+     * that {@link AggregateSlot} is considered the parent slot.
+     * @return the parent slot, or {@code null}.
+     */
+    public AggregateSlot getParentSlot() {
+        return parentSlot;
+    }
+
+    public void setParentSlot(AggregateSlot parentSlot) {
+        this.parentSlot = parentSlot;
+    }
 
 	@Override
 	public <T> T accept(Visitor<T> v) {
 		return v.visitSimpleSlot(this);
 	}
-	
-	
+    
+    
 }

@@ -11,6 +11,8 @@ import java.util.Set;
  * <br>
  * Corollary: Instances of compound types are maps from types to values of those types.
  * 
+ * TODO: All the methods should have "slot" names, rather than types. So ״getSlotNamed", "addSlot", etc.
+ * 
  * @author michael
  */
 public class CompoundSlot extends SlotType {
