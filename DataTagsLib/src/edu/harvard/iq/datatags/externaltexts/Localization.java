@@ -31,8 +31,6 @@ public class Localization {
     
     private final Map<String, String> nodeText = new HashMap<>();
     
-    private final Map<List<String>,String> policySpaceEntityText = new HashMap<>();
-    
     private final Map<SlotType, String> slotsText = new HashMap<>();
     
     private final Map<TagValue, String> slotValuesText = new HashMap<>();

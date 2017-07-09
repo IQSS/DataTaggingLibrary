@@ -164,8 +164,11 @@ public class PolicySpacePathQuery {
     }
     
     public Result get( final List<String> aPath ) {
+        if ( aPath.isEmpty() ) return new NotFoundResult(aPath);
+        if ( ! aPath.get(0).equals(base.getName()) ) return new NotFoundResult(aPath);
+        
         return base.accept( new SlotType.Visitor<Result>() {
-            int idx = 0;
+            int idx = 1;
             
             @Override
             public Result visitSimpleSlot(AtomicSlot t) {

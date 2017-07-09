@@ -42,14 +42,14 @@ public class PolicySpacePathQueryTest {
 
     @Test
     public void testFindSlotL1() {
-        List<String> path = Arrays.asList("agg");
+        List<String> path = Arrays.asList("top","agg");
         Result actual = sut.get(path);
         assertEquals( new PolicySpacePathQuery.SlotTypeResult(baseType.getTypeNamed("agg"), path), actual );
     }
 
     @Test
     public void testFindSlotL2() {
-        List<String> path = Arrays.asList("cmp", "cmp_a");
+        List<String> path = Arrays.asList("top", "cmp", "cmp_a");
         Result actual = sut.get(path);
         assertEquals( new PolicySpacePathQuery.SlotTypeResult(((CompoundSlot)baseType.getTypeNamed("cmp")).getTypeNamed("cmp_a"), path), actual );
     }
@@ -57,7 +57,7 @@ public class PolicySpacePathQueryTest {
     
     @Test
     public void testFindAggregateValue() {
-        List<String> path = Arrays.asList("agg", "B");
+        List<String> path = Arrays.asList("top","agg", "B");
         Result actual = sut.get(path);
         AggregateSlot slt = (AggregateSlot) baseType.getTypeNamed("agg");
         TagValue val = slt.getItemType().valueOf("B");
@@ -66,7 +66,7 @@ public class PolicySpacePathQueryTest {
     
     @Test
     public void testFindAtomicValue() {
-        List<String> path = Arrays.asList("ato", "X");
+        List<String> path = Arrays.asList("top","ato", "X");
         Result actual = sut.get(path);
         AtomicSlot slt = (AtomicSlot) baseType.getTypeNamed("ato");
         TagValue val = slt.valueOf("X");
@@ -75,7 +75,7 @@ public class PolicySpacePathQueryTest {
     
     @Test
     public void testFindTodoSlot() {
-        List<String> path = Arrays.asList("cmp", "cmp_b");
+        List<String> path = Arrays.asList("top","cmp", "cmp_b");
         Result actual = sut.get(path);
         CompoundSlot cmp = (CompoundSlot) baseType.getTypeNamed("cmp");
         assertEquals( new PolicySpacePathQuery.SlotTypeResult(cmp.getTypeNamed("cmp_b"), path), actual );
@@ -83,14 +83,14 @@ public class PolicySpacePathQueryTest {
     
     @Test
     public void testNotFindAtomicValue() {
-        List<String> path = Arrays.asList("ato", "XXX");
+        List<String> path = Arrays.asList("top","ato", "XXX");
         Result actual = sut.get(path);
         assertEquals( new PolicySpacePathQuery.NotFoundResult(path), actual );
     }
 
     @Test
     public void testNotFindAggregateValue() {
-        List<String> path = Arrays.asList("agg", "XXX");
+        List<String> path = Arrays.asList("top","agg", "XXX");
         Result actual = sut.get(path);
         assertEquals( new PolicySpacePathQuery.NotFoundResult(path), actual );
     }
@@ -104,7 +104,7 @@ public class PolicySpacePathQueryTest {
     
     @Test
     public void testNotFindSlot1() {
-        List<String> path = Arrays.asList("cmp", "XXX");
+        List<String> path = Arrays.asList("top","cmp", "XXX");
         Result actual = sut.get(path);
         assertEquals( new PolicySpacePathQuery.NotFoundResult(path), actual );
     }
@@ -112,14 +112,30 @@ public class PolicySpacePathQueryTest {
     
     @Test
     public void testNotFindSlot2() {
-        List<String> path = Arrays.asList("cmpXXX", "XXX");
+        List<String> path = Arrays.asList("top","cmpXXX", "XXX");
         Result actual = sut.get(path);
         assertEquals( new PolicySpacePathQuery.NotFoundResult(path), actual );
     }
     
     @Test
     public void testNotFindSlotAcrossTodo() {
-        List<String> path = Arrays.asList("cmp", "cmp_b","XXX");
+        List<String> path = Arrays.asList("top","cmp", "cmp_b","XXX");
+        Result actual = sut.get(path);
+        assertEquals( new PolicySpacePathQuery.NotFoundResult(path), actual );
+    }
+    
+    
+    @Test
+    public void testNotFindBadBaseName() {
+        List<String> path = Arrays.asList("topXXX","cmp", "cmp_b");
+        Result actual = sut.get(path);
+        assertEquals( new PolicySpacePathQuery.NotFoundResult(path), actual );
+    }
+    
+    
+    @Test
+    public void testNotFindEmpty() {
+        List<String> path = Arrays.asList();
         Result actual = sut.get(path);
         assertEquals( new PolicySpacePathQuery.NotFoundResult(path), actual );
     }
