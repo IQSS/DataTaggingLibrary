@@ -29,7 +29,7 @@ public class SpaceLocalizationParser {
     
     private boolean hasError = false;
     
-    private final Map<List<String>, String> spaceEnitiyText = new HashMap<>();
+    private final Map<List<String>, String> spaceEntityText = new HashMap<>();
     
     public SpaceLocalizationParser(PolicySpaceIndex spaceIndex) {
         this.spaceIndex = spaceIndex;
@@ -57,12 +57,12 @@ public class SpaceLocalizationParser {
                  String curLine = nl.string;
                  if ( curLine.startsWith("#") ) {
                      validateTypeExists( cleanEntityReference(curLine), nl.number );
-                     addTypeData( sb.toString(), spaceEnitiyText );
+                     addTypeData( sb.toString(), spaceEntityText );
                      sb.setLength(0);
                  }
                  sb.append(curLine).append("\n");
              });
-        addTypeData(sb.toString(), spaceEnitiyText);   
+        addTypeData(sb.toString(), spaceEntityText);   
              
         return !hasError;
     }
@@ -89,8 +89,7 @@ public class SpaceLocalizationParser {
         Set<List<String>> fullPaths = spaceIndex.get(policyPath);
         switch ( fullPaths.size() ) {
             case 0:
-                messages.add( String.format("Line %d: Type reference '%s' does not refere to any type", lineNum, policySpaceReference) );
-                hasError = true;
+                messages.add( String.format("Line %d: Type reference '%s' does not refer to any type", lineNum, policySpaceReference) );
                 break;
             case 1: 
                 break;
@@ -127,7 +126,7 @@ public class SpaceLocalizationParser {
     }
 
     public Map<List<String>, String> getSpaceEnitiyTexts() {
-        return spaceEnitiyText;
+        return spaceEntityText;
     }
     
 }

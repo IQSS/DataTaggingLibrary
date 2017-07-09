@@ -212,7 +212,7 @@ public class CompilationUnit {
         try {
             return astNodes.isEmpty()
                     ? defaultNode
-                    : C.head(astNodes).accept(new AstNode.Visitor<Node>() {
+                    : C.head(astNodes).accept(new AstNode.Visitor<Node>() {   // TODO this creates an instance for each node. Can't we re-use it?
 
                         @Override
                         // build consider node from ast-consider-node 

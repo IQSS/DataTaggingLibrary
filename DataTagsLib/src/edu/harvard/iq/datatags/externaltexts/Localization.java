@@ -1,5 +1,7 @@
 package edu.harvard.iq.datatags.externaltexts;
 
+import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.values.TagValue;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -31,6 +33,10 @@ public class Localization {
     
     private final Map<List<String>,String> policySpaceEntityText = new HashMap<>();
     
+    private final Map<SlotType, String> slotsText = new HashMap<>();
+    
+    private final Map<TagValue, String> slotValuesText = new HashMap<>();
+    
     /** 
      * A map of the readme files this localization can 
      */
@@ -44,10 +50,12 @@ public class Localization {
      * Removes versions of localization data from {@code this}, based on the passed format. Useful for server situations,
      * where it makes sense to remove all versions that will not be used.
      * 
-     * @param bestQuality Quality above which versions can be removed.
+     * @param keepFormat The readme format to keep.
      */
-    public void purge(MarkupFormat bestQuality) {
-        // TODO implement
+    public void purge(MarkupFormat keepFormat) {
+        Arrays.stream(MarkupFormat.values())
+               .filter( f->! f.equals(keepFormat) )
+                .forEach( f -> readmes.remove(f) );
     }
     
     public LocalizedModelData getLocalizedModelData() {
@@ -100,12 +108,24 @@ public class Localization {
         return nodeText.keySet();
     }
     
-    void setPolicySpaceEntityText( List<String> path, String text ) {
-        policySpaceEntityText.put(path, text);
+    public void setSlotText( SlotType st, String text ) {
+        if ( text.trim().length() > 0 ) {
+            slotsText.put(st, text);
+        }
     }
     
-    public Optional<String> getPolicySpaceEntityText( List<String> path ) {
-        return Optional.ofNullable( policySpaceEntityText.get(path) );
+    public Optional<String> getSlotText( SlotType st ) {
+        return Optional.ofNullable(slotsText.get(st));
+    }
+    
+    public void setSlotValueText( TagValue tv, String text ) {
+        if ( text.trim().length() > 0 ) {
+            slotValuesText.put(tv, text);
+        }
+    }
+    
+    public Optional<String> getSlotValueText( TagValue tv ) {
+        return Optional.ofNullable(slotValuesText.get(tv));
     }
     
     @Override
