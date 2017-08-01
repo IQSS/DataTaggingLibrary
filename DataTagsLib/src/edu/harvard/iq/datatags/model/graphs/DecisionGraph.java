@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -165,12 +166,13 @@ public class DecisionGraph {
      * Adds all nodes reachable from the visited node.
      */
     private class ReachableNodesCollector extends Node.VoidVisitor {
-
-        public ReachableNodesCollector() {
-        }
-
+        Set<String> visited = new TreeSet<>();
+        
         @Override
         public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
+            if ( visited.contains(nd.getId()) ) return;
+            visited.add(nd.getId());
+            
             nodes.put(nd.getId(), nd);
             nd.getAnswers().stream()
                            .filter( ans -> (nd.getNodeFor(ans) != null))
@@ -179,6 +181,9 @@ public class DecisionGraph {
 
         @Override
         public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
+            if ( visited.contains(nd.getId()) ) return;
+            visited.add(nd.getId());
+            
             nodes.put(nd.getId(), nd);
             nd.getAnswers().stream()
                            .filter( ans -> (nd.getNodeFor(ans) != null))
@@ -187,6 +192,9 @@ public class DecisionGraph {
 
         @Override
         public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
+            if ( visited.contains(nd.getId()) ) return;
+            visited.add(nd.getId());
+            
             nodes.put(nd.getId(), nd);
             if ( nd.hasNextNode() ) {
                 nd.getNextNode().accept(this);
@@ -195,6 +203,9 @@ public class DecisionGraph {
 
         @Override
         public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
+            if ( visited.contains(nd.getId()) ) return;
+            visited.add(nd.getId());
+            
             nodes.put(nd.getId(), nd);
             if ( nd.hasNextNode() ) {
                 nd.getNextNode().accept(this);
@@ -206,6 +217,9 @@ public class DecisionGraph {
 
         @Override
         public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
+            if ( visited.contains(nd.getId()) ) return;
+            visited.add(nd.getId());
+            
             nodes.put(nd.getId(), nd);
             if ( nd.hasNextNode() ) {
                 nd.getNextNode().accept(this);
@@ -214,16 +228,25 @@ public class DecisionGraph {
 
         @Override
         public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
+            if ( visited.contains(nd.getId()) ) return;
+            visited.add(nd.getId());
+            
             nodes.put(nd.getId(), nd);
         }
 
         @Override
         public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
+            if ( visited.contains(nd.getId()) ) return;
+            visited.add(nd.getId());
+            
             nodes.put(nd.getId(), nd);
         }
 
         @Override
-        public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{
+        public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
+            if ( visited.contains(nd.getId()) ) return;
+            visited.add(nd.getId());
+            
             nodes.put(nd.getId(), nd);
             if ( nd.hasNextNode() ) {
                 nd.getNextNode().accept(this);

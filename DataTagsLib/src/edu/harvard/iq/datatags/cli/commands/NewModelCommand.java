@@ -176,7 +176,7 @@ public class NewModelCommand extends AbstractCliCommand {
             } else if ( ans.equals("y") ) {
                 boolean go2 = true;
                 while (go2) {
-                    ans = rnr.readLineWithDefault("Person or Group? (p/g): ", "y");
+                    ans = rnr.readLineWithDefault("Person or Group? (p/g): ", "p");
                     if ( ans.equals("p") ) {
                         PersonAuthorData pad = new PersonAuthorData();
                         pad.setName( rnr.readLine("Name: ") );
