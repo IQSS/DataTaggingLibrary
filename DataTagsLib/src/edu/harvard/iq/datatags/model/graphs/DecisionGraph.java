@@ -77,11 +77,13 @@ public class DecisionGraph {
     }
     
     /**
-     * Collects the 
+     * Collects the reachable nodes of the graph. I.e reachable from the
+     * start node.
      */
     public void addAllReachableNodes() {
         ReachableNodesCollector nc = new ReachableNodesCollector();
         getStart().accept(nc);
+        System.out.println("nc.getCollectedNodes() = " + nc.getCollectedNodes());
         nc.getCollectedNodes().forEach( n -> nodes.put(n.getId(), n) );
     }
     

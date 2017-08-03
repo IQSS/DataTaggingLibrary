@@ -90,7 +90,7 @@ public class CompilationUnit {
         this(new String(Files.readAllBytes(aSource), StandardCharsets.UTF_8), aSource);
     }
     
-    private CompilationUnit(String aSource, Path aPath) {
+    CompilationUnit(String aSource, Path aPath) {
         source = aSource;
         sourcePath = aPath;
     }

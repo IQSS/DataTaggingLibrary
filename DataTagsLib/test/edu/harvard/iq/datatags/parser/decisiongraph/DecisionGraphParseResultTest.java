@@ -15,6 +15,7 @@ import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
+import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParseResult;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
@@ -22,6 +23,9 @@ import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
+import edu.harvard.iq.util.DecisionGraphHelper;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -104,21 +108,18 @@ public class DecisionGraphParseResultTest {
     public void todoCallEndTest() throws Exception {
 
         ToDoNode start = new ToDoNode(nodeIdProvider.nextId(), "this and that");
-        start.setNextNode(new CallNode(nodeIdProvider.nextId(), new ToDoNode("ghostbusters", "bla")))
-                .setNextNode(new ToDoNode("ghostbusters", "bla"))
+        final ToDoNode toDoNode = new ToDoNode("ghostbusters", "bla");
+        start.setNextNode(new CallNode(nodeIdProvider.nextId(), toDoNode))
+                .setNextNode(toDoNode)
                 .setNextNode(new EndNode(nodeIdProvider.nextId()));
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
         expected.setStart(start);
 
         String code = "[todo: this and that][call: ghostbusters][>ghostbusters< todo: bla][end]";
-        CompilationUnit cu = new CompilationUnit(code);
-        cu.compile(emptyTagSpace, endNode ,new ArrayList<>());
-        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
-        dgc.put("main path",cu);
-        dgc.linkage();
-        
-        DecisionGraph actual = cu.getDecisionGraph();
+        Path codePath = Paths.get("first code");
+        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
+        DecisionGraph actual = dgc.compile(emptyTagSpace, DecisionGraphHelper.getPmd(codePath), new ArrayList<>());
 
         normalize(actual);
         normalize(expected);
@@ -134,22 +135,20 @@ public class DecisionGraphParseResultTest {
     public void todoCallRejectTest() throws Exception {
 
         ToDoNode start = new ToDoNode(nodeIdProvider.nextId(), "this and that");
-        start.setNextNode(new CallNode(nodeIdProvider.nextId(), new ToDoNode("ghostbusters", "bla"))).
-                setNextNode(new ToDoNode("ghostbusters", "bla")).
+        final ToDoNode toDoNode = new ToDoNode("ghostbusters", "bla");
+        start.setNextNode(new CallNode(nodeIdProvider.nextId(), toDoNode)).
+                setNextNode(toDoNode).
                 setNextNode(new RejectNode(nodeIdProvider.nextId(), "obvious."));
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
         expected.setStart(start);
-
+        expected.addAllReachableNodes();
+       
         String code = "[todo: this and that][call: ghostbusters][>ghostbusters< todo: bla][reject: obvious.]";
         
-        CompilationUnit cu = new CompilationUnit(code);
-        cu.compile(emptyTagSpace, endNode ,new ArrayList<>());
-        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
-        dgc.put("main path",cu);
-        
-        dgc.linkage();
-        DecisionGraph actual = cu.getDecisionGraph();
+        Path codePath = Paths.get("first code");
+        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
+        DecisionGraph actual = dgc.compile(emptyTagSpace, DecisionGraphHelper.getPmd(codePath), new ArrayList<>());
 
         normalize(actual);
         normalize(expected);
@@ -199,12 +198,9 @@ public class DecisionGraphParseResultTest {
                 + "[>duh2< todo: bla]"
                 + "[>2< end]";
 
-        CompilationUnit cu = new CompilationUnit(code);
-        cu.compile(ct, endNode ,new ArrayList<>());
-        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
-        dgc.put("main path",cu);
-        dgc.linkage();
-        DecisionGraph actual = cu.getDecisionGraph();
+        Path codePath = Paths.get("first code");
+        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
+        DecisionGraph actual = dgc.compile(ct, DecisionGraphHelper.getPmd(codePath), new ArrayList<>());
 
         normalize(actual);
         normalize(expected);
@@ -234,12 +230,9 @@ public class DecisionGraphParseResultTest {
         expected.add(callTodo);
 
         String code = "[ask: {text: why?} {answers: {dunno:[>de< end]} {why not:[>wnc< call: duh]}}][>duh< todo: bla][end]";
-        CompilationUnit cu = new CompilationUnit(code);
-        cu.compile(emptyTagSpace, endNode ,new ArrayList<>());
-        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
-        dgc.put("main path",cu);
-        dgc.linkage();
-        DecisionGraph actual = cu.getDecisionGraph();
+        Path codePath = Paths.get("first code");
+        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
+        DecisionGraph actual = dgc.compile(emptyTagSpace, DecisionGraphHelper.getPmd(codePath), new ArrayList<>());
 
         normalize(actual);
         normalize(expected);
@@ -301,12 +294,9 @@ public class DecisionGraphParseResultTest {
 
         String code = "[section: {title: Section - start} [>blaID< todo: bla bla] [>CallID< call: callid]][>callid< todo: bla]";
 
-        CompilationUnit cu = new CompilationUnit(code);
-        cu.compile(emptyTagSpace, finalEndNode,new ArrayList<>());
-        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
-        dgc.put("main path",cu);
-        dgc.linkage();
-        DecisionGraph actual = cu.getDecisionGraph();
+        Path codePath = Paths.get("first code");
+        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
+        DecisionGraph actual = dgc.compile(emptyTagSpace, DecisionGraphHelper.getPmd(codePath), new ArrayList<>());
 
         normalize(actual);
         normalize(expected);

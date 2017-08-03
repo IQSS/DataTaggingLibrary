@@ -8,7 +8,10 @@ import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import edu.harvard.iq.util.DecisionGraphHelper;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -66,12 +69,10 @@ public class UnreachableNodeValidatorTest {
                         "    {yes: [>reject1< reject: Good it works.]}\n" +
                         "    {no: [>reject2< reject: This should have worked.]}}]";
         
-        CompilationUnit cu = new CompilationUnit(code);
-        cu.compile(new CompoundSlot("", ""), new EndNode("[SYN-END]"), new ArrayList<>());
-        decisionGraph = cu.getDecisionGraph();
-        DecisionGraphCompiler dgc = new DecisionGraphCompiler();
-        dgc.put("main path",cu);
-        dgc.linkage();
+        Path codePath = Paths.get("first code");
+        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
+        decisionGraph = dgc.compile(new CompoundSlot("", ""), DecisionGraphHelper.getPmd(codePath), new ArrayList<>());
+        
         List<ValidationMessage> messages = instance.validate(decisionGraph);
         
         Set<Node> expected = Collections.<Node>emptySet();

@@ -8,14 +8,21 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.types.AtomicSlot;
 import edu.harvard.iq.datatags.model.graphs.Answer;
+import edu.harvard.iq.datatags.parser.decisiongraph.ContentReader;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
+import edu.harvard.iq.datatags.parser.decisiongraph.MemoryContentReader;
 import edu.harvard.iq.datatags.runtime.ChartRunningTest;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.runtime.listeners.RuntimeEnginePrintStreamListener;
 import edu.harvard.iq.datatags.runtime.listeners.RuntimeEngineSilentListener;
 import edu.harvard.iq.datatags.runtime.listeners.RuntimeEngineTracingListener;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.assertEquals;
@@ -110,5 +117,19 @@ public class DecisionGraphHelper {
 		assertEquals( expectedIds,
 				      l.getVisitedNodeIds() );
 	}
+    
+    public static DecisionGraphCompiler getDGCompiler(String code, Path codePath){
+        Map<Path, String> pathToString = new HashMap<>();
+        pathToString.put(codePath, code);
+        ContentReader contentReader = new MemoryContentReader((pathToString));
+        PolicyModelData pmd = new PolicyModelData();
+        return new DecisionGraphCompiler(contentReader);
+    }
+    
+    public static PolicyModelData getPmd(Path codePath){
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(codePath);
+        return pmd;
+    }
     
 }
