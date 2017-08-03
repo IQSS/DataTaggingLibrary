@@ -154,8 +154,9 @@ public class DecisionGraphCompiler {
         // Change IDs by (re)named CU.
         nameToCu.entrySet().forEach( ent -> {
             String name = ent.getKey();
-            if ( ! name.equals(MAIN_CU_ID)) {
+            if ( ! name.equals(MAIN_CU_ID) ) {
                 CompilationUnit cu = ent.getValue();
+                System.out.println("renaming " + ent.getKey());
                 cu.getDecisionGraph().prefixNodeIds(ent.getKey()+">");
             }
         });
@@ -177,13 +178,13 @@ public class DecisionGraphCompiler {
     
     public DecisionGraph linkage() throws DataTagsParseException, IOException {
         
-        for (String path: pathToCu.keySet()){
-            CompilationUnit cu = pathToCu.get(path);
+        for ( CompilationUnit cu : pathToCu.values() ){
             List<AstImport> imports = cu.getParsedFile().getImports();
             Map<String, String> callToCallee = cu.getCallToCalleeID();
             String calleeCuPath = null;
             Boolean foundCalleeCU = false;
-            for(String call: callToCallee.keySet()){
+            
+            for ( String call: callToCallee.keySet() ) {
                 if (callToCallee.get(call).contains(">")){ //If the callee is from another compilation unit
                     String calleeCuName = callToCallee.get(call).split(">")[0]; //Take the cu in cu>id from callee
                     String calleeName = callToCallee.get(call).split(">")[1];
@@ -197,7 +198,7 @@ public class DecisionGraphCompiler {
                     if (foundCalleeCU){
                         CompilationUnit calleeCU = pathToCu.get(calleeCuPath);
                         Node calleeNode = calleeCU.getDecisionGraph().getNode(calleeName);
-                        if(calleeNode != null){
+                        if ( calleeNode != null ) {
                             CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
                             callNode.setCalleeNode(calleeNode);
                         }
@@ -218,9 +219,9 @@ public class DecisionGraphCompiler {
                 foundCalleeCU = false;
             }
         }
-        
-        
-        return pathToCu.get("main path").getDecisionGraph();
+        DecisionGraph decisionGraph = pathToCu.get("main path").getDecisionGraph();
+        decisionGraph.addAllReachableNodes();
+        return decisionGraph;
     }
     
     /**
