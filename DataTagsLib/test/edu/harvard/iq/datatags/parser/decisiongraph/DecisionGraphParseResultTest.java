@@ -147,6 +147,7 @@ public class DecisionGraphParseResultTest {
         cu.compile(emptyTagSpace, endNode ,new ArrayList<>());
         DecisionGraphCompiler dgc = new DecisionGraphCompiler();
         dgc.put("main path",cu);
+        
         dgc.linkage();
         DecisionGraph actual = cu.getDecisionGraph();
 

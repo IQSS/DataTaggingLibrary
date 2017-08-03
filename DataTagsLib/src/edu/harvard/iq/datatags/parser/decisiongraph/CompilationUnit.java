@@ -59,17 +59,21 @@ import org.codehaus.jparsec.error.ParserException;
  */
 public class CompilationUnit {
 
-    private Map<List<String>, List<String>> fullyQualifiedSlotName;
-    private final Map<String, String> callToCalleeID = new HashMap<>();
-
-    private CompoundSlot topLevelType;
-
-    private DecisionGraph product;
-    private final List<ValidationMessage> validationMessages = new LinkedList<>();
-    private final Map<String, CompilationUnit> nameToCU = new HashMap<>();
     private ParsedFile parsedFile;
     private final Path sourcePath;
-    private Node startNode;
+    
+    private CompoundSlot topLevelType;
+    private DecisionGraph product;
+    private final List<ValidationMessage> validationMessages = new LinkedList<>();
+    
+    private Map<List<String>, List<String>> fullyQualifiedSlotName;
+    /** 
+     * Maps a name of a compilation unit (as defined by the import statement) 
+     * to the actual compilation unit.
+     */
+    private final Map<String, CompilationUnit> nameToCU = new HashMap<>();
+    private final Map<String, String> callToCalleeID = new HashMap<>();
+    
     
     /**
      * Decision-graph wide end node (added synthetically).
@@ -79,13 +83,16 @@ public class CompilationUnit {
     private final String source;
     
     public CompilationUnit(String aSource) {
-        source = aSource;
-        sourcePath = null;
+        this(aSource, null);
     }
     
     public CompilationUnit(Path aSource) throws IOException {
-        sourcePath = aSource;
-        source = new String(Files.readAllBytes(sourcePath), StandardCharsets.UTF_8);
+        this(new String(Files.readAllBytes(aSource), StandardCharsets.UTF_8), aSource);
+    }
+    
+    private CompilationUnit(String aSource, Path aPath) {
+        source = aSource;
+        sourcePath = aPath;
     }
     
     private void parse() throws DataTagsParseException{
@@ -122,18 +129,17 @@ public class CompilationUnit {
         astValidators.stream().flatMap( v -> v.validate(parsedFile.getAstNodes()).stream())
                                     .forEach(validationMessages::add);
         
-        startNode = buildNodes(parsedFile.getAstNodes(), endAll);
-        product.setStart(product.getNode(C.head(parsedFile.getAstNodes()).getId()));
+        product.setStart(buildNodes(parsedFile.getAstNodes(), endAll));
         
     }
 
     public void compile(CompoundSlot aTopLevelType, EndNode globalEndNode, 
-            List<DecisionGraphAstValidator> astValidators) throws DataTagsParseException
-    {
+                          List<DecisionGraphAstValidator> astValidators) throws DataTagsParseException {
         DecisionGraphCompiler dgc = new DecisionGraphCompiler();
         Map<List<String>, List<String>> aFullyQualifiedSlotName = dgc.buildTypeIndex(aTopLevelType);
         compile(aFullyQualifiedSlotName, aTopLevelType, globalEndNode, astValidators);
-    }    
+    }   
+    
     private SlotType findSlot(List<String> astSlot, CompoundValue topValue, SetNodeValueBuilder valueBuilder) {
         SlotType slot;
 
@@ -392,8 +398,5 @@ public class CompilationUnit {
         return sourcePath;
     }
     
-     public Node getStartNode() {
-        return startNode;
-    }
 
 }
