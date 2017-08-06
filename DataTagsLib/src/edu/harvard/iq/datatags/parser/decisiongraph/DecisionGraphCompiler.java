@@ -156,7 +156,6 @@ public class DecisionGraphCompiler {
             String name = ent.getKey();
             if ( ! name.equals(MAIN_CU_ID) ) {
                 CompilationUnit cu = ent.getValue();
-                System.out.println("renaming " + ent.getKey());
                 cu.getDecisionGraph().prefixNodeIds(ent.getKey()+">");
             }
         });
