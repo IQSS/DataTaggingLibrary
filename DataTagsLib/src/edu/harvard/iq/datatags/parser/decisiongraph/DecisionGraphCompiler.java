@@ -59,9 +59,16 @@ public class DecisionGraphCompiler {
      * imported compilation may be renamed in the compiled graph.
      */
     private final Map<String, CompilationUnit> nameToCu = new HashMap<>();
-
+    private final ContentReader contentReader;
     private final List<ValidationMessage> messages = new ArrayList<>();
-
+    
+    public DecisionGraphCompiler(){
+        this(new StringContentReader());
+    }
+    
+    public DecisionGraphCompiler(ContentReader aContentReader){
+        contentReader = aContentReader;
+    }
     /**
      * Creates a ready-to-run {@link DecisionGraph} from the parsed nodes and
      * the tagspace.
@@ -81,7 +88,7 @@ public class DecisionGraphCompiler {
         Map<Node, CompilationUnit> nodeToCu = new HashMap<>();
         
         List<AstImport> needToVisit = new ArrayList();
-        CompilationUnit firstCU = new CompilationUnit(modelData.getDecisionGraphPath());
+        CompilationUnit firstCU = new CompilationUnit(contentReader.getContent(modelData.getDecisionGraphPath()) ,modelData.getDecisionGraphPath());
         try {
             firstCU.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
             needToVisit.addAll(firstCU.getParsedFile().getImports());
@@ -175,53 +182,6 @@ public class DecisionGraphCompiler {
         return pathToCu.put(key, value);
     }
     
-    public DecisionGraph linkage() throws DataTagsParseException, IOException {
-        
-        for ( CompilationUnit cu : pathToCu.values() ){
-            List<AstImport> imports = cu.getParsedFile().getImports();
-            Map<String, String> callToCallee = cu.getCallToCalleeID();
-            String calleeCuPath = null;
-            Boolean foundCalleeCU = false;
-            
-            for ( String call: callToCallee.keySet() ) {
-                if (callToCallee.get(call).contains(">")){ //If the callee is from another compilation unit
-                    String calleeCuName = callToCallee.get(call).split(">")[0]; //Take the cu in cu>id from callee
-                    String calleeName = callToCallee.get(call).split(">")[1];
-                    for (AstImport ai: imports){
-                        if (ai.getName().equals(calleeCuName)){
-                            calleeCuPath = ai.getPath();
-                            foundCalleeCU = true;
-                            break;
-                        }
-                    }
-                    if (foundCalleeCU){
-                        CompilationUnit calleeCU = pathToCu.get(calleeCuPath);
-                        Node calleeNode = calleeCU.getDecisionGraph().getNode(calleeName);
-                        if ( calleeNode != null ) {
-                            CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
-                            callNode.setCalleeNode(calleeNode);
-                        }
-                        else{
-                            messages.add(new ValidationMessage(Level.ERROR, "cannot find target node with id " + calleeCuName + ">" +  calleeName));
-                        }
-                    }
-                    else{
-                        messages.add(new ValidationMessage(Level.ERROR, "cannot find target file with id " + calleeCuName));
-
-                    }
-                }
-                else{
-                    Node calleeNode = cu.getDecisionGraph().getNode( callToCallee.get(call) );
-                    CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(call);
-                    callNode.setCalleeNode(calleeNode);
-                }
-                foundCalleeCU = false;
-            }
-        }
-        DecisionGraph decisionGraph = pathToCu.get("main path").getDecisionGraph();
-        decisionGraph.addAllReachableNodes();
-        return decisionGraph;
-    }
     
     /**
      * Maps all unique slot suffixes to their fully qualified version. That is,
