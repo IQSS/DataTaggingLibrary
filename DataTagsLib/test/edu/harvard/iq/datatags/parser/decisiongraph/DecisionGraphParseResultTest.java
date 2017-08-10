@@ -147,9 +147,13 @@ public class DecisionGraphParseResultTest {
        
         String code = "[todo: this and that][call: ghostbusters][>ghostbusters< todo: bla][reject: obvious.]";
         
-        Path codePath = Paths.get("first code");
-        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
-        DecisionGraph actual = dgc.compile(emptyTagSpace, DecisionGraphHelper.getPmd(codePath), new ArrayList<>());
+        Map<Path, String> pathToString = new HashMap<>();
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("main.dg"));
+        pathToString.put(pmd.getDecisionGraphPath().toAbsolutePath().getParent().resolve("main.dg"), code);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+        DecisionGraph actual = dgc.compile(emptyTagSpace, pmd, new ArrayList<>());
 
         normalize(actual);
         normalize(expected);
@@ -164,9 +168,13 @@ public class DecisionGraphParseResultTest {
     @Test
     public void considerTest() throws Exception {
         EndNode finalEndNode = new EndNode("2");
-        final CallNode whyNotCallNode = new CallNode("wnc", new ToDoNode("duh", "bla"));
-        final CallNode whyNotCallNode2 = new CallNode("wnc2", new ToDoNode("duh2", "bla"));
-        whyNotCallNode.setNextNode(finalEndNode);
+        ToDoNode todo1 = new ToDoNode("duh", "bla");
+        ToDoNode todo2 = new ToDoNode("duh2", "bla");
+        todo2.setNextNode(finalEndNode);
+        final CallNode whyNotCallNode = new CallNode("wnc", todo1);
+        final CallNode whyNotCallNode2 = new CallNode("wnc2", todo2);
+        whyNotCallNode.setNextNode(todo1);
+        whyNotCallNode2.setNextNode(todo1);
         AtomicSlot t2Items = new AtomicSlot("Subject", "");
         AggregateSlot t2 = new AggregateSlot("Subject", "", t2Items);
         t2Items.registerValue("world", "");
@@ -182,8 +190,8 @@ public class DecisionGraphParseResultTest {
         DecisionGraph expected = new DecisionGraph();
         expected.add(whyNotCallNode);
         expected.add(start);
-        expected.add(new ToDoNode("duh", "bla"));
-        expected.add(new ToDoNode("duh2", "bla"));
+        expected.add(todo1);
+        expected.add(todo2);
 
         expected.setStart(start);
 
@@ -223,7 +231,8 @@ public class DecisionGraphParseResultTest {
         start.addAnswer(Answer.get("why not"), whyNotCallNode);
 
         EndNode finalEndNode = new EndNode(nodeIdProvider.nextId());
-        whyNotCallNode.setNextNode(finalEndNode);
+        whyNotCallNode.setNextNode(callTodo);
+        callTodo.setNextNode(finalEndNode);
 
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
@@ -231,9 +240,15 @@ public class DecisionGraphParseResultTest {
         expected.add(callTodo);
 
         String code = "[ask: {text: why?} {answers: {dunno:[>de< end]} {why not:[>wnc< call: duh]}}][>duh< todo: bla][end]";
-        Path codePath = Paths.get("first code");
-        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
-        DecisionGraph actual = dgc.compile(emptyTagSpace, DecisionGraphHelper.getPmd(codePath), new ArrayList<>());
+        Map<Path, String> pathToString = new HashMap<>();
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("main.dg"));
+        pathToString.put(pmd.getDecisionGraphPath().toAbsolutePath().getParent().resolve("main.dg"), code);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+//        Path codePath = Paths.get("first code");
+//        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
+        DecisionGraph actual = dgc.compile(emptyTagSpace, pmd, new ArrayList<>());
 
         normalize(actual);
         normalize(expected);
@@ -475,11 +490,11 @@ public class DecisionGraphParseResultTest {
                 + "[>nd-2< call: a>nd-3]";
         
         Map<Path, String> pathToString = new HashMap<>();
-        ContentReader contentReader = new MemoryContentReader((pathToString));
         PolicyModelData pmd = new PolicyModelData();
         pmd.setDecisionGraphPath(Paths.get("a.dg"));
         pathToString.put(pmd.getDecisionGraphPath().toAbsolutePath().getParent().resolve("a.dg"), code_a);
         pathToString.put(pmd.getDecisionGraphPath().toAbsolutePath().getParent().resolve("b.dg"), code_b);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
         DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
         DecisionGraph actual = dgc.compile(emptyTagSpace, pmd, new ArrayList<>());
         

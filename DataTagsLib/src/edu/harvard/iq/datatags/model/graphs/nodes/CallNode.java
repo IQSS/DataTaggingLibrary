@@ -42,7 +42,7 @@ public class CallNode extends ThroughNode {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+            if (this == obj) {
             return true;
         }
         if (obj == null) {
@@ -55,10 +55,10 @@ public class CallNode extends ThroughNode {
         if (!Objects.equals(getId(), other.getId())) {
             return false;
         }
-        if (!(calleeNode != null ? calleeNode.getId().equals(other.calleeNode != null ? other.calleeNode.getId() : true) : true)){
+        if (!(calleeNode != null ? calleeNode.getId().equals(other.calleeNode != null ? other.calleeNode.getId() : calleeNode == null) : other.calleeNode == null)){
             return false;
         }
-        if (!(getNextNode() != null ? getNextNode().getId().equals(other.getNextNode() != null ? other.getNextNode().getId() : true) : true)){
+        if (!(getNextNode() != null ? getNextNode().getId().equals(other.getNextNode() != null ? other.getNextNode().getId() : getNextNode() == null) : other.getNextNode() == null)){
             return false;
         }
         return true;

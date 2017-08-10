@@ -22,6 +22,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
@@ -35,6 +36,7 @@ import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationRefere
 import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
 import edu.harvard.iq.datatags.tools.NodeValidationMessage;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
+import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -46,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Collectors;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.error.ParserException;
 
@@ -99,7 +102,11 @@ public class CompilationUnit {
         try{
             Parser<ParsedFile> parser = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.graphParser() );
             parsedFile = parser.parse(source);
-            parsedFile.getImports().forEach(im-> im.setInitalPath(sourcePath));
+            parsedFile.getImports().forEach(im -> im.setInitalPath(sourcePath));
+            final Map<String, List<AstImport>> collect = parsedFile.getImports().stream().collect(Collectors.groupingBy(AstImport::getName));
+            parsedFile.getImports().stream().collect(Collectors.groupingBy(AstImport::getName)).
+                                entrySet().stream().filter(e -> e.getValue().size() > 1).
+                                forEach(e -> validationMessages.add(new ValidationMessage(Level.ERROR, "Duplicate import name " + e.getKey() + ", at path - "  + sourcePath)));
             new NodeIdAdder().addIds(parsedFile.getAstNodes());
         }
         catch ( ParserException pe ){

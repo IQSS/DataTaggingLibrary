@@ -90,10 +90,10 @@ public class DecisionGraphCompiler {
         Map<Node, CompilationUnit> nodeToCu = new HashMap<>();
         
         List<AstImport> needToVisit = new ArrayList();
-        Path p = modelData.getDecisionGraphPath().toAbsolutePath().normalize();
         CompilationUnit firstCU = new CompilationUnit(contentReader.getContent(modelData.getDecisionGraphPath().toAbsolutePath().normalize()) ,modelData.getDecisionGraphPath().toAbsolutePath().normalize());
         try {
             firstCU.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
+            messages.addAll(firstCU.getValidationMessages());
             needToVisit.addAll(firstCU.getParsedFile().getImports());
             pathToCu.put( modelData.getDecisionGraphPath().toAbsolutePath().normalize().toString(), firstCU );
             nameToCu.put(MAIN_CU_ID, firstCU);
@@ -113,6 +113,7 @@ public class DecisionGraphCompiler {
                 CompilationUnit compilationUnit = new CompilationUnit(content, getRealPath(astImport.getPath(), astImport.getInitialPath(), modelData));
                 try {
                     compilationUnit.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
+                    messages.addAll(compilationUnit.getValidationMessages());
                     compilationUnit.getDecisionGraph().nodes().forEach(n->nodeToCu.put(n,compilationUnit));
                     needToVisit.addAll(compilationUnit.getParsedFile().getImports());
                     

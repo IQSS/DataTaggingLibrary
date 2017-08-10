@@ -120,7 +120,7 @@ public class DecisionGraphHelper {
     
     public static DecisionGraphCompiler getDGCompiler(String code, Path codePath){
         Map<Path, String> pathToString = new HashMap<>();
-        pathToString.put(codePath, code);
+        pathToString.put(getPmd(codePath).getDecisionGraphPath().toAbsolutePath().getParent().resolve(codePath), code);
         ContentReader contentReader = new MemoryContentReader((pathToString));
         return new DecisionGraphCompiler(contentReader);
     }
