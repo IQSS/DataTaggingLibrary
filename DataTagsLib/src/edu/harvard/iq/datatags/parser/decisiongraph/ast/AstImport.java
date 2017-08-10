@@ -1,27 +1,29 @@
 package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 /**
  *
  * @author mor_vilozni
  */
-public class AstImport{
+public class AstImport {
 
-    
-    private String path;
+    private Path initialPath;
+    private Path path;
     private String name;
 
     public AstImport(String path, String name) {
-        this.path = path;
+        this.path = Paths.get(path);
         this.name = name;
     }
-    
-    public String getPath() {
+
+    public Path getPath() {
         return path;
     }
 
-    public void setPath(String path) {
+    public void setPath(Path path) {
         this.path = path;
     }
 
@@ -32,7 +34,15 @@ public class AstImport{
     public void setName(String name) {
         this.name = name;
     }
-
+    
+    public void setInitalPath(Path initialPath) {
+        this.initialPath = initialPath;
+    }
+    
+    public Path getInitialPath() {
+        return initialPath;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;
@@ -62,7 +72,5 @@ public class AstImport{
     public String toString() {
         return "[AstImport path:" + path + " name:" + name + ']';
     }
-    
-    
-    
+
 }

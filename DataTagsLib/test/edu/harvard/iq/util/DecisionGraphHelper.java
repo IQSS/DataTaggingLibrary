@@ -122,7 +122,6 @@ public class DecisionGraphHelper {
         Map<Path, String> pathToString = new HashMap<>();
         pathToString.put(codePath, code);
         ContentReader contentReader = new MemoryContentReader((pathToString));
-        PolicyModelData pmd = new PolicyModelData();
         return new DecisionGraphCompiler(contentReader);
     }
     

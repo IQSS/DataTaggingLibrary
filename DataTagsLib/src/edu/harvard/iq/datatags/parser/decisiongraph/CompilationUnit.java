@@ -99,6 +99,7 @@ public class CompilationUnit {
         try{
             Parser<ParsedFile> parser = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.graphParser() );
             parsedFile = parser.parse(source);
+            parsedFile.getImports().forEach(im-> im.setInitalPath(sourcePath));
             new NodeIdAdder().addIds(parsedFile.getAstNodes());
         }
         catch ( ParserException pe ){
@@ -130,7 +131,7 @@ public class CompilationUnit {
                                     .forEach(validationMessages::add);
         
         product.setStart(buildNodes(parsedFile.getAstNodes(), endAll));
-        
+        product.nodes().forEach(n->n.setCuPath(sourcePath));
     }
 
     public void compile(CompoundSlot aTopLevelType, EndNode globalEndNode, 

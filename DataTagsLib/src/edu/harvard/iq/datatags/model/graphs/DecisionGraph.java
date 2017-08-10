@@ -83,7 +83,6 @@ public class DecisionGraph {
     public void addAllReachableNodes() {
         ReachableNodesCollector nc = new ReachableNodesCollector();
         getStart().accept(nc);
-        System.out.println("nc.getCollectedNodes() = " + nc.getCollectedNodes());
         nc.getCollectedNodes().forEach( n -> nodes.put(n.getId(), n) );
     }
     

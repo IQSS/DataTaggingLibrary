@@ -74,6 +74,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
                     .shape(GvNode.Shape.cds)
                     .fillColor("#BBBBFF")
                     .gv());
+            advanceTo(nd.getCalleeNode());
             advanceTo(nd.getNextNode());
             out.println(edge(nodeId(nd), nodeId(nd.getNextNode())).gv());
         }

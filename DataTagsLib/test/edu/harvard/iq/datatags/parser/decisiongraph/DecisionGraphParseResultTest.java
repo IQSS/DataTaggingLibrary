@@ -24,6 +24,7 @@ import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import edu.harvard.iq.util.DecisionGraphHelper;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -464,7 +465,27 @@ public class DecisionGraphParseResultTest {
 
         assertEquals(expected, actual);
     }
-
+    
+    @Test
+    public void importToTheMainFile() throws IOException {
+        String code_a = "[#import b: b.dg]"
+                + "[>nd-1<call: b>nd-2]"
+                + "[>nd-3< todo: bla bla]";
+        String code_b = "[#import a: a.dg]"
+                + "[>nd-2< call: a>nd-3]";
+        
+        Map<Path, String> pathToString = new HashMap<>();
+        ContentReader contentReader = new MemoryContentReader((pathToString));
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("a.dg"));
+        pathToString.put(pmd.getDecisionGraphPath().toAbsolutePath().getParent().resolve("a.dg"), code_a);
+        pathToString.put(pmd.getDecisionGraphPath().toAbsolutePath().getParent().resolve("b.dg"), code_b);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+        DecisionGraph actual = dgc.compile(emptyTagSpace, pmd, new ArrayList<>());
+        
+        
+    }
+    
     private DecisionGraph normalize(DecisionGraph dg) {
         dg.setId("normalizedId");
         return dg;

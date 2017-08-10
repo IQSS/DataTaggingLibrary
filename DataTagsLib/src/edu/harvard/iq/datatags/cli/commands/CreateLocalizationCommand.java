@@ -31,6 +31,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -233,6 +234,7 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
         rnr.print(" - Creating node files");
         
         final Path nodesDir = localizationPath.resolve(LocalizationLoader.NODE_DIRECTORY_NAME);
+        final PolicyModelData metaData = rnr.getModel().getMetadata();
         if ( ! Files.exists(nodesDir) ) {
             Files.createDirectory(nodesDir);
         }
@@ -253,22 +255,22 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
                                                              .append("\n")
                     );
                 }
-                createNodeLocalizationFile(nodesDir, nd.getId(), sb.toString());
+                createNodeLocalizationFile(nodesDir, nd, sb.toString(), metaData);
             }
 
             @Override
             public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-                createNodeLocalizationFile(nodesDir, nd.getId(), nd.getTitle());
+                createNodeLocalizationFile(nodesDir, nd, nd.getTitle(), metaData);
             }
 
             @Override
             public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-                createNodeLocalizationFile(nodesDir, nd.getId(), nd.getReason());
+                createNodeLocalizationFile(nodesDir, nd, nd.getReason(), metaData);
             }
 
             @Override
             public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
-                createNodeLocalizationFile(nodesDir, nd.getId(), nd.getTodoText());
+                createNodeLocalizationFile(nodesDir, nd, nd.getTodoText(), metaData);
             }
 
             @Override
@@ -281,32 +283,38 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
             public void visitImpl(EndNode nd) throws DataTagsRuntimeException {}
         };
         
-        PolicyModelData metaData = rnr.getModel().getMetadata();
+        
         rnr.getModel().getDecisionGraph().nodes().forEach( nd -> {
             if ( AstNodeIdProvider.isAutoId(nd.getId()) ) return;
-            if ( ! isLocalNode(nd.getId(), metaData) ) return;
             nd.accept(writer);
         });
         
         rnr.println("..Done");
     }
     
-    private void createNodeLocalizationFile( Path nodesDir, String nodeId, String content ) {
-        String[] comps = nodeId.split(">");
+    private void createNodeLocalizationFile( Path nodesDir, Node node, String content, 
+                                                    PolicyModelData pmd) {
+        Path pmdPath = pmd.getModelDirectoryPath().toAbsolutePath();
+        Path nodePath = node.getCuPath();
+        Path relativePath = pmdPath.relativize(nodePath);
+        
+        //delete the .dg from file name
+        String fileName = relativePath.toString();
+        fileName = fileName.endsWith(".dg") ? fileName.substring(0, fileName.length() - 3) : fileName;
+        relativePath = Paths.get(fileName);
+        
         Path nodeDir;
-        if ( comps.length == 1 ) {
-            nodeDir = nodesDir.resolve(comps[0] + ".md");
-        } else {
-            Path secFol = nodesDir.resolve(comps[0]);
-            if ( ! Files.exists(secFol) ) {
-                try {
-                    Files.createDirectories(secFol);
-                } catch (IOException ex) {
-                    Logger.getLogger(CreateLocalizationCommand.class.getName()).log(Level.SEVERE, "Error creating directory for node localizatoin", ex);
-                }
+        Path secFol = nodesDir.resolve(relativePath);
+        if ( ! Files.exists(secFol) ) {
+            try {
+                Files.createDirectories(secFol);
+            } catch (IOException ex) {
+                Logger.getLogger(CreateLocalizationCommand.class.getName()).log(Level.SEVERE, "Error creating directory for node localizatoin", ex);
             }
-            nodeDir = secFol.resolve(comps[1] + ".md");
         }
+
+        String[] nodesCu = node.getId().split(">");
+        nodeDir = secFol.resolve(nodesCu[nodesCu.length-1] + ".md");
         if ( nodeDir != null ) {
             createFileWithContent(nodeDir, content);
         }

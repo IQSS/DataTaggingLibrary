@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +75,7 @@ public class LocalizationLoader {
             loadTagspaceData( retVal, model.getSpaceRoot(), spacePath );
         }
                 
-        loadNodeData( retVal, model );
+        loadNodeData( retVal, model, localizationPath );
         
         return retVal;
     }
@@ -154,44 +155,27 @@ public class LocalizationLoader {
     }
     
     
-    private void loadNodeData(Localization loc, PolicyModel model) throws IOException {
-        
-        // collect node direcotry paths for all compilation units
-        Map<String, CompilationUnit> compilationUnitPaths = model.getMetadata().getCompilationUnits();
-        Map<String, Path> compilationUnitNodeDirectories = new HashMap<>();
-        compilationUnitPaths.forEach( (id, cu)->{
-            // find the node directory path
-            Path cuNodesPath = cu.getSourcePath();
-            
-            while ( cuNodesPath != null && !Files.exists(cuNodesPath.resolveSibling(LOCALIZATION_DIRECTORY_NAME)) ) {
-                cuNodesPath = cuNodesPath.getParent();
-            }
-            if ( cuNodesPath != null ) {
-                cuNodesPath = cuNodesPath.resolveSibling(LOCALIZATION_DIRECTORY_NAME);
-                cuNodesPath = cuNodesPath.resolve(loc.getLanguage()).resolve(NODE_DIRECTORY_NAME);
-                if ( Files.exists(cuNodesPath) ) {
-                    compilationUnitNodeDirectories.put(id, cuNodesPath);
-                } else {
-                    messages.add( new ValidationMessage(ValidationMessage.Level.WARNING, "Could not find '" + loc.getLanguage() + "/nodes' directory for compilation unit '" + cu.getSourcePath() + "'"));
-                }
-            } else {
-                messages.add( new ValidationMessage(ValidationMessage.Level.WARNING, "Could not find 'languages' directory for compilation unit '" + cu.getSourcePath() + "'"));
-            }
-        });
+    private void loadNodeData(Localization loc, PolicyModel model, Path localizationPath) throws IOException {
         
         // load nodes that have localization ids.
-        model.getDecisionGraph().nodeIds().forEach( id -> {
-           String[] comps = id.split(">");
-           String cuID = (comps.length==1) ? DecisionGraphCompiler.MAIN_CU_ID : comps[0]; 
-           String nodeName = (comps.length==1) ? comps[0] : comps[1];
-           Path cuNodesPath = compilationUnitNodeDirectories.get(cuID);
-           if ( cuNodesPath != null ) {
+        model.getDecisionGraph().nodes().forEach( node -> {
+           String[] comps = node.getId().split(">");
+           String nodeName = (comps.length==1) ? comps[0] : comps[comps.length-1];
+           Path nodePath = node.getCuPath();
+           nodePath = model.getMetadata().getModelDirectoryPath().toAbsolutePath().relativize(nodePath);
+           
+           //delete the .dg from file name
+            String fileName = nodePath.toString();
+            fileName = fileName.endsWith(".dg") ? fileName.substring(0, fileName.length() - 3) : fileName;
+            nodePath = Paths.get(fileName);
+           
+           if ( nodePath != null ) {
                for ( String ext : new String[]{".md", ".mdown", ".txt"}) {
-                   Path attempt = (comps.length==1) ? cuNodesPath.resolve(nodeName + ext) 
-                                                    : cuNodesPath.resolve(comps[0]).resolve(comps[1]  + ext);
+                   Path attempt = (comps.length==1) ? localizationPath.toAbsolutePath().resolve(NODE_DIRECTORY_NAME).resolve(nodePath.resolve(nodeName + ext)) 
+                                                    : localizationPath.toAbsolutePath().resolve(NODE_DIRECTORY_NAME).resolve(nodePath.resolve(comps[comps.length-1]  + ext));
                    if ( Files.exists(attempt) ) {
-                       loc.addNodeText(id, readAll(attempt));
-                       break;
+                       loc.addNodeText(node.getId(), readAll(attempt));
+                       break;   
                    }
                }
            }

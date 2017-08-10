@@ -59,11 +59,11 @@ public class ReachableNodesCollector extends Node.VoidVisitor {
     @Override
     public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
         if ( collection.contains(nd) ) return;
+        visitThroughNode(nd);
         if ( nd.getCalleeNode() != null ) {
             // initially, callee nodes may be null, e.g. before linkage.
             nd.getCalleeNode().accept(this);
         }
-        visitThroughNode(nd);
     }
 
     @Override

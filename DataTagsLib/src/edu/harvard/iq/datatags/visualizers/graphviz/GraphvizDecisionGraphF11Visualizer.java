@@ -136,6 +136,7 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
 						.shape(GvNode.Shape.cds)
 						.fillColor("#BBBBFF")
 						.gv() );
+            advanceTo(nd.getCalleeNode());
             if ( showEndNodes || !(nd.getNextNode() instanceof EndNode) ) {
                 advanceTo(nd.getNextNode());
                 out.println( edge(nodeId(nd), nodeId(nd.getNextNode())).gv() );
