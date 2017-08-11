@@ -15,8 +15,8 @@ import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.decisiongraph.MemoryContentReader;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.*;
-import edu.harvard.iq.util.DecisionGraphHelper;
 import static edu.harvard.iq.util.DecisionGraphHelper.*;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -109,7 +109,9 @@ public class ChartRunningTest {
         DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
         DecisionGraph chart = dgc.compile(new CompoundSlot("", ""), pmd, new ArrayList<>());
         
-        assertExecutionTrace(chart, Arrays.asList("[..\\main.dg]a", "[..\\main.dg]b", "[..\\main.dg]c", "[..\\main.dg]n", "[..\\main.dg]e"), false);
+        assertExecutionTrace(chart, Arrays.asList("[.." + File.separator + "main.dg]a",
+                "[.." + File.separator + "main.dg]b", "[.." + File.separator + "main.dg]c", 
+                "[.." + File.separator + "main.dg]n", "[.." + File.separator + "main.dg]e"), false);
     }
 
     @Test

@@ -25,6 +25,7 @@ import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import edu.harvard.iq.util.DecisionGraphHelper;
 import static edu.harvard.iq.util.DecisionGraphHelper.assertExecutionTrace;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -118,7 +119,7 @@ public class DecisionGraphParseResultTest {
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
         expected.setStart(start);
-        expected.prefixNodeIds("[..\\main.dg]");
+        expected.prefixNodeIds("[.." + File.separator + "main.dg]");
 
         String code = "[todo: this and that][call: ghostbusters][>ghostbusters< todo: bla][end]";
         Map<Path, String> pathToString = new HashMap<>();
@@ -152,7 +153,7 @@ public class DecisionGraphParseResultTest {
         expected.add(start);
         expected.setStart(start);
         expected.addAllReachableNodes();
-        expected.prefixNodeIds("[..\\main.dg]");
+        expected.prefixNodeIds("[.." + File.separator + "main.dg]");
         
         String code = "[todo: this and that][call: ghostbusters][>ghostbusters< todo: bla][reject: obvious.]";
         Map<Path, String> pathToString = new HashMap<>();
@@ -203,7 +204,7 @@ public class DecisionGraphParseResultTest {
         expected.add(todo2);
 
         expected.setStart(start);
-        expected.prefixNodeIds("[..\\main.dg]");
+        expected.prefixNodeIds("[.." + File.separator + "main.dg]");
         
         String code = "[>1< consider: \n"
                 + "     {slot:Subject}\n"
@@ -252,7 +253,7 @@ public class DecisionGraphParseResultTest {
         expected.add(start);
         expected.setStart(start);
         expected.add(callTodo);
-        expected.prefixNodeIds("[..\\main.dg]");
+        expected.prefixNodeIds("[.." + File.separator + "main.dg]");
 
         String code = "[ask: {text: why?} {answers: {dunno:[>de< end]} {why not:[>wnc< call: duh]}}][>duh< todo: bla][end]";
         
@@ -322,7 +323,7 @@ public class DecisionGraphParseResultTest {
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
         expected.setStart(start);
-        expected.prefixNodeIds("[..\\main.dg]");
+        expected.prefixNodeIds("[.." + File.separator + "main.dg]");
 
         String code = "[section: {title: Section - start} [>blaID< todo: bla bla] [>CallID< call: callid]][>callid< todo: bla]";
 
@@ -520,9 +521,10 @@ public class DecisionGraphParseResultTest {
         DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
         DecisionGraph actual = dgc.compile(emptyTagSpace, pmd, new ArrayList<>());
         normalize(actual);
-        assertEquals( C.set("[..\\a.dg]nd-1", "[..\\b.dg]nd-2", "[..\\a.dg]nd-3", "[..\\b.dg][..\\a.dg][SYN-END]", "[..\\a.dg][SYN-END]"), actual.nodeIds());
-        
-  
+        assertEquals( C.set("[.." + File.separator + "a.dg]nd-1",
+                            "[.." + File.separator + "b.dg]nd-2", "[.." + File.separator + "a.dg]nd-3", 
+                            "[.." + File.separator + "b.dg][.." + File.separator + "a.dg][SYN-END]", 
+                            "[.." + File.separator + "a.dg][SYN-END]"), actual.nodeIds());
     }
     
     private DecisionGraph normalize(DecisionGraph dg) {
