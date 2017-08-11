@@ -294,7 +294,7 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
     
     private void createNodeLocalizationFile( Path nodesDir, Node node, String content, 
                                                     PolicyModelData pmd) {
-        Path pmdPath = pmd.getModelDirectoryPath().toAbsolutePath();
+        Path pmdPath = pmd.getModelDirectoryPath();
         Path nodePath = node.getCuPath();
         Path relativePath = pmdPath.relativize(nodePath);
         
@@ -386,27 +386,5 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
         }
         return Collections.singletonList(out);
     }
-    
-    /**
-     * Find which nodes are local, that is reside within the same directory as the
-     * main decision graph.
-     * @param nodeId The id of the node we test.
-     * @param md the model metadata (needed for the compilation units)
-     * @return {@code true} iff the node came from a local file.
-     */
-    private boolean isLocalNode( String nodeId, PolicyModelData md ) {
-        String[] comps = nodeId.split(">");
-        if ( comps.length == 1 ) return true;
-        CompilationUnit compilationUnit = md.getCompilationUnits().get(comps[0]);
-        
-        if ( compilationUnit != null ) {
-            Path cuPath = compilationUnit.getSourcePath();
-            return cuPath.startsWith(md.getModelDirectoryPath());
-            
-        } else {
-            System.err.println("Nonexistant " + comps[0]);
-            System.err.println( md.getCompilationUnits().keySet());
-            return false;
-        }
-    }
+
 }

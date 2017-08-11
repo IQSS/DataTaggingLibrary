@@ -162,7 +162,7 @@ public class LocalizationLoader {
            String[] comps = node.getId().split(">");
            String nodeName = (comps.length==1) ? comps[0] : comps[comps.length-1];
            Path nodePath = node.getCuPath();
-           nodePath = model.getMetadata().getModelDirectoryPath().toAbsolutePath().relativize(nodePath);
+           nodePath = model.getMetadata().getModelDirectoryPath().relativize(nodePath);
            
            //delete the .dg from file name
             String fileName = nodePath.toString();
@@ -171,8 +171,8 @@ public class LocalizationLoader {
            
            if ( nodePath != null ) {
                for ( String ext : new String[]{".md", ".mdown", ".txt"}) {
-                   Path attempt = (comps.length==1) ? localizationPath.toAbsolutePath().resolve(NODE_DIRECTORY_NAME).resolve(nodePath.resolve(nodeName + ext)) 
-                                                    : localizationPath.toAbsolutePath().resolve(NODE_DIRECTORY_NAME).resolve(nodePath.resolve(comps[comps.length-1]  + ext));
+                   Path attempt = (comps.length==1) ? localizationPath.resolve(NODE_DIRECTORY_NAME).resolve(nodePath.resolve(nodeName + ext)) 
+                                                    : localizationPath.resolve(NODE_DIRECTORY_NAME).resolve(nodePath.resolve(comps[comps.length-1]  + ext));
                    if ( Files.exists(attempt) ) {
                        loc.addNodeText(node.getId(), readAll(attempt));
                        break;   
