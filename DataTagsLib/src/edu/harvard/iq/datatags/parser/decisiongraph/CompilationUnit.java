@@ -103,7 +103,6 @@ public class CompilationUnit {
             Parser<ParsedFile> parser = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.graphParser() );
             parsedFile = parser.parse(source);
             parsedFile.getImports().forEach(im -> im.setInitalPath(sourcePath));
-            final Map<String, List<AstImport>> collect = parsedFile.getImports().stream().collect(Collectors.groupingBy(AstImport::getName));
             parsedFile.getImports().stream().collect(Collectors.groupingBy(AstImport::getName)).
                                 entrySet().stream().filter(e -> e.getValue().size() > 1).
                                 forEach(e -> validationMessages.add(new ValidationMessage(Level.ERROR, "Duplicate import name " + e.getKey() + ", at path - "  + sourcePath)));
@@ -138,6 +137,7 @@ public class CompilationUnit {
                                     .forEach(validationMessages::add);
         
         product.setStart(buildNodes(parsedFile.getAstNodes(), endAll));
+        
         product.nodes().forEach(n->n.setCuPath(sourcePath));
     }
 

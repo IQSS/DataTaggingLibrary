@@ -18,7 +18,6 @@ import edu.harvard.iq.datatags.tools.ValidationMessage;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -90,12 +89,14 @@ public class DecisionGraphCompiler {
         Map<Node, CompilationUnit> nodeToCu = new HashMap<>();
         
         List<AstImport> needToVisit = new ArrayList();
-        CompilationUnit firstCU = new CompilationUnit(contentReader.getContent(modelData.getDecisionGraphPath().toAbsolutePath().normalize()) ,modelData.getDecisionGraphPath().toAbsolutePath().normalize());
+        CompilationUnit firstCU = new CompilationUnit(contentReader.getContent(modelData.getDecisionGraphPath()) ,modelData.getDecisionGraphPath());
         try {
             firstCU.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
+            String prefixNodes = modelData.getModelDirectoryPath().relativize(firstCU.getSourcePath()).toString();
+            firstCU.getDecisionGraph().prefixNodeIds("[" + prefixNodes + "]");
             messages.addAll(firstCU.getValidationMessages());
             needToVisit.addAll(firstCU.getParsedFile().getImports());
-            pathToCu.put( modelData.getDecisionGraphPath().toAbsolutePath().normalize().toString(), firstCU );
+            pathToCu.put( modelData.getDecisionGraphPath().normalize().toString(), firstCU );
             nameToCu.put(MAIN_CU_ID, firstCU);
             firstCU.getDecisionGraph().nodes().forEach(n->nodeToCu.put(n,firstCU));
             
@@ -104,20 +105,22 @@ public class DecisionGraphCompiler {
         }
         
         // Load and compile all compilation units (BFS over CU's imports)
-        String mainPath = modelData.getDecisionGraphPath().toAbsolutePath().normalize().toString();
+        String mainPath = modelData.getDecisionGraphPath().normalize().toString();
         while ( !needToVisit.isEmpty() ) {
             AstImport astImport = needToVisit.remove(0);
-            String currentFilePath = getRealPath(astImport.getPath(), astImport.getInitialPath(), modelData).toString();
-            if ( !pathToCu.containsKey(astImport.getPath()) && (!mainPath.equals(currentFilePath))) {
-                String content = contentReader.getContent(getRealPath(astImport.getPath(), astImport.getInitialPath(), modelData));
-                CompilationUnit compilationUnit = new CompilationUnit(content, getRealPath(astImport.getPath(), astImport.getInitialPath(), modelData));
+            String currentFilePath = getRealPath(astImport.getPath(), astImport.getInitialPath()).toString();
+            if ( !pathToCu.containsKey(astImport.getPath().toString()) && (!mainPath.equals(currentFilePath))) {
+                String content = contentReader.getContent(getRealPath(astImport.getPath(), astImport.getInitialPath()));
+                CompilationUnit compilationUnit = new CompilationUnit(content, getRealPath(astImport.getPath(), astImport.getInitialPath()));
                 try {
                     compilationUnit.compile(fullyQualifiedSlotName, topLevelType, endAll, astValidators);
+                    String prefixNodes = modelData.getModelDirectoryPath().relativize(compilationUnit.getSourcePath()).toString();
+                    compilationUnit.getDecisionGraph().prefixNodeIds("[" + prefixNodes + "]");
                     messages.addAll(compilationUnit.getValidationMessages());
                     compilationUnit.getDecisionGraph().nodes().forEach(n->nodeToCu.put(n,compilationUnit));
                     needToVisit.addAll(compilationUnit.getParsedFile().getImports());
                     
-                    pathToCu.put(getRealPath(astImport.getPath(), astImport.getInitialPath(), modelData).toString(), compilationUnit );
+                    pathToCu.put(getRealPath(astImport.getPath(), astImport.getInitialPath()).toString(), compilationUnit );
                     String cuName = astImport.getName();
                     int i=0;
                     while ( nameToCu.containsKey(cuName) ) {
@@ -142,15 +145,14 @@ public class DecisionGraphCompiler {
                     String calleeCuName = comps[0]; //Take the cu in cu>id from callee
                     String calleeName = comps[1];
                     Path destinationCUPath = cu.getParsedFile().getImportPath(calleeCuName);
-                    CompilationUnit calleeCU = pathToCu.get(getRealPath(destinationCUPath, cu.getSourcePath(), modelData));
-                    if ( calleeCU == null ){
-                        calleeCU = pathToCu.get(getRealPath(destinationCUPath, cu.getSourcePath(),  modelData).toString());
-                    }
+                    CompilationUnit calleeCU = pathToCu.get(getRealPath(destinationCUPath, cu.getSourcePath()).toString());
                     if ( calleeCU != null ) {
-                        Node calleeNode = calleeCU.getDecisionGraph().getNode(calleeName);
+                        String prefixNodes = modelData.getModelDirectoryPath().relativize(calleeCU.getSourcePath()).toString();
+                        Node calleeNode = calleeCU.getDecisionGraph().getNode("[" + prefixNodes + "]" + calleeName);
                         nameToCu.put(calleeCuName, calleeCU);
                         if ( calleeNode != null ) {
-                            CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(callCalleePair.getKey());
+                            prefixNodes = modelData.getModelDirectoryPath().relativize(cu.getSourcePath()).toString();
+                            CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
                             callNode.setCalleeNode(calleeNode);
                         } else {
                             messages.add(new ValidationMessage(Level.ERROR, "cannot find target node with id " + calleeCuName + ">" +  calleeName));
@@ -161,21 +163,14 @@ public class DecisionGraphCompiler {
                     
                 } else {
                     // link to node within same compilation unit
-                    Node calleeNode = cu.getDecisionGraph().getNode( callCalleePair.getValue() );
-                    CallNode callNode = (CallNode) cu.getDecisionGraph().getNode(callCalleePair.getKey());
+                    String prefixNodes = modelData.getModelDirectoryPath().relativize(cu.getSourcePath()).toString();
+                    Node calleeNode = cu.getDecisionGraph().getNode( "[" + prefixNodes + "]" + callCalleePair.getValue() );
+                    CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
                     callNode.setCalleeNode(calleeNode);
                 }
             }
         }
-        
-        // Change IDs by (re)named CU.
-        nameToCu.entrySet().forEach( ent -> {
-            String name = ent.getKey();
-            if ( ! name.equals(MAIN_CU_ID) ) {
-                CompilationUnit cu = ent.getValue();
-                cu.getDecisionGraph().prefixNodeIds(ent.getKey()+">");
-            }
-        });
+       
         
         CompilationUnit mainCu = nameToCu.get(MAIN_CU_ID);
         if ( mainCu != null) {
@@ -280,8 +275,8 @@ public class DecisionGraphCompiler {
         return messages;
     }
     
-    private Path getRealPath(Path path, Path parentPath, PolicyModelData pmd){
-        return (parentPath.resolveSibling(path).toAbsolutePath().normalize());
+    private Path getRealPath(Path path, Path parentPath){
+        return (parentPath.resolveSibling(path).normalize());
     }
 
 }

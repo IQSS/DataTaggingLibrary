@@ -51,7 +51,7 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
         }
 
         protected String idLabel(Node nd) {
-            return AstNodeIdProvider.isAutoId(nd.getId()) ? "" : nd.getId() + "\\n";
+            return AstNodeIdProvider.isAutoId(nd.getId()) ? "" : sanitizeIdDisplay(nd.getId()) + "\\n";
         }
     }
     
@@ -188,6 +188,10 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
 
     String nodeId(Node nd) {
         return sanitizeId(nd.getId());
+    }
+    
+    String sanitizeIdDisplay(String s){
+        return s.replaceAll("\\\\", "\\\\\\\\");
     }
    
 }

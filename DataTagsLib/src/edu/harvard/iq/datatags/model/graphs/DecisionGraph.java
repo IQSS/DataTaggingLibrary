@@ -118,7 +118,6 @@ public class DecisionGraph {
      */
     public void prefixNodeIds( String prefix ) {
         List<Node> nodeList = new ArrayList<>(nodes.values());
-        if (nodeList.get(0).getId().contains(">")) return;
         nodeList.stream().forEachOrdered( n -> {
             nodes.remove(n.getId());
             n.setId( prefix + n.getId() );

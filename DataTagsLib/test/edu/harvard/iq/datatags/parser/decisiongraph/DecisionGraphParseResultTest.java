@@ -24,10 +24,12 @@ import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import edu.harvard.iq.util.DecisionGraphHelper;
+import static edu.harvard.iq.util.DecisionGraphHelper.assertExecutionTrace;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,11 +118,17 @@ public class DecisionGraphParseResultTest {
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
         expected.setStart(start);
+        expected.prefixNodeIds("[..\\main.dg]");
 
         String code = "[todo: this and that][call: ghostbusters][>ghostbusters< todo: bla][end]";
-        Path codePath = Paths.get("first code");
-        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
-        DecisionGraph actual = dgc.compile(emptyTagSpace, DecisionGraphHelper.getPmd(codePath), new ArrayList<>());
+        Map<Path, String> pathToString = new HashMap<>();
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("/main.dg"));
+        pmd.setMetadataFile(Paths.get("/test/main.dg"));
+        pathToString.put(Paths.get("/main.dg"), code);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+        DecisionGraph actual = dgc.compile(emptyTagSpace, pmd, new ArrayList<>());
 
         normalize(actual);
         normalize(expected);
@@ -144,13 +152,14 @@ public class DecisionGraphParseResultTest {
         expected.add(start);
         expected.setStart(start);
         expected.addAllReachableNodes();
-       
-        String code = "[todo: this and that][call: ghostbusters][>ghostbusters< todo: bla][reject: obvious.]";
+        expected.prefixNodeIds("[..\\main.dg]");
         
+        String code = "[todo: this and that][call: ghostbusters][>ghostbusters< todo: bla][reject: obvious.]";
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();
-        pmd.setDecisionGraphPath(Paths.get("main.dg"));
-        pathToString.put(pmd.getDecisionGraphPath().toAbsolutePath().getParent().resolve("main.dg"), code);
+        pmd.setDecisionGraphPath(Paths.get("/main.dg"));
+        pmd.setMetadataFile(Paths.get("/test/main.dg"));
+        pathToString.put(Paths.get("/main.dg"), code);
         ContentReader contentReader = new MemoryContentReader(pathToString);
         DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
         DecisionGraph actual = dgc.compile(emptyTagSpace, pmd, new ArrayList<>());
@@ -194,7 +203,8 @@ public class DecisionGraphParseResultTest {
         expected.add(todo2);
 
         expected.setStart(start);
-
+        expected.prefixNodeIds("[..\\main.dg]");
+        
         String code = "[>1< consider: \n"
                 + "     {slot:Subject}\n"
                 + "    {options:\n"
@@ -207,10 +217,14 @@ public class DecisionGraphParseResultTest {
                 + "[>duh2< todo: bla]"
                 + "[>2< end]";
 
-        Path codePath = Paths.get("first code");
-        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
-        DecisionGraph actual = dgc.compile(ct, DecisionGraphHelper.getPmd(codePath), new ArrayList<>());
-
+        Map<Path, String> pathToString = new HashMap<>();
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("/main.dg"));
+        pmd.setMetadataFile(Paths.get("/test/main.dg"));
+        pathToString.put(Paths.get("/main.dg"), code);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+        DecisionGraph actual = dgc.compile(ct, pmd, new ArrayList<>());
         normalize(actual);
         normalize(expected);
 
@@ -238,16 +252,17 @@ public class DecisionGraphParseResultTest {
         expected.add(start);
         expected.setStart(start);
         expected.add(callTodo);
+        expected.prefixNodeIds("[..\\main.dg]");
 
         String code = "[ask: {text: why?} {answers: {dunno:[>de< end]} {why not:[>wnc< call: duh]}}][>duh< todo: bla][end]";
+        
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();
-        pmd.setDecisionGraphPath(Paths.get("main.dg"));
-        pathToString.put(pmd.getDecisionGraphPath().toAbsolutePath().getParent().resolve("main.dg"), code);
+        pmd.setDecisionGraphPath(Paths.get("/main.dg"));
+        pmd.setMetadataFile(Paths.get("/test/main.dg"));
+        pathToString.put(Paths.get("/main.dg"), code);
         ContentReader contentReader = new MemoryContentReader(pathToString);
         DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
-//        Path codePath = Paths.get("first code");
-//        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
         DecisionGraph actual = dgc.compile(emptyTagSpace, pmd, new ArrayList<>());
 
         normalize(actual);
@@ -307,13 +322,19 @@ public class DecisionGraphParseResultTest {
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);
         expected.setStart(start);
+        expected.prefixNodeIds("[..\\main.dg]");
 
         String code = "[section: {title: Section - start} [>blaID< todo: bla bla] [>CallID< call: callid]][>callid< todo: bla]";
 
-        Path codePath = Paths.get("first code");
-        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
-        DecisionGraph actual = dgc.compile(emptyTagSpace, DecisionGraphHelper.getPmd(codePath), new ArrayList<>());
-
+        Map<Path, String> pathToString = new HashMap<>();
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("/main.dg"));
+        pmd.setMetadataFile(Paths.get("/test/main.dg"));
+        pathToString.put(Paths.get("/main.dg"), code);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+        DecisionGraph actual = dgc.compile(emptyTagSpace, pmd, new ArrayList<>());
+        
         normalize(actual);
         normalize(expected);
 
@@ -491,14 +512,17 @@ public class DecisionGraphParseResultTest {
         
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();
-        pmd.setDecisionGraphPath(Paths.get("a.dg"));
-        pathToString.put(pmd.getDecisionGraphPath().toAbsolutePath().getParent().resolve("a.dg"), code_a);
-        pathToString.put(pmd.getDecisionGraphPath().toAbsolutePath().getParent().resolve("b.dg"), code_b);
+        pmd.setDecisionGraphPath(Paths.get("/a.dg"));
+        pmd.setMetadataFile(Paths.get("/test/a.dg"));
+        pathToString.put(Paths.get("/a.dg"), code_a);
+        pathToString.put(Paths.get("/b.dg"), code_b);
         ContentReader contentReader = new MemoryContentReader(pathToString);
         DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
         DecisionGraph actual = dgc.compile(emptyTagSpace, pmd, new ArrayList<>());
+        normalize(actual);
+        assertEquals( C.set("[..\\a.dg]nd-1", "[..\\b.dg]nd-2", "[..\\a.dg]nd-3", "[..\\b.dg][..\\a.dg][SYN-END]", "[..\\a.dg][SYN-END]"), actual.nodeIds());
         
-        
+  
     }
     
     private DecisionGraph normalize(DecisionGraph dg) {

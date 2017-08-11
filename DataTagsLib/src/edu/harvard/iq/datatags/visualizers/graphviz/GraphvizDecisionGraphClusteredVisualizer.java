@@ -70,11 +70,10 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
         @Override
         public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
             out.println(node(nodeId(nd))
-                    .label(idLabel(nd) + nd.getCalleeNode().getId())
+                    .label(idLabel(nd) + sanitizeIdDisplay(nd.getCalleeNode().getId()))
                     .shape(GvNode.Shape.cds)
                     .fillColor("#BBBBFF")
                     .gv());
-            advanceTo(nd.getCalleeNode());
             advanceTo(nd.getNextNode());
             out.println(edge(nodeId(nd), nodeId(nd.getNextNode())).gv());
         }
@@ -189,10 +188,8 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
         Set<Node> subchartHeads = findSubchartHeades(fc);
         NodePainter np = new NodePainter();
         np.out = wrt;
-        
         subchartHeads.forEach( chartHead -> {
-            System.out.println("Subchart: " + sanitizeId(chartHead.getId()));
-            wrt.println("subgraph cluster_toplevel" + sanitizeId(chartHead.getId()) + " {");
+            wrt.println("subgraph cluster_" + sanitizeId(chartHead.getId()) + " {");
             wrt.println(String.format("label=\"%s\"; color=\"#AABBDD\"; labeljust=\"l\"", sanitizeTitle(chartHead.getId())));
             chartHead.accept(np);
             wrt.println("}");

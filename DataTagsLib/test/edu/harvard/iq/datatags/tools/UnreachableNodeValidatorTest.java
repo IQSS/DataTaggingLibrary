@@ -3,9 +3,12 @@ package edu.harvard.iq.datatags.tools;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
+import edu.harvard.iq.datatags.parser.decisiongraph.ContentReader;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
+import edu.harvard.iq.datatags.parser.decisiongraph.MemoryContentReader;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.util.DecisionGraphHelper;
@@ -16,8 +19,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.After;
@@ -69,10 +74,15 @@ public class UnreachableNodeValidatorTest {
                         "    {yes: [>reject1< reject: Good it works.]}\n" +
                         "    {no: [>reject2< reject: This should have worked.]}}]";
         
-        Path codePath = Paths.get("first code");
-        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
-        decisionGraph = dgc.compile(new CompoundSlot("", ""), DecisionGraphHelper.getPmd(codePath), new ArrayList<>());
-        
+        Map<Path, String> pathToString = new HashMap<>();
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("/main.dg"));
+        pmd.setMetadataFile(Paths.get("/test/main.dg"));
+        pathToString.put(Paths.get("/main.dg"), code);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+        decisionGraph = dgc.compile(new CompoundSlot("", ""), pmd, new ArrayList<>());
+
         List<ValidationMessage> messages = instance.validate(decisionGraph);
         
         Set<Node> expected = Collections.<Node>emptySet();

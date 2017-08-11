@@ -22,11 +22,11 @@ public abstract class GraphvizVisualizer {
     private final Map<Character, String> idEncodeMap = new HashMap<>();
     
     public GraphvizVisualizer(){
-        String idChars = ".,/~?!()@#$%^&*_+-[] >=";
+        String idChars = ".,/~?!()@#$%^&*_+-[] >=\\";
         
         idChars.chars().forEach( intChar -> {
             Character src = (char)intChar;
-            String dest = "_" + String.format("%02d", idChars.indexOf(intChar));
+            String dest = "_" + String.format("%02x", intChar);
             idEncodeMap.put(src, dest);
         });
         
@@ -74,7 +74,7 @@ public abstract class GraphvizVisualizer {
 	}
 
 	String sanitizeTitle(String s) {
-		return s.replaceAll("\"", "\\\"");
+		return s.replaceAll("\"", "\\\"").replaceAll("\\\\", "\\\\\\\\");
 	}
 	
     /**

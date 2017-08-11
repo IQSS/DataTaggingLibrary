@@ -8,10 +8,11 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import static edu.harvard.iq.datatags.model.graphs.Answer.*;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
-import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
+import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
-import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
+import edu.harvard.iq.datatags.parser.decisiongraph.ContentReader;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
+import edu.harvard.iq.datatags.parser.decisiongraph.MemoryContentReader;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.*;
 import edu.harvard.iq.util.DecisionGraphHelper;
@@ -21,6 +22,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.Test;
 
 /**
@@ -97,11 +100,16 @@ public class ChartRunningTest {
     public void chartWithCall() throws DataTagsParseException, IOException {
         String code = "[>a< todo:a][>b< todo:a][>c< call:n][>e<end][>n< end]";
         
-        Path codePath = Paths.get("first code");
-        DecisionGraphCompiler dgc = DecisionGraphHelper.getDGCompiler(code, codePath);
-        DecisionGraph chart = dgc.compile(new CompoundSlot("", ""), DecisionGraphHelper.getPmd(codePath), new ArrayList<>());
-       
-        assertExecutionTrace(chart, Arrays.asList("a", "b", "c", "n", "e"), false);
+        Map<Path, String> pathToString = new HashMap<>();
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("/main.dg"));
+        pmd.setMetadataFile(Paths.get("/test/main.dg"));
+        pathToString.put(Paths.get("/main.dg"), code);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+        DecisionGraph chart = dgc.compile(new CompoundSlot("", ""), pmd, new ArrayList<>());
+        
+        assertExecutionTrace(chart, Arrays.asList("[..\\main.dg]a", "[..\\main.dg]b", "[..\\main.dg]c", "[..\\main.dg]n", "[..\\main.dg]e"), false);
     }
 
     @Test
