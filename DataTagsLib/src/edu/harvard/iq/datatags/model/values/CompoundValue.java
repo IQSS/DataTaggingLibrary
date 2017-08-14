@@ -75,25 +75,6 @@ public class CompoundValue extends TagValue {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 19 * hash + Objects.hashCode(this.fields);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof CompoundValue)) {
-            return false;
-        }
-        final CompoundValue other = (CompoundValue) obj;
-        return super.equals(obj) && Objects.equals(this.fields, other.fields);
-    }
-
-    @Override
     protected String tagValueToString() {
         StringBuilder sb = new StringBuilder();
         fields.values().stream()
@@ -262,7 +243,26 @@ public class CompoundValue extends TagValue {
 
         return result;
     }
+    
+    
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 19 * hash + Objects.hashCode(this.fields);
+        return hash;
+    }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof CompoundValue)) {
+            return false;
+        }
+        final CompoundValue other = (CompoundValue) obj;
+        return super.equals(obj) && Objects.equals(this.fields, other.fields);
+    }
 }
 
 class Resolver implements TagValue.Visitor<TagValue.Function> {
@@ -335,5 +335,6 @@ class SubsetComparator implements TagValue.Visitor<Predicate<TagValue>> {
     public Predicate<TagValue> visitCompoundValue(CompoundValue thisValue) {
         return (TagValue other) -> thisValue.isSupersetOf((CompoundValue) other);
     }
-
+    
+    
 }

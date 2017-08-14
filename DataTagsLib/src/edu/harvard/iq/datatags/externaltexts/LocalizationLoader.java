@@ -5,15 +5,18 @@ import static edu.harvard.iq.datatags.io.FileUtils.ciResolve;
 import static edu.harvard.iq.datatags.io.FileUtils.readAll;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.PolicySpaceIndex;
+import edu.harvard.iq.datatags.model.PolicySpacePathQuery;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
+import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import edu.harvard.iq.datatags.util.NumberedString;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +75,7 @@ public class LocalizationLoader {
             loadTagspaceData( retVal, model.getSpaceRoot(), spacePath );
         }
                 
-        loadNodeData( retVal, model );
+        loadNodeData( retVal, model, localizationPath );
         
         return retVal;
     }
@@ -121,51 +124,56 @@ public class LocalizationLoader {
     private void loadTagspaceData(Localization retVal, CompoundSlot baseSlot, Path spacePath) throws IOException {
         PolicySpaceIndex spaceIndex = new PolicySpaceIndex(baseSlot);
         SpaceLocalizationParser parser = new SpaceLocalizationParser(spaceIndex);
-        if ( parser.parse(Files.lines(spacePath, StandardCharsets.UTF_8)) ) {
-            parser.getSpaceEnitiyTexts().forEach((p,t)->retVal.setPolicySpaceEntityText(p, t));
-        } else {
-            parser.getMessages().forEach( s -> messages.add(new ValidationMessage(ValidationMessage.Level.WARNING, s)));
-        }
-    }
-
-    private void loadNodeData(Localization loc, PolicyModel model) throws IOException {
         
-        // collect node direcotry paths for all compilation units
-        Map<String, CompilationUnit> compilationUnitPaths = model.getMetadata().getCompilationUnits();
-        Map<String, Path> compilationUnitNodeDirectories = new HashMap<>();
-        compilationUnitPaths.forEach( (id, cu)->{
-            // find the node directory path
-            Path cuNodesPath = cu.getSourcePath();
-            
-            while ( cuNodesPath != null && !Files.exists(cuNodesPath.resolveSibling(LOCALIZATION_DIRECTORY_NAME)) ) {
-                cuNodesPath = cuNodesPath.getParent();
-            }
-            if ( cuNodesPath != null ) {
-                cuNodesPath = cuNodesPath.resolveSibling(LOCALIZATION_DIRECTORY_NAME);
-                cuNodesPath = cuNodesPath.resolve(loc.getLanguage()).resolve(NODE_DIRECTORY_NAME);
-                if ( Files.exists(cuNodesPath) ) {
-                    compilationUnitNodeDirectories.put(id, cuNodesPath);
-                } else {
-                    messages.add( new ValidationMessage(ValidationMessage.Level.WARNING, "Could not find '" + loc.getLanguage() + "/nodes' directory for compilation unit '" + cu.getSourcePath() + "'"));
-                }
-            } else {
-                messages.add( new ValidationMessage(ValidationMessage.Level.WARNING, "Could not find 'languages' directory for compilation unit '" + cu.getSourcePath() + "'"));
-            }
-        });
+        if ( parser.parse(Files.lines(spacePath, StandardCharsets.UTF_8)) ) {
+            PolicySpacePathQuery qry = new PolicySpacePathQuery(baseSlot);
+                    
+            parser.getSpaceEnitiyTexts().forEach(
+                    (path,text) -> qry.get(path).accept(new PolicySpacePathQuery.Result.Visitor<Void>() {
+                           @Override
+                           public Void visit(PolicySpacePathQuery.TagValueResult tvr) {
+                               retVal.setSlotValueText(tvr.value, text);
+                               return null;
+                           }
+
+                           @Override
+                           public Void visit(PolicySpacePathQuery.SlotTypeResult str) {
+                               retVal.setSlotText(str.value, text);
+                               return null;
+                           }
+
+                           @Override
+                           public Void visit(PolicySpacePathQuery.NotFoundResult nfr) {
+                               messages.add( new ValidationMessage(Level.WARNING, "Localization refers to nonexistent slot/value '" + nfr.path + "'"));
+                               return null;
+                           }
+                    }));
+        } 
+        
+        parser.getMessages().forEach( s -> messages.add(new ValidationMessage(Level.WARNING, s)));
+        
+    }
+    
+    
+    private void loadNodeData(Localization loc, PolicyModel model, Path localizationPath) throws IOException {
         
         // load nodes that have localization ids.
-        model.getDecisionGraph().nodeIds().forEach( id -> {
-           String[] comps = id.split(">");
-           String cuID = (comps.length==1) ? DecisionGraphCompiler.MAIN_CU_ID : comps[0]; 
-           String nodeName = (comps.length==1) ? comps[0] : comps[1];
-           Path cuNodesPath = compilationUnitNodeDirectories.get(cuID);
-           if ( cuNodesPath != null ) {
+        model.getDecisionGraph().nodes().forEach( node -> {
+           String nodeName = node.getId().substring(node.getId().indexOf("]")+1, node.getId().length());
+           
+           Path relativePath = Paths.get(node.getId().substring(1, node.getId().indexOf("]")));
+           //delete the .dg from file name
+           String fileName = relativePath.toString();
+           fileName = fileName.endsWith(".dg") ? fileName.substring(0, fileName.length() - 3) : fileName;
+           relativePath = Paths.get(fileName);
+           
+           if ( relativePath != null ) {
                for ( String ext : new String[]{".md", ".mdown", ".txt"}) {
-                   Path attempt = (comps.length==1) ? cuNodesPath.resolve(nodeName + ext) 
-                                                    : cuNodesPath.resolve(comps[0]).resolve(comps[1]  + ext);
+                   Path attempt = localizationPath.resolve(NODE_DIRECTORY_NAME).resolve(relativePath.resolve(nodeName + ext)) ;
+                                                    
                    if ( Files.exists(attempt) ) {
-                       loc.addNodeText(id, readAll(attempt));
-                       break;
+                       loc.addNodeText(node.getId(), readAll(attempt));
+                       break;   
                    }
                }
            }

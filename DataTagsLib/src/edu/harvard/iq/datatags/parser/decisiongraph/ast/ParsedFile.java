@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,7 @@ public class ParsedFile {
  
     private final List<? extends AstNode> astNodes;
     private final List<AstImport> imports;  // for validation
-    private final Map<String, String> importsById = new HashMap<>();
+    private final Map<String, Path> importsById = new HashMap<>();
     
     public ParsedFile(List<AstImport> imports, List<? extends AstNode> astNodes) {
         this.astNodes = astNodes;
@@ -45,7 +46,7 @@ public class ParsedFile {
         return importsById.keySet();
     }
     
-    public String getImportPath(String importName ) {
+    public Path getImportPath(String importName ) {
         return importsById.get(importName);
     }
     

@@ -1,5 +1,7 @@
 package edu.harvard.iq.datatags.parser.decisiongraph;
 
+import java.util.regex.Pattern;
+
 /**
  * A class that creates unique node ids. Uniqueness is guaranteed only 
  * for ids created by the same instance.
@@ -10,13 +12,12 @@ public class AstNodeIdProvider {
    
     private int nextId = 1;
     
+    private final static Pattern AUTO_ID = Pattern.compile(".*\\[#[0-9]+\\]$");
+    
     public static boolean isAutoId( String anId ) {
         if ( anId == null ) return false;
-        String[] comps = anId.split(">");
-        if ( comps.length == 2 ) {
-            anId = comps[1];
-        }
-        return ( anId.startsWith("[#") && anId.endsWith("]"));
+        
+        return AUTO_ID.matcher(anId).matches();
         
     }
     

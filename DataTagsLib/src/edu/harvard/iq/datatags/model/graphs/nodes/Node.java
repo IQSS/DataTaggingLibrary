@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.model.graphs.nodes;
 
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import java.nio.file.Path;
 import org.codehaus.jparsec.internal.util.Objects;
 
 /**
@@ -101,7 +102,8 @@ public abstract class Node {
     }
 
     private String id;
-
+    private Path cuPath;
+    
     public Node(String anId) {
         id = anId;
     }
@@ -135,6 +137,16 @@ public abstract class Node {
     public void setId(String id) {
         this.id = id;
     }
+
+    public Path getCuPath() {
+        return cuPath;
+    }
+
+    public void setCuPath(Path cuPath) {
+        this.cuPath = cuPath;
+    }
+    
+    
     
     
 }

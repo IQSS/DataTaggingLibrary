@@ -25,6 +25,8 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.Set;
+import java.util.TreeSet;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -32,6 +34,8 @@ import static java.util.stream.Collectors.toList;
  * @author michael
  */
 public class NewModelCommand extends AbstractCliCommand {
+    
+    static Set<Character> ALLOWD_FILENAME_CHARACTERS = new TreeSet<>(Arrays.asList('-','_','(',')'));
     
     private PolicyModelData data;
     
@@ -68,7 +72,9 @@ public class NewModelCommand extends AbstractCliCommand {
         if ( hasFlag("q", args) ) {
             autoFillModel();
         } else {
-            interactiveFillModel(rnr);
+            if ( ! interactiveFillModel(rnr) ) {
+                return;
+            }
         }
 
         rnr.print("Creating model at " + data.getMetadataFile().getParent().toAbsolutePath() + "...");
@@ -149,13 +155,31 @@ public class NewModelCommand extends AbstractCliCommand {
         return Collections.singletonList(out);
     }
 
-    private void interactiveFillModel(CliRunner rnr) throws IOException {
+    private boolean interactiveFillModel(CliRunner rnr) throws IOException {
         data.setTitle(rnr.readLineWithDefault("Model title: ", "Policy Model"));
         
-        Path modelFolder = Paths.get("PolicyModel");
+        String modelFolderName = sanitizeName(data.getTitle());
+        if (modelFolderName.length() == 0) {
+            modelFolderName = "PolicyModel";
+        }
+        
+        String modelPath = rnr.readLineWithDefault("Model Path:", Paths.get(".").toAbsolutePath()
+                                                                       .getParent().resolve(modelFolderName).toString());
+        
+        if ( modelPath.startsWith("~/") ) {
+            modelPath = System.getProperty("user.home") + "/" + modelPath.substring(2);
+        }
+        
+        Path modelFolder = Paths.get(modelPath);
+        
+        if ( ! Files.exists(modelFolder.getParent()) ) {
+            rnr.printWarning("Parent directory '%s' does not exist. Please validate the path typed is correct.", modelPath);
+            return false;
+        }
+        
         int i=1;
         while ( Files.exists(modelFolder) ) {
-            modelFolder = Paths.get("PolicyModel-" + i);
+            modelFolder = Paths.get(modelPath + "-" + i);
             i++;
         }
         data.setMetadataFile( modelFolder.resolve("policy-model.xml") );
@@ -176,7 +200,7 @@ public class NewModelCommand extends AbstractCliCommand {
             } else if ( ans.equals("y") ) {
                 boolean go2 = true;
                 while (go2) {
-                    ans = rnr.readLineWithDefault("Person or Group? (p/g): ", "y");
+                    ans = rnr.readLineWithDefault("Person or Group? (p/g): ", "p");
                     if ( ans.equals("p") ) {
                         PersonAuthorData pad = new PersonAuthorData();
                         pad.setName( rnr.readLine("Name: ") );
@@ -196,7 +220,7 @@ public class NewModelCommand extends AbstractCliCommand {
                 }
             }
         }
-        
+        return true;
     }
 
     private void autoFillModel() {
@@ -218,6 +242,22 @@ public class NewModelCommand extends AbstractCliCommand {
         data.setDecisionGraphPath( data.getMetadataFile().resolveSibling("decision-graph.dg") );
         data.setPolicySpacePath( data.getMetadataFile().resolveSibling("policy-space.ps") );
         data.setRootTypeName("DataTags");
+    }
+    
+    String sanitizeName(String name) {
+        StringBuilder out = new StringBuilder(name.length());
+        if ( name.length() > 64 ) {
+            name = name.substring(0, 64);
+        }
+        
+        for ( char c : name.toCharArray() ) {
+            out.append( 
+                    (Character.isAlphabetic(c) || Character.isDigit(c) || ALLOWD_FILENAME_CHARACTERS.contains(c))
+                    ? c : "-"
+            );
+        }
+        
+        return out.toString();
     }
 }
 
@@ -263,7 +303,7 @@ class AuthorToXml implements AuthorData.Visitor<List<String>> {
         
         return res;
     }
-
+    
     
     
 }

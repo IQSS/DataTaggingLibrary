@@ -1,15 +1,7 @@
 package edu.harvard.iq.datatags.model.graphs;
 
-import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
-import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import edu.harvard.iq.datatags.tools.ReachableNodesCollector;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +24,6 @@ public class DecisionGraph {
     private Node start;
     private final Map<String, Node> nodes = new HashMap<>();
     private String id;
-    private final ReachableNodesCollector nodeCollector = new ReachableNodesCollector();
 
     public DecisionGraph() {
         this("DecisionGraph-" + INDEX.incrementAndGet());
@@ -75,19 +66,24 @@ public class DecisionGraph {
      * Adds the node, and its descendents, to the chart.
      *
      * @param <T> the static type of the node
-     * @param n the node
+     * @param aNode the node
      * @return the node, for call chaining.
      */
-    public <T extends Node> T add(T n) {
-        n.accept(nodeCollector);
-        return n;
+    public <T extends Node> T add(T aNode) {
+        ReachableNodesCollector nc = new ReachableNodesCollector();
+        aNode.accept(nc);
+        nc.getCollectedNodes().forEach( n -> nodes.put(n.getId(), n) );
+        return aNode;
     }
     
     /**
-     * Collects the 
+     * Collects the reachable nodes of the graph. I.e reachable from the
+     * start node.
      */
     public void addAllReachableNodes() {
-        getStart().accept(nodeCollector);
+        ReachableNodesCollector nc = new ReachableNodesCollector();
+        getStart().accept(nc);
+        nc.getCollectedNodes().forEach( n -> nodes.put(n.getId(), n) );
     }
     
     /**
@@ -159,77 +155,6 @@ public class DecisionGraph {
             return false;
         }
         return Objects.equals(this.nodes, other.nodes);
-    }
-
-    /**
-     * Adds all nodes reachable from the visited node.
-     */
-    private class ReachableNodesCollector extends Node.VoidVisitor {
-
-        public ReachableNodesCollector() {
-        }
-
-        @Override
-        public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
-            nodes.put(nd.getId(), nd);
-            nd.getAnswers().stream()
-                           .filter( ans -> (nd.getNodeFor(ans) != null))
-                           .forEachOrdered( ans -> nd.getNodeFor(ans).accept(this));
-        }
-
-        @Override
-        public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
-            nodes.put(nd.getId(), nd);
-            nd.getAnswers().stream()
-                           .filter( ans -> (nd.getNodeFor(ans) != null))
-                           .forEachOrdered( ans -> nd.getNodeFor(ans).accept(this));
-        }
-
-        @Override
-        public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
-            nodes.put(nd.getId(), nd);
-            if ( nd.hasNextNode() ) {
-                nd.getNextNode().accept(this);
-            }
-        }
-
-        @Override
-        public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
-            nodes.put(nd.getId(), nd);
-            if ( nd.hasNextNode() ) {
-                nd.getNextNode().accept(this);
-            }
-            if ( nd.getCalleeNode() != null ) {
-                nd.getCalleeNode().accept(this);
-            }
-        }
-
-        @Override
-        public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
-            nodes.put(nd.getId(), nd);
-            if ( nd.hasNextNode() ) {
-                nd.getNextNode().accept(this);
-            }
-        }
-
-        @Override
-        public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
-            nodes.put(nd.getId(), nd);
-        }
-
-        @Override
-        public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-            nodes.put(nd.getId(), nd);
-        }
-
-        @Override
-        public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{
-            nodes.put(nd.getId(), nd);
-            if ( nd.hasNextNode() ) {
-                nd.getNextNode().accept(this);
-            }
-            nd.getStartNode().accept(this);
-        }
     }
 
 }

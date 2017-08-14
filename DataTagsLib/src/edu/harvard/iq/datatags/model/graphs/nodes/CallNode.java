@@ -37,14 +37,12 @@ public class CallNode extends ThroughNode {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + hashCallee(this.calleeNode);
-        return hash;
+        return getId().hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+            if (this == obj) {
             return true;
         }
         if (obj == null) {
@@ -54,7 +52,13 @@ public class CallNode extends ThroughNode {
             return false;
         }
         final CallNode other = (CallNode) obj;
-        if (!Objects.equals(this.calleeNode, other.calleeNode)) {
+        if (!Objects.equals(getId(), other.getId())) {
+            return false;
+        }
+        if (!(calleeNode != null ? calleeNode.getId().equals(other.calleeNode != null ? other.calleeNode.getId() : calleeNode == null) : other.calleeNode == null)){
+            return false;
+        }
+        if (!(getNextNode() != null ? getNextNode().getId().equals(other.getNextNode() != null ? other.getNextNode().getId() : getNextNode() == null) : other.getNextNode() == null)){
             return false;
         }
         return true;
@@ -111,7 +115,7 @@ public class CallNode extends ThroughNode {
 
     @Override
     protected String toStringExtras() {
-        return "callee:" + getCalleeNode();
+        return getCalleeNode() != null ? "callee:" + getCalleeNode().getId() : "callee null";
     }
 	
     

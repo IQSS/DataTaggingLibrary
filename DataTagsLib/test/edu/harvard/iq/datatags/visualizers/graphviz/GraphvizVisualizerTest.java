@@ -2,6 +2,7 @@ package edu.harvard.iq.datatags.visualizers.graphviz;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.stream.Stream;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -44,8 +45,7 @@ public class GraphvizVisualizerTest {
 
     @Test
     public void testSanitizeId() {
-        assertEquals( "_18_091_19", sut.sanitizeId("[#1]") );
-        assertEquals( "FERPA", sut.sanitizeId("FERPA") );
+        Stream.of(".,/~?!()@#$%^&*_+-[] >=\\", "123aAbBzZ").forEach(s -> assertTrue( sut.sanitizeId(s).chars().allMatch(c-> Character.isLetterOrDigit(c) || c == '_') ));
     }
     
     @Test

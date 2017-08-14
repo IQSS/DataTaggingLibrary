@@ -8,8 +8,6 @@ import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.model.graphs.Answer;
-import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -21,40 +19,62 @@ import java.util.Set;
  * @author michael
  */
 public class ReachableNodesCollector extends Node.VoidVisitor {
+    
     final Set<Node> collection = new HashSet<>();
     
-    
-    public Set<Node> getCollection() {
+    public Set<Node> getCollectedNodes() {
         return collection;
     }
+    
     @Override
     public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
+        if ( collection.contains(nd) ) return;
+        
         collection.add( nd );
-        for ( ConsiderAnswer a : nd.getAnswers() ) {
-            nd.getNodeFor(a).accept(this);
+        nd.getAnswers().forEach(a-> nd.getNodeFor(a).accept(this));
+        if ( nd.getElseNode() != null ) {
+            nd.getElseNode().accept(this);
         }
-        nd.getElseNode().accept(this);
     }
+    
     @Override
     public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
+        if ( collection.contains(nd) ) return;
         collection.add( nd );
-        for ( Answer a : nd.getAnswers() ) {
-            nd.getNodeFor(a).accept(this);
-        }
-    }
-
-    @Override
-    public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
-        visitThroughNode(nd);
+        nd.getAnswers().forEach(a-> nd.getNodeFor(a).accept(this));
     }
 
     @Override
     public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
+        if ( collection.contains(nd) ) return;
         collection.add(nd);
     }
 
     @Override
+    public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
+        if ( collection.contains(nd) ) return;
+        collection.add(nd);
+    }
+    
+    @Override
     public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
+        if ( collection.contains(nd) ) return;
+        visitThroughNode(nd);
+        if ( nd.getCalleeNode() != null ) {
+            // initially, callee nodes may be null, e.g. before linkage.
+            nd.getCalleeNode().accept(this);
+        }
+    }
+
+    @Override
+    public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
+        if ( collection.contains(nd) ) return;
+        nd.getStartNode().accept(this);
+        visitThroughNode(nd);
+    }
+    
+    @Override
+    public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
         visitThroughNode(nd);
     }
 
@@ -63,20 +83,12 @@ public class ReachableNodesCollector extends Node.VoidVisitor {
         visitThroughNode(nd);
     }
 
-    @Override
-    public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
-        collection.add(nd);
-    }
-    
-    @Override
-    public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-        nd.getStartNode().accept(this);
-        visitThroughNode(nd);
-    }
-    
     void visitThroughNode( ThroughNode nd ) {
+        if ( collection.contains(nd) ) return;
         collection.add(nd);
-        nd.getNextNode().accept(this);
+        if ( nd.getNextNode() != null ) {
+            nd.getNextNode().accept(this);
+        }
     }
     
 }

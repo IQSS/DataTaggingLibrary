@@ -8,6 +8,7 @@ import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphF11Visu
 import java.awt.Desktop;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
@@ -53,6 +54,7 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
         try (OutputStreamWriter outputToGraphviz = new OutputStreamWriter(gv.getOutputStream())) {
             viz.visualize(outputToGraphviz);
         }
+        
         
         ProcessOutputDumper dump = new ProcessOutputDumper( gv.getInputStream(), outputPath);
         ByteArrayOutputStream errorStrm = new ByteArrayOutputStream();

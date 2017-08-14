@@ -132,10 +132,11 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
 		@Override
 		public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
 			out.println( node(nodeId(nd))
-						.label( idLabel(nd) + nd.getCalleeNode().getId())
+						.label( idLabel(nd) + sanitizeIdDisplay(nd.getCalleeNode().getId()))
 						.shape(GvNode.Shape.cds)
 						.fillColor("#BBBBFF")
 						.gv() );
+            advanceTo(nd.getCalleeNode());
             if ( showEndNodes || !(nd.getNextNode() instanceof EndNode) ) {
                 advanceTo(nd.getNextNode());
                 out.println( edge(nodeId(nd), nodeId(nd.getNextNode())).gv() );

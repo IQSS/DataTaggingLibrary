@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Checks that every node in the flow chart set
@@ -27,7 +28,7 @@ import java.util.Set;
  * node.
  * @author Naomi
  */
-public class UnreachableNodeValidator extends VoidVisitor implements DecisionGraphValidator {
+public class UnreachableNodeValidator implements DecisionGraphValidator {
     
     private final List<ValidationMessage> validationMessages = new LinkedList<>();
     private final Set<String> reachedNodeIds = new HashSet<>();
@@ -45,9 +46,11 @@ public class UnreachableNodeValidator extends VoidVisitor implements DecisionGra
         flowChartNodeIds.addAll( dg.nodeIds() );
 
         flowChart = dg;
-        dg.getStart().accept(this);
-        flowChartNodeIds.removeAll(reachedNodeIds);
-        flowChartNodeIds.remove("[SYN-END]");
+        ReachableNodesCollector nc = new ReachableNodesCollector();
+        dg.getStart().accept(nc);
+        nc.getCollectedNodes().stream().map(n->n.getId()).forEach( flowChartNodeIds::remove );
+        Set<String> flowChartNodeIdsEnds = flowChartNodeIds.stream().filter(n->n.endsWith("[SYN-END]")).collect(toSet());
+        flowChartNodeIds.removeAll(flowChartNodeIdsEnds);
 
         if (!flowChartNodeIds.isEmpty()) {
             flowChartNodeIds.forEach((nodeId) -> {
@@ -60,117 +63,6 @@ public class UnreachableNodeValidator extends VoidVisitor implements DecisionGra
         return validationMessages;
     }
     
-    @Override
-    public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
-        if (!reachedNodeIds.contains(nd.getId())) {
-            reachedNodeIds.add(nd.getId());
-        }
-        for (ConsiderAnswer answer : nd.getAnswers()) {
-            if (!reachedNodeIds.contains(nd.getNodeFor(answer).getId())) {
-                nd.getNodeFor(answer).accept(this);
-            }
-        }
-        Node elseNode = nd.getElseNode();
-        if ( ! reachedNodeIds.contains(elseNode.getId()) ) {
-            elseNode.accept(this);
-        }
-    }
-    /**
-     * Check that the ask node and its answer nodes have not already been
-     * traversed before iterating and recursing.
-     */
-    @Override
-    public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
-        if (!reachedNodeIds.contains(nd.getId())) {
-            reachedNodeIds.add(nd.getId());
-        }
-        for (Answer answer : nd.getAnswers()) {
-            if (!reachedNodeIds.contains(nd.getNodeFor(answer).getId())) {
-                nd.getNodeFor(answer).accept(this);
-            }
-        }
-    }
-
-    /**
-     * Check that the set node and the next node have not already been
-     * traversed before recursing.
-     */
-    @Override
-    public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
-        if (!reachedNodeIds.contains(nd.getId())) {
-            reachedNodeIds.add(nd.getId());
-        }
-        if (!reachedNodeIds.contains(nd.getNextNode().getId())) {
-            nd.getNextNode().accept(this);
-        }
-    }
-
-    /**
-     * Check that the reject node has not already been
-     * traversed.
-     */
-    @Override
-    public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-        if (!reachedNodeIds.contains(nd.getId())) {
-            reachedNodeIds.add(nd.getId());
-        }
-    }
-
-    /**
-     * Check that the call node, its callee node, and the next node have not
-     * already been traversed before recursing.
-     */
-    @Override
-    public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
-        if (!reachedNodeIds.contains(nd.getId())) {
-            reachedNodeIds.add(nd.getId());
-        }
-        if (!reachedNodeIds.contains(nd.getCalleeNode()) && nd.getCalleeNode() != null) {
-            reachedNodeIds.add(nd.getCalleeNode().getId());
-            nd.getCalleeNode().accept(this);
-        }
-        if (!reachedNodeIds.contains(nd.getNextNode().getId())) {
-            nd.getNextNode().accept(this);
-        }
-    }
-
-    /**
-     * Check that the todo node and the next node have not already been
-     * traversed before recursing.
-     */
-    @Override
-    public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
-        if (!reachedNodeIds.contains(nd.getId())) {
-            reachedNodeIds.add(nd.getId());
-        }
-        if (!reachedNodeIds.contains(nd.getNextNode().getId())) {
-            nd.getNextNode().accept(this);
-        }
-    }
-
-    /**
-     * Check that the end node has not already been
-     * traversed.
-     */
-    @Override
-    public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
-        if (!reachedNodeIds.contains(nd.getId())) {
-            reachedNodeIds.add(nd.getId());
-        }
-    }
-    
-    @Override
-    public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-        if (!reachedNodeIds.contains(nd.getId())) {
-            reachedNodeIds.add(nd.getId());
-        }
-        if (!reachedNodeIds.contains(nd.getStartNode().getId())) {
-            nd.getStartNode().accept(this);
-        }
-        if (!reachedNodeIds.contains(nd.getNextNode().getId())) {
-            nd.getNextNode().accept(this);
-        }
-    }
-    
+   
     
 }

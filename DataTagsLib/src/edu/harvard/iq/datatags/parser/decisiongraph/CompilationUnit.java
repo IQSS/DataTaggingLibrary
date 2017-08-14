@@ -22,6 +22,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
@@ -35,6 +36,7 @@ import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationRefere
 import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
 import edu.harvard.iq.datatags.tools.NodeValidationMessage;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
+import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -46,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Collectors;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.error.ParserException;
 
@@ -59,17 +62,21 @@ import org.codehaus.jparsec.error.ParserException;
  */
 public class CompilationUnit {
 
-    private Map<List<String>, List<String>> fullyQualifiedSlotName;
-    private final Map<String, String> callToCalleeID = new HashMap<>();
-
-    private CompoundSlot topLevelType;
-
-    private DecisionGraph product;
-    private final List<ValidationMessage> validationMessages = new LinkedList<>();
-    private final Map<String, CompilationUnit> nameToCU = new HashMap<>();
     private ParsedFile parsedFile;
     private final Path sourcePath;
-    private Node startNode;
+    
+    private CompoundSlot topLevelType;
+    private DecisionGraph product;
+    private final List<ValidationMessage> validationMessages = new LinkedList<>();
+    
+    private Map<List<String>, List<String>> fullyQualifiedSlotName;
+    /** 
+     * Maps a name of a compilation unit (as defined by the import statement) 
+     * to the actual compilation unit.
+     */
+    private final Map<String, CompilationUnit> nameToCU = new HashMap<>();
+    private final Map<String, String> callToCalleeID = new HashMap<>();
+    
     
     /**
      * Decision-graph wide end node (added synthetically).
@@ -79,19 +86,26 @@ public class CompilationUnit {
     private final String source;
     
     public CompilationUnit(String aSource) {
-        source = aSource;
-        sourcePath = null;
+        this(aSource, null);
     }
     
     public CompilationUnit(Path aSource) throws IOException {
-        sourcePath = aSource;
-        source = new String(Files.readAllBytes(sourcePath), StandardCharsets.UTF_8);
+        this(new String(Files.readAllBytes(aSource), StandardCharsets.UTF_8), aSource);
+    }
+    
+    CompilationUnit(String aSource, Path aPath) {
+        source = aSource;
+        sourcePath = aPath;
     }
     
     private void parse() throws DataTagsParseException{
         try{
             Parser<ParsedFile> parser = DecisionGraphTerminalParser.buildParser( DecisionGraphRuleParser.graphParser() );
             parsedFile = parser.parse(source);
+            parsedFile.getImports().forEach(im -> im.setInitalPath(sourcePath));
+            parsedFile.getImports().stream().collect(Collectors.groupingBy(AstImport::getName)).
+                                entrySet().stream().filter(e -> e.getValue().size() > 1).
+                                forEach(e -> validationMessages.add(new ValidationMessage(Level.ERROR, "Duplicate import name " + e.getKey() + ", at path - "  + sourcePath)));
             new NodeIdAdder().addIds(parsedFile.getAstNodes());
         }
         catch ( ParserException pe ){
@@ -122,18 +136,18 @@ public class CompilationUnit {
         astValidators.stream().flatMap( v -> v.validate(parsedFile.getAstNodes()).stream())
                                     .forEach(validationMessages::add);
         
-        startNode = buildNodes(parsedFile.getAstNodes(), endAll);
-        product.setStart(product.getNode(C.head(parsedFile.getAstNodes()).getId()));
+        product.setStart(buildNodes(parsedFile.getAstNodes(), endAll));
         
+        product.nodes().forEach(n->n.setCuPath(sourcePath));
     }
 
     public void compile(CompoundSlot aTopLevelType, EndNode globalEndNode, 
-            List<DecisionGraphAstValidator> astValidators) throws DataTagsParseException
-    {
+                          List<DecisionGraphAstValidator> astValidators) throws DataTagsParseException {
         DecisionGraphCompiler dgc = new DecisionGraphCompiler();
         Map<List<String>, List<String>> aFullyQualifiedSlotName = dgc.buildTypeIndex(aTopLevelType);
         compile(aFullyQualifiedSlotName, aTopLevelType, globalEndNode, astValidators);
-    }    
+    }   
+    
     private SlotType findSlot(List<String> astSlot, CompoundValue topValue, SetNodeValueBuilder valueBuilder) {
         SlotType slot;
 
@@ -212,7 +226,7 @@ public class CompilationUnit {
         try {
             return astNodes.isEmpty()
                     ? defaultNode
-                    : C.head(astNodes).accept(new AstNode.Visitor<Node>() {
+                    : C.head(astNodes).accept(new AstNode.Visitor<Node>() {   // TODO this creates an instance for each node. Can't we re-use it?
 
                         @Override
                         // build consider node from ast-consider-node 
@@ -392,8 +406,5 @@ public class CompilationUnit {
         return sourcePath;
     }
     
-     public Node getStartNode() {
-        return startNode;
-    }
 
 }
