@@ -159,20 +159,18 @@ public class LocalizationLoader {
         
         // load nodes that have localization ids.
         model.getDecisionGraph().nodes().forEach( node -> {
-           String[] comps = node.getId().split(">");
-           String nodeName = (comps.length==1) ? comps[0] : comps[comps.length-1];
-           Path nodePath = node.getCuPath();
-           nodePath = model.getMetadata().getModelDirectoryPath().relativize(nodePath);
+           String nodeName = node.getId().substring(node.getId().indexOf("]")+1, node.getId().length());
            
+           Path relativePath = Paths.get(node.getId().substring(1, node.getId().indexOf("]")));
            //delete the .dg from file name
-            String fileName = nodePath.toString();
-            fileName = fileName.endsWith(".dg") ? fileName.substring(0, fileName.length() - 3) : fileName;
-            nodePath = Paths.get(fileName);
+           String fileName = relativePath.toString();
+           fileName = fileName.endsWith(".dg") ? fileName.substring(0, fileName.length() - 3) : fileName;
+           relativePath = Paths.get(fileName);
            
-           if ( nodePath != null ) {
+           if ( relativePath != null ) {
                for ( String ext : new String[]{".md", ".mdown", ".txt"}) {
-                   Path attempt = (comps.length==1) ? localizationPath.resolve(NODE_DIRECTORY_NAME).resolve(nodePath.resolve(nodeName + ext)) 
-                                                    : localizationPath.resolve(NODE_DIRECTORY_NAME).resolve(nodePath.resolve(comps[comps.length-1]  + ext));
+                   Path attempt = localizationPath.resolve(NODE_DIRECTORY_NAME).resolve(relativePath.resolve(nodeName + ext)) ;
+                                                    
                    if ( Files.exists(attempt) ) {
                        loc.addNodeText(node.getId(), readAll(attempt));
                        break;   

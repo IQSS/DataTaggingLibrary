@@ -20,7 +20,6 @@ import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.types.SlotType;
 import edu.harvard.iq.datatags.model.types.ToDoSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
-import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.datatags.util.StringHelper.nonEmpty;
 import java.io.BufferedReader;
@@ -234,7 +233,6 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
         rnr.print(" - Creating node files");
         
         final Path nodesDir = localizationPath.resolve(LocalizationLoader.NODE_DIRECTORY_NAME);
-        final PolicyModelData metaData = rnr.getModel().getMetadata();
         if ( ! Files.exists(nodesDir) ) {
             Files.createDirectory(nodesDir);
         }
@@ -255,22 +253,22 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
                                                              .append("\n")
                     );
                 }
-                createNodeLocalizationFile(nodesDir, nd, sb.toString(), metaData);
+                createNodeLocalizationFile(nodesDir, nd, sb.toString());
             }
 
             @Override
             public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-                createNodeLocalizationFile(nodesDir, nd, nd.getTitle(), metaData);
+                createNodeLocalizationFile(nodesDir, nd, nd.getTitle());
             }
 
             @Override
             public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-                createNodeLocalizationFile(nodesDir, nd, nd.getReason(), metaData);
+                createNodeLocalizationFile(nodesDir, nd, nd.getReason());
             }
 
             @Override
             public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
-                createNodeLocalizationFile(nodesDir, nd, nd.getTodoText(), metaData);
+                createNodeLocalizationFile(nodesDir, nd, nd.getTodoText());
             }
 
             @Override
@@ -292,12 +290,8 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
         rnr.println("..Done");
     }
     
-    private void createNodeLocalizationFile( Path nodesDir, Node node, String content, 
-                                                    PolicyModelData pmd) {
-        Path pmdPath = pmd.getModelDirectoryPath();
-        Path nodePath = node.getCuPath();
-        Path relativePath = pmdPath.relativize(nodePath);
-        
+    private void createNodeLocalizationFile( Path nodesDir, Node node, String content) {
+        Path relativePath = Paths.get(node.getId().substring(1, node.getId().indexOf("]")));
         //delete the .dg from file name
         String fileName = relativePath.toString();
         fileName = fileName.endsWith(".dg") ? fileName.substring(0, fileName.length() - 3) : fileName;
@@ -312,9 +306,9 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
                 Logger.getLogger(CreateLocalizationCommand.class.getName()).log(Level.SEVERE, "Error creating directory for node localizatoin", ex);
             }
         }
-
-        String[] nodesCu = node.getId().split(">");
-        nodeDir = secFol.resolve(nodesCu[nodesCu.length-1] + ".md");
+        
+        String nodeName = node.getId().substring(node.getId().indexOf("]")+1, node.getId().length());
+        nodeDir = secFol.resolve(nodeName + ".md");
         if ( nodeDir != null ) {
             createFileWithContent(nodeDir, content);
         }
