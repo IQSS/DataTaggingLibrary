@@ -46,13 +46,18 @@ public class GvNode extends GvObject<GvNode> {
     public GvNode fillColor( String aColor ) {
         return add( "fillcolor", aColor );
     }
+    
     public GvNode style( Style aStyle ) {
         return add( "style", aStyle.name() );
     }
+    
     public GvNode peripheries( int count ) {
         return add( "peripheries", Integer.toString(count) );
     }
     
+    public GvNode width( double sz ) {
+        return add("width", Double.toString(sz) );
+    }
     
     @Override
     protected String gvTitle() {

@@ -7,7 +7,6 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.After;
