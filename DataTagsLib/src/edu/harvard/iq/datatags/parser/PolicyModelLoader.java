@@ -14,7 +14,7 @@ import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
 import edu.harvard.iq.datatags.tools.DecisionGraphValidator;
 import edu.harvard.iq.datatags.tools.DuplicateNodeAnswerValidator;
-import edu.harvard.iq.datatags.tools.RepeatIdValidator;
+import edu.harvard.iq.datatags.tools.DuplicateIdValidator;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import edu.harvard.iq.datatags.tools.processors.YesNoAnswersSorter;
@@ -32,7 +32,7 @@ import java.util.List;
  * Loads policy models from {@link PolicyModelData}. Each loader has a list of
  * validators and post-processors that is runs in the appropriate places.
  * 
- * Use the class' statis methods to obtain instances that fit certain contexts 
+ * Use the class' static methods to obtain instances that fit certain contexts 
  * (e.g. dev, production).
  * 
  * @author michael
@@ -50,7 +50,7 @@ public class PolicyModelLoader {
         PolicyModelLoader res = new PolicyModelLoader();
         
         res.add( new DuplicateNodeAnswerValidator() );
-        res.add( new RepeatIdValidator() );
+        res.add(new DuplicateIdValidator() );
         
         res.add( new UnreachableNodeValidator() );
         
@@ -64,7 +64,7 @@ public class PolicyModelLoader {
         PolicyModelLoader res = new PolicyModelLoader();
         
         res.add( new DuplicateNodeAnswerValidator() );
-        res.add( new RepeatIdValidator() );
+        res.add(new DuplicateIdValidator() );
         
         
         res.add( new EndNodeOptimizer() );
@@ -124,22 +124,23 @@ public class PolicyModelLoader {
                 }
                 model.setDecisionGraph(dg);
                 
+                // Load localizations
+                Path localizations;
+                try {
+                    localizations = ciResolve(data.getMetadataFile().getParent(), LocalizationLoader.LOCALIZATION_DIRECTORY_NAME);
+                    if ( localizations != null ) {
+                        Files.list(localizations).filter(Files::isDirectory)
+                                                 .map(p->p.getFileName().toString())
+                                                 .forEach(res.getModel()::addLocalization);
+                    }
+                } catch (IOException ex) {
+                    res.addMessage( new ValidationMessage(Level.WARNING, "IO Error reading localizations: " + ex.getMessage()));
+                }
+
             } else {
                 res.addMessage( new ValidationMessage(Level.ERROR, "Failed to create decision graph; see previous errors.") );
             }
             
-            // Load localizations
-            Path localizations;
-            try {
-                localizations = ciResolve(data.getMetadataFile().getParent(), LocalizationLoader.LOCALIZATION_DIRECTORY_NAME);
-                if ( localizations != null ) {
-                    Files.list(localizations).filter(Files::isDirectory)
-                                             .map(p->p.getFileName().toString())
-                                             .forEach(res.getModel()::addLocalization);
-                }
-            } catch (IOException ex) {
-                res.addMessage( new ValidationMessage(Level.WARNING, "IO Error reading localizations: " + ex.getMessage()));
-            }
             
         } catch (NoSuchFileException ex) {
             res.addMessage( new ValidationMessage(Level.ERROR, "File " + ex.getMessage() + " cannot be found."));

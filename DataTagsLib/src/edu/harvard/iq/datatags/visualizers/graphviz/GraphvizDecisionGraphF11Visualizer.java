@@ -94,8 +94,8 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
 					    .gv());
             
 			for ( Answer ans : nd.getAnswers() ) {
-                String ansId = nodeId(nd) + "_" + sanitizeId(ans.getAnswerText());
-                out.println( answerNodeGv(ansId, ans.getAnswerText()) );
+                String ansId = nodeId(nd) + "_to_" + nodeId(nd.getNodeFor(ans));
+                out.println( answerNodeGv(ansId, wrapAt(ans.getAnswerText(), 35)) );
 				out.println( edge(nodeId(nd), ansId).arrowhead(GvEdge.ArrowType.None).gv() );
              
                 Node nextNode = nd.getNodeFor(ans);
@@ -116,7 +116,8 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
         private String answerNodeGv( String nodeId, String ans ) {
             String answerText = ans.toLowerCase();
             GvNode nodeBld = node(nodeId).label(ans)
-                    .shape(GvNode.Shape.circle);
+                    .shape(GvNode.Shape.circle)
+                    .width(0.7);
             switch( answerText ) {
                 case "yes":
                     return nodeBld.label("Yes").fontColor(NO_NODE_FILL_COLOR)
@@ -267,6 +268,7 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
             wrt.println("}");
         });
                 
+        wrt.println( makeSameRank(subchartHeads) );
 		wrt.println("}");
 		
 	}

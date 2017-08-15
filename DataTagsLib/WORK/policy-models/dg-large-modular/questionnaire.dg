@@ -1,6 +1,6 @@
 <*
-	DISCLAIMER:
-	NOT TO BE USED AS A LEGAL ADVICE
+DISCLAIMER:
+NOT TO BE USED AS A LEGAL ADVICE
 *>
 [#import ppra:    ppra.dg    ]
 [#import medical: medical.dg ]
@@ -8,60 +8,61 @@
 [#import dppa:    dppa.dg    ]
 [#import gov:     government-records.dg ]
 [>global-start< ask:
-	{text: Do the data concern living persons?}
+  {text: Do the data concern living persons?}
   {answers:
     {yes:
       [set: Code=green] <-- Explicit settings of colors is going away soon!
-			[>filter-medical< ask:
-				{text: Do the data contain health or medical information?}
-			  {answers:
-				 {yes: [call: medical>start]}}
-			 ]
-			 [>filter-ppra< ask:
-			  {text: Was the data collected from students in an elementary or secondary school?}
-			  {answers:
-			    {yes: [call: ppra>start]}
-			  }
-			]
-			[>filter-ferpa< ask:
-			  {text: Do the data contain any information derived from ministry of education data?}
-			  {answers:
-			    {yes: [call: ferpa>start]}
-			}]
-			[call: gov>Gov1]
-			[call: dppa>DPPA1]
-      [>futures< todo: Future additions go here.]}
+      [>filter-medical< ask:
+        {text: Do the data contain health or medical information?}
+        {answers:
+          {yes: [call: medical>start]}}
+        ]
+        [>filter-ppra< ask:
+          {text: Was the data collected from students in an elementary or secondary school?}
+          {answers:
+            {yes: [call: ppra>start]}
+          }
+        ]
+        [>filter-ferpa< ask:
+          {text: Do the data contain any information derived from ministry of education data?}
+          {answers:
+            {yes: [call: ferpa>start]}
+          }]
+        [call: gov>Gov1]
+        [call: dppa>DPPA1]
+        [>futures< todo: Future additions go here.]}
       {no:  [set: Code=blue; Identity=noPersonData] }
-}]
-[call: dua]
-[end]
+    }]
+  [call: dua]
+  [end]
 
-[>dua< section:
-  {title: Data Use Agreements}
-	[>dua-ext< todo: Data use agreements]
-	[>duaTimeLimit< ask:
-		{text: Is there any reason why we cannot store the data indefinitely? }
-			{answers:
-				{no: [set: TimeLimit=none] }
-				{yes:
-					[ask:
-						{text:For how long should we keep the data?}
-						{answers:
-							{ indefinitely: [set: TimeLimit=none]  }
-							{ 50 years:     [set: TimeLimit=_50yr] }
-							{ 5 years:      [set: TimeLimit=_5yr]  }
-							{ 2 years:      [set: TimeLimit=_2yr]  }
-							{ 1 year:       [set: TimeLimit=_1yr]  }
-						}]}}]
-	[>duaAdditional< ask:
-		{text: Did the data have any restrictions on sharing, e.g. stated in an agreement or policy statement?}
-		{answers:
-			{yes: [set: ContractOrPolicy=yes]}
-			{no:  [set: ContractOrPolicy=no]}}
-	]
+  [>dua< section:
+    {title: Data Use Agreements}
+    [>dua-ext< todo: Data use agreements]
+    [>duaTimeLimit< ask:
+      {text: Is there any reason why we cannot store the data indefinitely? }
+      {answers:
+        {no: [set: TimeLimit=none] }
+        {yes:
+          [ask:
+            {text:For how long should we keep the data?}
+            {answers:
+              { indefinitely: [set: TimeLimit=none]  }
+              { 50 years:     [set: TimeLimit=_50yr] }
+              { 5 years:      [set: TimeLimit=_5yr]  }
+              { 2 years:      [set: TimeLimit=_2yr]  }
+              { 1 year:       [set: TimeLimit=_1yr]  }
+            }]}}]
+  [>duaAdditional< ask:
+    {text: Did the data have any restrictions on sharing, e.g. stated in an agreement or policy statement?}
+    {answers:
+      {yes: [set: ContractOrPolicy=yes]}
+      {no:  [set: ContractOrPolicy=no]}
+    }
+  ]
 ]
 [end]
 <*
-	DISCLAIMER:
-	NOT TO BE USED AS A LEGAL ADVICE
+DISCLAIMER:
+NOT TO BE USED AS A LEGAL ADVICE
 *>

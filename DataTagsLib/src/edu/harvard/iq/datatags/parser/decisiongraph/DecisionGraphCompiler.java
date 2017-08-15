@@ -38,9 +38,14 @@ public class DecisionGraphCompiler {
     public static final String MAIN_CU_ID = "<main>";
     
     /**
+     * Id of the synthetic [end] node added to all compiled graphs.
+     */
+    public static final String SYNTHETIC_END_NODE_ID = "[SYN-END]";
+    
+    /**
      * "Miranda node" - added to nodes that do not have their own end node.
      */
-    EndNode endAll = new EndNode("[SYN-END]");
+    EndNode endAll = new EndNode(SYNTHETIC_END_NODE_ID);
 
     /**
      * Maps a name of a slot to its fully qualified version (i.e from the top

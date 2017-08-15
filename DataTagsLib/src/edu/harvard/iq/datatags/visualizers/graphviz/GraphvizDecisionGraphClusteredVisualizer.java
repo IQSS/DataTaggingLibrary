@@ -194,8 +194,12 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
             chartHead.accept(np);
             wrt.println("}");
         });
-
-
+        
+        wrt.println( makeSameRank(subchartHeads) );
+        
+        wrt.println("edge [color=\"#CCCCFF\", penwidth=2, style=dotted, arrowhead=open]");
+        drawCallLinks(wrt);
+        
         wrt.println("}");
 
     }

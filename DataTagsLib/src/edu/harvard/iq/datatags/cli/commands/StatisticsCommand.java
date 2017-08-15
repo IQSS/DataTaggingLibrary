@@ -6,7 +6,11 @@ import edu.harvard.iq.datatags.model.types.AtomicSlot;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.types.SlotType;
 import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import static edu.harvard.iq.datatags.util.CollectionHelper.C;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Prints statistics about the questionnaire.
@@ -31,6 +35,18 @@ public class StatisticsCommand implements CliCommand {
         rnr.println("Slot count: %d", cnt.slotsCount);
         rnr.println("Value count: %d", cnt.valuesCount);
         rnr.println("Decision graph nodes: %d", rnr.getModel().getDecisionGraph().nodeIds().size() );
+        final Map<Class<?>, AtomicInteger> countsByClass = new HashMap<>();
+        rnr.getModel().getDecisionGraph().nodes().forEach( 
+                nd -> countsByClass.computeIfAbsent(nd.getClass(), c -> new AtomicInteger(0)).incrementAndGet() );
+        
+        final Map<String, Integer> counts = new HashMap<>();
+        countsByClass.entrySet().forEach( ent -> {
+            String className = C.last(ent.getKey().getName().split("\\."));
+            counts.put(className, ent.getValue().intValue());
+        });
+        
+        counts.entrySet().stream().sorted((e1,e2)->e2.getValue().compareTo(e1.getValue()))
+                .forEach( ent -> rnr.println("  %s\t%d", ent.getKey(), ent.getValue()));
     }
     
 }

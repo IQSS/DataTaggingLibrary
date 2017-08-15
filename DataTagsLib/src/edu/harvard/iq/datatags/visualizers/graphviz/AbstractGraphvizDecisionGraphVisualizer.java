@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Base class for {@link DecisionGraph} visualizers, that use Graphviz.
@@ -36,7 +37,6 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
     protected DecisionGraph theGraph;
     
     Set<String> visitedIds = new TreeSet<>();
-        
     
     protected abstract class AbstracctNodePainter extends Node.VoidVisitor {
         PrintWriter out;
@@ -177,7 +177,18 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
         }
         return candidates;
     }
-
+    
+    protected void drawCallLinks(PrintWriter out) {
+        for ( Node nd : getDecisionGraph().nodes() ) {
+            out.println("edge [constraint=false];");
+            if ( nd instanceof CallNode ) {
+                CallNode cn = (CallNode) nd;
+                out.println( GvEdge.edge(nodeId(cn), nodeId(cn.getCalleeNode())).gv() );
+            }
+        }
+    }
+    
+    
     public DecisionGraph getDecisionGraph() {
         return theGraph;
     }
@@ -193,5 +204,13 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
     String sanitizeIdDisplay(String s){
         return s.replaceAll("\\\\", "\\\\\\\\");
     }
-   
+    
+    protected String makeSameRank( Set<Node> nodes ) {
+        StringBuilder sb = new StringBuilder();
+        sb.append( "{rank=same ");
+        sb.append( nodes.stream().map( nd->sanitizeId(nd.getId()) ).collect( joining(", ")));
+        sb.append("}");
+        
+        return sb.toString();
+    }
 }
