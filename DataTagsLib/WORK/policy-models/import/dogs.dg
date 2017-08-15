@@ -1,3 +1,9 @@
+[>WW< ask:
+  {text: Noname node #1 }
+  {answers:
+      {yes: [todo: first TODO in dogs.dg]}
+  }
+]
 [>dog< section:
   {title: Dogs!}
   [>q-dogType< ask:

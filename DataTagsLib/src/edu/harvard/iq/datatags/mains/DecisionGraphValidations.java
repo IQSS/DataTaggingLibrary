@@ -13,7 +13,7 @@ import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
 import edu.harvard.iq.datatags.tools.NodeValidationMessage;
-import edu.harvard.iq.datatags.tools.RepeatIdValidator;
+import edu.harvard.iq.datatags.tools.DuplicateIdValidator;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizGraphNodeAstVisualizer;
@@ -66,7 +66,7 @@ public class DecisionGraphValidations {
             System.out.println("===============");
             
             System.out.println("Validating repeating ids");
-            RepeatIdValidator riv = new RepeatIdValidator();
+            DuplicateIdValidator riv = new DuplicateIdValidator();
             List<ValidationMessage> repeatIdMessages = riv.validate(refs);
             if (repeatIdMessages.size() > 0) {
                 System.out.println(repeatIdMessages);

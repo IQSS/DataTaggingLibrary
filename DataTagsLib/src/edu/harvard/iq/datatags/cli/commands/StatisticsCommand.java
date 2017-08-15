@@ -39,10 +39,14 @@ public class StatisticsCommand implements CliCommand {
         rnr.getModel().getDecisionGraph().nodes().forEach( 
                 nd -> countsByClass.computeIfAbsent(nd.getClass(), c -> new AtomicInteger(0)).incrementAndGet() );
         
+        final Map<String, Integer> counts = new HashMap<>();
         countsByClass.entrySet().forEach( ent -> {
             String className = C.last(ent.getKey().getName().split("\\."));
-            rnr.println( " %s\t%d", className, ent.getValue().intValue() );
+            counts.put(className, ent.getValue().intValue());
         });
+        
+        counts.entrySet().stream().sorted((e1,e2)->e2.getValue().compareTo(e1.getValue()))
+                .forEach( ent -> rnr.println("  %s\t%d", ent.getKey(), ent.getValue()));
     }
     
 }
