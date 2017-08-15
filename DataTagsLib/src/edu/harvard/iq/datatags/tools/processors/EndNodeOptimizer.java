@@ -13,7 +13,11 @@ import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
+import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -34,8 +38,13 @@ public class EndNodeOptimizer implements DecisionGraphProcessor {
     public DecisionGraph process(final DecisionGraph fcs) {
         
         // create the end node
-        final EndNode end = new EndNode("[#" + fcs.getId() + "-end]" );
-        fcs.add( end );
+        EndNode tempEnd = (EndNode) fcs.getNode(DecisionGraphCompiler.SYNTHETIC_END_NODE_ID);
+        if ( tempEnd == null ) {
+            tempEnd = new EndNode(DecisionGraphCompiler.SYNTHETIC_END_NODE_ID);
+            fcs.add( tempEnd );
+        }
+        final EndNode end = tempEnd;
+        final List<Node> toRemove = new ArrayList<>();
         
         // now traverse the chart and replace all.
         Node.VoidVisitor traversor = new Node.VoidVisitor() {
@@ -79,8 +88,13 @@ public class EndNodeOptimizer implements DecisionGraphProcessor {
 
             @Override
             public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {}
+            
             @Override
-            public void visitImpl(EndNode nd) throws DataTagsRuntimeException {}
+            public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
+                if ( AstNodeIdProvider.isAutoId(nd.getId()) ) {
+                    toRemove.add(nd);
+                }
+            }
             
             @Override 
             public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{} 
@@ -94,8 +108,7 @@ public class EndNodeOptimizer implements DecisionGraphProcessor {
             }
             
             private boolean shouldReplace( Node n ) {
-                return ( (n.getId().startsWith("[#"))
-                            && ( n instanceof EndNode ) );
+                return ( ( n instanceof EndNode ) && AstNodeIdProvider.isAutoId(n.getId()));
             }
         };
         
@@ -111,6 +124,8 @@ public class EndNodeOptimizer implements DecisionGraphProcessor {
                 n.accept(traversor);
             }
         }
+        
+        toRemove.forEach( nd -> fcs.remove(nd) );
         
         return fcs;
     }
