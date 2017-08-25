@@ -12,7 +12,6 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.exceptions.BadLookupException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,7 +50,7 @@ public class SetNodeValueBuilder implements AstSetNode.Assignment.Visitor {
 
             @Override
             public void visitAggregateSlotImpl(AggregateSlot t) {
-                throw new RuntimeException("Slot " + aa.getSlot() + " is aggregate, not atomic. Use ``+='' .");
+                throw new RuntimeException("Slot " + aa.getSlot() + " is aggregate, not atomic. Use ``+='' to assign a value to it.");
             }
 
             @Override
@@ -81,7 +80,7 @@ public class SetNodeValueBuilder implements AstSetNode.Assignment.Visitor {
         valueType.accept(new SlotType.VoidVisitor() {
             @Override
             public void visitAtomicSlotImpl(AtomicSlot t) {
-                throw new RuntimeException("Slot " + aa.getSlot() + " is aggregate, not atomic. Use ``+='' .");
+                throw new RuntimeException("Slot " + aa.getSlot() + " is compound, not aggregate. Can't assign values here.");
             }
 
             @Override

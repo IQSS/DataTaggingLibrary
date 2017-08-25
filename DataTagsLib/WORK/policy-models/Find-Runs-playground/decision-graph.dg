@@ -1,0 +1,22 @@
+[set: Atomic=val0]
+[ask:
+  {text: Set atomic }
+  {answers:
+    {to 1: [set: Atomic=val1]}
+    {to 2: [set: Atomic=val2]}
+    {skip:}
+  }
+]
+[>agg< ask:
+  {text: Agg options}
+  {answers:
+    {none:}
+    {one: [set: Aggregate += optA]}
+    {some: [set: Aggregate += optA,optB]}
+    {all: [set: Aggregate += optA,optB,optC]}
+  }
+]
+[set: Compound/Comp1 = c1_2]
+<-- [>idSec< section:
+<--   {title: Setting the compound}
+<-- ]
