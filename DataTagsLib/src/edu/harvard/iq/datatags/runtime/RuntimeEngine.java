@@ -10,6 +10,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.io.StringMapFormat;
 import edu.harvard.iq.datatags.model.PolicyModel;
+import edu.harvard.iq.datatags.model.ValueInferrer;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
@@ -22,6 +23,7 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -66,6 +68,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     private Node currentNode;
     private RuntimeEngineStatus status = RuntimeEngineStatus.Idle;
     private Optional<Listener> listener = Optional.empty();
+    private Set<ValueInferrer> valueInferrer;
 
     private final Node.Visitor<Node> processNodeVisitor = new Node.Visitor<Node>() {
 
@@ -98,10 +101,27 @@ import java.util.concurrent.atomic.AtomicInteger;
         }
 
         @Override
-        public Node visit(SetNode nd) {
+            public Node visit(SetNode nd) {
             // Apply changes
             setCurrentTags(getCurrentTags().composeWith(nd.getTags()));
-
+            
+            //ValueInference
+            boolean first = true;
+            CompoundValue previousTags = getCurrentTags();
+            while( !getCurrentTags().equals(previousTags) || first ){
+                previousTags = getCurrentTags();
+                first = false;
+                valueInferrer.forEach(value -> {
+                    value.getInferencePairs().forEach(pair -> {
+                        Boolean isBigger = (pair.getMinimalCoordinate().intersectSlotWith(getCurrentTags()) != null) ? 
+                                pair.getMinimalCoordinate().intersectSlotWith(getCurrentTags()).isBigger(getCurrentTags().intersectSlotWith(pair.getMinimalCoordinate())) :
+                                false;
+                        if (isBigger != null && isBigger){
+                            setCurrentTags(getCurrentTags().composeWith(pair.getInferredValue()));
+                        }
+                    });
+                });
+            }
             // Off we go to the next node.
             return nd.getNextNode();
         }
@@ -148,7 +168,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         }
         
     };
-
+    
     public CompoundValue getCurrentTags() {
         return currentTags;
     }
@@ -339,8 +359,15 @@ import java.util.concurrent.atomic.AtomicInteger;
     public void setModel(PolicyModel model) {
         this.model = model;
         decisionGraph = model.getDecisionGraph();
+        valueInferrer = model.getValueInferrers();
         listener.ifPresent( l->l.runTerminated(this) );
         setStatus(RuntimeEngineStatus.Idle);
+        
     }
+    
+//    private boolean isStricter(CompoundValue first, CompoundValue second){
+////        TagValue.Visitor compare = new TagValue
+//          second.getNonEmptySubSlotTypes().;
+//    }
     
 }

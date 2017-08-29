@@ -3,9 +3,12 @@ package edu.harvard.iq.datatags.parser;
 import edu.harvard.iq.datatags.externaltexts.LocalizationLoader;
 import static edu.harvard.iq.datatags.io.FileUtils.ciResolve;
 import edu.harvard.iq.datatags.model.PolicyModel;
+import edu.harvard.iq.datatags.model.ValueInferrer;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.parser.Inference.ValueInferenceParseResult;
+import edu.harvard.iq.datatags.parser.Inference.ValueInferenceParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
@@ -27,6 +30,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Loads policy models from {@link PolicyModelData}. Each loader has a list of
@@ -139,6 +143,20 @@ public class PolicyModelLoader {
 
             } else {
                 res.addMessage( new ValidationMessage(Level.ERROR, "Failed to create decision graph; see previous errors.") );
+            }
+            
+            try {
+                //load valueInferrers
+                if (data.getValueInferrersPath() != null){
+                    ValueInferenceParseResult inferenceParseResult = new ValueInferenceParser(spaceRoot).parse(data.getValueInferrersPath());
+                    Set<ValueInferrer> valueInferrer =  inferenceParseResult.buildValueInference();
+                    model.setValueInferrers(valueInferrer);
+                    inferenceParseResult.getValidationMessages().forEach(res::addMessage);
+                }
+            } catch (SyntaxErrorException ex) {
+                res.addMessage( new ValidationMessage(Level.ERROR, "Syntax error in value inference: " + ex.getMessage()));
+            } catch (IOException ex) {
+                res.addMessage( new ValidationMessage(Level.ERROR, "Cannot load value inference: " + ex.getMessage()));
             }
             
             

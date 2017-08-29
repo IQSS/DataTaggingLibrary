@@ -3,9 +3,15 @@
 [>q-order< ask:
   {text: Do the dogs first?}
   {answers:
-      {yes: [call: dogs>dog]<*[call: cats>cat]*>}
-      {no:  <*[call: cats>cat]*>[call:dogs>dog]}
+      {yes: [call: dogs>dog][call: cats>cat]}
+      {no:  [call: cats>cat][call:dogs>dog]}
   }
+]
+[ask:
+	{text: Continue?}
+	{answers:
+		{yes: [todo:yes]}
+	}
 ]
 [todo: specify mice]
 [>sec-frogs< section:
@@ -13,5 +19,5 @@
   [todo: Add frog 1]
   [todo: Add frog 2]
 ]
-[set: Rice=Full]
+
 [end]

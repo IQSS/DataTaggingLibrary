@@ -12,7 +12,6 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.exceptions.BadLookupException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

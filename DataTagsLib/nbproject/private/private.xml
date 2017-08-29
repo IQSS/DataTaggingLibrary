@@ -3,14 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="Everyday"/>
-        <group>
-            <file>file:/C:/Users/user/Desktop/DataTagging/DataTaggingLibrary%20-%20import/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/PolicyModelLoader.java</file>
-            <file>file:/C:/Users/user/Desktop/DataTagging/DataTaggingLibrary%20-%20import/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/decisiongraph/DecisionGraphCompiler.java</file>
-            <file>file:/C:/Users/user/Desktop/DataTagging/DataTaggingLibrary%20-%20import/DataTaggingLibrary/DataTagsLib/test/edu/harvard/iq/datatags/parser/decisiongraph/DecisionGraphParseResultTest.java</file>
-            <file>file:/C:/Users/user/Desktop/DataTagging/DataTaggingLibrary%20-%20import/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/decisiongraph/CompilationUnit.java</file>
-        </group>
         <group name="DataTags">
             <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/tools/processors/EndNodeOptimizer.java</file>
+        </group>
+        <group>
+            <file>file:/C:/Users/user/Desktop/DataTagging/DataTaggingLibrary%20-%20import/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/Inference/ValueInferenceParseResult.java</file>
         </group>
     </open-files>
 </project-private>

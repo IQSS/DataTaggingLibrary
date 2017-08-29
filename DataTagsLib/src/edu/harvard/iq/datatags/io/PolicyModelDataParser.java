@@ -218,6 +218,11 @@ public class PolicyModelDataParser {
                     model.setDecisionGraphPath(xmlFilePath.resolveSibling(tmpStr));
                     break;
                     
+                case "valueInferrer":
+                    tmpStr = chars();
+                    model.setValueInferrersPath(xmlFilePath.resolveSibling(tmpStr));
+                    break;
+                    
                 case "reference":
                     currentReference.setText(chars());
                     break;

@@ -3,7 +3,9 @@ package edu.harvard.iq.datatags.model.values;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
 import edu.harvard.iq.datatags.model.types.SlotType;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -14,7 +16,7 @@ import java.util.function.Predicate;
  *
  * @author michael
  */
-public class CompoundValue extends TagValue {
+public class CompoundValue extends TagValue{
 
     private static final Resolver RESOLVER = new Resolver();
 
@@ -205,6 +207,65 @@ public class CompoundValue extends TagValue {
         }
         return result;
     }
+    
+    /**
+     * Returns a copy with only slots shared by {@code this} and {@code other}.
+     * For each slot type T, the intersection will occur <b>only</b> if both
+     * values are not null;
+     *
+     * @param other
+     * @return A new DataTags object, composed from {@code this} and
+     * {@code other}.
+     */
+    public CompoundValue intersectSlotWith (CompoundValue other) {
+        int count = 0;
+        if (other == null) {
+            return getOwnableInstance();
+        }
+        if (!getType().equals(other.getType())) {
+            throw new RuntimeException("Cannot compose values of different types (" + getType() + " and " + other.getType() + ")");
+        }
+
+        CompoundValue result = getType().createInstance();
+
+        // Composing. Note that for each type in types, at least one object has a non-null value
+        for (SlotType tp : C.intersectSet(getNonEmptySubSlotTypes(), other.getNonEmptySubSlotTypes())) {
+            TagValue ours = get(tp);
+            TagValue its = other.get(tp);
+            /* if both tags were found */
+            if ((ours != null) && (its != null)) {
+                result.set(ours.getOwnableInstance());
+                count++;
+            }
+        }
+        if (count == 0) {
+                return null;    
+        }
+        return result;
+    }
+    
+    public Boolean isBigger(CompoundValue other) {
+        List<TagValue> thisValues = new ArrayList<>();
+        List<TagValue> otherValues = new ArrayList<>();
+        this.getNonEmptySubSlotTypes().forEach(slot -> thisValues.add(get(slot)));
+        other.getNonEmptySubSlotTypes().forEach(slot -> otherValues.add(other.get(slot)));
+        Predicate<TagValue> predicate = v -> {
+                int vPosition = thisValues.indexOf(v);
+                if (v instanceof AtomicValue){
+                    AtomicValue thisValue = (AtomicValue) v;
+                    AtomicValue otherValue = (AtomicValue) otherValues.get(vPosition);
+                    return (thisValue.compareTo(otherValue) >= 0);
+                } else {
+                    AggregateValue thisValue = (AggregateValue) v;
+                    AggregateValue otherValue = (AggregateValue) otherValues.get(vPosition);
+                    return (thisValue.getValues().containsAll(otherValue.getValues()));
+                }};
+        boolean isBigger = thisValues.stream().allMatch(predicate);
+        boolean isSmaller = thisValues.stream().allMatch(predicate.negate());
+        if (isBigger) return Boolean.TRUE;
+        else if (isSmaller) return Boolean.FALSE;
+        else return null;
+    }
 
     /**
      * Returns a copy with only values types that {@code this} had and
@@ -263,6 +324,7 @@ public class CompoundValue extends TagValue {
         final CompoundValue other = (CompoundValue) obj;
         return super.equals(obj) && Objects.equals(this.fields, other.fields);
     }
+
 }
 
 class Resolver implements TagValue.Visitor<TagValue.Function> {
