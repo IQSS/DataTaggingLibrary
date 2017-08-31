@@ -64,7 +64,7 @@ public class CompoundValueTest {
         val.set( burrito );
         
         
-        assertTrue("A value should be a supertype of itself", val.isSupersetOf(val));
+        assertTrue("A value should be a superset of itself", val.isSupersetOf(val));
     }
     
     @Test
