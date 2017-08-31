@@ -1,5 +1,5 @@
 DataTags Language Tools
-============
+=======================
 
 ![DataTags Logo](DataTagsLib/DOCS/datatags-logo-large.png)
 

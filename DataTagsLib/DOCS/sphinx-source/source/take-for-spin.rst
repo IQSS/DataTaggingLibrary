@@ -14,18 +14,20 @@ of interest in the release:
   Contains some sample models so it's easier to get started. This file is optional.
 
 .. note::
-   CliRunner requires Java. You can freely download and install it from http://java.com.
+   CliRunner requires Java JDK. You can freely download it from `here`_.
+
+.. _here: http://www.oracle.com/technetwork/java/javase/downloads/index.html
 
 .. tip:: When coding policy models, you may want to use the `language support package`_ for the `Atom`_ text editor.
 
 .. _Atom: https://atom.io/
 .. _language support package: https://atom.io/packages/language-datatags
 
-Download and extract the **PolicyModels-[version].zip** file. Using a console, naviagte to the newly extracted  directory, and type::
+Download and extract the **PolicyModels-[version].zip** file. Using a terminal [*]_, naviagte to the newly extracted  directory, and type::
 
   java -jar DataTagsLib.jar
 
-You should see the DataTags logo, followd by a prompt. To load a policy model, such as those available from the extracted *sample-models.zip* file, type ``\load path/to/model``. To create a new model, type ``\new``. CliRunner will ask you for some data, and then create the model for you.
+You should see the DataTags/PolicyModels logo, followed by a prompt. To load a policy model, such as those available from the extracted *sample-models.zip* file, type ``\load path/to/model``. To create a new model, type ``\new``. CliRunner will ask you for some data, and then create the model for you.
 
 CliRunner
 -----------------------
@@ -52,3 +54,5 @@ To start CliRunner with a specific model, pass the path to its folder as a param
   java -jar DataTagsLib.jar path/to/model/
 
 .. tip :: For a more structured introduction, see the :doc:`tutorial/index`
+
+.. [*] A terminal is the application used to run applications with command line interface. On Macs it's called "Terminal" and can be found in ``/Applications/Utilities/Terminal.app``. In Windows, it's called "CMD" and can be opened by opening the "start" menu, navigating to "All Programs", then "Accessories", then selecting "Command Prompt" (or by typing ``cmd`` in the run dialog).
