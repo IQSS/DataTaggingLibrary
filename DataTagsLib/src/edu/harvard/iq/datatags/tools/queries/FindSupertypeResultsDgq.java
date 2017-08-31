@@ -108,7 +108,7 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
                         Boolean isBigger = (pair.getMinimalCoordinate().intersectSlotWith(valueStack.peek()) != null) ? 
                                 pair.getMinimalCoordinate().intersectSlotWith(valueStack.peek()).isBigger(valueStack.peek().intersectSlotWith(pair.getMinimalCoordinate())) :
                                 false;
-                        if (isBigger != null && isBigger){
+                        if ( isBigger ){
                             valueStack.push( valueStack.pop().composeWith(pair.getInferredValue()));
                         }
                     });

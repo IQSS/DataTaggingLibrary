@@ -108,7 +108,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             //ValueInference
             boolean first = true;
             CompoundValue previousTags = getCurrentTags();
-            while( !getCurrentTags().equals(previousTags) || first ){
+            while( (!getCurrentTags().equals(previousTags)) || first ){
                 previousTags = getCurrentTags();
                 first = false;
                 valueInferrer.forEach(value -> {
@@ -116,7 +116,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                         Boolean isBigger = (pair.getMinimalCoordinate().intersectSlotWith(getCurrentTags()) != null) ? 
                                 pair.getMinimalCoordinate().intersectSlotWith(getCurrentTags()).isBigger(getCurrentTags().intersectSlotWith(pair.getMinimalCoordinate())) :
                                 false;
-                        if (isBigger != null && isBigger){
+                        if ( isBigger != null && isBigger ) {
                             setCurrentTags(getCurrentTags().composeWith(pair.getInferredValue()));
                         }
                     });
@@ -364,10 +364,5 @@ import java.util.concurrent.atomic.AtomicInteger;
         setStatus(RuntimeEngineStatus.Idle);
         
     }
-    
-//    private boolean isStricter(CompoundValue first, CompoundValue second){
-////        TagValue.Visitor compare = new TagValue
-//          second.getNonEmptySubSlotTypes().;
-//    }
     
 }

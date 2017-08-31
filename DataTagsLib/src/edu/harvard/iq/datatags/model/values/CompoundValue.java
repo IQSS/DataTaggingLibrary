@@ -238,10 +238,7 @@ public class CompoundValue extends TagValue{
                 count++;
             }
         }
-        if (count == 0) {
-                return null;    
-        }
-        return result;
+        return (count == 0) ? null : result;
     }
     
     public Boolean isBigger(CompoundValue other) {
@@ -260,11 +257,10 @@ public class CompoundValue extends TagValue{
                     AggregateValue otherValue = (AggregateValue) otherValues.get(vPosition);
                     return (thisValue.getValues().containsAll(otherValue.getValues()));
                 }};
-        boolean isBigger = thisValues.stream().allMatch(predicate);
-        boolean isSmaller = thisValues.stream().allMatch(predicate.negate());
-        if (isBigger) return Boolean.TRUE;
-        else if (isSmaller) return Boolean.FALSE;
-        else return null;
+
+        if ( thisValues.stream().allMatch(predicate)          ) return Boolean.TRUE;        
+        if ( thisValues.stream().allMatch(predicate.negate()) ) return Boolean.FALSE;
+        return null;
     }
 
     /**

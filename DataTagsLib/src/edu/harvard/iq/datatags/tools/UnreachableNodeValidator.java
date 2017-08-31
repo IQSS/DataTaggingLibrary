@@ -18,8 +18,6 @@ import static java.util.stream.Collectors.toSet;
 public class UnreachableNodeValidator implements DecisionGraphValidator {
     
     private final List<ValidationMessage> validationMessages = new LinkedList<>();
-    private final Set<String> reachedNodeIds = new HashSet<>();
-    private DecisionGraph flowChart = new DecisionGraph();
     
     /**
      * Check each FlowChart in the FlowChartSet for unreachable nodes.
@@ -32,7 +30,6 @@ public class UnreachableNodeValidator implements DecisionGraphValidator {
         Set<String> flowChartNodeIds = new HashSet<>();
         flowChartNodeIds.addAll( dg.nodeIds() );
 
-        flowChart = dg;
         ReachableNodesCollector nc = new ReachableNodesCollector();
         dg.getStart().accept(nc);
         nc.getCollectedNodes().stream().map(n->n.getId()).forEach( flowChartNodeIds::remove );
@@ -49,7 +46,5 @@ public class UnreachableNodeValidator implements DecisionGraphValidator {
         
         return validationMessages;
     }
-    
-   
     
 }

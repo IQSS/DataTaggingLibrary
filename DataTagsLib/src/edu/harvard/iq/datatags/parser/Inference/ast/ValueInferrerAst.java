@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.harvard.iq.datatags.parser.Inference.ast;
 
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode.Assignment;
-import edu.harvard.iq.datatags.parser.tagspace.ast.CompoundAstSlot;
 import java.util.List;
 import java.util.Objects;
 
@@ -56,14 +50,8 @@ public class ValueInferrerAst {
             if (!Objects.equals(this.inferredValue, other.inferredValue)) {
                 return false;
             }
-            if (!Objects.equals(this.minimalCoordinate, other.minimalCoordinate)) {
-                return false;
-            }
-            return true;
+            return Objects.equals(this.minimalCoordinate, other.minimalCoordinate);
         }
-
-        
-        
     }
     
     List<String> slot;
@@ -105,10 +93,7 @@ public class ValueInferrerAst {
         if (!Objects.equals(this.slot, other.slot)) {
             return false;
         }
-        if (!Objects.equals(this.inferencePair, other.inferencePair)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.inferencePair, other.inferencePair);
     }
     
     

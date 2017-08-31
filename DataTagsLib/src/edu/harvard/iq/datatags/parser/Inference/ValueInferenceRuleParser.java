@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.harvard.iq.datatags.parser.Inference;
 
 import static edu.harvard.iq.datatags.parser.Inference.ValueInferenceTerminalParser.valueInferrerStructurePart;
@@ -11,13 +6,14 @@ import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst.InferencePa
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import static java.util.stream.Collectors.toList;
 import org.codehaus.jparsec.Parser;
 import org.codehaus.jparsec.Parsers;
 import org.codehaus.jparsec.Terminals;
 
 /**
- *
+ * 
  * @author mor_vilozni
  */
 public class ValueInferenceRuleParser {
@@ -25,10 +21,12 @@ public class ValueInferenceRuleParser {
     
     final static Parser<String> IDENTIFIER_WITH_KEYWORDS;
     
+    final static Pattern IDENTIFIER_PATTERN = Pattern.compile("^[_a-z][_a-z0-9]*$");
+    
     static {
         List<Parser<?>> parsers = new ArrayList<>();
         parsers.addAll( ValueInferenceTerminalParser.VALUE_INFERRER_STRUCTURE_TOKENS.stream()
-                        .filter( t -> t.toLowerCase().matches("^[a-z][a-z0-9]*$") )
+                        .filter( t -> IDENTIFIER_PATTERN.matcher(t.toLowerCase()).matches() )
                         .map( t -> valueInferrerStructurePart(t) ) 
                             .collect( toList() ) );
         IDENTIFIER_WITH_KEYWORDS =  Parsers.sequence(

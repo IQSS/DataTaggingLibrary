@@ -1,25 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.harvard.iq.datatags.parser.Inference;
 
 import edu.harvard.iq.datatags.model.ValueInferrer;
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
 import edu.harvard.iq.datatags.model.types.AtomicSlot;
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst.InferencePairAst;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParseResult;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
-import java.util.ArrayList;
 import static java.util.Arrays.asList;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +75,8 @@ public class ValueInferenceParseResultTest {
 
     /**
      * Test of getValidationMessages method, of class ValueInferenceParseResult.
+     * @throws edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException
+     * @throws edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException
      */
     @Test
     public void testGetValidationMessages() throws SyntaxErrorException, SemanticsErrorException {

@@ -54,7 +54,7 @@ public class PolicyModelLoader {
         PolicyModelLoader res = new PolicyModelLoader();
         
         res.add( new DuplicateNodeAnswerValidator() );
-        res.add(new DuplicateIdValidator() );
+        res.add( new DuplicateIdValidator() );
         
         res.add( new UnreachableNodeValidator() );
         
@@ -68,7 +68,7 @@ public class PolicyModelLoader {
         PolicyModelLoader res = new PolicyModelLoader();
         
         res.add( new DuplicateNodeAnswerValidator() );
-        res.add(new DuplicateIdValidator() );
+        res.add( new DuplicateIdValidator() );
         
         
         res.add( new EndNodeOptimizer() );

@@ -40,16 +40,13 @@ public class ValueInferenceParser {
         this.topLevelType = topLevelType;
     }
     
-    
-    
-    
     /**
      * Parse value inference code into a result that can be used to create actual value inferrer
      * @param valueInferrerCode
      * @return the result of the parsing
      * @throws SyntaxErrorException
      */
-    public ValueInferenceParseResult parse ( String valueInferrerCode ) throws SyntaxErrorException {
+    public ValueInferenceParseResult parse( String valueInferrerCode ) throws SyntaxErrorException {
         fullyQualifiedSlotName = buildTypeIndex();
         try {
             return new ValueInferenceParseResult( parser.parse(valueInferrerCode), fullyQualifiedSlotName, topLevelType );
@@ -61,7 +58,7 @@ public class ValueInferenceParser {
         }
     }
     
-    public ValueInferenceParseResult parse ( Path file ) throws IOException, SyntaxErrorException {
+    public ValueInferenceParseResult parse( Path file ) throws IOException, SyntaxErrorException {
         String source = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
         return parse(source);
     }

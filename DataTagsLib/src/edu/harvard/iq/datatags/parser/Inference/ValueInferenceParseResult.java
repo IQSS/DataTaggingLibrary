@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.harvard.iq.datatags.parser.Inference;
 
 import edu.harvard.iq.datatags.model.types.CompoundSlot;
@@ -35,7 +30,6 @@ public class ValueInferenceParseResult {
     private final Map<List<String>, List<String>> fullyQualifiedSlotName;
     private final CompoundSlot topLevelType;
 
-
     ValueInferenceParseResult( List<ValueInferrerAst> inferences, Map<List<String>, List<String>> fullyQualifiedSlotName, 
             CompoundSlot topLevelType) {
         this.inferencesAst = inferences;
@@ -53,17 +47,17 @@ public class ValueInferenceParseResult {
             slotMap.values().stream()
                     .map ( l -> l.get(0) )
                     .forEach( v -> valueByName.put(v.toStringSlotName(), v));
-        } else{
+        } else {
             duplicates.forEach(d -> validationMessages.add(new ValidationMessage(Level.ERROR, "ValueInference " + d + " is duplicated")));
         }
     }
     
     public Set<ValueInferrer> buildValueInference() {
         inferencesAst.forEach(i -> {
-            //For each ValueInferrereAst
+            // For each ValueInferrereAst
             ValueInferrer valueInferrer = new ValueInferrer();
             i.getInferencePairs().forEach(pair -> {
-                //For each pair
+                // For each pair
                 final CompoundValue minimalCoordinates = topLevelType.createInstance();
                 SetNodeValueBuilder valueBuilder = new SetNodeValueBuilder(minimalCoordinates, fullyQualifiedSlotName);
                 try {
@@ -92,12 +86,12 @@ public class ValueInferenceParseResult {
                         validationMessages.add(new ValidationMessage(Level.ERROR,
                                 "Slots are not comparable - " + lastMinimalCoorinate.toString() + " and " + minimalCoordinates));
                     }
-                    else if(!isOk) {
+                    else if( !isOk ) {
                         validationMessages.add(new ValidationMessage(Level.ERROR,
                                 "Slots are not ordered hierarchically - " + lastMinimalCoorinate.toString() + " and " + minimalCoordinates));
                     }
                 }
-                if (isOk){
+                if ( isOk ) {
                     InferencePair inferencePair = new InferencePair(minimalCoordinates, inferredValue);
                     valueInferrer.add(inferencePair);
                 }
@@ -106,8 +100,7 @@ public class ValueInferenceParseResult {
                 inferences.add(valueInferrer);
             }
         });
-        if ( isValid() ) return inferences;
-        else return null;
+        return isValid() ? inferences : null;
     }
     
     public Boolean isValid(){
