@@ -53,6 +53,8 @@ To start CliRunner with a specific model, pass the path to its folder as a param
 
   java -jar DataTagsLib.jar path/to/model/
 
+.. tip :: On most systems, instead of typing the path to the model, you can just drag the model to the terminal window, which would make the terminal application type it for you.
+
 .. tip :: For a more structured introduction, see the :doc:`tutorial/index`
 
 .. [*] A terminal is the application used to run applications with command line interface. On Macs it's called "Terminal" and can be found in ``/Applications/Utilities/Terminal.app``. In Windows, it's called "CMD" and can be opened by opening the "start" menu, navigating to "All Programs", then "Accessories", then selecting "Command Prompt" (or by typing ``cmd`` in the run dialog).

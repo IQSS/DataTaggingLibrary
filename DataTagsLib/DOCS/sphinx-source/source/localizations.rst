@@ -82,6 +82,8 @@ Decision Graph Elements
 Decision graph elements that contain texts (``ask``, ``todo``, and ``section``) can be localized by adding a file to the ``nodes`` sub-directory in the localization directory. The file name is the id of the node it provides localized text for. Files can be in either text (``.txt``) or markdown (``.md``) format. In case both text and markdown files are present, the markdown variant is preferred.
 
 
+.. tip:: There are many Markdown editors that offer formatted preview of the text, or even allow editing of formatted text (like "normal" word processors.) Use your favorite search engine to find one - the list updated too often to include a recommendation here.
+
 ..  _ISO-639: https://www.iso.org/iso-639-language-codes.html
 .. _ISO-3166: https://www.iso.org/iso-3166-country-codes.html
 .. _markdown: https://guides.github.com/features/mastering-markdown/
