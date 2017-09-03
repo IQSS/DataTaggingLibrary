@@ -14,11 +14,11 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.datatags.util.StringHelper.nonEmpty;
@@ -160,7 +160,7 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
         rnr.print(" - Creating " + LocalizationLoader.SPACE_DATA_FILENAME + " file");
         try ( BufferedWriter bwrt = Files.newBufferedWriter(localizationPath.resolve(LocalizationLoader.SPACE_DATA_FILENAME));
               PrintWriter prt = new PrintWriter(bwrt) ){
-            rnr.getModel().getSpaceRoot().accept( new SlotType.VoidVisitor(){
+            rnr.getModel().getSpaceRoot().accept(new AbstractSlot.VoidVisitor(){
                 
                 LinkedList<String> stack = new LinkedList<>();
                 
@@ -209,7 +209,7 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
                     prt.println(nonEmpty(t.getNote()) ? t.getNote() : ("<-- TODO: describe " + curPath() ) );
                     prt.println();
                     
-                    t.getFieldTypes().forEach( ft -> ft.accept(this) );
+                    t.getSubSlots().forEach( ft -> ft.accept(this) );
                     
                     stack.pop();
                 }

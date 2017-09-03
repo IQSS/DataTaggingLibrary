@@ -8,9 +8,9 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
@@ -189,10 +189,10 @@ public class DecisionGraphParseResultTest {
         AggregateSlot t2 = new AggregateSlot("Subject", "", t2Items);
         t2Items.registerValue("world", "");
         CompoundSlot ct = new CompoundSlot("topLevel", "");
-        ct.addFieldType(t2);
+        ct.addSubSlot(t2);
         CompoundValue tags = ct.createInstance();
 
-        tags.set(t2.createInstance());
+        tags.put(t2.createInstance());
         ((AggregateValue) tags.get(t2)).add(t2Items.valueOf("world"));
 
         ConsiderNode start = new ConsiderNode("1", whyNotCallNode);
@@ -360,12 +360,12 @@ public class DecisionGraphParseResultTest {
         t2Items.registerValue("c", "");
 
         CompoundSlot ct = new CompoundSlot("topLevel", "");
-        ct.addFieldType(t1);
-        ct.addFieldType(t2);
+        ct.addSubSlot(t1);
+        ct.addSubSlot(t2);
 
         CompoundValue tags = ct.createInstance();
-        tags.set(t1.valueOf("a"));
-        tags.set(t2.createInstance());
+        tags.put(t1.valueOf("a"));
+        tags.put(t2.createInstance());
         ((AggregateValue) tags.get(t2)).add(t2Items.valueOf("b"));
         ((AggregateValue) tags.get(t2)).add(t2Items.valueOf("c"));
 
@@ -402,15 +402,15 @@ public class DecisionGraphParseResultTest {
         CompoundSlot ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
 
         CompoundValue expected = ts.createInstance();
-        expected.set(((AtomicSlot) ts.getTypeNamed("mid1")).valueOf("B"));
-        CompoundValue mid2 = ((CompoundSlot) ts.getTypeNamed("mid2")).createInstance();
-        mid2.set(((AtomicSlot) mid2.getType().getTypeNamed("bottom1")).valueOf("W"));
-        final AggregateValue bottom2Value = ((AggregateSlot) mid2.getType().getTypeNamed("bottom2")).createInstance();
-        bottom2Value.add(bottom2Value.getType().getItemType().valueOf("S"));
-        bottom2Value.add(bottom2Value.getType().getItemType().valueOf("D"));
-        bottom2Value.add(bottom2Value.getType().getItemType().valueOf("F"));
-        mid2.set(bottom2Value);
-        expected.set(mid2);
+        expected.put(((AtomicSlot) ts.getSubSlot("mid1")).valueOf("B"));
+        CompoundValue mid2 = ((CompoundSlot) ts.getSubSlot("mid2")).createInstance();
+        mid2.put(((AtomicSlot) mid2.getSlot().getSubSlot("bottom1")).valueOf("W"));
+        final AggregateValue bottom2Value = ((AggregateSlot) mid2.getSlot().getSubSlot("bottom2")).createInstance();
+        bottom2Value.add(bottom2Value.getSlot().getItemType().valueOf("S"));
+        bottom2Value.add(bottom2Value.getSlot().getItemType().valueOf("D"));
+        bottom2Value.add(bottom2Value.getSlot().getItemType().valueOf("F"));
+        mid2.put(bottom2Value);
+        expected.put(mid2);
 
         String dgCode = "[set: mid1=B; bottom1=W; bottom2+=S,D,F][end]";
         
@@ -432,16 +432,16 @@ public class DecisionGraphParseResultTest {
 
         CompoundSlot ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
 
-        CompoundValue mid2 = ((CompoundSlot) ts.getTypeNamed("mid2")).createInstance();
-        mid2.set(((AtomicSlot) mid2.getType().getTypeNamed("bottom1")).valueOf("W"));
-        final AggregateValue bottom2Value = ((AggregateSlot) mid2.getType().getTypeNamed("bottom2")).createInstance();
-        bottom2Value.add(bottom2Value.getType().getItemType().valueOf("S"));
-        bottom2Value.add(bottom2Value.getType().getItemType().valueOf("D"));
-        bottom2Value.add(bottom2Value.getType().getItemType().valueOf("F"));
-        mid2.set(bottom2Value);
+        CompoundValue mid2 = ((CompoundSlot) ts.getSubSlot("mid2")).createInstance();
+        mid2.put(((AtomicSlot) mid2.getSlot().getSubSlot("bottom1")).valueOf("W"));
+        final AggregateValue bottom2Value = ((AggregateSlot) mid2.getSlot().getSubSlot("bottom2")).createInstance();
+        bottom2Value.add(bottom2Value.getSlot().getItemType().valueOf("S"));
+        bottom2Value.add(bottom2Value.getSlot().getItemType().valueOf("D"));
+        bottom2Value.add(bottom2Value.getSlot().getItemType().valueOf("F"));
+        mid2.put(bottom2Value);
 
         CompoundValue expected = ts.createInstance();
-        expected.set(mid2);
+        expected.put(mid2);
 
         String dgCode = "[set: bottom1=W; bottom2+=S,D,F][end]";
         
@@ -464,10 +464,10 @@ public class DecisionGraphParseResultTest {
         CompoundSlot ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
 
         CompoundValue expected = ts.createInstance();
-        expected.set(((AtomicSlot) ts.getTypeNamed("mid1")).valueOf("B"));
-        CompoundValue mid2 = ((CompoundSlot) ts.getTypeNamed("mid2")).createInstance();
-        mid2.set(((AtomicSlot) mid2.getType().getTypeNamed("bottom1")).valueOf("W"));
-        expected.set(mid2);
+        expected.put(((AtomicSlot) ts.getSubSlot("mid1")).valueOf("B"));
+        CompoundValue mid2 = ((CompoundSlot) ts.getSubSlot("mid2")).createInstance();
+        mid2.put(((AtomicSlot) mid2.getSlot().getSubSlot("bottom1")).valueOf("W"));
+        expected.put(mid2);
 
         String dgCode = "[set: mid1=B; bottom1=W][end]";
         
@@ -490,9 +490,9 @@ public class DecisionGraphParseResultTest {
         CompoundSlot ts = new TagSpaceParser().parse(tsCode).buildType("top").get();
 
         CompoundValue expected = ts.createInstance();
-        CompoundValue mid2 = ((CompoundSlot) ts.getTypeNamed("mid2")).createInstance();
-        mid2.set(((AtomicSlot) mid2.getType().getTypeNamed("bottom1")).valueOf("W"));
-        expected.set(mid2);
+        CompoundValue mid2 = ((CompoundSlot) ts.getSubSlot("mid2")).createInstance();
+        mid2.put(((AtomicSlot) mid2.getSlot().getSubSlot("bottom1")).valueOf("W"));
+        expected.put(mid2);
 
         String dgCode = "[set: bottom1=W][end]";
         CompilationUnit cu = new CompilationUnit(dgCode);

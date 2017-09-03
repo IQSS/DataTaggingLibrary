@@ -15,6 +15,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Deque;
 import java.util.LinkedList;
 
@@ -98,24 +99,25 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
             valueStack.push( valueStack.peek().composeWith(nd.getTags()) );
             
             //Value inference
-            boolean first = true;
-            CompoundValue previousTags = valueStack.peek();
-            while( !valueStack.peek().equals(previousTags) || first ){
-                previousTags = valueStack.peek();
-                first = false;
-                subject.getValueInferrers().forEach(value -> {
-                    value.getInferencePairs().forEach(pair -> {
-                        Boolean isBigger = (pair.getMinimalCoordinate().intersectSlotWith(valueStack.peek()) != null) ? 
-                                pair.getMinimalCoordinate().intersectSlotWith(valueStack.peek()).isBigger(valueStack.peek().intersectSlotWith(pair.getMinimalCoordinate())) :
-                                false;
-                        if ( isBigger ){
-                            valueStack.push( valueStack.pop().composeWith(pair.getInferredValue()));
-                        }
-                    });
-                });
+            // Process inferred values (ValueInference)
+            CompoundValue previousValue;
+            CompoundValue inferredValue = valueStack.peek();
+            
+            do {
+                previousValue = inferredValue;
+                CompoundValue infCapture = inferredValue; // passing to lambda, has to be effectively final.
+                inferredValue = subject.getValueInferrers().stream().map( vi -> vi.apply(infCapture) ).collect( C.compose(previousValue.getSlot()));                
+            } while ( !inferredValue.equals(previousValue) );
+            
+            if ( ! inferredValue.equals(valueStack.peek()) ) {
+                valueStack.pop();
+                valueStack.push(inferredValue);
             }
             
+            // go forward
             nd.getNextNode().accept(this);
+            
+            // came back, clean up.
             valueStack.pop();
             currentTrace.removeLast();
         }

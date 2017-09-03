@@ -6,7 +6,7 @@ import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.ValueInferrer;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.parser.Inference.ValueInferenceParseResult;
 import edu.harvard.iq.datatags.parser.Inference.ValueInferenceParser;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;

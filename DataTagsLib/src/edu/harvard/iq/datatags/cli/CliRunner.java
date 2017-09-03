@@ -35,7 +35,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
-import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
 import edu.harvard.iq.datatags.runtime.RuntimeEngineStatus;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -206,7 +206,7 @@ public class CliRunner {
         restartFlag = true;        
     }
 
-    public void dumpTagValue(TagValue val) {
+    public void dumpTagValue(AbstractValue val) {
         dtFormat.format(val).entrySet().forEach((e) -> {
             println("%s = %s", e.getKey(), e.getValue());
         });
@@ -543,7 +543,7 @@ public class CliRunner {
 
             if (ngn.getStatus() == RuntimeEngineStatus.Accept) {
                 printTitle("Final Tags");
-                dumpTagValue(ngn.getCurrentTags());
+                dumpTagValue(ngn.getCurrentValue());
             } else if (ngn.getStatus() == RuntimeEngineStatus.Error) {
                 printWarning("Runtime engine in ERROR mode");
             }

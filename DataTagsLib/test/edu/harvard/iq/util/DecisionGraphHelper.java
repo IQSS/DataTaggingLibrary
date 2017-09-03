@@ -5,8 +5,8 @@ import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.parser.decisiongraph.ContentReader;
@@ -61,7 +61,7 @@ public class DecisionGraphHelper {
         st1.registerValue("v2", null);
         st1.registerValue("v3", null);
         st1.registerValue("v4", null);
-        mock.addFieldType(st1);
+        mock.addSubSlot(st1);
         
         return mock;
     }

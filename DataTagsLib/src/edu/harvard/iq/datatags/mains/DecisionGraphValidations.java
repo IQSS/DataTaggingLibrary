@@ -1,17 +1,13 @@
 package edu.harvard.iq.datatags.mains;
 
-import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
-import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
 import edu.harvard.iq.datatags.tools.NodeValidationMessage;
 import edu.harvard.iq.datatags.tools.DuplicateIdValidator;
 import edu.harvard.iq.datatags.tools.UnreachableNodeValidator;
@@ -24,7 +20,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Runs the following validations on a decision graph:
@@ -94,11 +89,7 @@ public class DecisionGraphValidations {
             ex.printStackTrace(System.out);
 
         } catch (BadSetInstructionException ex) {
-            TagValueLookupResult badRes = ex.getBadResult();
-
             System.out.println("Bad Set instruction: " + ex.getMessage());
-            badRes.accept(new BadSetInstructionPrinter());
-
             System.out.println("offending Set node: " + ex.getOffendingNode());
 
         } catch (DataTagsParseException ex) {

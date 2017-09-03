@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.model.types;
+package edu.harvard.iq.datatags.model.slots;
 
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 
@@ -6,7 +6,7 @@ import edu.harvard.iq.datatags.model.values.AggregateValue;
  * A type whose values contain varying number of (sub-) values, of type {@link #itemType}.
  * @author michael
  */
-public class AggregateSlot extends SlotType {
+public class AggregateSlot extends AbstractSlot {
 	
 	private final AtomicSlot itemType;
 	

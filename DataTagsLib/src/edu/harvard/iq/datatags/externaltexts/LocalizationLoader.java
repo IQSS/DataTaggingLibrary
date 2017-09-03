@@ -6,7 +6,7 @@ import static edu.harvard.iq.datatags.io.FileUtils.readAll;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.PolicySpaceIndex;
 import edu.harvard.iq.datatags.model.PolicySpacePathQuery;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.tools.ValidationMessage;

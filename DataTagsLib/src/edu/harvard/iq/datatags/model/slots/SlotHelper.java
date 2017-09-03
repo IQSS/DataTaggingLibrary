@@ -1,14 +1,14 @@
-package edu.harvard.iq.datatags.model.types;
+package edu.harvard.iq.datatags.model.slots;
 
 import edu.harvard.iq.datatags.model.values.AtomicValue;
-import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 
 /**
- * Common methods for usage with types.
+ * Common methods for usage with slots.
  * 
  * @author michael
  */
-public class TypeHelper {
+public class SlotHelper {
     
     /**
      * Gets the value from the tag type. Use when you know the value is there and is distinct.
@@ -24,16 +24,16 @@ public class TypeHelper {
      * @return The tag value pointed by the slot name.
      * @throws RuntimeException When the value is not there, or is not distinct.
      */
-    static public TagValue safeGet( SlotType tt, String slotName, String valueName ) {
-        return tt.lookupValue(slotName, valueName).accept(new TagValueLookupResult.SuccessFailVisitor<TagValue, RuntimeException>(){
+    static public AbstractValue safeGet( AbstractSlot tt, String slotName, String valueName ) {
+        return tt.lookupValue(slotName, valueName).accept(new SlotValueLookupResult.SuccessFailVisitor<AbstractValue, RuntimeException>(){
 
             @Override
-            public TagValue visitSuccess(TagValueLookupResult.Success s) throws RuntimeException {
+            public AbstractValue visitSuccess(SlotValueLookupResult.Success s) throws RuntimeException {
                 return s.getValue();
             }
 
             @Override
-            public TagValue visitFailure(TagValueLookupResult s) throws RuntimeException {
+            public AbstractValue visitFailure(SlotValueLookupResult s) throws RuntimeException {
                 throw new RuntimeException("Can't find value " + s);
             }
         });
@@ -46,7 +46,7 @@ public class TypeHelper {
             
     }
     
-    static public String formatTypePath( Iterable<String> path ) {
+    static public String formatSlotPath( Iterable<String> path ) {
         StringBuilder sb = new StringBuilder();
         path.forEach( c -> { 
             sb.append(c);

@@ -1,11 +1,11 @@
 package edu.harvard.iq.datatags.cli.commands;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +51,7 @@ public class StatisticsCommand implements CliCommand {
     
 }
 
-class TagCounter extends SlotType.VoidVisitor {
+class TagCounter extends AbstractSlot.VoidVisitor {
     
     int slotsCount=0;
     int valuesCount=0;
@@ -69,7 +69,7 @@ class TagCounter extends SlotType.VoidVisitor {
     @Override
     public void visitCompoundSlotImpl(CompoundSlot t) {
         slotsCount++;
-        t.getFieldTypes().forEach( tt -> {
+        t.getSubSlots().forEach( tt -> {
             slotsCount++;
             tt.accept(this);
         });

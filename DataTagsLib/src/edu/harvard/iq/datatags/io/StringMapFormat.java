@@ -1,14 +1,14 @@
 package edu.harvard.iq.datatags.io;
 
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
-import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Arrays;
@@ -18,18 +18,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Writes/Reads a {@link TagValue} into a map of strings. 
+ * Writes/Reads a {@link AbstractValue} into a map of strings. 
  * This format does not support long-term archiving.
  * 
  * @author michael
  */
 public class StringMapFormat {
     
-    public Map<String,String> format( TagValue value ) {
+    public Map<String,String> format( AbstractValue value ) {
         final Map<String, String> res = new TreeMap<>();
         if ( value==null ) return res;
         
-        value.accept(new TagValue.Visitor<Void>() {
+        value.accept(new AbstractValue.Visitor<Void>() {
             
             List<String> stack = new LinkedList<>();
             
@@ -41,7 +41,7 @@ public class StringMapFormat {
 
             @Override
             public Void visitAtomicValue(AtomicValue v) {
-                res.put(pathAsString() + v.getType().getName(), v.getName() );
+                res.put(pathAsString() + v.getSlot().getName(), v.getName() );
                 return null;
             }
 
@@ -52,14 +52,14 @@ public class StringMapFormat {
                     sb.append(sv.getName()).append(",");
                 }
                 String val = sb.toString();
-                res.put( pathAsString() + v.getType().getName(), val.substring(0,val.length()-1) );
+                res.put( pathAsString() + v.getSlot().getName(), val.substring(0,val.length()-1) );
                 return null;
             }
 
             @Override
             public Void visitCompoundValue(CompoundValue cv) {
-                stack.add( cv.getType().getName() );
-                for ( SlotType tt : cv.getNonEmptySubSlotTypes() ) {
+                stack.add( cv.getSlot().getName() );
+                for ( AbstractSlot tt : cv.getNonEmptySubSlots() ) {
                     cv.get(tt).accept(this);
                 }
                 stack.remove( stack.size()-1 );
@@ -80,20 +80,20 @@ public class StringMapFormat {
     
     
     /**
-     * Builds a {@link TagValue} from a map created by {@link #format}.
+     * Builds a {@link AbstractValue} from a map created by {@link #format}.
      * @param type The expected type of the resulting tag value.
      * @param serializedValue Tag of the expected type, serialized by this format.
      * @return The value, or {@code null} for empty map.
      * @see #parseCompoundValue(edu.harvard.iq.datatags.model.types.CompoundSlot, java.util.Map) 
      */
-    public TagValue parse( SlotType type, Map<String,String> serializedValue ) {
+    public AbstractValue parse( AbstractSlot type, Map<String,String> serializedValue ) {
         return serializedValue.isEmpty() 
                 ? null
                 : evaluate( type, makeTrie(serializedValue).getSingleChild() );
     }
     
     /**
-     * Builds a {@link TagValue} from a map created by {@link #format}.
+     * Builds a {@link AbstractValue} from a map created by {@link #format}.
      * @param type The expected type of the resulting tag value.
      * @param serializedValue Tag of the expected type, serialized by this format.
      * @return The value (empty map translates to empty value).
@@ -104,19 +104,19 @@ public class StringMapFormat {
                 : (CompoundValue)evaluate( type, makeTrie(serializedValue).getSingleChild() );
     }
     
-    TagValue evaluate( final SlotType type, final TrieNode node ) {
+    AbstractValue evaluate( final AbstractSlot type, final TrieNode node ) {
         if ( node == null ) return null;
         
-        return type.accept(new SlotType.Visitor<TagValue>() {
+        return type.accept(new AbstractSlot.Visitor<AbstractValue>() {
 
             @Override
-            public TagValue visitSimpleSlot(AtomicSlot t) {
+            public AbstractValue visitSimpleSlot(AtomicSlot t) {
                 // We expect a single value.
                 return t.valueOf(node.getSingleKey());
             }
 
             @Override
-            public TagValue visitAggregateSlot(AggregateSlot t) {
+            public AbstractValue visitAggregateSlot(AggregateSlot t) {
                 AggregateValue val = t.createInstance();
                 String values = node.getSingleKey();
                 for ( String itemName : values.split(",") ) {
@@ -126,13 +126,13 @@ public class StringMapFormat {
             }
 
             @Override
-            public TagValue visitCompoundSlot(CompoundSlot t) {
+            public AbstractValue visitCompoundSlot(CompoundSlot t) {
                 CompoundValue val = t.createInstance();
                 
-                for ( SlotType fieldType : t.getFieldTypes() ) {
-                    TagValue fieldValue = evaluate(fieldType, node.get(fieldType.getName()));
+                for ( AbstractSlot fieldType : t.getSubSlots() ) {
+                    AbstractValue fieldValue = evaluate(fieldType, node.get(fieldType.getName()));
                     if ( fieldValue != null ) {
-                        val.set( fieldValue );
+                        val.put( fieldValue );
                     }
                 }
                 
@@ -140,7 +140,7 @@ public class StringMapFormat {
             }
 
             @Override
-            public TagValue visitTodoSlot(ToDoSlot t) {
+            public AbstractValue visitTodoSlot(ToDoSlot t) {
                 return t.getValue();
             }
         });

@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.parser.exceptions;
 
-import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
+import edu.harvard.iq.datatags.model.slots.SlotValueLookupResult;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 
 /**
@@ -11,20 +11,20 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
  */
 public class BadSetInstructionException extends DataTagsParseException {
     
-    // TODO - this field might need to go.
-    private final TagValueLookupResult badResult;
+    private final BadLookupException ble;
     
     public BadSetInstructionException(String msg, AstSetNode anOffendingNode) {
-        super( anOffendingNode, msg );
-        badResult = null;
-    }
-    
-    public BadSetInstructionException(TagValueLookupResult res, AstSetNode anOffendingNode) {
-        super(anOffendingNode, "Bad set instruction: " + res );
-        badResult = res;
+        this(  msg, anOffendingNode, null );
     }
 
-    public TagValueLookupResult getBadResult() {
-        return badResult;
+    public BadSetInstructionException(String msg, AstSetNode anOffendingNode, BadLookupException aBadLookupException) {
+        super( anOffendingNode, msg);
+        ble = aBadLookupException;
     }
+
+    public BadLookupException getBadLookupException() {
+        return ble;
+    }
+    
+    
 }

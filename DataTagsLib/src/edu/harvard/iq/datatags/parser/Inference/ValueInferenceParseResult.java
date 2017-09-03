@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.parser.Inference;
 
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst;
 import edu.harvard.iq.datatags.parser.decisiongraph.SetNodeValueBuilder;
@@ -74,19 +74,13 @@ public class ValueInferenceParseResult {
                                                             (inferredValue, fullyQualifiedSlotName);
                 asnmnt.accept(valueBuilderForInferredValue);
                 // inferredValue -> compoundValue from the slotName and inferred value
-                Boolean isOk =true;
+                Boolean isOk = true;
                 if (!valueInferrer.getInferencePairs().isEmpty()){
                     CompoundValue lastMinimalCoorinate = valueInferrer.getInferencePairs()
                             .get(valueInferrer.getInferencePairs().size() - 1).getMinimalCoordinate();
-                    isOk = (lastMinimalCoorinate.intersectSlotWith(minimalCoordinates) != null) ? minimalCoordinates.intersectSlotWith(lastMinimalCoorinate)
-                            .isBigger(lastMinimalCoorinate.intersectSlotWith(minimalCoordinates)) : 
-                            false;
-                    if (isOk == null){
-                        //mean that we cant compare
-                        validationMessages.add(new ValidationMessage(Level.ERROR,
-                                "Slots are not comparable - " + lastMinimalCoorinate.toString() + " and " + minimalCoordinates));
-                    }
-                    else if( !isOk ) {
+                    isOk = lastMinimalCoorinate.project(minimalCoordinates.getNonEmptySubSlots()).isEmpty() ? false
+                            : minimalCoordinates.project(lastMinimalCoorinate.getNonEmptySubSlots()).isBigger(lastMinimalCoorinate.project(minimalCoordinates.getNonEmptySubSlots())).orElse(false);
+                    if ( !isOk ) {
                         validationMessages.add(new ValidationMessage(Level.ERROR,
                                 "Slots are not ordered hierarchically - " + lastMinimalCoorinate.toString() + " and " + minimalCoordinates));
                     }
@@ -96,7 +90,8 @@ public class ValueInferenceParseResult {
                     valueInferrer.add(inferencePair);
                 }
             });
-            if (isValid()){
+            
+            if ( isValid() ) {
                 inferences.add(valueInferrer);
             }
         });

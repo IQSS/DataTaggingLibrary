@@ -5,11 +5,11 @@
  */
 package edu.harvard.iq.datatags.parser.Inference;
 
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
@@ -66,7 +66,7 @@ public class ValueInferenceParser {
     Map<List<String>, List<String>> buildTypeIndex() {
         List<List<String>> fullyQualifiedNames = new LinkedList<>();
         // initial index
-        topLevelType.accept(new SlotType.VoidVisitor() {
+        topLevelType.accept(new AbstractSlot.VoidVisitor() {
             LinkedList<String> stack = new LinkedList<>();
 
             @Override
@@ -87,11 +87,11 @@ public class ValueInferenceParser {
             @Override
             public void visitCompoundSlotImpl(CompoundSlot t) {
                 stack.push(t.getName());
-                t.getFieldTypes().forEach(tt -> tt.accept(this));
+                t.getSubSlots().forEach(tt -> tt.accept(this));
                 stack.pop();
             }
 
-            void addType(SlotType tt) {
+            void addType(AbstractSlot tt) {
                 stack.push(tt.getName());
                 fullyQualifiedNames.add(C.reverse((List) stack));
                 stack.pop();

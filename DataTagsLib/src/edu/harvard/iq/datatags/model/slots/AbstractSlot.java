@@ -1,8 +1,8 @@
-package edu.harvard.iq.datatags.model.types;
+package edu.harvard.iq.datatags.model.slots;
 
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
-import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * 
  * @author michael
  */
-public abstract class SlotType {
+public abstract class AbstractSlot {
 	
 	public interface Visitor<T> {
 		T visitSimpleSlot( AtomicSlot t );
@@ -56,7 +56,7 @@ public abstract class SlotType {
 	private final String name;
 	private String note;
 
-	public SlotType(String name, String note) {
+	public AbstractSlot(String name, String note) {
 		this.name = name;
 		this.note = note;
 	}
@@ -75,66 +75,66 @@ public abstract class SlotType {
 
 	public abstract <T> T accept( Visitor<T> v );
 	
-    public TagValueLookupResult lookupValue( final String slotName, final String valueName ) {
-        return accept(new SlotType.Visitor<TagValueLookupResult>() {
+    public SlotValueLookupResult lookupValue( final String slotName, final String valueName ) {
+        return accept(new AbstractSlot.Visitor<SlotValueLookupResult>() {
             
             @Override
-            public TagValueLookupResult visitSimpleSlot(AtomicSlot t) {
+            public SlotValueLookupResult visitSimpleSlot(AtomicSlot t) {
                 if ( slotName.equals(t.getName()) ) {
-                    TagValue v = t.valueOf( valueName );
-                    return (v!=null) ? TagValueLookupResult.Success(v)
-                                     : TagValueLookupResult.ValueNotFound(t, valueName);
+                    AbstractValue v = t.valueOf( valueName );
+                    return (v!=null) ? SlotValueLookupResult.Success(v)
+                                     : SlotValueLookupResult.ValueNotFound(t, valueName);
                 } else {
-                    return TagValueLookupResult.SlotNotFound(slotName);
+                    return SlotValueLookupResult.SlotNotFound(slotName);
                 }
             }
 
             @Override
-            public TagValueLookupResult visitAggregateSlot(AggregateSlot t) {
+            public SlotValueLookupResult visitAggregateSlot(AggregateSlot t) {
                 if ( slotName.equals(t.getName()) ) {
                     AggregateValue res = t.createInstance();
                     AtomicValue singleValue = t.getItemType().valueOf(valueName);
                     
                     if ( singleValue == null ) {
-                        return TagValueLookupResult.ValueNotFound(SlotType.this, valueName);
+                        return SlotValueLookupResult.ValueNotFound(AbstractSlot.this, valueName);
                     } else {
                         res.add(singleValue);
-                        return TagValueLookupResult.Success(res);
+                        return SlotValueLookupResult.Success(res);
                     }
                     
                 } else {
-                    return TagValueLookupResult.SlotNotFound(slotName);
+                    return SlotValueLookupResult.SlotNotFound(slotName);
                 }
             }
 
             @Override
-            public TagValueLookupResult visitCompoundSlot(CompoundSlot t) {
-                final List<TagValueLookupResult.Success> matches = new LinkedList<>();
-                final AtomicReference<TagValueLookupResult.ValueNotFound> vnfRef = new AtomicReference<>(null);
+            public SlotValueLookupResult visitCompoundSlot(CompoundSlot t) {
+                final List<SlotValueLookupResult.Success> matches = new LinkedList<>();
+                final AtomicReference<SlotValueLookupResult.ValueNotFound> vnfRef = new AtomicReference<>(null);
                 
-                TagValueLookupResult.VoidVisitor aggregator = new TagValueLookupResult.VoidVisitor() {
+                SlotValueLookupResult.VoidVisitor aggregator = new SlotValueLookupResult.VoidVisitor() {
 
                     @Override
-                    protected void visitImpl(TagValueLookupResult.SlotNotFound snf) {}
+                    protected void visitImpl(SlotValueLookupResult.SlotNotFound snf) {}
 
                     @Override
-                    protected void visitImpl(TagValueLookupResult.ValueNotFound vnf) {
+                    protected void visitImpl(SlotValueLookupResult.ValueNotFound vnf) {
                         vnfRef.set(vnf);
                     }
 
                     @Override
-                    protected void visitImpl(TagValueLookupResult.Ambiguity amb) {
+                    protected void visitImpl(SlotValueLookupResult.Ambiguity amb) {
                         matches.addAll( amb.getPossibilities() );
                     }
 
                     @Override
-                    protected void visitImpl(TagValueLookupResult.Success scss) {
+                    protected void visitImpl(SlotValueLookupResult.Success scss) {
                         matches.add( scss );
                     }
                 };
                 
                 // group results by status.
-                for ( SlotType tt : t.getFieldTypes() ) {
+                for ( AbstractSlot tt : t.getSubSlots() ) {
                     tt.accept(this) // get the lookup result
                       .accept(aggregator); // process the lookup result
                 }
@@ -142,22 +142,22 @@ public abstract class SlotType {
                 switch ( matches.size() ) {
                     case 0:
                         return (vnfRef.get()==null)
-                                ? TagValueLookupResult.SlotNotFound(slotName)
+                                ? SlotValueLookupResult.SlotNotFound(slotName)
                                 : vnfRef.get();
                     case 1: 
                         return matches.get(0);
                         
                     default: 
-                        return TagValueLookupResult.Ambiguity(matches);
+                        return SlotValueLookupResult.Ambiguity(matches);
                 }
             }
 
             @Override
-            public TagValueLookupResult visitTodoSlot(ToDoSlot t) {
+            public SlotValueLookupResult visitTodoSlot(ToDoSlot t) {
                 if ( slotName.equals(t.getName())) {
-                    return TagValueLookupResult.Success(t.getValue());
+                    return SlotValueLookupResult.Success(t.getValue());
                 } else {
-                    return TagValueLookupResult.SlotNotFound(slotName);
+                    return SlotValueLookupResult.SlotNotFound(slotName);
                 }
             }
         });
@@ -176,10 +176,10 @@ public abstract class SlotType {
 		if (obj == null) {
 			return false;
 		}
-		if ( ! (obj instanceof SlotType) ) {
+		if ( ! (obj instanceof AbstractSlot) ) {
 			return false;
 		}
-		final SlotType other = (SlotType) obj;
+		final AbstractSlot other = (AbstractSlot) obj;
 		if (!Objects.equals(this.name, other.name)) {
 			return false;
 		}

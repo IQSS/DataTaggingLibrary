@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.parser.tagspace;
 
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import edu.harvard.iq.datatags.parser.tagspace.ast.AbstractAstSlot;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
@@ -125,15 +125,15 @@ public class TagSpaceParseResult {
     /**
      * Visits an slot, builds a SlotType based on it.
      */
-    class TypeBuilder implements AbstractAstSlot.Visitor<SlotType> {
+    class TypeBuilder implements AbstractAstSlot.Visitor<AbstractSlot> {
 
         @Override
-        public SlotType visit(ToDoAstSlot slot) {
+        public AbstractSlot visit(ToDoAstSlot slot) {
             return new ToDoSlot(slot.getName(), slot.getNote());
         }
 
         @Override
-        public SlotType visit(AtomicAstSlot slot) {
+        public AbstractSlot visit(AtomicAstSlot slot) {
             AtomicSlot newType = new AtomicSlot(slot.getName(), slot.getNote());
             slot.getValueDefinitions().forEach( vd -> newType.registerValue(vd.getName(), vd.getNote()) );
             
@@ -141,7 +141,7 @@ public class TagSpaceParseResult {
         }
 
         @Override
-        public SlotType visit(AggregateAstSlot slot) {
+        public AbstractSlot visit(AggregateAstSlot slot) {
             AtomicSlot itemType = new AtomicSlot( slot.getName() + "#item", "" );
             AggregateSlot newType = new AggregateSlot(slot.getName(), slot.getNote(), itemType );
             itemType.setParentSlot(newType);
@@ -156,7 +156,7 @@ public class TagSpaceParseResult {
             CompoundSlot newType = new CompoundSlot(slot.getName(), slot.getNote());
             slot.getSubSlotNames().forEach( 
                 (String name) -> 
-                    newType.addFieldType( 
+                    newType.addSubSlot( 
                             Optional.ofNullable(slotsByName.get(name))
                                 .orElseThrow( ()->new MissingSlotException(name, slot.getName()) )
                                 .accept(TypeBuilder.this)));

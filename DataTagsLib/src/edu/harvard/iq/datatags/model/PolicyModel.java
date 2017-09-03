@@ -2,7 +2,7 @@ package edu.harvard.iq.datatags.model;
 
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;

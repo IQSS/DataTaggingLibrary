@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
@@ -19,9 +19,9 @@ import java.util.List;
  */
 public class GraphvizTagSpacePathsVizualizer extends GraphvizVisualizer {
 	
-	private final SlotType topLevel;
+	private final AbstractSlot topLevel;
 
-	public GraphvizTagSpacePathsVizualizer(SlotType topLevel) {
+	public GraphvizTagSpacePathsVizualizer(AbstractSlot topLevel) {
 		this.topLevel = topLevel;
 	}
 
@@ -37,7 +37,7 @@ public class GraphvizTagSpacePathsVizualizer extends GraphvizVisualizer {
 		final List<String> nodes = new LinkedList<>();
 		final List<String> edges = new LinkedList<>();
 		
-		SlotType.Visitor typePainter = new SlotType.VoidVisitor(){
+		AbstractSlot.Visitor typePainter = new AbstractSlot.VoidVisitor(){
 
 			@Override
 			public void visitAtomicSlotImpl(AtomicSlot t) {
@@ -60,7 +60,7 @@ public class GraphvizTagSpacePathsVizualizer extends GraphvizVisualizer {
 			public void visitCompoundSlotImpl(CompoundSlot t) {
 				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[shape=\"point\"]");
-                t.getFieldTypes().forEach((subFieldType) -> {
+                t.getSubSlots().forEach((subFieldType) -> {
                     edges.add( sTypeName + " -> " + sanitizeId(subFieldType.getName()) + ":w [label=\"" + subFieldType.getName() + "\"]" );
                     subFieldType.accept(this);
                 });

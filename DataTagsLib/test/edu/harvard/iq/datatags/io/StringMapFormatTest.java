@@ -1,23 +1,17 @@
-/*
- *  (C) Michael Bar-Sinai
- */
-
 package edu.harvard.iq.datatags.io;
 
 import edu.harvard.iq.datatags.io.StringMapFormat.TrieNode;
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.types.TypeHelper;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.SlotHelper;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import java.util.Map;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -29,7 +23,7 @@ public class StringMapFormatTest {
     public StringMapFormatTest() {
     }
     
-    SlotType dataTagsType;
+    AbstractSlot dataTagsType;
     
     @Before
     public void setUp() throws DataTagsParseException {
@@ -56,9 +50,9 @@ public class StringMapFormatTest {
         
         Map<String, String> result = sut.format(val);
         
-        for ( Map.Entry<String, String> ent : result.entrySet() ) {
-            System.out.println( String.format("%s -> %s", ent.getKey(), ent.getValue()));
-        }
+        result.entrySet().forEach( ent -> 
+            System.out.println( String.format("%s -> %s", ent.getKey(), ent.getValue()))
+        );
         
         TrieNode root = sut.makeTrie(result);
         printTrie( root, 0 );
@@ -112,18 +106,18 @@ public class StringMapFormatTest {
 
     private CompoundValue makeCompoundValue() {
         CompoundValue val = ((CompoundSlot)dataTagsType).createInstance();
-        val.set( TypeHelper.safeGet(dataTagsType, "color", "red") );
-        AggregateValue stylesVal = (AggregateValue) TypeHelper.safeGet(dataTagsType, "styles", "Jazz");
-        AggregateSlot stylesType = stylesVal.getType();
-        stylesVal.add( TypeHelper.getCreateValue( stylesType.getItemType(), "Blues", "") );
-        stylesVal.add( TypeHelper.getCreateValue( stylesType.getItemType(), "RockAndRoll", "") );
-        CompoundSlot mealType = (CompoundSlot) val.getType().getTypeNamed("meal");
+        val.put(SlotHelper.safeGet(dataTagsType, "color", "red") );
+        AggregateValue stylesVal = (AggregateValue) SlotHelper.safeGet(dataTagsType, "styles", "Jazz");
+        AggregateSlot stylesType = stylesVal.getSlot();
+        stylesVal.add(SlotHelper.getCreateValue( stylesType.getItemType(), "Blues", "") );
+        stylesVal.add(SlotHelper.getCreateValue( stylesType.getItemType(), "RockAndRoll", "") );
+        CompoundSlot mealType = (CompoundSlot) val.getSlot().getSubSlot("meal");
         CompoundValue meal = mealType.createInstance();
-        meal.set( TypeHelper.safeGet(mealType, "open", "salad") );
-        meal.set( TypeHelper.safeGet(mealType, "main", "meat") );
-        meal.set( TypeHelper.safeGet(mealType, "desert", "appleSauce") );
-        val.set( meal );
-        val.set( stylesVal );
+        meal.put(SlotHelper.safeGet(mealType, "open", "salad") );
+        meal.put(SlotHelper.safeGet(mealType, "main", "meat") );
+        meal.put(SlotHelper.safeGet(mealType, "desert", "appleSauce") );
+        val.put( meal );
+        val.put( stylesVal );
         return val;
     }
     

@@ -186,7 +186,7 @@ public class NewModelCommand extends AbstractCliCommand {
         String ans = rnr.readLineWithDefault("Decision graph filename: ", "decision-graph.dg");
         data.setDecisionGraphPath( data.getMetadataFile().resolveSibling(ans) );
         
-        ans = rnr.readLineWithDefault("Policy space filename: ", "policy-space.ps");
+        ans = rnr.readLineWithDefault("Policy space filename: ", "policy-space.pspace");
         data.setPolicySpacePath( data.getMetadataFile().resolveSibling(ans) );
         
         ans = rnr.readLineWithDefault("Root slot name (Only letters, no spaces):", "DataTags");
@@ -240,7 +240,7 @@ public class NewModelCommand extends AbstractCliCommand {
             data.setTitle( data.getMetadataFile().getParent().getFileName().toString() );
         }
         data.setDecisionGraphPath( data.getMetadataFile().resolveSibling("decision-graph.dg") );
-        data.setPolicySpacePath( data.getMetadataFile().resolveSibling("policy-space.ps") );
+        data.setPolicySpacePath( data.getMetadataFile().resolveSibling("policy-space.pspace") );
         data.setRootTypeName("DataTags");
     }
     

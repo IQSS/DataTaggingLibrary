@@ -6,11 +6,11 @@ import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
@@ -220,7 +220,7 @@ public class DecisionGraphCompiler {
 
         List<List<String>> fullyQualifiedNames = new LinkedList<>();
         // initial index
-        topLevelType.accept(new SlotType.VoidVisitor() {
+        topLevelType.accept(new AbstractSlot.VoidVisitor() {
             LinkedList<String> stack = new LinkedList<>();
 
             @Override
@@ -241,11 +241,11 @@ public class DecisionGraphCompiler {
             @Override
             public void visitCompoundSlotImpl(CompoundSlot t) {
                 stack.push(t.getName());
-                t.getFieldTypes().forEach(tt -> tt.accept(this));
+                t.getSubSlots().forEach(tt -> tt.accept(this));
                 stack.pop();
             }
 
-            void addType(SlotType tt) {
+            void addType(AbstractSlot tt) {
                 stack.push(tt.getName());
                 fullyQualifiedNames.add(C.reverse((List) stack));
                 stack.pop();

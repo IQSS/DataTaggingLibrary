@@ -18,6 +18,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.*;
+import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.Iterator;
@@ -63,7 +64,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     private String id = "RuntimeEngine-" + COUNTER.incrementAndGet();
     private PolicyModel model;
     private DecisionGraph decisionGraph;
-    private CompoundValue currentTags;
+    private CompoundValue currentValue;
     private final Deque<ThroughNode> stack = new LinkedList<>();
     private Node currentNode;
     private RuntimeEngineStatus status = RuntimeEngineStatus.Idle;
@@ -78,7 +79,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                // return the node of the first write answer 
             for (ConsiderAnswer ans : nd.getAnswers()) {
                 CompoundValue answer = ans.getAnswer();
-                if (currentTags.isSupersetOf(answer)) {
+                if (currentValue.isSupersetOf(answer)) {
                     return nd.getNodeFor(ans);
                 }
             }
@@ -103,25 +104,22 @@ import java.util.concurrent.atomic.AtomicInteger;
         @Override
             public Node visit(SetNode nd) {
             // Apply changes
-            setCurrentTags(getCurrentTags().composeWith(nd.getTags()));
+            setCurrentValue(getCurrentValue().composeWith(nd.getTags()));
             
-            //ValueInference
-            boolean first = true;
-            CompoundValue previousTags = getCurrentTags();
-            while( (!getCurrentTags().equals(previousTags)) || first ){
-                previousTags = getCurrentTags();
-                first = false;
-                valueInferrer.forEach(value -> {
-                    value.getInferencePairs().forEach(pair -> {
-                        Boolean isBigger = (pair.getMinimalCoordinate().intersectSlotWith(getCurrentTags()) != null) ? 
-                                pair.getMinimalCoordinate().intersectSlotWith(getCurrentTags()).isBigger(getCurrentTags().intersectSlotWith(pair.getMinimalCoordinate())) :
-                                false;
-                        if ( isBigger != null && isBigger ) {
-                            setCurrentTags(getCurrentTags().composeWith(pair.getInferredValue()));
-                        }
-                    });
-                });
+            // Process inferred values (ValueInference)
+            CompoundValue previousValue;
+            CompoundValue inferredValue = getCurrentValue();
+            
+            do {
+                previousValue = inferredValue;
+                CompoundValue infCapture = inferredValue; // passing to lambda, has to be effectively final.
+                inferredValue = valueInferrer.stream().map( vi -> vi.apply(infCapture) ).collect( C.compose(previousValue.getSlot()));                
+            } while ( !inferredValue.equals(previousValue) );
+            
+            if ( ! inferredValue.equals(getCurrentValue()) ) {
+                setCurrentValue(inferredValue);
             }
+            
             // Off we go to the next node.
             return nd.getNextNode();
         }
@@ -169,8 +167,8 @@ import java.util.concurrent.atomic.AtomicInteger;
         
     };
     
-    public CompoundValue getCurrentTags() {
-        return currentTags;
+    public CompoundValue getCurrentValue() {
+        return currentValue;
     }
 
     /**
@@ -181,7 +179,7 @@ import java.util.concurrent.atomic.AtomicInteger;
      * @return {@code true} iff there is a need to consume answers.
      */
     public boolean start() throws DataTagsRuntimeException {
-        setCurrentTags(model.getSpaceRoot().createInstance());
+        setCurrentValue(model.getSpaceRoot().createInstance());
         setStatus(RuntimeEngineStatus.Running);
         listener.ifPresent(l -> l.runStarted(this));
         
@@ -208,7 +206,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         setStatus(RuntimeEngineStatus.Idle);
         stack.clear();
         currentNode = null;
-        currentTags = null;
+        currentValue = null;
     }
 
     protected boolean processNode(Node n) throws DataTagsRuntimeException {
@@ -243,7 +241,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
         getStack().forEach(nd -> state.pushNodeIdToStack(nd.getId()));
 
-        state.setSerializedTagValue(new StringMapFormat().format(currentTags));
+        state.setSerializedTagValue(new StringMapFormat().format(currentValue));
 
         return state;
     }
@@ -253,7 +251,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             throw new IllegalArgumentException("Snapshot cannot be null");
         }
         setStatus(snapshot.getStatus());
-        currentTags = new StringMapFormat().parseCompoundValue(
+        currentValue = new StringMapFormat().parseCompoundValue(
                 model.getSpaceRoot(),
                 snapshot.getSerializedTagValue());
         currentNode = decisionGraph.getNode(snapshot.getCurrentNodeId());
@@ -286,8 +284,8 @@ import java.util.concurrent.atomic.AtomicInteger;
         return consumeAll(Arrays.asList(answers));
     }
 
-    public void setCurrentTags(CompoundValue currentTags) {
-        this.currentTags = currentTags;
+    public void setCurrentValue(CompoundValue aNewValue) {
+        this.currentValue = aNewValue;
     }
 
     /**

@@ -1,8 +1,8 @@
 package edu.harvard.iq.datatags.parser.Inference;
 
 import edu.harvard.iq.datatags.model.ValueInferrer;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst.InferencePairAst;
@@ -54,10 +54,10 @@ public class ValueInferenceParseResultTest {
                         + "TestI: one of yes, no.";
         TagSpaceParseResult tagSpaceParseResult = new TagSpaceParser().parse(typeDef);
         topType = tagSpaceParseResult.buildType("Top").get();
-        as0 = (AtomicSlot) topType.getTypeNamed("A");
-        asB = (AtomicSlot) topType.getTypeNamed("Color");
-        asT = (AtomicSlot) topType.getTypeNamed("Test");
-        asTI = (AtomicSlot) topType.getTypeNamed("TestI");
+        as0 = (AtomicSlot) topType.getSubSlot("A");
+        asB = (AtomicSlot) topType.getSubSlot("Color");
+        asT = (AtomicSlot) topType.getSubSlot("Test");
+        asTI = (AtomicSlot) topType.getSubSlot("TestI");
         
     }
     
@@ -87,12 +87,12 @@ public class ValueInferenceParseResultTest {
         CompoundValue cvB = topType.createInstance();
         CompoundValue cvT = topType.createInstance();
         CompoundValue cvTI = topType.createInstance();
-        cv0.set(as0.valueOf("a0"));
-        cv1.set(as0.valueOf("a1"));
-        cvR.set(asB.valueOf("Red"));
-        cvB.set(asB.valueOf("Blue"));
-        cvT.set(asT.valueOf("Works"));
-        cvTI.set(asTI.valueOf("yes"));
+        cv0.put(as0.valueOf("a0"));
+        cv1.put(as0.valueOf("a1"));
+        cvR.put(asB.valueOf("Red"));
+        cvB.put(asB.valueOf("Blue"));
+        cvT.put(asT.valueOf("Works"));
+        cvTI.put(asTI.valueOf("yes"));
         
         InferencePairAst firstAstPair = new InferencePairAst(asList(
                                         new AstSetNode.AtomicAssignment(asList("A"), "a0")), "Blue");

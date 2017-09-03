@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.externaltexts;
 
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -31,9 +31,9 @@ public class Localization {
     
     private final Map<String, String> nodeText = new HashMap<>();
     
-    private final Map<SlotType, String> slotsText = new HashMap<>();
+    private final Map<AbstractSlot, String> slotsText = new HashMap<>();
     
-    private final Map<TagValue, String> slotValuesText = new HashMap<>();
+    private final Map<AbstractValue, String> slotValuesText = new HashMap<>();
     
     /** 
      * A map of the readme files this localization can 
@@ -106,23 +106,23 @@ public class Localization {
         return nodeText.keySet();
     }
     
-    public void setSlotText( SlotType st, String text ) {
+    public void setSlotText( AbstractSlot st, String text ) {
         if ( text.trim().length() > 0 ) {
             slotsText.put(st, text);
         }
     }
     
-    public Optional<String> getSlotText( SlotType st ) {
+    public Optional<String> getSlotText( AbstractSlot st ) {
         return Optional.ofNullable(slotsText.get(st));
     }
     
-    public void setSlotValueText( TagValue tv, String text ) {
+    public void setSlotValueText( AbstractValue tv, String text ) {
         if ( text.trim().length() > 0 ) {
             slotValuesText.put(tv, text);
         }
     }
     
-    public Optional<String> getSlotValueText( TagValue tv ) {
+    public Optional<String> getSlotValueText( AbstractValue tv ) {
         return Optional.ofNullable(slotValuesText.get(tv));
     }
     

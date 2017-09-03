@@ -12,10 +12,10 @@ import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
@@ -30,6 +30,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.NodeIdAdder;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
+import edu.harvard.iq.datatags.parser.exceptions.BadLookupException;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
@@ -148,15 +149,15 @@ public class CompilationUnit {
         compile(aFullyQualifiedSlotName, aTopLevelType, globalEndNode, astValidators);
     }   
     
-    private SlotType findSlot(List<String> astSlot, CompoundValue topValue, SetNodeValueBuilder valueBuilder) {
-        SlotType slot;
+    private AbstractSlot findSlot(List<String> astSlot, CompoundValue topValue, SetNodeValueBuilder valueBuilder) {
+        AbstractSlot slot;
 
         if (astSlot == null || C.last(astSlot).equals(topLevelType.getName())) {
             slot = topLevelType;
         } else {
             try {
                 final CompoundValue additionPoint = valueBuilder.descend(C.tail(fullyQualifiedSlotName.get(astSlot)), topValue);
-                slot = additionPoint.getType().getTypeNamed(C.last(astSlot));
+                slot = additionPoint.getSlot().getSubSlot(C.last(astSlot));
             } catch (RuntimeException re) {
                 throw new RuntimeException("Tag not found");
             }
@@ -241,7 +242,7 @@ public class CompilationUnit {
                             }
                             ConsiderNode res = new ConsiderNode(astNode.getId(), elseNode);
 
-                            SlotType slot = findSlot(astNode.getSlot(), topValue, valueBuilder);
+                            AbstractSlot slot = findSlot(astNode.getSlot(), topValue, valueBuilder);
 
                             if (slot instanceof AggregateSlot || slot instanceof AtomicSlot) {
                                 // Original node was [consider]
@@ -342,7 +343,11 @@ public class CompilationUnit {
                             try {
                                 astNode.getAssignments().forEach(asnmnt -> asnmnt.accept(valueBuilder));
                             } catch (RuntimeException re) {
-                                throw new RuntimeException(new BadSetInstructionException(re.getMessage() + " (at node " + astNode + ")", astNode));
+                                if ( re.getCause() instanceof BadLookupException ) {
+                                    throw new RuntimeException(new BadSetInstructionException(re.getMessage() + " (at node " + astNode + ")", astNode, (BadLookupException) re.getCause()));
+                                } else {
+                                    throw new RuntimeException(new BadSetInstructionException(re.getMessage() + " (at node " + astNode + ")", astNode));
+                                }
                             }
 
                             final SetNode setNode = new SetNode(astNode.getId(), topValue);

@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.model.types;
+package edu.harvard.iq.datatags.model.slots;
 
 import edu.harvard.iq.datatags.model.values.*;
 import java.util.Collections;
@@ -13,7 +13,7 @@ import java.util.TreeSet;
  * 
  * @author michael
  */
-public class AtomicSlot extends SlotType {
+public class AtomicSlot extends AbstractSlot {
 	
 	private int nextOrdinal = 0;
     

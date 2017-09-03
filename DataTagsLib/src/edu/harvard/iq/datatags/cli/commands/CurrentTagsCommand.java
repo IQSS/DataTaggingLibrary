@@ -21,7 +21,7 @@ public class CurrentTagsCommand implements CliCommand {
 
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception {
-        rnr.dumpTagValue( rnr.getEngine().getCurrentTags() );
+        rnr.dumpTagValue( rnr.getEngine().getCurrentValue() );
         rnr.println("");
     }
     

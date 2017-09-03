@@ -7,7 +7,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
-import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
+import edu.harvard.iq.datatags.model.slots.SlotValueLookupResult;
 import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
@@ -38,11 +38,19 @@ public class MatchResultToSequenceCommand implements CliCommand {
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception {
         String tagValueExpression = "[>x< set: " + String.join(" ", C.tail(args)) + "]";
+        
         rnr.debugPrint( tagValueExpression );
         try {
             CompilationUnit cu = new CompilationUnit(tagValueExpression);
-            cu.compile(rnr.getModel().getSpaceRoot(), new EndNode("SYN-END"), new ArrayList<>());
-//            DecisionGraph dg = new DecisionGraphParser().parse(tagValueExpression).compile(rnr.getModel().getSpaceRoot());
+            try {
+                cu.compile(rnr.getModel().getSpaceRoot(), new EndNode("SYN-END"), new ArrayList<>());
+            } catch ( RuntimeException rte ) {
+                if ( rte.getCause() instanceof BadSetInstructionException ) {
+                    throw (BadSetInstructionException) rte.getCause();
+                } else {
+                    throw rte;
+                }
+            }
             SetNode sn = (SetNode) cu.getDecisionGraph().getNode("x");
 
             FindSupertypeResultsDgq query = new FindSupertypeResultsDgq(rnr.getModel(), sn.getTags());
@@ -78,35 +86,14 @@ public class MatchResultToSequenceCommand implements CliCommand {
             
             
         } catch ( BadSetInstructionException bse ) {
-            rnr.printWarning("Bad Set Instruction");
-            bse.getBadResult().accept(new TagValueLookupResult.VoidVisitor() {
-                @Override
-                protected void visitImpl(TagValueLookupResult.SlotNotFound snf) {
-                    rnr.printWarning("Can't find slot '" + snf.getSlotName() + "'");
-                }
-
-                @Override
-                protected void visitImpl(TagValueLookupResult.ValueNotFound vnf) {
-                    rnr.printWarning("Can't find value " + vnf.getValueName() + " in type " + vnf.getTagType().getName());
-                }
-
-                @Override
-                protected void visitImpl(TagValueLookupResult.Ambiguity amb) {
-                    rnr.printWarning("Possible results are");
-                    amb.getPossibilities().forEach((poss) -> {
-                        rnr.println("  " + poss);
-                    });
-                }
-
-                @Override
-                protected void visitImpl(TagValueLookupResult.Success scss) {
-                    System.out.println("Should not have gotten here");
-                    throw new RuntimeException("Set success is not a failure.");
-                }
-
-            });
+            if ( bse.getBadLookupException() != null ) {
+                rnr.printWarning( bse.getBadLookupException().getMessage() );
+            } else {
+                rnr.printWarning("Error parsing value expression. Is the slot name correct?");
+            }
         } catch ( DataTagsParseException dpe ) {
             rnr.printWarning( dpe.getMessage() );
+            rnr.printWarning( "Was the value or slot names entered legal? (i.e. start with a letter, no spaces, etc.)" );
         }
         
     }

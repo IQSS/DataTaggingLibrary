@@ -1,5 +1,8 @@
-package edu.harvard.iq.datatags.model.types;
+package edu.harvard.iq.datatags.model.slots;
 
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
+import edu.harvard.iq.datatags.model.values.AbstractValue.CompareResult;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +19,7 @@ import org.junit.Test;
  *
  * @author michael
  */
-public class AtomicTypeTest {
+public class AtomicSlotTest {
 	
 	/**
 	 * Test of registerValue method, of class AtomicType.
@@ -39,6 +42,21 @@ public class AtomicTypeTest {
 		assertEquals( new TreeSet<>(vals), instance.values() );
 	}
 
+    @Test
+    public void testCompare() {
+        AtomicSlot instance = new AtomicSlot("Test", null);
+		AtomicValue v1 = instance.registerValue("1", null);
+		AtomicValue v2 = instance.registerValue("2", null);
+		AtomicValue v3 = instance.registerValue("3", null);
+        
+        AtomicSlot otherSlot = new AtomicSlot("OtherAtomic", null);
+        
+        assertEquals( CompareResult.Smaller, v2.compare(v3) );
+        assertEquals( CompareResult.Same, v2.compare(v2) );
+        assertEquals( CompareResult.Bigger, v2.compare(v1) );
+        assertEquals( CompareResult.Incomparable, v2.compare(otherSlot.registerValue("X", null)) );
+    }
+    
     /**
 	 * Test of registerValue method, of class AtomicType.
 	 */

@@ -1,24 +1,24 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Visualizes a {@link SlotType} as a tree.
+ * Visualizes a {@link AbstractSlot} as a tree.
  * @author michael
  */
 public class GraphvizTagSpaceVisualizer extends GraphvizVisualizer {
 	
-	private final SlotType topLevel;
+	private final AbstractSlot topLevel;
 
-	public GraphvizTagSpaceVisualizer(SlotType topLevel) {
+	public GraphvizTagSpaceVisualizer(AbstractSlot topLevel) {
 		this.topLevel = topLevel;
 	}
 
@@ -34,7 +34,7 @@ public class GraphvizTagSpaceVisualizer extends GraphvizVisualizer {
 		final List<String> nodes = new LinkedList<>();
 		final List<String> edges = new LinkedList<>();
 		
-		SlotType.Visitor typePainter = new SlotType.Visitor<Void>(){
+		AbstractSlot.Visitor typePainter = new AbstractSlot.Visitor<Void>(){
 
 			@Override
 			public Void visitSimpleSlot(AtomicSlot t) {
@@ -64,7 +64,7 @@ public class GraphvizTagSpaceVisualizer extends GraphvizVisualizer {
 			public Void visitCompoundSlot(CompoundSlot t) {
 				String sTypeName = sanitizeId(t.getName());
 				nodes.add( sTypeName + "[label=\""+t.getName()+"\" shape=\"octagon\" peripheries=\"2\"]");
-                t.getFieldTypes().forEach( val  -> {
+                t.getSubSlots().forEach( val  -> {
                     edges.add( sTypeName + " -> " + sanitizeId(val.getName()) );
                     val.accept(this);
                 });

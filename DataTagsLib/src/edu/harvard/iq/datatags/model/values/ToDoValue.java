@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.model.values;
 
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 
 /**
  * A placeholder value, to be filled in later in the
@@ -10,7 +10,7 @@ import edu.harvard.iq.datatags.model.types.ToDoSlot;
  * 
  * @author michael
  */
-public class ToDoValue extends TagValue {
+public class ToDoValue extends AbstractValue {
     private final String info;
 
 	public ToDoValue(ToDoSlot type, String someInfo) {
@@ -19,12 +19,22 @@ public class ToDoValue extends TagValue {
 	}
 
     @Override
-    public ToDoSlot getType() {
-        return (ToDoSlot) super.getType();
+    public ToDoSlot getSlot() {
+        return (ToDoSlot) super.getSlot();
+    }
+    
+    @Override
+    public CompareResult compare(AbstractValue otherValue) {
+        if ( otherValue == null ) throw new IllegalArgumentException("Cannot compare a value to null");
+        if ( equals(otherValue) ) return CompareResult.Same;
+        if ( ! otherValue.getSlot().equals(getSlot()) ) return CompareResult.Incomparable;
+        if ( ! (otherValue instanceof ToDoValue) )  return CompareResult.Incomparable;
+        
+        return CompareResult.Same; // ToDo slots have a single value only. If we're here, it's the same slot, so same value.
     }
     
 	@Override
-	public <R> R accept(edu.harvard.iq.datatags.model.values.TagValue.Visitor<R> tv) {
+	public <R> R accept(edu.harvard.iq.datatags.model.values.AbstractValue.Visitor<R> tv) {
 		return tv.visitToDoValue(this);
 	}
 
@@ -33,7 +43,7 @@ public class ToDoValue extends TagValue {
     }
 	
     @Override
-    protected String tagValueToString() {
+    protected String contentToString() {
         return "<TODO>";
     }
 }

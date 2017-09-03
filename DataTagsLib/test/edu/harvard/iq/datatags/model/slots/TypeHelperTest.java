@@ -3,9 +3,13 @@
  *  (C) Michael Bar-Sinai
  */
 
-package edu.harvard.iq.datatags.model.types;
+package edu.harvard.iq.datatags.model.slots;
 
-import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.SlotHelper;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import java.util.Arrays;
@@ -24,7 +28,7 @@ public class TypeHelperTest {
     public TypeHelperTest() {
     }
     
-    SlotType dataTagsType;
+    AbstractSlot dataTagsType;
     
     @Before
     public void setUp() throws DataTagsParseException {
@@ -50,16 +54,16 @@ public class TypeHelperTest {
      */
     @Test
     public void testSafeGet_simple() {
-        AtomicSlot colorType = (AtomicSlot)((CompoundSlot)dataTagsType).getTypeNamed("color");
-        TagValue red = TypeHelper.getCreateValue(colorType, "red", "");
-        assertEquals( red, TypeHelper.safeGet(dataTagsType, "color", "red") );
+        AtomicSlot colorType = (AtomicSlot)((CompoundSlot)dataTagsType).getSubSlot("color");
+        AbstractValue red = SlotHelper.getCreateValue(colorType, "red", "");
+        assertEquals(red, SlotHelper.safeGet(dataTagsType, "color", "red") );
     }
     
     
     @Test
     public void testPathFormat() {
         List<String> sample = Arrays.asList("Hello","World","What's","Up");
-        assertEquals( "Hello/World/What's/Up", TypeHelper.formatTypePath(sample));
+        assertEquals("Hello/World/What's/Up", SlotHelper.formatSlotPath(sample));
     }
     
 }

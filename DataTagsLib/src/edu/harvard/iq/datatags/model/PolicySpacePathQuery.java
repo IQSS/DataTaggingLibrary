@@ -1,11 +1,11 @@
 package edu.harvard.iq.datatags.model;
 
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
-import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,9 +36,9 @@ public class PolicySpacePathQuery {
     }
     
     public static class TagValueResult extends Result {
-        public final TagValue value;
+        public final AbstractValue value;
 
-        public TagValueResult(TagValue result, List<String> path) {
+        public TagValueResult(AbstractValue result, List<String> path) {
             super(path);
             this.value = result;
         }
@@ -78,9 +78,9 @@ public class PolicySpacePathQuery {
     }
     
     public static class SlotTypeResult extends Result {
-        public final SlotType value;
+        public final AbstractSlot value;
 
-        public SlotTypeResult(SlotType value, List<String> path) {
+        public SlotTypeResult(AbstractSlot value, List<String> path) {
             super(path);
             this.value = value;
         }
@@ -167,7 +167,7 @@ public class PolicySpacePathQuery {
         if ( aPath.isEmpty() ) return new NotFoundResult(aPath);
         if ( ! aPath.get(0).equals(base.getName()) ) return new NotFoundResult(aPath);
         
-        return base.accept( new SlotType.Visitor<Result>() {
+        return base.accept(new AbstractSlot.Visitor<Result>() {
             int idx = 1;
             
             @Override
@@ -199,7 +199,7 @@ public class PolicySpacePathQuery {
             @Override
             public Result visitCompoundSlot(CompoundSlot t) {
                 if ( idx==aPath.size() ) return new SlotTypeResult(t, aPath);
-                SlotType subSlot = t.getTypeNamed(aPath.get(idx));
+                AbstractSlot subSlot = t.getSubSlot(aPath.get(idx));
                 idx++;
                 return (subSlot!=null) ? subSlot.accept(this) : new NotFoundResult(aPath);
             }
