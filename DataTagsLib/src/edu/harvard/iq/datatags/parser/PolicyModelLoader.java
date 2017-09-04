@@ -3,9 +3,10 @@ package edu.harvard.iq.datatags.parser;
 import edu.harvard.iq.datatags.externaltexts.LocalizationLoader;
 import static edu.harvard.iq.datatags.io.FileUtils.ciResolve;
 import edu.harvard.iq.datatags.model.PolicyModel;
-import edu.harvard.iq.datatags.model.ValueInferrer;
+import edu.harvard.iq.datatags.model.inference.SupportValueInferrer;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.inference.AbstractValueInferrer;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.parser.Inference.ValueInferenceParseResult;
 import edu.harvard.iq.datatags.parser.Inference.ValueInferenceParser;
@@ -149,7 +150,7 @@ public class PolicyModelLoader {
                 //load valueInferrers
                 if (data.getValueInferrersPath() != null){
                     ValueInferenceParseResult inferenceParseResult = new ValueInferenceParser(spaceRoot).parse(data.getValueInferrersPath());
-                    Set<ValueInferrer> valueInferrer =  inferenceParseResult.buildValueInference();
+                    Set<AbstractValueInferrer> valueInferrer =  inferenceParseResult.buildValueInference();
                     model.setValueInferrers(valueInferrer);
                     inferenceParseResult.getValidationMessages().forEach(res::addMessage);
                 }

@@ -1,12 +1,15 @@
 package edu.harvard.iq.datatags.parser.Inference;
 
+import edu.harvard.iq.datatags.model.inference.AbstractValueInferrer;
+import edu.harvard.iq.datatags.model.inference.AbstractValueInferrer.InferencePair;
+import edu.harvard.iq.datatags.model.inference.ComplianceValueInferrer;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst;
 import edu.harvard.iq.datatags.parser.decisiongraph.SetNodeValueBuilder;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
-import edu.harvard.iq.datatags.model.ValueInferrer;
-import edu.harvard.iq.datatags.model.ValueInferrer.InferencePair;
+import edu.harvard.iq.datatags.model.inference.SupportValueInferrer;
+import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst.InferencePairAst;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.HashMap;
@@ -25,7 +28,7 @@ public class ValueInferenceParseResult {
     private final List<ValueInferrerAst> inferencesAst;
     private final List<ValidationMessage> validationMessages = new LinkedList<>();
     private Map<String, ValueInferrerAst> valueByName = new HashMap<>();
-    private final Set<ValueInferrer> inferences = new HashSet<>();
+    private final Set<AbstractValueInferrer> inferences = new HashSet<>();
     
     private final Map<List<String>, List<String>> fullyQualifiedSlotName;
     private final CompoundSlot topLevelType;
@@ -52,44 +55,52 @@ public class ValueInferenceParseResult {
         }
     }
     
-    public Set<ValueInferrer> buildValueInference() {
+    public Set<AbstractValueInferrer> buildValueInference() {
         inferencesAst.forEach(i -> {
             // For each ValueInferrereAst
-            ValueInferrer valueInferrer = new ValueInferrer();
-            i.getInferencePairs().forEach(pair -> {
-                // For each pair
-                final CompoundValue minimalCoordinates = topLevelType.createInstance();
-                SetNodeValueBuilder valueBuilder = new SetNodeValueBuilder(minimalCoordinates, fullyQualifiedSlotName);
-                try {
-                    pair.getMinimalCoordinate().forEach(asnmnt -> asnmnt.accept(valueBuilder));
-                } catch (RuntimeException re) {
-                    validationMessages.add(new ValidationMessage(Level.ERROR, re.getMessage() + " at value " + i.toStringSlotName()));
-                }
-                // minimalCoordinates -> CompoundValue from all minimalCoordinates
-                
-                AstSetNode.AtomicAssignment asnmnt = new AstSetNode.AtomicAssignment
-                                                            (i.getSlot(), pair.getInferredValue());
-                final CompoundValue inferredValue = topLevelType.createInstance();
-                SetNodeValueBuilder valueBuilderForInferredValue = new SetNodeValueBuilder
-                                                            (inferredValue, fullyQualifiedSlotName);
-                asnmnt.accept(valueBuilderForInferredValue);
-                // inferredValue -> compoundValue from the slotName and inferred value
-                Boolean isOk = true;
-                if (!valueInferrer.getInferencePairs().isEmpty()){
-                    CompoundValue lastMinimalCoorinate = valueInferrer.getInferencePairs()
-                            .get(valueInferrer.getInferencePairs().size() - 1).getMinimalCoordinate();
-                    isOk = lastMinimalCoorinate.project(minimalCoordinates.getNonEmptySubSlots()).isEmpty() ? false
-                            : minimalCoordinates.project(lastMinimalCoorinate.getNonEmptySubSlots()).isBigger(lastMinimalCoorinate.project(minimalCoordinates.getNonEmptySubSlots())).orElse(false);
-                    if ( !isOk ) {
-                        validationMessages.add(new ValidationMessage(Level.ERROR,
-                                "Slots are not ordered hierarchically - " + lastMinimalCoorinate.toString() + " and " + minimalCoordinates));
+            AbstractValueInferrer valueInferrer = null;
+            switch (i.getType()) {
+                case "copmly": valueInferrer = new ComplianceValueInferrer(); break;
+                case "support": valueInferrer = new SupportValueInferrer(); break;
+                default: validationMessages.add(new ValidationMessage(Level.ERROR, "Unknown inferrer type '" + i.getType() + "'."));
+            }
+            if ( valueInferrer != null ) {
+            for ( InferencePairAst pair : i.getInferencePairs() ) {
+                    // For each pair
+                    final CompoundValue minimalCoordinates = topLevelType.createInstance();
+                    SetNodeValueBuilder valueBuilder = new SetNodeValueBuilder(minimalCoordinates, fullyQualifiedSlotName);
+                    try {
+                        pair.getMinimalCoordinate().forEach(asnmnt -> asnmnt.accept(valueBuilder));
+                    } catch (RuntimeException re) {
+                        validationMessages.add(new ValidationMessage(Level.ERROR, re.getMessage() + " at value " + i.toStringSlotName()));
+                    }
+                    // minimalCoordinates -> CompoundValue from all minimalCoordinates
+
+                    AstSetNode.AtomicAssignment asnmnt = new AstSetNode.AtomicAssignment
+                                                                (i.getSlot(), pair.getInferredValue());
+                    final CompoundValue inferredValue = topLevelType.createInstance();
+                    SetNodeValueBuilder valueBuilderForInferredValue = new SetNodeValueBuilder
+                                                                (inferredValue, fullyQualifiedSlotName);
+                    asnmnt.accept(valueBuilderForInferredValue);
+
+                    // inferredValue -> compoundValue from the slotName and inferred value
+                    Boolean isOk = true;
+                    if (!valueInferrer.getInferencePairs().isEmpty()){
+                        CompoundValue lastMinimalCoorinate = valueInferrer.getInferencePairs()
+                                .get(valueInferrer.getInferencePairs().size() - 1).getMinimalCoordinate();
+                        isOk = lastMinimalCoorinate.project(minimalCoordinates.getNonEmptySubSlots()).isEmpty() ? false
+                                : minimalCoordinates.project(lastMinimalCoorinate.getNonEmptySubSlots()).isBigger(lastMinimalCoorinate.project(minimalCoordinates.getNonEmptySubSlots())).orElse(false);
+                        if ( !isOk ) {
+                            validationMessages.add(new ValidationMessage(Level.ERROR,
+                                    "Slots are not ordered hierarchically - " + lastMinimalCoorinate.toString() + " and " + minimalCoordinates));
+                        }
+                    }
+                    if ( isOk ) {
+                        InferencePair inferencePair = new InferencePair(minimalCoordinates, inferredValue);
+                        valueInferrer.add(inferencePair);
                     }
                 }
-                if ( isOk ) {
-                    InferencePair inferencePair = new InferencePair(minimalCoordinates, inferredValue);
-                    valueInferrer.add(inferencePair);
-                }
-            });
+            }
             
             if ( isValid() ) {
                 inferences.add(valueInferrer);

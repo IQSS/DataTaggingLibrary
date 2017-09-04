@@ -2,6 +2,7 @@ package edu.harvard.iq.datatags.model;
 
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
+import edu.harvard.iq.datatags.model.inference.AbstractValueInferrer;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -20,7 +21,7 @@ public class PolicyModel {
     private CompoundSlot spaceRoot;
     private DecisionGraph decisionGraph;
     private final Set<String> localizations = new TreeSet<>();
-    private Set<ValueInferrer> valueInferrers = new HashSet<>();
+    private Set<AbstractValueInferrer> valueInferrers = new HashSet<>();
 
     
     public PolicyModelData getMetadata() {
@@ -59,11 +60,11 @@ public class PolicyModel {
         return ( metadata.getMetadataFile() != null ) ? metadata.getMetadataFile().getParent() : null;
     }
     
-    public Set<ValueInferrer> getValueInferrers() {
+    public Set<AbstractValueInferrer> getValueInferrers() {
         return valueInferrers;
     }
 
-    public void setValueInferrers(Set<ValueInferrer> valueInferrers) {
+    public void setValueInferrers(Set<AbstractValueInferrer> valueInferrers) {
         this.valueInferrers = valueInferrers;
     }
     

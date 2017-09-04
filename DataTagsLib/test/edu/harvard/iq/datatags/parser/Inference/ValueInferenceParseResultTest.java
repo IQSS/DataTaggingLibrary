@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.parser.Inference;
 
-import edu.harvard.iq.datatags.model.ValueInferrer;
+import edu.harvard.iq.datatags.model.inference.AbstractValueInferrer;
+import edu.harvard.iq.datatags.model.inference.SupportValueInferrer;
 import edu.harvard.iq.datatags.model.slots.AtomicSlot;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
@@ -100,22 +101,22 @@ public class ValueInferenceParseResultTest {
                                         new AstSetNode.AtomicAssignment(asList("A"), "a1")), "Red");
         InferencePairAst thirdAstPair = new InferencePairAst(asList(
                                         new AstSetNode.AtomicAssignment(asList("TestI"), "yes")), "Works");
-        List<ValueInferrerAst> inferences = asList(new ValueInferrerAst(asList("Color"), asList(firstAstPair, secondAstPair)),
-                                                new ValueInferrerAst(asList("Test"), asList(thirdAstPair)));
+        List<ValueInferrerAst> inferences = asList(new ValueInferrerAst(asList("Color"), asList(firstAstPair, secondAstPair), "support"),
+                                                new ValueInferrerAst(asList("Test"), asList(thirdAstPair), "support"));
         
         ValueInferenceParser parser = new ValueInferenceParser(topType);
         final Map<List<String>, List<String>> typesBySlot = parser.buildTypeIndex();
         ValueInferenceParseResult parse = new ValueInferenceParseResult(inferences, typesBySlot, topType);
-        ValueInferrer.InferencePair firstValPair = new ValueInferrer.InferencePair(cv0,cvB);
-        ValueInferrer.InferencePair secondValPair = new ValueInferrer.InferencePair(cv1,cvR);
-        ValueInferrer.InferencePair thirdValPair = new ValueInferrer.InferencePair(cvTI, cvT);
-        ValueInferrer first = new ValueInferrer();
+        SupportValueInferrer.InferencePair firstValPair = new SupportValueInferrer.InferencePair(cv0,cvB);
+        SupportValueInferrer.InferencePair secondValPair = new SupportValueInferrer.InferencePair(cv1,cvR);
+        SupportValueInferrer.InferencePair thirdValPair = new SupportValueInferrer.InferencePair(cvTI, cvT);
+        SupportValueInferrer first = new SupportValueInferrer();
         first.add(firstValPair);
         first.add(secondValPair);
-        ValueInferrer second = new ValueInferrer();
+        SupportValueInferrer second = new SupportValueInferrer();
         second.add(thirdValPair);
-        Set<ValueInferrer> expResult = Stream.of(first, second).collect(Collectors.toSet());
-        Set<ValueInferrer> result = parse.buildValueInference();
+        Set<AbstractValueInferrer> expResult = Stream.of(first, second).collect(Collectors.toSet());
+        Set<AbstractValueInferrer> result = parse.buildValueInference();
         assertEquals(expResult, result);
     }
     

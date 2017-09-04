@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.model;
+package edu.harvard.iq.datatags.model.inference;
 
 import edu.harvard.iq.datatags.model.slots.AggregateSlot;
 import edu.harvard.iq.datatags.model.slots.AtomicSlot;
@@ -18,7 +18,7 @@ import org.junit.Before;
  *
  * @author michael
  */
-public class ValueInferrerTest {
+public class SupportValueInferrerTest {
     
     private static final String SOURCE_SIMPLE = 
             "SBase: consists of X, Y, I. \n"
@@ -71,11 +71,10 @@ public class ValueInferrerTest {
     @Test
     public void testApplySimple() {
         
-        ValueInferrer sut = new ValueInferrer();
-        Stream.of( 
-                new ValueInferrer.InferencePair(buildValue(sBase, "X/X0; Y/Y0"), buildValue(sBase, "I/I0")),
-                new ValueInferrer.InferencePair(buildValue(sBase, "X/X1; Y/Y1"), buildValue(sBase, "I/I1")),
-                new ValueInferrer.InferencePair(buildValue(sBase, "X/X2; Y/Y1"), buildValue(sBase, "I/I2")) 
+        SupportValueInferrer sut = new SupportValueInferrer();
+        Stream.of(new SupportValueInferrer.InferencePair(buildValue(sBase, "X/X0; Y/Y0"), buildValue(sBase, "I/I0")),
+                new SupportValueInferrer.InferencePair(buildValue(sBase, "X/X1; Y/Y1"), buildValue(sBase, "I/I1")),
+                new SupportValueInferrer.InferencePair(buildValue(sBase, "X/X2; Y/Y1"), buildValue(sBase, "I/I2")) 
         ).forEach( sut::add );
         
         CompoundValue i0 = buildValue(sBase, "X/X0; Y/Y0; I/I0");

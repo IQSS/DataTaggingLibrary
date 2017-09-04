@@ -30,8 +30,8 @@ public class ValueInferenceRuleParser {
                         .map( t -> valueInferrerStructurePart(t) ) 
                             .collect( toList() ) );
         IDENTIFIER_WITH_KEYWORDS =  Parsers.sequence(
-                Parsers.or(parsers).many(),
-                Terminals.identifier().many()
+                    Parsers.or(parsers).many(),
+                    Terminals.identifier().many()
                 ).source().map( String::trim );
     }
     
@@ -58,18 +58,22 @@ public class ValueInferenceRuleParser {
                 valueInferrerStructurePart("]"),
                 (_s, assignments, _c, value, _e) -> new InferencePairAst(assignments, value));
     }
+    
     /**
      * Generate a parser that will accept the sub-slot name
      */
-    
     static Parser<ValueInferrerAst> valueInferrerParser() {
         return Parsers.sequence(
-            valueInferrerStructurePart("["), 
-            Terminals.identifier().sepBy(valueInferrerStructurePart("/")),
-            valueInferrerStructurePart(":"),
+            Parsers.sequence(
+                valueInferrerStructurePart("["), 
+                Terminals.identifier().sepBy(valueInferrerStructurePart("/")),
+                valueInferrerStructurePart(":"),
+                (_open, slot, _column) -> slot 
+            ),
+            Terminals.identifier().optional("support"),
             InferencePairParser().many(),
             valueInferrerStructurePart("]"),
-            (_a, slot, _b, inferencePair, _c) -> new ValueInferrerAst(slot, inferencePair) );
+            (slot, inferrerType, inferencePair, _c) -> new ValueInferrerAst(slot, inferencePair, inferrerType) );
     }
     
     final static Parser<List<ValueInferrerAst>> valueInferrersParser () {

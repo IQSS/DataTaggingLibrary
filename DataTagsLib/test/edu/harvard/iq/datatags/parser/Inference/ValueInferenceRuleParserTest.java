@@ -53,18 +53,18 @@ public class ValueInferenceRuleParserTest {
         InferencePairAst secondPair = new InferencePairAst(asList(
                                         new AstSetNode.AtomicAssignment(asList("A"), "a1"), 
                                         new AstSetNode.AtomicAssignment(asList("B"), "b1")), "Red");
-        ValueInferrerAst actual = sut.parse("[Color:" 
+        ValueInferrerAst actual = sut.parse("[Color: support" 
                                             + "[A=a0; B=b0 -> Blue]"
                                             + "[A=a1; B=b1 -> Red]" 
                                             + "]");
-        ValueInferrerAst expected = new ValueInferrerAst(asList("Color"), asList(firstPair, secondPair));
+        ValueInferrerAst expected = new ValueInferrerAst(asList("Color"), asList(firstPair, secondPair), "support");
         assertEquals(expected, actual);
         
-        actual = sut.parse("[Color:" 
+        actual = sut.parse("[Color: comply" 
                                             + "[A=a0;      B=b0 -> Blue]"
                                             + "[A=a1; \nB=b1 -> Red] <--- encrypted\n" 
                                             + "]");
-        expected = new ValueInferrerAst(asList("Color"), asList(firstPair, secondPair));
+        expected = new ValueInferrerAst(asList("Color"), asList(firstPair, secondPair), "comply");
         assertEquals(expected, actual);
         
         //Aggregate
@@ -74,11 +74,11 @@ public class ValueInferenceRuleParserTest {
         secondPair = new InferencePairAst(asList(
                                         new AstSetNode.AggregateAssignment(asList("A"), asList("a1")),
                                         new AstSetNode.AggregateAssignment(asList("B"), asList("b1"))), "Red");
-        actual = sut.parse("[Color:" 
+        actual = sut.parse("[Color: support" 
                             + "[A+=a0; B+=b0 -> Blue]"
                             + "[A+=a1; B+=b1 -> Red]" 
                             + "]");
-        expected = new ValueInferrerAst(asList("Color"), asList(firstPair, secondPair));
+        expected = new ValueInferrerAst(asList("Color"), asList(firstPair, secondPair), "support");
         assertEquals(expected, actual);
         
         firstPair = new InferencePairAst(asList(
@@ -87,11 +87,11 @@ public class ValueInferenceRuleParserTest {
         secondPair = new InferencePairAst(asList(
                                         new AstSetNode.AggregateAssignment(Arrays.asList("Base/A".split("/")), asList("a1")),
                                         new AstSetNode.AggregateAssignment(Arrays.asList("Base/B".split("/")), asList("b1"))), "Red");
-        actual = sut.parse("[Color:" 
+        actual = sut.parse("[Color: support" 
                             + "[Base/A+=a0; Base/B+=b0 -> Blue]"
                             + "[Base/A+=a1; Base/B+=b1 -> Red]" 
                             + "]");
-        expected = new ValueInferrerAst(asList("Color"), asList(firstPair, secondPair));
+        expected = new ValueInferrerAst(asList("Color"), asList(firstPair, secondPair), "support");
         assertEquals(expected, actual);
     }
     
@@ -111,15 +111,15 @@ public class ValueInferenceRuleParserTest {
         InferencePairAst thirdPair = new InferencePairAst(asList(
                                         new AstSetNode.AggregateAssignment(asList("TestI"), asList("yes")),
                                         new AstSetNode.AtomicAssignment(asList("TestII"), "no")), "Works");
-        List<ValueInferrerAst> actual = sut.parse("[Color:\n" 
+        List<ValueInferrerAst> actual = sut.parse("[Color: support\n" 
                                                     + "[A=a0; B=b0 -> Blue]\n"
                                                     + "[A=a1; B=b1 -> Red]\n" 
                                                     + "]\n"
-                                                + "[Test:\n"
+                                                + "[Test: comply\n"
                                                     + "[TestI+=yes; TestII=no -> Works]\n"
                                                     + "]");
-        List<ValueInferrerAst> expected = asList(new ValueInferrerAst(asList("Color"), asList(firstPair, secondPair)),
-                                                new ValueInferrerAst(asList("Test"), asList(thirdPair)));
+        List<ValueInferrerAst> expected = asList(new ValueInferrerAst(asList("Color"), asList(firstPair, secondPair), "support"),
+                                                new ValueInferrerAst(asList("Test"), asList(thirdPair), "comply"));
         assertEquals(expected, actual);
         
         

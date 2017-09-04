@@ -54,18 +54,24 @@ public class ValueInferrerAst {
         }
     }
     
-    List<String> slot;
-    List<InferencePairAst> inferencePair;
+    private final List<String> slot;
+    private final List<InferencePairAst> inferencePair;
+    private final String type;
 
-    public ValueInferrerAst(List<String> slot, List<InferencePairAst> inferencePair) {
+    public ValueInferrerAst(List<String> slot, List<InferencePairAst> inferencePair, String aType) {
         this.slot = slot;
         this.inferencePair = inferencePair;
+        type = aType;
     }
     
     public List<String> getSlot() {
         return slot;
     }
 
+    public String getType() {
+        return type;
+    }
+    
     public List<InferencePairAst> getInferencePairs() {
         return inferencePair;
     }
@@ -93,6 +99,7 @@ public class ValueInferrerAst {
         if (!Objects.equals(this.slot, other.slot)) {
             return false;
         }
+        if ( ! Objects.equals(type, other.getType()) ) return false;
         return Objects.equals(this.inferencePair, other.inferencePair);
     }
     

@@ -10,12 +10,12 @@ import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.io.StringMapFormat;
 import edu.harvard.iq.datatags.model.PolicyModel;
-import edu.harvard.iq.datatags.model.ValueInferrer;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
+import edu.harvard.iq.datatags.model.inference.AbstractValueInferrer;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.*;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
@@ -69,7 +69,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     private Node currentNode;
     private RuntimeEngineStatus status = RuntimeEngineStatus.Idle;
     private Optional<Listener> listener = Optional.empty();
-    private Set<ValueInferrer> valueInferrer;
+    private Set<AbstractValueInferrer> valueInferrers;
 
     private final Node.Visitor<Node> processNodeVisitor = new Node.Visitor<Node>() {
 
@@ -113,7 +113,7 @@ import java.util.concurrent.atomic.AtomicInteger;
             do {
                 previousValue = inferredValue;
                 CompoundValue infCapture = inferredValue; // passing to lambda, has to be effectively final.
-                inferredValue = valueInferrer.stream().map( vi -> vi.apply(infCapture) ).collect( C.compose(previousValue.getSlot()));                
+                inferredValue = valueInferrers.stream().map( vi -> vi.apply(infCapture) ).collect( C.compose(previousValue.getSlot()));                
             } while ( !inferredValue.equals(previousValue) );
             
             if ( ! inferredValue.equals(getCurrentValue()) ) {
@@ -357,7 +357,7 @@ import java.util.concurrent.atomic.AtomicInteger;
     public void setModel(PolicyModel model) {
         this.model = model;
         decisionGraph = model.getDecisionGraph();
-        valueInferrer = model.getValueInferrers();
+        valueInferrers = model.getValueInferrers();
         listener.ifPresent( l->l.runTerminated(this) );
         setStatus(RuntimeEngineStatus.Idle);
         

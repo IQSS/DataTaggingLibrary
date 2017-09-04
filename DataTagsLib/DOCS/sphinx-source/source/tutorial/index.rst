@@ -21,3 +21,4 @@ This tutorial uses ``CliRunner``, Tags' command line execution environmnet. It c
   section
   value-order
   import-node
+  inference
