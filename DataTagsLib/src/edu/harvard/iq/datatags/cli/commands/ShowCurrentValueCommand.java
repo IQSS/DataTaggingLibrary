@@ -7,16 +7,16 @@ import java.util.List;
  * Prints the current tags to the console.
  * @author michael
  */
-public class CurrentTagsCommand implements CliCommand {
+public class ShowCurrentValueCommand implements CliCommand {
 
     @Override
     public String command() {
-        return "current-tags";
+        return "current-value";
     }
 
     @Override
     public String description() {
-        return "Print the current tags to the console.";
+        return "Print the current value to the console.";
     }
 
     @Override

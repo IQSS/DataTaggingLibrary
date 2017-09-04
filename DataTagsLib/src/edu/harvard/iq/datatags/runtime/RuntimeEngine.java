@@ -110,14 +110,16 @@ import java.util.concurrent.atomic.AtomicInteger;
             CompoundValue previousValue;
             CompoundValue inferredValue = getCurrentValue();
             
-            do {
-                previousValue = inferredValue;
-                CompoundValue infCapture = inferredValue; // passing to lambda, has to be effectively final.
-                inferredValue = valueInferrers.stream().map( vi -> vi.apply(infCapture) ).collect( C.compose(previousValue.getSlot()));                
-            } while ( !inferredValue.equals(previousValue) );
-            
-            if ( ! inferredValue.equals(getCurrentValue()) ) {
-                setCurrentValue(inferredValue);
+            if ( ! valueInferrers.isEmpty() ) {
+                do {
+                    previousValue = inferredValue;
+                    CompoundValue infCapture = inferredValue; // passing to lambda, has to be effectively final.
+                    inferredValue = valueInferrers.stream().map( vi -> vi.apply(infCapture) ).collect( C.compose(previousValue.getSlot()));                
+                } while ( !inferredValue.equals(previousValue) );
+
+                if ( ! inferredValue.equals(getCurrentValue()) ) {
+                    setCurrentValue(inferredValue);
+                }
             }
             
             // Off we go to the next node.
@@ -167,10 +169,6 @@ import java.util.concurrent.atomic.AtomicInteger;
         
     };
     
-    public CompoundValue getCurrentValue() {
-        return currentValue;
-    }
-
     /**
      * Starts a run, in the start node of the flowchart whose name was passed.
      * If there are no data tags for the engine, a new instance is created.
@@ -285,9 +283,13 @@ import java.util.concurrent.atomic.AtomicInteger;
     }
 
     public void setCurrentValue(CompoundValue aNewValue) {
-        this.currentValue = aNewValue;
+        currentValue = aNewValue;
     }
-
+    
+    public CompoundValue getCurrentValue() {
+        return currentValue;
+    }
+    
     /**
      * @return The current stack of nodes. This is enough to know where the
      * engine is, but not what the data tags state is.
