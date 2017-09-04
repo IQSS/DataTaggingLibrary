@@ -29,6 +29,7 @@
     <!-- pathes are relative to model directory -->
     <space root="PSRoot">policy-space.ps</space>
     <graph>decision-graph.dg</graph>
+    <valueInferrer>valueInference.vi</valueInferrer>
   </model>
   <!--
   <references>

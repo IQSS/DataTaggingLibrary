@@ -3,7 +3,6 @@ package edu.harvard.iq.datatags.tools.queries;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
-import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
@@ -12,9 +11,11 @@ import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Deque;
 import java.util.LinkedList;
 
@@ -52,7 +53,7 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
         final DecisionGraphQuery.Listener listener;
         
         LinkedList<Node> currentTrace = new LinkedList<>();
-        LinkedList<CallNode> nodeStack = new LinkedList<>();
+        LinkedList<ThroughNode> nodeStack = new LinkedList<>();
         LinkedList<Answer> currentAnswers = new LinkedList<>();
         Deque<CompoundValue> valueStack = new LinkedList<>();
         
@@ -96,7 +97,27 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
         public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
             currentTrace.addLast(nd);
             valueStack.push( valueStack.peek().composeWith(nd.getTags()) );
+            
+            //Value inference
+            // Process inferred values (ValueInference)
+            CompoundValue previousValue;
+            CompoundValue inferredValue = valueStack.peek();
+            
+            do {
+                previousValue = inferredValue;
+                CompoundValue infCapture = inferredValue; // passing to lambda, has to be effectively final.
+                inferredValue = subject.getValueInferrers().stream().map( vi -> vi.apply(infCapture) ).collect( C.compose(previousValue.getSlot()));                
+            } while ( !inferredValue.equals(previousValue) );
+            
+            if ( ! inferredValue.equals(valueStack.peek()) ) {
+                valueStack.pop();
+                valueStack.push(inferredValue);
+            }
+            
+            // go forward
             nd.getNextNode().accept(this);
+            
+            // came back, clean up.
             valueStack.pop();
             currentTrace.removeLast();
         }
@@ -136,7 +157,7 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
                     listener.nonMatchFound(FindSupertypeResultsDgq.this);
                 }
             } else {
-                CallNode lastCall = nodeStack.pop();
+                ThroughNode lastCall = nodeStack.pop();
                 lastCall.getNextNode().accept(this);
                 nodeStack.push(lastCall);
                 
@@ -146,6 +167,11 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
         
         @Override
         public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{
+            currentTrace.addLast( nd );
+            nodeStack.push(nd);
+            nd.getStartNode().accept(this);
+            nodeStack.pop();
+            currentTrace.removeLast();
         }
         
         

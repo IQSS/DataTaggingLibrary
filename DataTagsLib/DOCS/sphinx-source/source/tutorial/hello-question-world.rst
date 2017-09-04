@@ -85,5 +85,20 @@ In the :download:`below decision graph <code/hello-question-world/hello-implied-
 
   The above code, visualized. Implied edges are pointed by arrows.
 
+--------------------
+Empty Answers
+--------------------
+
+If there's an answer that requiers no action, you can leave the decision graph part of the answer empty, like so::
+
+    [ask
+      {text: What do you want to do?}
+      {answers:
+        {nothing: }
+        {something: [...]}
+        {something else: [...]}
+      }
+    ]
+
 
 Now that you've leanred to ask questions and set slot values according to the user's choices, you can start writing questionnaires! But you your training is not complete; there are :doc:`more nodes to be discovered <call-and-end>`.

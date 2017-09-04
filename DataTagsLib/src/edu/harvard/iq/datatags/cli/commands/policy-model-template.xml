@@ -25,6 +25,9 @@
     <!-- pathes are relative to model directory -->
     <space root="${BASE_SLOT}">${TAG_SPACE}</space>
     <graph>${DECISION_GRAPH}</graph>
+    <!--
+    <valueInferrer>valueInference.vi</valueInferrer>
+    -->
   </model>
   <!--
   <references>

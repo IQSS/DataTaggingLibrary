@@ -1,9 +1,3 @@
-[>iii< ask:
-  {text: Noname node #1 }
-  {answers:
-      {yes: [todo: todo in cats.dg]}
-  }
-]
 [>cat< section:
   {title: Cats}
   [>q-cats-group< ask:

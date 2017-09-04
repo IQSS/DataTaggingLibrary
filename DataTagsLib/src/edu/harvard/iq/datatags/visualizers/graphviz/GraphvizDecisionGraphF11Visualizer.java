@@ -8,7 +8,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
@@ -54,7 +54,7 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
             int ansNodeCount=0;
             for (ConsiderAnswer ans : nd.getAnswers()) {
                 StringBuilder label = new StringBuilder();
-                ans.getAnswer().getNonEmptySubSlotTypes().forEach( tt -> 
+                ans.getAnswer().getNonEmptySubSlots().forEach( tt -> 
                     label.append(tt.getName())
                             .append("=")
                             .append(ans.getAnswer().get(tt).accept(valueNamer))
@@ -170,7 +170,7 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
 		public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
             StringBuilder label = new StringBuilder();
             label.append( idLabel(nd) );
-            for ( SlotType tt : nd.getTags().getNonEmptySubSlotTypes() ) {
+            for ( AbstractSlot tt : nd.getTags().getNonEmptySubSlots() ) {
                 label.append( tt.getName() )
                         .append( "=" )
                         .append( nd.getTags().get(tt).accept(valueNamer) )

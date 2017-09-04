@@ -1,58 +1,62 @@
 package edu.harvard.iq.datatags.model.values;
 
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * A value that has multiple fields of different types.
  *
  * @author michael
  */
-public class CompoundValue extends TagValue {
+public class CompoundValue extends AbstractValue{
 
     private static final Resolver RESOLVER = new Resolver();
 
-    private final Map<SlotType, TagValue> fields = new HashMap<>();
+    private final Map<AbstractSlot, AbstractValue> fields = new HashMap<>();
 
     public CompoundValue(CompoundSlot type) {
         super(type);
     }
 
     @Override
-    public CompoundSlot getType() {
-        return (CompoundSlot) super.getType();
+    public CompoundSlot getSlot() {
+        return (CompoundSlot) super.getSlot();
     }
 
-    public void set(TagValue value) {
-        if (getType().getFieldTypes().contains(value.getType())) {
-            fields.put(value.getType(), value);
+    public void put(AbstractValue value) {
+        if (getSlot().getSubSlots().contains(value.getSlot())) {
+            fields.put(value.getSlot(), value);
         } else {
-            throw new IllegalArgumentException("Type " + getType() + " does not have a field of type " + value.getType() + ".");
+            throw new IllegalArgumentException("Slot " + getSlot() + " does not have a sub-slot " + value.getSlot() + ".");
         }
     }
 
-    public void clear(SlotType type) {
-        fields.remove(type);
+    public void clear(AbstractSlot slot) {
+        fields.remove(slot);
     }
 
-    public TagValue get(SlotType type) {
-        if (getType().getFieldTypes().contains(type)) {
-            return fields.get(type);
+    public AbstractValue get(AbstractSlot slot) {
+        if (getSlot().getSubSlots().contains(slot)) {
+            return fields.get(slot);
         } else {
-            throw new IllegalArgumentException("Type " + getType() + " does not have a field of type " + type + ".");
+            throw new IllegalArgumentException("Slot " + getSlot() + " does not have a sub-slot " + slot + ".");
         }
     }
 
     /**
      * @return All the types of all the sub-slot of {@code this}, where there are values.
      */
-    public Set<SlotType> getNonEmptySubSlotTypes() {
+    public Set<AbstractSlot> getNonEmptySubSlots() {
         return fields.keySet();
     }
 
@@ -63,19 +67,19 @@ public class CompoundValue extends TagValue {
 
     @Override
     public CompoundValue getOwnableInstance() {
-        return buildOwnableInstance(getType().createInstance());
+        return buildOwnableInstance(getSlot().createInstance());
     }
 
     protected <T extends CompoundValue> T buildOwnableInstance(T startingPoint) {
-        for (SlotType tt : getNonEmptySubSlotTypes()) {
-            startingPoint.set(get(tt).getOwnableInstance());
+        for (AbstractSlot tt : getNonEmptySubSlots()) {
+            startingPoint.put(get(tt).getOwnableInstance());
         }
 
         return startingPoint;
     }
 
     @Override
-    protected String tagValueToString() {
+    protected String contentToString() {
         StringBuilder sb = new StringBuilder();
         fields.values().stream()
                 .forEach(tv -> sb.append(tv.toString()));
@@ -95,14 +99,14 @@ public class CompoundValue extends TagValue {
      * defined above.
      */
     public boolean isSupersetOf(CompoundValue other) {
-        if (!(getNonEmptySubSlotTypes().containsAll(other.getNonEmptySubSlotTypes()))) {
+        if (!(getNonEmptySubSlots().containsAll(other.getNonEmptySubSlots()))) {
             // condition 2 unsatisfied - other has more defined fields than this
             return false;
         }
 
-        for (SlotType type : getNonEmptySubSlotTypes()) {
-            TagValue ourValue = get(type);
-            TagValue otherValue = other.get(type);
+        for (AbstractSlot type : getNonEmptySubSlots()) {
+            AbstractValue ourValue = get(type);
+            AbstractValue otherValue = other.get(type);
             if (otherValue != null) {
                 if (!ourValue.accept(new SubsetComparator()).test(otherValue)) {
                     return false;
@@ -140,25 +144,25 @@ public class CompoundValue extends TagValue {
         if (other == null) {
             return getOwnableInstance();
         }
-        if (!getType().equals(other.getType())) {
-            throw new RuntimeException("Cannot compose values of different types (" + getType() + " and " + other.getType() + ")");
+        if (!getSlot().equals(other.getSlot())) {
+            throw new RuntimeException("Cannot compose values of different types (" + getSlot() + " and " + other.getSlot() + ")");
         }
 
-        CompoundValue result = getType().createInstance();
+        CompoundValue result = getSlot().createInstance();
         // Composing. Note that for each type in types, at least one object has a non-null value
-        for (SlotType tp : C.unionSet(getNonEmptySubSlotTypes(), other.getNonEmptySubSlotTypes())) {
-            TagValue ours = get(tp);
-            TagValue its = other.get(tp);
+        for (AbstractSlot tp : C.unionSet(getNonEmptySubSlots(), other.getNonEmptySubSlots())) {
+            AbstractValue ours = get(tp);
+            AbstractValue its = other.get(tp);
             if (ours == null) {
                 if (its == null) {
                     throw new IllegalStateException("Both [this] and [other] had null tag value for a tag type");
                 } else {
-                    result.set(its);
+                    result.put(its);
                 }
             } else if (its == null) {
-                result.set(ours);
+                result.put(ours);
             } else {
-                result.set(ours.accept(RESOLVER).apply(its));
+                result.put(ours.accept(RESOLVER).apply(its));
             }
         }
         return result;
@@ -181,21 +185,21 @@ public class CompoundValue extends TagValue {
         if (other == null) {
             return getOwnableInstance();
         }
-        if (!getType().equals(other.getType())) {
-            throw new RuntimeException("Cannot compose values of different types (" + getType() + " and " + other.getType() + ")");
+        if (!getSlot().equals(other.getSlot())) {
+            throw new RuntimeException("Cannot compose values of different types (" + getSlot() + " and " + other.getSlot() + ")");
         }
 
-        CompoundValue result = getType().createInstance();
+        CompoundValue result = getSlot().createInstance();
 
         // Composing. Note that for each type in types, at least one object has a non-null value
-        for (SlotType tp : C.intersectSet(getNonEmptySubSlotTypes(), other.getNonEmptySubSlotTypes())) {
-            TagValue ours = get(tp);
-            TagValue its = other.get(tp);
+        for (AbstractSlot tp : C.intersectSet(getNonEmptySubSlots(), other.getNonEmptySubSlots())) {
+            AbstractValue ours = get(tp);
+            AbstractValue its = other.get(tp);
 
             /* if both tags were found */
             if ((ours != null) && (its != null)) {
                 if (ours.equals(its)) {
-                    result.set(ours.getOwnableInstance());
+                    result.put(ours.getOwnableInstance());
                     count++;
                 }
             }
@@ -204,6 +208,85 @@ public class CompoundValue extends TagValue {
             return null;
         }
         return result;
+    }
+    
+    /**
+     * Project {@code this} over the slots in {@code slots}. In effect, returns
+     * a copy of {@code this}, where the set of filled slots is an intersection
+     * of the non-empty slots on {@code this}, and {@code slots}.
+     *
+     * This is somewhat similar to the column list part of a SELECT clause in SQL.
+     * 
+     * @param slots a set of slots to project {@code this} on.
+     * @return A new CompoundValue, with values from {@code this} and slots 
+     *         from {@code slots}.
+     */
+    public CompoundValue project(Set<AbstractSlot> slots) {
+        CompoundValue result = getSlot().createInstance();
+        C.intersectSet(getNonEmptySubSlots(), slots).stream()
+                .map( slot -> get(slot) )
+                .forEachOrdered(value -> result.put(value.getOwnableInstance()) );
+        return result;
+    }
+    
+    @Override
+    public CompareResult compare(AbstractValue otherValue) {
+        if ( otherValue == null ) throw new IllegalArgumentException("Cannot compare a value to null");
+        if ( equals(otherValue) ) return CompareResult.Same;
+        if ( ! otherValue.getSlot().equals(getSlot()) ) return CompareResult.Incomparable;
+        if ( ! (otherValue instanceof CompoundValue) ) return CompareResult.Incomparable;
+        
+        CompoundValue other = (CompoundValue) otherValue;
+        if ( ! getNonEmptySubSlots().equals(other.getNonEmptySubSlots()) ) return CompareResult.Incomparable;
+        
+        Set<CompareResult> results =  getNonEmptySubSlots().stream()
+                .map( this::get )
+                .map( value -> value.compare(other.get(value.getSlot())) )
+                .collect( toSet() );
+        
+        if ( results.size()==1 ) return results.iterator().next();
+        if ( results.contains(CompareResult.Incomparable) ) return CompareResult.Incomparable;
+        boolean hasBigger = results.contains(CompareResult.Bigger);
+        boolean hasSmaller = results.contains(CompareResult.Smaller);
+        
+        if (hasBigger && hasSmaller) return CompareResult.Incomparable;
+        return hasBigger ? CompareResult.Bigger : CompareResult.Smaller;
+        
+    }
+    
+    public Optional<Boolean> isBigger(CompoundValue other) {
+        List<AbstractValue> thisValues = new ArrayList<>();
+        List<AbstractValue> otherValues = new ArrayList<>();
+        getNonEmptySubSlots().forEach(slot -> thisValues.add(get(slot)));
+        other.getNonEmptySubSlots().forEach(slot -> otherValues.add(other.get(slot)));
+        
+        Predicate<AbstractValue> predicate = new Predicate<AbstractValue>() {
+            @Override 
+            public boolean test(AbstractValue v) {        
+            int vPosition = thisValues.indexOf(v);
+            if ( v instanceof AtomicValue ) {
+                AtomicValue thisValue = (AtomicValue) v;
+                AtomicValue otherValue = (AtomicValue) otherValues.get(vPosition);
+                return (thisValue.compareTo(otherValue) >= 0);
+            } else {
+                AggregateValue thisValue = (AggregateValue) v;
+                AggregateValue otherValue = (AggregateValue) otherValues.get(vPosition);
+                return (thisValue.getValues().containsAll(otherValue.getValues()));
+            }}
+        };
+
+        if ( thisValues.stream().allMatch(predicate)          ) return Optional.of(Boolean.TRUE);
+        if ( thisValues.stream().allMatch(predicate.negate()) ) return Optional.of(Boolean.FALSE);
+        
+        return Optional.empty();
+    }
+    
+    /**
+     * 
+     * @return (@code true} iff no slots are set.
+     */
+    public boolean isEmpty() {
+        return getNonEmptySubSlots().isEmpty();
     }
 
     /**
@@ -222,13 +305,13 @@ public class CompoundValue extends TagValue {
             return this;
         }
 
-        if (!getType().equals(other.getType())) {
-            throw new RuntimeException("Cannot substract values of different types (" + getType() + " and " + other.getType() + ")");
+        if (!getSlot().equals(other.getSlot())) {
+            throw new RuntimeException("Cannot substract values of different types (" + getSlot() + " and " + other.getSlot() + ")");
         }
 
-        CompoundValue result = getType().createInstance();
+        CompoundValue result = getSlot().createInstance();
 
-        Set<SlotType> substractedSet = C.subtractSet(getNonEmptySubSlotTypes(), other.getNonEmptySubSlotTypes());
+        Set<AbstractSlot> substractedSet = C.subtractSet(getNonEmptySubSlots(), other.getNonEmptySubSlots());
 
         /* Check if any key left */
         if (substractedSet.isEmpty()) {
@@ -236,9 +319,9 @@ public class CompoundValue extends TagValue {
         }
 
         // Composing. Note that for each type in types, at least one object has a non-null value
-        for (SlotType tp : substractedSet) {
-            TagValue ours = get(tp);
-            result.set(ours.getOwnableInstance());
+        for (AbstractSlot tp : substractedSet) {
+            AbstractValue ours = get(tp);
+            result.put(ours.getOwnableInstance());
         }
 
         return result;
@@ -263,13 +346,14 @@ public class CompoundValue extends TagValue {
         final CompoundValue other = (CompoundValue) obj;
         return super.equals(obj) && Objects.equals(this.fields, other.fields);
     }
+
 }
 
-class Resolver implements TagValue.Visitor<TagValue.Function> {
+class Resolver implements AbstractValue.Visitor<AbstractValue.Function> {
 
     @Override
-    public TagValue.Function visitAtomicValue(final AtomicValue op1) {
-        return (TagValue v) -> {
+    public AbstractValue.Function visitAtomicValue(final AtomicValue op1) {
+        return (AbstractValue v) -> {
             if (v == null) {
                 return op1.getOwnableInstance();
             }
@@ -279,8 +363,8 @@ class Resolver implements TagValue.Visitor<TagValue.Function> {
     }
 
     @Override
-    public TagValue.Function visitAggregateValue(final AggregateValue op1) {
-        return (TagValue v) -> {
+    public AbstractValue.Function visitAggregateValue(final AggregateValue op1) {
+        return (AbstractValue v) -> {
             AggregateValue res = op1.getOwnableInstance();
             if (v == null) {
                 return res;
@@ -292,48 +376,47 @@ class Resolver implements TagValue.Visitor<TagValue.Function> {
     }
 
     @Override
-    public TagValue.Function visitToDoValue(ToDoValue v) {
-        return (TagValue v1) -> v1;
+    public AbstractValue.Function visitToDoValue(ToDoValue v) {
+        return (AbstractValue v1) -> v1;
     }
 
     @Override
-    public TagValue.Function visitCompoundValue(final CompoundValue cv) {
-        return (TagValue v) -> {
+    public AbstractValue.Function visitCompoundValue(final CompoundValue cv) {
+        return (AbstractValue v) -> {
             CompoundValue res = cv.getOwnableInstance();
             if (v == null) {
                 return res;
             }
             CompoundValue cv2 = (CompoundValue) v;
-            C.unionSet(cv2.getNonEmptySubSlotTypes(), cv.getNonEmptySubSlotTypes()).stream().forEach((tt) -> {
-                res.set(
-                        (res.get(tt) == null) ? cv2.get(tt)
-                        : ((TagValue.Function) cv.get(tt).accept(Resolver.this)).apply(cv2.get(tt)));
+            C.unionSet(cv2.getNonEmptySubSlots(), cv.getNonEmptySubSlots()).stream().forEach((tt) -> {
+                res.put((res.get(tt) == null) ? cv2.get(tt)
+                        : ((AbstractValue.Function) cv.get(tt).accept(Resolver.this)).apply(cv2.get(tt)));
             });
             return res;
         };
     }
 }
 
-class SubsetComparator implements TagValue.Visitor<Predicate<TagValue>> {
+class SubsetComparator implements AbstractValue.Visitor<Predicate<AbstractValue>> {
 
     @Override
-    public Predicate<TagValue> visitToDoValue(ToDoValue thisValue) {
-        return (TagValue t) -> thisValue.equals(t);
+    public Predicate<AbstractValue> visitToDoValue(ToDoValue thisValue) {
+        return (AbstractValue t) -> thisValue.equals(t);
     }
 
     @Override
-    public Predicate<TagValue> visitAtomicValue(AtomicValue thisValue) {
-        return (TagValue t) -> thisValue.equals(t);
+    public Predicate<AbstractValue> visitAtomicValue(AtomicValue thisValue) {
+        return (AbstractValue t) -> thisValue.equals(t);
     }
 
     @Override
-    public Predicate<TagValue> visitAggregateValue(AggregateValue thisValue) {
-        return (TagValue other) -> thisValue.getValues().containsAll(((AggregateValue) other).getValues());
+    public Predicate<AbstractValue> visitAggregateValue(AggregateValue thisValue) {
+        return (AbstractValue other) -> thisValue.getValues().containsAll(((AggregateValue) other).getValues());
     }
 
     @Override
-    public Predicate<TagValue> visitCompoundValue(CompoundValue thisValue) {
-        return (TagValue other) -> thisValue.isSupersetOf((CompoundValue) other);
+    public Predicate<AbstractValue> visitCompoundValue(CompoundValue thisValue) {
+        return (AbstractValue other) -> thisValue.isSupersetOf((CompoundValue) other);
     }
     
     

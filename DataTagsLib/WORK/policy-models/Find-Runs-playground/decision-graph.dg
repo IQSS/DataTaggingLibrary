@@ -17,6 +17,7 @@
   }
 ]
 [set: Compound/Comp1 = c1_2]
-<-- [>idSec< section:
-<--   {title: Setting the compound}
-<-- ]
+[>idSec< section:
+  {title: Setting the compound}
+  [set: Comp2 = c2_2]
+]

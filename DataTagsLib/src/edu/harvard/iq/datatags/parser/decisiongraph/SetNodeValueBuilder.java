@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.parser.decisiongraph;
 
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
@@ -33,16 +33,16 @@ public class SetNodeValueBuilder implements AstSetNode.Assignment.Visitor {
     @Override
     public void visit(AstSetNode.AtomicAssignment aa) {
         final CompoundValue additionPoint = descend(C.tail(fullyQualifiedSlotName.get(aa.getSlot())), topValue);
-        SlotType valueType = additionPoint.getType().getTypeNamed(C.last(aa.getSlot()));
+        AbstractSlot valueType = additionPoint.getSlot().getSubSlot(C.last(aa.getSlot()));
         if (valueType == null) {
-            throw new RuntimeException("Type '" + additionPoint.getType().getName()
+            throw new RuntimeException("Type '" + additionPoint.getSlot().getName()
                     + "' does not have a field of type '" + C.last(aa.getSlot()) + "'");
         }
-        valueType.accept(new SlotType.VoidVisitor() {
+        valueType.accept(new AbstractSlot.VoidVisitor() {
             @Override
             public void visitAtomicSlotImpl(AtomicSlot t) {
                 try {
-                    additionPoint.set(t.valueOf(aa.getValue())); // if there's no such value, an IllegalArgumentException will be thrown.
+                    additionPoint.put(t.valueOf(aa.getValue())); // if there's no such value, an IllegalArgumentException will be thrown.
                 } catch (IllegalArgumentException iae) {
                     throw new RuntimeException(new BadLookupException(t, aa.getValue(), null));
                 }
@@ -73,11 +73,11 @@ public class SetNodeValueBuilder implements AstSetNode.Assignment.Visitor {
                     + aa.getSlot().stream().collect(Collectors.joining("/")) + "' not found"));
         }
         final CompoundValue additionPoint = descend(C.tail(fullyQualifiedName), topValue);
-        SlotType valueType = additionPoint.getType().getTypeNamed(C.last(aa.getSlot()));
+        AbstractSlot valueType = additionPoint.getSlot().getSubSlot(C.last(aa.getSlot()));
         if (valueType == null) {
-            throw new RuntimeException(new BadLookupException(additionPoint.getType(), C.last(aa.getSlot()), null));
+            throw new RuntimeException(new BadLookupException(additionPoint.getSlot(), C.last(aa.getSlot()), null));
         }
-        valueType.accept(new SlotType.VoidVisitor() {
+        valueType.accept(new AbstractSlot.VoidVisitor() {
             @Override
             public void visitAtomicSlotImpl(AtomicSlot t) {
                 throw new RuntimeException("Slot " + aa.getSlot() + " is compound, not aggregate. Can't assign values here.");
@@ -88,7 +88,7 @@ public class SetNodeValueBuilder implements AstSetNode.Assignment.Visitor {
                 AggregateValue value = (AggregateValue) additionPoint.get(t);
                 if (value == null) {
                     value = t.createInstance();
-                    additionPoint.set(value);
+                    additionPoint.put(value);
                 }
                 for (String val : aa.getValue()) {
                     try {
@@ -125,14 +125,14 @@ public class SetNodeValueBuilder implements AstSetNode.Assignment.Visitor {
         if (pathRemainder.size() == 1) {
             return cVal;
         }
-        CompoundSlot cType = cVal.getType();
-        SlotType nextTagType = cType.getTypeNamed(C.head(pathRemainder));
+        CompoundSlot cType = cVal.getSlot();
+        AbstractSlot nextTagType = cType.getSubSlot(C.head(pathRemainder));
         if (nextTagType == null) {
             throw new RuntimeException("Type '" + cType.getName()
                     + "' does not have a field of type '" + C.head(pathRemainder));
         }
 
-        return descend(C.tail(pathRemainder), nextTagType.accept(new SlotType.Visitor<CompoundValue>() {
+        return descend(C.tail(pathRemainder), nextTagType.accept(new AbstractSlot.Visitor<CompoundValue>() {
             @Override
             public CompoundValue visitSimpleSlot(AtomicSlot t) {
                 throw new RuntimeException("Type '" + t.getName()
@@ -154,7 +154,7 @@ public class SetNodeValueBuilder implements AstSetNode.Assignment.Visitor {
             public CompoundValue visitCompoundSlot(CompoundSlot t) {
                 if (cVal.get(t) == null) {
                     final CompoundValue newInstance = t.createInstance();
-                    cVal.set(newInstance);
+                    cVal.put(newInstance);
                 }
                 return (CompoundValue) cVal.get(t);
             }

@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.model.types;
+package edu.harvard.iq.datatags.model.slots;
 
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 
@@ -6,7 +6,7 @@ import edu.harvard.iq.datatags.model.values.ToDoValue;
  * A placeholder tag.
  * @author michael
  */
-public class ToDoSlot extends SlotType {
+public class ToDoSlot extends AbstractSlot {
     
     final ToDoValue singleValue = new ToDoValue(this, null);
     

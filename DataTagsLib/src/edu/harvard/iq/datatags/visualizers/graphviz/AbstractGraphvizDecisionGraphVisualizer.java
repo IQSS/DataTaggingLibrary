@@ -10,11 +10,11 @@ import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
-import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
-import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -55,7 +55,7 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
         }
     }
     
-    protected final TagValue.Visitor<String> valueNamer = new TagValue.Visitor<String>() {
+    protected final AbstractValue.Visitor<String> valueNamer = new AbstractValue.Visitor<String>() {
         @Override
         public String visitToDoValue(ToDoValue v) {
             return v.getInfo();
@@ -82,13 +82,13 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
         public String visitCompoundValue(CompoundValue aThis) {
             StringBuilder sb = new StringBuilder();
             sb.append("[");
-            for (SlotType tt : aThis.getNonEmptySubSlotTypes()) {
+            for (AbstractSlot tt : aThis.getNonEmptySubSlots()) {
                 sb.append(tt.getName());
                 sb.append(":");
                 sb.append(aThis.get(tt).accept(this));
                 sb.append(" ");
             }
-            if (!aThis.getNonEmptySubSlotTypes().isEmpty()) {
+            if (!aThis.getNonEmptySubSlots().isEmpty()) {
                 sb.setLength(sb.length() - 1);
             }
             sb.append("]");

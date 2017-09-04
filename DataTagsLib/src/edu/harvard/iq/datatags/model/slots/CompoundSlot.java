@@ -1,4 +1,4 @@
-package edu.harvard.iq.datatags.model.types;
+package edu.harvard.iq.datatags.model.slots;
 
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import java.util.Collections;
@@ -6,36 +6,34 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A type whose values contain fields. As there is only one field of each type,
+ * A slot whose values contains sub-slots (fields). As there is only one field of each type,
  * the fields are accessible by using the type as key.
  * <br>
  * Corollary: Instances of compound types are maps from types to values of those types.
  * 
- * TODO: All the methods should have "slot" names, rather than types. So ״getSlotNamed", "addSlot", etc.
- * 
  * @author michael
  */
-public class CompoundSlot extends SlotType {
-	private final Set<SlotType> fieldTypes = new HashSet<>();
+public class CompoundSlot extends AbstractSlot {
+	private final Set<AbstractSlot> subSlots = new HashSet<>();
 
 	public CompoundSlot(String name, String note) {
 		super(name, note);
 	}
 	
-	public void addFieldType( SlotType tt ) {
-		fieldTypes.add( tt );
+	public void addSubSlot( AbstractSlot tt ) {
+		subSlots.add( tt );
 	}
 	
-	public Set<SlotType> getFieldTypes() {
-		return Collections.unmodifiableSet(fieldTypes);
+	public Set<AbstractSlot> getSubSlots() {
+		return Collections.unmodifiableSet(subSlots);
 	}
 	
-	public void removeFieldType( SlotType tt ) {
-		fieldTypes.remove(tt);
+	public void removeSubSlot( AbstractSlot tt ) {
+		subSlots.remove(tt);
 	}
     
-    public SlotType getTypeNamed( String typeName ) {
-        for ( SlotType tt : getFieldTypes() ) {
+    public AbstractSlot getSubSlot( String typeName ) {
+        for ( AbstractSlot tt : getSubSlots() ) {
             if ( tt.getName().equals(typeName) ) {
                 return tt;
             }

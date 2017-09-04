@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.parser.exceptions;
 
-import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 
 /**
@@ -9,10 +9,10 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
  */
 public class BadLookupException extends DataTagsParseException {
     
-    private final SlotType type;
+    private final AbstractSlot type;
     private final String soughtName;
 
-    public BadLookupException(SlotType type, String soughtName, AstNode offending) {
+    public BadLookupException(AbstractSlot type, String soughtName, AstNode offending) {
         super(offending, "Type " + type.getName() + " does not have a value/sub-slot named '" + soughtName + "'");
         this.type = type;
         this.soughtName = soughtName;
@@ -22,7 +22,7 @@ public class BadLookupException extends DataTagsParseException {
         return soughtName;
     }
 
-    public SlotType getType() {
+    public AbstractSlot getType() {
         return type;
     }
     

@@ -4,11 +4,31 @@
 Hello, World! v1.0
 ==================
 
-Let's start with a simple "hello, world!" questionnaire. A questionnaire consists of three components:
+Let's start with a simple "hello, world!" model. A model consists of three components:
 
 * **Policy Space**: Defines the tags the questionnaire can assign, and their possible values.
 * **Decision Graph**: Describes a decision graph. A decision graph is made of node of various types. Each node carries instruction to a runtime engine, that traverse the graph along its edges. Decision graph files often have a ``.dg`` suffix.
 * **Policy model definition file**: A file that references both above files, and may contain additional metadata.
+
+--------------------
+Creating a new model
+--------------------
+
+In this section we'll create a new model using the New Model wizard of CliRunner, PolicyModel's command line tool.
+
+1. Start CliRunner by opening a terminal window and typing ``java -jar path-to-policymodels/DataTagsLib.jar``. You should be greeted with the CliRunner's start screen.
+
+.. figure:: img/hello-world-1.png
+
+  CliRunner's start screen
+
+2. Type ``\new`` at the command prompt, and press ``enter``. CliRunner will ask you a few questions regarding the model's metadata, and will finally create the model itself. Where possible, CliRunner will present default choices (in square brackets). To except them, just press ``enter`` and move to the next question.
+
+.. figure:: img/hello-world-2.png
+
+  CliRunner's New Model wizard in action. Default answers appear between square brackets (``[]``), and can be accepted by pressing ``enter``.
+
+3. The model is ready! To have CliRunner open it in the system's file browser, type ``\show``.
 
 ------------
 Policy Space
@@ -67,19 +87,9 @@ Last step before running the model: create the policy model metadata file. This 
 Runtime!
 ---------
 
-Now, let's run the questionnaire. In the console, type the following::
+Now, let's run the model as a questionnaire. Switch back to the terminal app, and type ``\rr``. This will instruct CliRunner to reload the model and start running it. In case something went wrong during editing (e.g. one of the files containing a syntax error), an error message will be shown, explaining why the model can't be loaded.
 
-  java -jar DataTagsLib path/to/policy-model.xml
-
-or just::
-
-  java -jar DataTagsLib
-
-and provide the path to ``policy-model.xml`` when CliRunner prompts you.
-
-.. tip:: On most systems, dragging a file to the terminal's window will type its absolute path in the prompt.
-
-.. tip:: If the model description file is indeed called ``policy-model.xml``, it is enough to provide the path to the model's directory. CliRunner will find the description file automatically.
+.. tip:: If you've already closed CliRunner, just open it again and use the ``\load`` command to load the model. CliRunner will request the path to the model's folder. You can either type it in, or drag the policy model's directory or *policy-model.xml* file to the terminal window.
 
 The system traverses the graph and setting the slot values like so:
 

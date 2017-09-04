@@ -1,0 +1,39 @@
+<policy-model>
+  <title>InfererExample</title>
+  <subtitle>An example of how to use value inferrers.</subtitle>
+  <version>0.1</version>
+  <date>2017-09-02</date>
+  <!--
+  <keywords></keywords>
+  -->
+  <authors>
+    <!--
+    <person orcid="123-2345-67890">
+      <name>Jane Doe</name>
+      <affiliation>Institute</affiliation>
+      <email>jane.d@institute.edu</email>
+    </person>
+    <group>
+      <name>Working group</name>
+      <contact>hello@working-group.org</contact>
+    </group>
+      -->
+  </authors>
+  <model answers-order="yes-first">
+    <!-- other options: yes-last, verbatim. Default: yes-first -->
+    <!-- pathes are relative to model directory -->
+    <space root="Base">policy-space.pspace</space>
+    <graph>decision-graph.dg</graph>
+    <valueInferrer>valueInference.vi</valueInferrer>
+  </model>
+  <!--
+  <references>
+    <reference doi="1234567890">
+      ref1 text
+    </reference>
+    <reference url="http://somewhere.org/important/doc">
+      ref2 text
+    </reference>
+  </references>
+  -->
+</policy-model>

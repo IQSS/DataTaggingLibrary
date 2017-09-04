@@ -13,7 +13,7 @@ The PolicyModels console enables more than just going through an interview. It i
 
 There are two ways of loading an interview into the application. The first is to provide the path to a policy model directory, or to a ``policy-model.xml`` file, aa a parameter::
 
-  java -jar dist/DataTagsLib.jar path/to/policy-model/direcotry
+  java -jar dist/DataTagsLib.jar path/to/policy-model/directory
 
 If these parameters are omitted, the console app asks for them.
 

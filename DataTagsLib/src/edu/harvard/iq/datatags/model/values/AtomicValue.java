@@ -1,12 +1,12 @@
 package edu.harvard.iq.datatags.model.values;
 
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
 
 /**
  * A value of an {@link AtomicSlot}.
  * @author michael
  */
-public class AtomicValue extends TagValue implements Comparable<AtomicValue>{
+public class AtomicValue extends AbstractValue implements Comparable<AtomicValue>{
 	
 	private final int ordinal;
     private final String name;
@@ -28,10 +28,22 @@ public class AtomicValue extends TagValue implements Comparable<AtomicValue>{
 	}
 	
     @Override
-    public AtomicSlot getType() {
-        return (AtomicSlot) super.getType();
+    public AtomicSlot getSlot() {
+        return (AtomicSlot) super.getSlot();
     }
     
+    @Override
+    public CompareResult compare(AbstractValue otherValue) {
+        if ( otherValue == null ) throw new IllegalArgumentException("Cannot compare a value to null");
+        if ( equals(otherValue) ) return CompareResult.Same;
+        if ( ! otherValue.getSlot().equals(getSlot()) ) return CompareResult.Incomparable;
+        if ( ! (otherValue instanceof AtomicValue) )  return CompareResult.Incomparable;
+        
+        int cr = compareTo((AtomicValue) otherValue);
+        if ( cr<0  ) return CompareResult.Smaller;
+        if ( cr==0 ) return CompareResult.Same;
+        return CompareResult.Bigger;
+    }
     
 	@Override
 	public int compareTo(AtomicValue o) {
@@ -75,7 +87,7 @@ public class AtomicValue extends TagValue implements Comparable<AtomicValue>{
     }
 
     @Override
-    protected String tagValueToString() {
+    protected String contentToString() {
         return "<" + getOrdinal() + " " + getName() + ">";
     }
 	

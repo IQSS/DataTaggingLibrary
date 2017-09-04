@@ -11,10 +11,10 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
-import edu.harvard.iq.datatags.model.types.SlotType;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
-import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 
 import java.util.ArrayList;
@@ -44,29 +44,29 @@ public class EagerSetCallsOptimizer implements DecisionGraphProcessor {
                 if (other == null) {
                     return current.getOwnableInstance();
                 }
-                if ( ! current.getType().equals(other.getType()) ) {
-                    throw new RuntimeException("Cannot compose values of different types (" + current.getType() + " and " + other.getType() + ")");
+                if ( ! current.getSlot().equals(other.getSlot()) ) {
+                    throw new RuntimeException("Cannot compose values of different types (" + current.getSlot() + " and " + other.getSlot() + ")");
                 }
 
-                CompoundValue result = current.getType().createInstance();
+                CompoundValue result = current.getSlot().createInstance();
 
                 // Composing. Note that for each type in types, at least one object has a non-null value
-                for (SlotType tp : C.unionSet(current.getNonEmptySubSlotTypes(), other.getNonEmptySubSlotTypes())) {
-                    TagValue ours = current.get(tp);
-                    TagValue its = other.get(tp);
+                for (AbstractSlot tp : C.unionSet(current.getNonEmptySubSlots(), other.getNonEmptySubSlots())) {
+                    AbstractValue ours = current.get(tp);
+                    AbstractValue its = other.get(tp);
                     if (ours == null) {
                         if (its == null) {
                             throw new IllegalStateException("Both [this] and [other] had null tag value for a tag type");
                         } else {
-                            result.set(its);
+                            result.put(its);
                         }
                     } else if (its == null) {
-                        result.set(ours);
+                        result.put(ours);
                     } else {
 
                         if (ours instanceof AtomicValue) {
                             // Get other value as it is the newer
-                            result.set(its);
+                            result.put(its);
                         }
                         else {
                             // TODO: Not Implemented

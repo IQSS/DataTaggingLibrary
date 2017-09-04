@@ -1,5 +1,7 @@
 package edu.harvard.iq.datatags.util;
 
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.values.CompoundValue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,6 +11,11 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 
 /**
  * The missing parts of the the Java collection framework.
@@ -110,4 +117,44 @@ public class CollectionHelper {
 		return ( itr == null ) ? null
 							   : itr.iterator().next();
 	}
+    
+    public Collector<CompoundValue, Set<CompoundValue>, CompoundValue> compose( final CompoundSlot base ) {
+        return new Collector<CompoundValue, Set<CompoundValue>, CompoundValue>(){
+            @Override
+            public Supplier<Set<CompoundValue>> supplier() {
+                return ()->new HashSet<>();
+            }
+
+            @Override
+            public BiConsumer<Set<CompoundValue>, CompoundValue> accumulator() {
+                return (set, val)->set.add(val);
+            }
+
+            @Override
+            public BinaryOperator<Set<CompoundValue>> combiner() {
+                return (s1, s2) -> {
+                    Set<CompoundValue> s3 = new HashSet<>();
+                    s3.addAll(s1);
+                    s3.addAll(s2);
+                    return s3;
+                };
+            }
+
+            @Override
+            public Function<Set<CompoundValue>, CompoundValue> finisher() {
+                return (set) -> {
+                    CompoundValue out = base.createInstance();
+                    for ( CompoundValue v:set ) {
+                        out = out.composeWith(v);
+                    }
+                    return out;
+                };
+            }
+
+            @Override
+            public Set<Collector.Characteristics> characteristics() {
+                return Collections.emptySet();
+            }
+        };
+    }
 }

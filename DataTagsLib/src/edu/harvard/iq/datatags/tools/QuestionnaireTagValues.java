@@ -13,7 +13,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
-import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Collections;
@@ -28,10 +28,10 @@ import java.util.stream.Collectors;
  * @author Naomi
  */
 public class QuestionnaireTagValues extends VoidVisitor {
-    private final Set<TagValue> usedTagValues = new HashSet<>();
-    private final TagValue.Visitor<Set<AtomicValue>> valueCollector = new ValueCollector();
+    private final Set<AbstractValue> usedTagValues = new HashSet<>();
+    private final AbstractValue.Visitor<Set<AtomicValue>> valueCollector = new ValueCollector();
     
-    public Set<TagValue> gatherInterviewTagValues( DecisionGraph dg ) {
+    public Set<AbstractValue> gatherInterviewTagValues( DecisionGraph dg ) {
         dg.nodes().forEach( a -> a.accept(this));
         return usedTagValues;
     }
@@ -77,7 +77,7 @@ public class QuestionnaireTagValues extends VoidVisitor {
     
 }
 
-class ValueCollector implements TagValue.Visitor<Set<AtomicValue>> {
+class ValueCollector implements AbstractValue.Visitor<Set<AtomicValue>> {
 
     @Override
     public Set<AtomicValue> visitToDoValue(ToDoValue v) {
@@ -96,7 +96,7 @@ class ValueCollector implements TagValue.Visitor<Set<AtomicValue>> {
 
     @Override
     public Set<AtomicValue> visitCompoundValue(CompoundValue v) {
-        return v.getNonEmptySubSlotTypes().stream()
+        return v.getNonEmptySubSlots().stream()
                 .map( st -> v.get(st) ) // get the slots
                 .flatMap( s -> s.accept(this).stream() ) // get the values
                 .collect( Collectors.toSet() );

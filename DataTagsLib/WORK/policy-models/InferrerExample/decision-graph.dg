@@ -1,0 +1,28 @@
+[set: HumanDataType=none; Harm=none]
+[>human< ask:
+  {text: Does the data concerns humans?}
+  {answers:
+    {yes:
+      [>human-type< ask:
+        {text: What type of human information does the dataset contains?}
+        {terms:
+          {PII: Personally Identifiable Information. Data that allows identifying an individual by using the dataset.}
+        }
+        {answers:
+          {PII: [set: HumanDataType=identifiable]}
+          {aggregated: [set: HumanDataType=aggregated]}
+          {anonymized: [set: HumanDataType=anonymized] }
+        }
+      ]
+    }
+  }
+]
+[>harm< ask:
+  {text: How harmful are the data?}
+  {answers:
+    {harmless: <*No need to do anything, this is set at line 1.*>}
+    {mosly harmless: [set: Harm=minor]}
+    {somewhat: [set: Harm=medium]}
+    {very: [set: Harm=major]}
+  }
+]

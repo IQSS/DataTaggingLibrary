@@ -1,16 +1,16 @@
 package edu.harvard.iq.datatags.cli.commands;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
-import static edu.harvard.iq.datatags.model.types.TypeHelper.formatTypePath;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import static edu.harvard.iq.datatags.model.slots.SlotHelper.formatSlotPath;
 
 /**
  * Prints a slot to the console.
@@ -44,14 +44,14 @@ public class ShowSlotCommand implements CliCommand {
             pathDone.addLast( pathLeft.removeFirst());
         }
         
-        topLevelType.accept(new SlotType.VoidVisitor() {
+        topLevelType.accept(new AbstractSlot.VoidVisitor() {
             @Override
             public void visitCompoundSlotImpl(CompoundSlot t) {
                 if (pathLeft.isEmpty()) {
                     rnr.println("%s: compound slot (consists of)", typePath);
                     printNote(t);
                     rnr.println("Sub slots:");
-                    t.getFieldTypes().forEach( val -> {
+                    t.getSubSlots().forEach( val -> {
                         rnr.println("* %s", val.getName());
                         if ( val.getNote() != null ) {
                             rnr.println("  \t%s", val.getNote() );
@@ -59,9 +59,9 @@ public class ShowSlotCommand implements CliCommand {
                     });
                 } else {
                     String nextTypeName = pathLeft.removeFirst();
-                    SlotType nextType = t.getTypeNamed(nextTypeName);
+                    AbstractSlot nextType = t.getSubSlot(nextTypeName);
                     if ( nextType == null ) {
-                        rnr.printWarning("Slot %s does not exist: %s does not have a sub-slot named %s.", typePath, formatTypePath(pathDone), nextTypeName );
+                        rnr.printWarning("Slot %s does not exist: %s does not have a sub-slot named %s.", typePath, formatSlotPath(pathDone), nextTypeName );
                     } else {
                         pathDone.addLast(nextTypeName);
                         nextType.accept(this);
@@ -83,7 +83,7 @@ public class ShowSlotCommand implements CliCommand {
                         }
                     });
                 } else {
-                    rnr.printWarning("Slot %s does not exist: %s is an atomic slot, and has no sub-slots.", typePath, formatTypePath(pathDone));
+                    rnr.printWarning("Slot %s does not exist: %s is an atomic slot, and has no sub-slots.", typePath, formatSlotPath(pathDone));
                 }
             }
 
@@ -100,7 +100,7 @@ public class ShowSlotCommand implements CliCommand {
                         }
                     });
                 } else {
-                    rnr.printWarning("Slot %s does not exist: %s is an aggregate slot, and has no sub-slots.", typePath, formatTypePath(pathDone));
+                    rnr.printWarning("Slot %s does not exist: %s is an aggregate slot, and has no sub-slots.", typePath, formatSlotPath(pathDone));
                 }
             }
 
@@ -110,11 +110,11 @@ public class ShowSlotCommand implements CliCommand {
                     rnr.println("%s: TODO", typePath);
                     printNote(t);
                 } else {
-                    rnr.printWarning("Slot %s does not exist: %s is a placeholder slot, and has no sub-slots.", typePath, formatTypePath(pathDone));
+                    rnr.printWarning("Slot %s does not exist: %s is a placeholder slot, and has no sub-slots.", typePath, formatSlotPath(pathDone));
                 }
             }
 
-            void printNote(SlotType t) {
+            void printNote(AbstractSlot t) {
                 if (t.getNote() != null && !t.getNote().isEmpty()) {
                     rnr.println(t.getNote());
                 }

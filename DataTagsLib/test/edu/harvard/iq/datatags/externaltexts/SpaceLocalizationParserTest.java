@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.externaltexts;
 
 import edu.harvard.iq.datatags.model.PolicySpaceIndex;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;

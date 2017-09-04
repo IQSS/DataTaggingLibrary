@@ -1,11 +1,9 @@
 package edu.harvard.iq.datatags.mains;
 
-import edu.harvard.iq.datatags.cli.BadSetInstructionPrinter;
 import edu.harvard.iq.datatags.io.PolicyModelDataParser;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
-import edu.harvard.iq.datatags.model.types.TagValueLookupResult;
 import edu.harvard.iq.datatags.parser.PolicyModelLoadResult;
 import edu.harvard.iq.datatags.parser.PolicyModelLoader;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
@@ -35,12 +33,7 @@ public class DecisionGraphCompiling {
             ex.printStackTrace(System.out);
 
         } catch (BadSetInstructionException ex) {
-            TagValueLookupResult badRes = ex.getBadResult();
-
-            if (badRes != null) {
-                System.out.println("Bad Set instruction: " + ex.getMessage());
-                badRes.accept(new BadSetInstructionPrinter());
-            }
+            
             System.out.println("Error in [set] node: " + ex.getMessage());
             System.out.println("offending Set node: " + ex.getOffendingNode());
 

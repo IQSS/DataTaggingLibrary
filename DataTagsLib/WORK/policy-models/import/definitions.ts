@@ -1,4 +1,4 @@
-Base: consists of Cats, Dogs, Rice.
+Base: consists of Cats, Dogs, Rice, Test.
 
 Cats: some of Tom, Shmil, Mitzi.
 
@@ -7,4 +7,6 @@ Dogs[A friendly mamle with a tail]: some of
   Pluto [This dog user to be a star, then a planet, now a big rock.],
   Lassie [Eventually comes home.].
 
-Rice: one of White, Full.
+Rice: one of White, Full, Super.
+
+Test: one of Work, Not.

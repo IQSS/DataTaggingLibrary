@@ -1,8 +1,8 @@
 package edu.harvard.iq.datatags.parser.tagspace;
 
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -24,10 +24,10 @@ public class TagSpaceParserTest {
 
         TagSpaceParseResult parse = new TagSpaceParser().parse(typeDef);
         CompoundSlot topType = parse.buildType("top").get();
-        AggregateSlot agg = (AggregateSlot) topType.getTypeNamed("agg");
+        AggregateSlot agg = (AggregateSlot) topType.getSubSlot("agg");
         assertEquals( agg, agg.getItemType().getParentSlot() );
         
-        AtomicSlot ato = (AtomicSlot) topType.getTypeNamed("ato");
+        AtomicSlot ato = (AtomicSlot) topType.getSubSlot("ato");
         assertNull( ato.getParentSlot() );
 
     }

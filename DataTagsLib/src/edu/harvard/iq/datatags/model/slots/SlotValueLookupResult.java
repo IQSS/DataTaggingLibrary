@@ -1,14 +1,14 @@
-package edu.harvard.iq.datatags.model.types;
+package edu.harvard.iq.datatags.model.slots;
 
-import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Used for reporting which slot a value should go to, and
- * whether the value exists and is compatible with the slot.
+ * whether that value exists and is compatible with the slot.
  */
-public abstract class TagValueLookupResult {
+public abstract class SlotValueLookupResult {
     
     public interface Visitor<R> {
         R visit(SlotNotFound snf);
@@ -54,10 +54,10 @@ public abstract class TagValueLookupResult {
     
     public interface SuccessFailVisitor<R,E extends Exception> {
         R visitSuccess( Success s ) throws E;
-        R visitFailure( TagValueLookupResult s ) throws E;
+        R visitFailure( SlotValueLookupResult s ) throws E;
     }
     
-    public static class SlotNotFound extends TagValueLookupResult {
+    public static class SlotNotFound extends SlotValueLookupResult {
         private final String slotName;
 
         public SlotNotFound(String aSlotName) {
@@ -79,16 +79,16 @@ public abstract class TagValueLookupResult {
         }
     }
     
-    public static class ValueNotFound extends TagValueLookupResult {
-        private final SlotType tagType;
+    public static class ValueNotFound extends SlotValueLookupResult {
+        private final AbstractSlot tagType;
         private final String valueName;
 
-        public ValueNotFound(SlotType aTagType, String aValueName) {
+        public ValueNotFound(AbstractSlot aTagType, String aValueName) {
             tagType = aTagType;
             valueName = aValueName;
         }
 
-        public SlotType getTagType() {
+        public AbstractSlot getTagType() {
             return tagType;
         }
 
@@ -107,17 +107,17 @@ public abstract class TagValueLookupResult {
         }
     }
     
-    public static class Ambiguity extends TagValueLookupResult {
-        private final Set<TagValueLookupResult.Success> possibilities;
+    public static class Ambiguity extends SlotValueLookupResult {
+        private final Set<SlotValueLookupResult.Success> possibilities;
 
-        public Ambiguity( Iterable<TagValueLookupResult.Success> possibilities ) {
+        public Ambiguity( Iterable<SlotValueLookupResult.Success> possibilities ) {
             this.possibilities = new HashSet<>();
-            for ( TagValueLookupResult.Success res : possibilities ) {
+            for ( SlotValueLookupResult.Success res : possibilities ) {
                 this.possibilities.add( res );
             }
         }
 
-        public Set<TagValueLookupResult.Success> getPossibilities() {
+        public Set<SlotValueLookupResult.Success> getPossibilities() {
             return possibilities;
         }
 
@@ -132,15 +132,15 @@ public abstract class TagValueLookupResult {
         }
     }
     
-    public static class Success extends TagValueLookupResult {
+    public static class Success extends SlotValueLookupResult {
         
-        private final TagValue value;
+        private final AbstractValue value;
 
-        public Success( TagValue value ) {
+        public Success( AbstractValue value ) {
             this.value = value;
         }
 
-        public TagValue getValue() {
+        public AbstractValue getValue() {
             return value;
         }
 
@@ -164,15 +164,15 @@ public abstract class TagValueLookupResult {
         return new SlotNotFound(slotName);
     }
 
-    static public ValueNotFound ValueNotFound(SlotType tt, String valueName) {
+    static public ValueNotFound ValueNotFound(AbstractSlot tt, String valueName) {
         return new ValueNotFound(tt, valueName);
     }
 
-    static public Success Success(TagValue val) {
+    static public Success Success(AbstractValue val) {
         return new Success(val);
     }
 
-    static public Ambiguity Ambiguity(Iterable<TagValueLookupResult.Success> r2) {
+    static public Ambiguity Ambiguity(Iterable<SlotValueLookupResult.Success> r2) {
         return new Ambiguity(r2);
     }
     

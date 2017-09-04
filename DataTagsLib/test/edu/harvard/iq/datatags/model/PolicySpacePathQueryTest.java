@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.model;
 
 import edu.harvard.iq.datatags.model.PolicySpacePathQuery.Result;
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParseResult;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import java.util.Arrays;
@@ -44,14 +44,14 @@ public class PolicySpacePathQueryTest {
     public void testFindSlotL1() {
         List<String> path = Arrays.asList("top","agg");
         Result actual = sut.get(path);
-        assertEquals( new PolicySpacePathQuery.SlotTypeResult(baseType.getTypeNamed("agg"), path), actual );
+        assertEquals( new PolicySpacePathQuery.SlotTypeResult(baseType.getSubSlot("agg"), path), actual );
     }
 
     @Test
     public void testFindSlotL2() {
         List<String> path = Arrays.asList("top", "cmp", "cmp_a");
         Result actual = sut.get(path);
-        assertEquals( new PolicySpacePathQuery.SlotTypeResult(((CompoundSlot)baseType.getTypeNamed("cmp")).getTypeNamed("cmp_a"), path), actual );
+        assertEquals( new PolicySpacePathQuery.SlotTypeResult(((CompoundSlot)baseType.getSubSlot("cmp")).getSubSlot("cmp_a"), path), actual );
     }
     
     
@@ -59,8 +59,8 @@ public class PolicySpacePathQueryTest {
     public void testFindAggregateValue() {
         List<String> path = Arrays.asList("top","agg", "B");
         Result actual = sut.get(path);
-        AggregateSlot slt = (AggregateSlot) baseType.getTypeNamed("agg");
-        TagValue val = slt.getItemType().valueOf("B");
+        AggregateSlot slt = (AggregateSlot) baseType.getSubSlot("agg");
+        AbstractValue val = slt.getItemType().valueOf("B");
         assertEquals( new PolicySpacePathQuery.TagValueResult(val, path), actual );
     }
     
@@ -68,8 +68,8 @@ public class PolicySpacePathQueryTest {
     public void testFindAtomicValue() {
         List<String> path = Arrays.asList("top","ato", "X");
         Result actual = sut.get(path);
-        AtomicSlot slt = (AtomicSlot) baseType.getTypeNamed("ato");
-        TagValue val = slt.valueOf("X");
+        AtomicSlot slt = (AtomicSlot) baseType.getSubSlot("ato");
+        AbstractValue val = slt.valueOf("X");
         assertEquals( new PolicySpacePathQuery.TagValueResult(val, path), actual );
     }
     
@@ -77,8 +77,8 @@ public class PolicySpacePathQueryTest {
     public void testFindTodoSlot() {
         List<String> path = Arrays.asList("top","cmp", "cmp_b");
         Result actual = sut.get(path);
-        CompoundSlot cmp = (CompoundSlot) baseType.getTypeNamed("cmp");
-        assertEquals( new PolicySpacePathQuery.SlotTypeResult(cmp.getTypeNamed("cmp_b"), path), actual );
+        CompoundSlot cmp = (CompoundSlot) baseType.getSubSlot("cmp");
+        assertEquals( new PolicySpacePathQuery.SlotTypeResult(cmp.getSubSlot("cmp_b"), path), actual );
     }
     
     @Test

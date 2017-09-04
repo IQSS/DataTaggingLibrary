@@ -1,11 +1,11 @@
 package edu.harvard.iq.datatags.tools;
 
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.SlotType.VoidVisitor;
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
-import edu.harvard.iq.datatags.model.values.TagValue;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot.VoidVisitor;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,9 +16,9 @@ import java.util.Set;
  * @author Naomi
  */
 public class AllTagValues extends VoidVisitor {
-    private final Set<TagValue> definedTagValues = new HashSet<>();
+    private final Set<AbstractValue> definedTagValues = new HashSet<>();
     
-    public Set<TagValue> gatherAllTagValues( CompoundSlot cs ) {
+    public Set<AbstractValue> gatherAllTagValues( CompoundSlot cs ) {
         cs.accept(this);
         return definedTagValues;
     }
@@ -35,7 +35,7 @@ public class AllTagValues extends VoidVisitor {
 
     @Override
     public void visitCompoundSlotImpl(CompoundSlot t) {
-        t.getFieldTypes().forEach(tagType -> tagType.accept(this));
+        t.getSubSlots().forEach(tagType -> tagType.accept(this));
     }
 
     @Override

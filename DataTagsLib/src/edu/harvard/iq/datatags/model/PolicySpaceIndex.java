@@ -1,10 +1,10 @@
 package edu.harvard.iq.datatags.model;
 
-import edu.harvard.iq.datatags.model.types.AggregateSlot;
-import edu.harvard.iq.datatags.model.types.AtomicSlot;
-import edu.harvard.iq.datatags.model.types.CompoundSlot;
-import edu.harvard.iq.datatags.model.types.SlotType;
-import edu.harvard.iq.datatags.model.types.ToDoSlot;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.CompoundSlot;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,7 +34,7 @@ public class PolicySpaceIndex {
      */
     private final Set<List<String>> valuePaths = new HashSet<>();
     
-    class PathCollector extends SlotType.VoidVisitor {
+    class PathCollector extends AbstractSlot.VoidVisitor {
         
         /**
          * The current stack. note that we use LinkedList as variable type since we need both
@@ -77,7 +77,7 @@ public class PolicySpaceIndex {
         public void visitCompoundSlotImpl(CompoundSlot t) {
             currentPath.push(t.getName());
             addPath();
-            t.getFieldTypes().forEach( ft->ft.accept(this) );
+            t.getSubSlots().forEach( ft->ft.accept(this) );
             currentPath.pop();
         }
         

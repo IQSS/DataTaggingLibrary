@@ -26,7 +26,8 @@ public class PolicyModelData extends BaseModelData {
     private String doi;
     private String rootTypeName;
     private LocalDate releaseDate;
-    private Path metadataFile, policySpacePath, decisionGraphPath;
+    private Path metadataFile, policySpacePath, decisionGraphPath, valueInferrersPath;
+
     private AnswerTransformationMode answerTransformationMode = AnswerTransformationMode.YesFirst;
     private final Map<String, CompilationUnit> nameToCU = new HashMap<>();
         
@@ -83,6 +84,13 @@ public class PolicyModelData extends BaseModelData {
         this.decisionGraphPath = decisionGraphPath;
     }
 
+    public Path getValueInferrersPath() {
+        return valueInferrersPath;
+    }
+
+    public void setValueInferrersPath(Path valueInferrersPath) {
+        this.valueInferrersPath = valueInferrersPath;
+    }
 
     public String getRootTypeName() {
         return rootTypeName;

@@ -1,0 +1,5 @@
+[Encryption:
+  [ Harm=none;   HumanDataType=none       -> clear         ]
+  [ Harm=medium; HumanDataType=none       -> serverSide    ]
+  [ Harm=major;  HumanDataType=anonymized -> doubleEncrypt ]
+]
