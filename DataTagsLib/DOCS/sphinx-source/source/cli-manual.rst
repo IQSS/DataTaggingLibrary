@@ -34,7 +34,7 @@ Once the model is loaded, the application starts the interview. The user can typ
   	What's this application all about.
   \ask: (\a)
   	Prints the current question again.
-  \current-tags:
+  \current-value:
   	Print the current tags to the console.
   \debug-messages:
   	Toggles printing of debug messages.

@@ -36,3 +36,5 @@ Here's a simple graph using imports::
   [call: enc>at-rest]
 
 The first ``#import`` node references the "health2-final.dg" file at a directory called "sub-graphs". The path is resolved relative to the policy model's directory, so in this example "sub-graphs" must be a sub directory of that directory. The importing decision graph can now call the nodes in "health2-final.dg" using the specified prefix ``health``. This is done by the first ``call`` node.
+
+So far, we've seen how to have the decision graph directly update the current value, using :doc:`set nodes <../decision-graphs/set-node>` and control flow. But values can also be :doc:`inferred<inference>`.

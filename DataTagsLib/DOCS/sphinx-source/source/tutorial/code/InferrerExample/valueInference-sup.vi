@@ -1,0 +1,7 @@
+[DataTag: support
+  [ Encrypt=None;   DUA_AM=Implied -> Blue    ]
+  [ Encrypt=Quick;  DUA_AM=Click   -> Yellow  ]
+  [ Encrypt=Hard;   DUA_AM=Click   -> Green   ]
+  [ Encrypt=Double; DUA_AM=Type    -> Red     ]
+  [ Encrypt=Double; DUA_AM=Sign    -> Crimson ]
+]

@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.cli;
 
 import edu.harvard.iq.datatags.cli.commands.RestartCommand;
-import edu.harvard.iq.datatags.cli.commands.CurrentTagsCommand;
+import edu.harvard.iq.datatags.cli.commands.ShowCurrentValueCommand;
 import edu.harvard.iq.datatags.cli.commands.ShowNodeCommand;
 import edu.harvard.iq.datatags.cli.commands.ReloadQuestionnaireCommand;
 import edu.harvard.iq.datatags.cli.commands.ShowSlotCommand;
@@ -124,7 +124,7 @@ public class CliRunner {
 
     public CliRunner() {
         // Register commands here
-        Arrays.asList(new CurrentTagsCommand(), new AboutCommand(),
+        Arrays.asList(new ShowCurrentValueCommand(), new AboutCommand(),
                 new QuitCommand(), new ToggleDebugMessagesCommand(), new ShowNodeCommand(),
                 new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
                 new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
@@ -479,8 +479,6 @@ public class CliRunner {
     
     
     private class CliEngineListener implements RuntimeEngine.Listener {
-
-        public CliEngineListener() {}
 
         @Override
         public void runStarted(RuntimeEngine ngn) {
