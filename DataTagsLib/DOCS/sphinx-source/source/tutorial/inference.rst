@@ -57,7 +57,7 @@ One option can be illustrated by the following statement:
 
   If a dataset can cause at least medium harm, and contains aggregated (or more detailed) human data, encrypt it. If it can cause major harm and the data is annonymized (or contains personally identifying information), use double encryption. Otherwise, store it in the clear.
 
-This type of requirement can be visualized like below. In policy space terms, given a set of points (here ``(None,None)``, ``(Medium,Aggregated)`` and ``(Major,Annonymized)``), we map any point in the policy space to the strictest policy whose compliance space contains said point. So, the policy/point ``Medium,Annonymized`` would map to ``Medium,Aggregated``. That's a lot of math-speak for saying something quite intuitive: if we require the encryption of datasets that can cause medium harm and contain aggregated data, we should require the encryption of datasets that can cause more harm, or whose data is more detailed.
+This type of requirement can be visualized like below. In policy space terms, given a set of points (here ``(None,None)``, ``(Medium,Aggregated)`` and ``(Major,Annonymized)``), we map any point in the policy space to the strictest policy whose compliance space contains said point. So, the policy/point ``(Medium,Annonymized)`` would map to ``(Medium,Aggregated)``. That's a lot of math-speak for saying something quite intuitive: if we require the encryption of datasets that can cause medium harm and contain aggregated data, we should require the encryption of datasets that can cause more harm, or whose data is more detailed.
 
 .. figure:: img/spaces/compliance-spaces.png
   :align: center
@@ -81,7 +81,7 @@ Another option is to base the matching on support spaces. This is useful, for ex
 
    Hierarchical sub-spaces with support matching. This type of matching pairs an arbitrary point/policy ``p`` with the most lenient point of the hierarchy, whose support space contains ``p``.
 
-Suppose, using the above example, an interview concludes that a given dataset does not have to be encrypted, and requires a user to agree to a DUA using a click-through method. There is no DataTag at ``None,Click``, and so the data depositor has to decide between the Blue and Yellow tags. But the Blue tag is not a real option - if the depositor would have chosen it, people downloading the dataset will not go through a click-through agreement process. Thus, the only option is the Yellow tag - it would unnecessarily encrypt the data, but will not breach any law. In effect, support matching makes a model err on the safe side.
+Suppose, using the above example, an interview concludes that a given dataset does not have to be encrypted, and requires a user to agree to a DUA using a click-through method. There is no DataTag at ``(None,Click)``, and so the data depositor has to decide between the Blue and Yellow tags. But the Blue tag is not a real option - if the depositor would have chosen it, people downloading the dataset will not go through a click-through agreement process. Thus, the only option is the Yellow tag - it would unnecessarily encrypt the data, but will not breach any law. In effect, support matching makes a model err on the safe side.
 
 .. note:: For a realistic set of DataTags, please refer the `original DataTags paper`_ or to http://datatags.org..
 
