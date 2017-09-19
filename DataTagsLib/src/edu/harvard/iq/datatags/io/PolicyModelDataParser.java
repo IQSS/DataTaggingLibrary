@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import static java.util.stream.Collectors.joining;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -120,12 +121,14 @@ public class PolicyModelDataParser {
                 case "person":
                     PersonAuthorData pad = new PersonAuthorData();
                     pad.setOrcid(atts.getValue("orcid"));
+                    pad.setUrl(atts.getValue("url"));
                     currentAuthor = pad;
                     model.add(currentAuthor);
                     break;
 
                 case "group":
                     currentAuthor = new GroupAuthorData();
+                    currentAuthor.setUrl(atts.getValue("url"));
                     model.add(currentAuthor);
                     break;
 

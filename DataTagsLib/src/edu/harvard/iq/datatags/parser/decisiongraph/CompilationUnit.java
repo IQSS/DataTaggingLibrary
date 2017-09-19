@@ -344,9 +344,12 @@ public class CompilationUnit {
                                 astNode.getAssignments().forEach(asnmnt -> asnmnt.accept(valueBuilder));
                             } catch (RuntimeException re) {
                                 if ( re.getCause() instanceof BadLookupException ) {
-                                    throw new RuntimeException(new BadSetInstructionException(re.getMessage() + " (at node " + astNode + ")", astNode, (BadLookupException) re.getCause()));
+                                    //validationMessages.add(new ValidationMessage(Level.ERROR, "Duplicate import name " + e.getKey() + ", at path - "  + sourcePath)))
+//                                    throw new RuntimeException(new BadSetInstructionException(re.getMessage() + " (at node " + astNode + ")", astNode, (BadLookupException) re.getCause()));
+                                    validationMessages.add(new ValidationMessage(Level.ERROR,re.getMessage() + " (at node " + astNode + ")"));
                                 } else {
-                                    throw new RuntimeException(new BadSetInstructionException(re.getMessage() + " (at node " + astNode + ")", astNode));
+//                                    throw new RuntimeException(new BadSetInstructionException(re.getMessage() + " (at node " + astNode + ")", astNode));
+                                    validationMessages.add(new ValidationMessage(Level.ERROR,re.getMessage() + " (at node " + astNode + ")"));
                                 }
                             }
 

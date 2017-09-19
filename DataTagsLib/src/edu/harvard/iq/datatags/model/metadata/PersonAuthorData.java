@@ -6,14 +6,12 @@ import java.util.Objects;
  * A person who (co-)authored the model.
  * @author michael
  */
-public class PersonAuthorData implements AuthorData {
+public class PersonAuthorData extends AuthorData {
     
     private String orcid;
-    private String name;
     private String affiliation;
     private String email;
     
-    @Override
     public String displayString() {
         StringBuilder sb = new StringBuilder();
         sb.append(name);
@@ -27,7 +25,6 @@ public class PersonAuthorData implements AuthorData {
         return sb.toString();
     }
 
-    @Override
     public <R> R accept(Visitor<R> v) {
         return v.visit(this);
     }
@@ -40,13 +37,6 @@ public class PersonAuthorData implements AuthorData {
         this.orcid = orcid;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getAffiliation() {
         return affiliation;
@@ -99,8 +89,7 @@ public class PersonAuthorData implements AuthorData {
     @Override
     public String toString() {
         return "[PersonAuthorData name:" + name + ']';
-    }
-    
+    } 
     
 
 }

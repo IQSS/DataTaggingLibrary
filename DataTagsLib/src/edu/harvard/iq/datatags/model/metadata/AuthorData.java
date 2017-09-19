@@ -6,16 +6,35 @@ package edu.harvard.iq.datatags.model.metadata;
  * 
  * @author michael
  */
-public interface AuthorData {
+public abstract class AuthorData {
     
-    interface Visitor<R> {
+    protected String url;
+    protected String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+    
+    
+    public interface Visitor<R> {
         public R visit( PersonAuthorData p );
         public R visit( GroupAuthorData  g );
     }
             
-    String displayString();
+    public abstract String displayString();
+        
+    public abstract <R> R accept(Visitor<R> v);
     
-    void setName( String aName );
-    
-    <R> R accept(Visitor<R> v);
 }

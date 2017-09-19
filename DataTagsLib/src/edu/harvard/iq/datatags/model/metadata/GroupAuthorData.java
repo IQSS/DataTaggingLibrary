@@ -7,9 +7,8 @@ import java.util.Objects;
  * 
  * @author michael
  */
-public class GroupAuthorData implements AuthorData {
+public class GroupAuthorData extends AuthorData {
     
-    private String name;
     private String contact;
     
     @Override
@@ -20,15 +19,6 @@ public class GroupAuthorData implements AuthorData {
     @Override
     public <R> R accept(Visitor<R> v) {
         return v.visit(this);
-    }
-
-    @Override
-    public void setName(String aName) {
-        name = aName;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getContact() {
