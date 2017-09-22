@@ -27,7 +27,7 @@ public abstract class AbstractValue {
         Incomparable(0, false),
         Bigger(1, true);
         
-        /** Adapter value to Java's {@link Comparable<>} */
+        /** Adapter value to Java's {@link Comparable} */
         public final int compareValue;
         
         /** is greater than or equals */
