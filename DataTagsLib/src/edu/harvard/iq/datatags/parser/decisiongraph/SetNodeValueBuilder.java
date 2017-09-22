@@ -1,5 +1,4 @@
 package edu.harvard.iq.datatags.parser.decisiongraph;
-
 import edu.harvard.iq.datatags.model.slots.AggregateSlot;
 import edu.harvard.iq.datatags.model.slots.AtomicSlot;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;

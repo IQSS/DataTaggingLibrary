@@ -38,7 +38,7 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
     
     Set<String> visitedIds = new TreeSet<>();
     
-    protected abstract class AbstracctNodePainter extends Node.VoidVisitor {
+    protected abstract class AbstractNodePainter extends Node.VoidVisitor {
         PrintWriter out;
         
         Set<String> visitedIds = new TreeSet<>();
@@ -179,15 +179,14 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
     }
     
     protected void drawCallLinks(PrintWriter out) {
+        out.println("edge [constraint=false, color=\"#CCCCFF\", penwidth=2, style=dotted, arrowhead=open];");
         for ( Node nd : getDecisionGraph().nodes() ) {
-            out.println("edge [constraint=false];");
             if ( nd instanceof CallNode ) {
                 CallNode cn = (CallNode) nd;
                 out.println( GvEdge.edge(nodeId(cn), nodeId(cn.getCalleeNode())).gv() );
             }
         }
     }
-    
     
     public DecisionGraph getDecisionGraph() {
         return theGraph;
@@ -206,11 +205,6 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
     }
     
     protected String makeSameRank( Set<Node> nodes ) {
-        StringBuilder sb = new StringBuilder();
-        sb.append( "{rank=same ");
-        sb.append( nodes.stream().map( nd->sanitizeId(nd.getId()) ).collect( joining(", ")));
-        sb.append("}");
-        
-        return sb.toString();
+        return nodes.stream().map( nd->sanitizeId(nd.getId()) ).collect( joining(",", "{rank=same ", "}"));
     }
 }

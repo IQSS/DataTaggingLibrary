@@ -43,7 +43,7 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
         this(false);
     }
             
-	private class NodePainter extends AbstractGraphvizDecisionGraphVisualizer.AbstracctNodePainter {
+	private class NodePainter extends AbstractGraphvizDecisionGraphVisualizer.AbstractNodePainter {
 		
         @Override
         public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
@@ -262,10 +262,7 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
         NodePainter np = new NodePainter();
         np.out = wrt;
         subchartHeads.forEach( chartHead -> {
-            wrt.println( "subgraph cluster_" + sanitizeId(chartHead.getId()) + " {");
-            wrt.println( String.format("label=\"%s\"; color=\"#AABBDD\"; labeljust=\"l\"", sanitizeTitle(chartHead.getId())) );
             chartHead.accept(np);
-            wrt.println("}");
         });
                 
         wrt.println( makeSameRank(subchartHeads) );

@@ -233,7 +233,7 @@ public class CliRunner {
                 try {
                     List<String> args = cmdScanner.parse( ansText );
                     String commandString = args.get(0).substring(1);
-                    commandString = shortcuts.getOrDefault(commandString, commandString);
+                    commandString = shortcuts.getOrDefault(commandString, commandString).trim();
                     commands.getOrDefault(commandString, COMMAND_NOT_FOUND).execute(this, args);
                     println("");
 

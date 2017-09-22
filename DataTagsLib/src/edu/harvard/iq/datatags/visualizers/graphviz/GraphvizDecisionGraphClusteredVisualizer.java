@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDecisionGraphVisualizer {
 
-    private class NodePainter extends AbstractGraphvizDecisionGraphVisualizer.AbstracctNodePainter {
+    private class NodePainter extends AbstractGraphvizDecisionGraphVisualizer.AbstractNodePainter {
         
         @Override
         public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
@@ -189,15 +189,11 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
         NodePainter np = new NodePainter();
         np.out = wrt;
         subchartHeads.forEach( chartHead -> {
-            wrt.println("subgraph cluster_" + sanitizeId(chartHead.getId()) + " {");
-            wrt.println(String.format("label=\"%s\"; color=\"#AABBDD\"; labeljust=\"l\"", sanitizeTitle(chartHead.getId())));
             chartHead.accept(np);
-            wrt.println("}");
         });
         
         wrt.println( makeSameRank(subchartHeads) );
         
-        wrt.println("edge [color=\"#CCCCFF\", penwidth=2, style=dotted, arrowhead=open]");
         drawCallLinks(wrt);
         
         wrt.println("}");
