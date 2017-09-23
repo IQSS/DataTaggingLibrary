@@ -27,11 +27,6 @@ public class RunValidationsCommand implements CliCommand {
     public void execute(CliRunner rnr, List<String> args) throws Exception {
         rnr.printTitle("Running Validations");
         
-        List<NodeValidationMessage> nvms;
-
-        rnr.print("Validating call nodes");
-
-        
         rnr.print("Checking for unreachable nodes");
         UnreachableNodeValidator unv = new UnreachableNodeValidator();
         List<ValidationMessage> unm = unv.validate(rnr.getModel().getDecisionGraph());
