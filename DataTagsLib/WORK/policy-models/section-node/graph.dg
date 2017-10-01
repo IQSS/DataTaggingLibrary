@@ -1,5 +1,4 @@
 [>q-order< ask:
-[>q-order< ask:
   {text: Do the dogs first?}
   {terms:
     {frogs: Referring to the section pertaining to dogs.}
