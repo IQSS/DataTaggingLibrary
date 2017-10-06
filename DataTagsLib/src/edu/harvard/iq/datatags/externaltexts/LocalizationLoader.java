@@ -1,14 +1,12 @@
 package edu.harvard.iq.datatags.externaltexts;
 
-import edu.harvard.iq.datatags.io.FileUtils;
 import static edu.harvard.iq.datatags.io.FileUtils.ciResolve;
 import static edu.harvard.iq.datatags.io.FileUtils.readAll;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.PolicySpaceIndex;
 import edu.harvard.iq.datatags.model.PolicySpacePathQuery;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
-import edu.harvard.iq.datatags.parser.decisiongraph.CompilationUnit;
-import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
+import edu.harvard.iq.datatags.parser.BaseModelLoader;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import edu.harvard.iq.datatags.util.NumberedString;
@@ -18,9 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -30,7 +26,7 @@ import java.util.stream.Stream;
  * 
  * @author michael
  */
-public class LocalizationLoader {
+public class LocalizationLoader extends BaseModelLoader {
     
     public static final String LOCALIZATION_DIRECTORY_NAME = "languages";
     public static final String ANSWERS_FILENAME = "answers.txt";
@@ -68,7 +64,7 @@ public class LocalizationLoader {
             retVal.setLocalizedModelData(lmdp.read(modelLocalizationPath));
         }
         
-        loadReadmes( retVal, localizationPath );
+        messages.addAll( loadReadmes(retVal.getLocalizedModelData(), localizationPath) );
         
         Path spacePath = ciResolve(localizationPath, SPACE_DATA_FILENAME);
         if ( spacePath != null ) {
@@ -83,7 +79,7 @@ public class LocalizationLoader {
     void loadAnswers(Stream<String> lines, Localization retVal) throws LocalizationException {
         final AtomicInteger idxer = new AtomicInteger();
         try {
-        lines.map( l -> new NumberedString(l, idxer.incrementAndGet()))
+            lines.map( l -> new NumberedString(l, idxer.incrementAndGet()))
              .map( l -> l.copy(l.string.split("<--")[0].trim()) )
              .filter( l -> !l.string.isEmpty() ) // OK, no empty lines and no line comments.
              .forEach( nl -> {
@@ -96,28 +92,10 @@ public class LocalizationLoader {
                     retVal.addAnswer(arr[0].trim(), localizedValue);
                 }
                });
+    
         } catch (RuntimeException rte) {
             messages.add(new ValidationMessage(ValidationMessage.Level.ERROR,
                                 "Error reading answer localization file: " + rte.getMessage()));
-        }
-    }
-
-    private void loadReadmes(Localization retVal, Path sourceDirectory) throws IOException {
-        try {
-            Files.find(sourceDirectory, 1,
-                   (path, atts) -> path.getFileName().toString().toLowerCase().startsWith("readme.") )
-                .forEach( path -> {
-                    String[] comps = path.getFileName().toString().split("\\.");
-                    MarkupFormat.forExtension(comps[comps.length-1])
-                                .ifPresent( fmt -> retVal.addReadme(fmt, FileUtils.readAll(path)));
-                });
-        } catch ( RuntimeException rte ) {
-            if ( rte.getCause()!=null && rte.getCause() instanceof IOException ) {
-                messages.add(new ValidationMessage(ValidationMessage.Level.ERROR,
-                                "Error reading readme files: " + rte.getCause().getMessage()));
-            } else {
-                throw rte;
-            }
         }
     }
 

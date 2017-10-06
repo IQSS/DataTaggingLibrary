@@ -41,7 +41,7 @@ import java.util.Set;
  * 
  * @author michael
  */
-public class PolicyModelLoader {
+public class PolicyModelLoader extends BaseModelLoader {
     
     private final List<DecisionGraphAstValidator> dgAstValidators = new ArrayList<>();
     private final List<DecisionGraphValidator> dgValidators = new ArrayList<>();
@@ -145,13 +145,13 @@ public class PolicyModelLoader {
                 res.addMessage( new ValidationMessage(Level.ERROR, "Failed to create decision graph; see previous errors.") );
             }
             
+            //load valueInferrers
             try {
-                //load valueInferrers
-                if (data.getValueInferrersPath() != null){
+                if ( data.getValueInferrersPath() != null ) {
                     ValueInferenceParseResult inferenceParseResult = new ValueInferenceParser(spaceRoot).parse(data.getValueInferrersPath());
                     Set<AbstractValueInferrer> valueInferrer =  inferenceParseResult.buildValueInference();
                     model.setValueInferrers(valueInferrer);
-                    inferenceParseResult.getValidationMessages().forEach(res::addMessage);
+                    res.addMessages(inferenceParseResult.getValidationMessages());
                 }
             } catch (SyntaxErrorException ex) {
                 res.addMessage( new ValidationMessage(Level.ERROR, "Syntax error in value inference: " + ex.getMessage()));
@@ -159,6 +159,7 @@ public class PolicyModelLoader {
                 res.addMessage( new ValidationMessage(Level.ERROR, "Cannot load value inference: " + ex.getMessage()));
             }
             
+            res.addMessages( loadReadmes(data, data.getModelDirectoryPath()) );
             
         } catch (NoSuchFileException ex) {
             res.addMessage( new ValidationMessage(Level.ERROR, "File " + ex.getMessage() + " cannot be found."));

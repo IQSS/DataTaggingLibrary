@@ -5,7 +5,6 @@ import edu.harvard.iq.datatags.model.values.AbstractValue;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -35,25 +34,8 @@ public class Localization {
     
     private final Map<AbstractValue, String> slotValuesText = new HashMap<>();
     
-    /** 
-     * A map of the readme files this localization can 
-     */
-    private final Map<MarkupFormat,MarkupString> readmes = new EnumMap<>(MarkupFormat.class);
-
     public Localization(String language) {
         this.language = language;
-    }
-    
-    /**
-     * Removes versions of localization data from {@code this}, based on the passed format. Useful for server situations,
-     * where it makes sense to remove all versions that will not be used.
-     * 
-     * @param keepFormat The readme format to keep.
-     */
-    public void purge(MarkupFormat keepFormat) {
-        Arrays.stream(MarkupFormat.values())
-               .filter( f->! f.equals(keepFormat) )
-                .forEach( f -> readmes.remove(f) );
     }
     
     public LocalizedModelData getLocalizedModelData() {
@@ -74,20 +56,6 @@ public class Localization {
     
     void addAnswer( String answerText, String localizedAnswerText ) {
         answers.put(answerText, localizedAnswerText);
-    }
-    
-    public Optional<MarkupFormat> getBestReadmeFormat() {
-        return Arrays.stream(MarkupFormat.values())
-                .filter( fmt -> readmes.keySet().contains(fmt) )
-                .findFirst();
-    }
-    
-    public MarkupString getReadme(MarkupFormat fmt) {
-        return readmes.get(fmt);
-    }
-    
-    void addReadme( MarkupFormat fmt, String content ) {
-        readmes.put(fmt, new MarkupString(fmt,content) );
     }
     
     public String getLanguage() {

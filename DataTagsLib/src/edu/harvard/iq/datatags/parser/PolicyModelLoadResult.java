@@ -5,6 +5,7 @@ import java.util.List;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
+import java.util.Collection;
 
 /**
  * The result of reading a model. As there are many possible errors and warnings,
@@ -45,6 +46,10 @@ public class PolicyModelLoadResult {
         messages.add(msg);
     }
 
+    public void addMessages( Collection<ValidationMessage> someMessages ) {
+        messages.addAll( someMessages );
+    }
+    
     public List<? extends AstNode> getDecisionGraphAst() {
         return decisionGraphAst;
     }

@@ -62,6 +62,12 @@ public class AboutCommand implements CliCommand {
                 rnr.println("Localizations:");
                 model.getLocalizations().forEach(lName -> rnr.println("* " + lName));
             }
+            
+            rnr.println( metadata.getBestReadmeFormat()
+                                 .map( fmt -> "readme: " + fmt)
+                                 .orElse("No readme file")
+            );
+            
             rnr.println("location:\n %s", metadata.getMetadataFile().getParent().toAbsolutePath() );
         }
         
