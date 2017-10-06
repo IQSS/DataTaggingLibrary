@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 import static java.util.stream.Collectors.joining;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -124,6 +123,7 @@ public class PolicyModelDataParser {
                     pad.setUrl(atts.getValue("url"));
                     currentAuthor = pad;
                     model.add(currentAuthor);
+                    
                     break;
 
                 case "group":
@@ -181,7 +181,7 @@ public class PolicyModelDataParser {
                     break;
                     
                 case "keywords":
-                    Arrays.stream(sb.toString().split(","))
+                    Arrays.stream(sb.toString().split("[;,]"))
                             .map(w->w.trim().toLowerCase())
                             .forEach(model::addKeyword);
                     break;

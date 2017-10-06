@@ -3,7 +3,6 @@ package edu.harvard.iq.datatags.parser;
 import edu.harvard.iq.datatags.externaltexts.LocalizationLoader;
 import static edu.harvard.iq.datatags.io.FileUtils.ciResolve;
 import edu.harvard.iq.datatags.model.PolicyModel;
-import edu.harvard.iq.datatags.model.inference.SupportValueInferrer;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.inference.AbstractValueInferrer;

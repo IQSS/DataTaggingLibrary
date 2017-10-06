@@ -12,6 +12,7 @@ public class PersonAuthorData extends AuthorData {
     private String affiliation;
     private String email;
     
+    @Override
     public String displayString() {
         StringBuilder sb = new StringBuilder();
         sb.append(name);
@@ -25,6 +26,7 @@ public class PersonAuthorData extends AuthorData {
         return sb.toString();
     }
 
+    @Override
     public <R> R accept(Visitor<R> v) {
         return v.visit(this);
     }
@@ -74,9 +76,11 @@ public class PersonAuthorData extends AuthorData {
             return false;
         }
         final PersonAuthorData other = (PersonAuthorData) obj;
-        if (!Objects.equals(this.orcid, other.orcid)) {
+        if (!equals(other)) 
             return false;
-        }
+        if (!Objects.equals(this.orcid, other.orcid))
+            return false;
+       
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
