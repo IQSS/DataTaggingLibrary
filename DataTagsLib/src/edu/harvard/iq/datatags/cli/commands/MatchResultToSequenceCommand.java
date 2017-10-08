@@ -17,13 +17,14 @@ import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author michael
  */
 public class MatchResultToSequenceCommand implements CliCommand {
-
+        
     @Override
     public String command() {
         return "find-runs";
@@ -37,7 +38,7 @@ public class MatchResultToSequenceCommand implements CliCommand {
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception {
         String tagValueExpression = "[>x< set: " + String.join(" ", C.tail(args)) + "]";
-        
+
         rnr.debugPrint( tagValueExpression );
         try {
             CompilationUnit cu = new CompilationUnit(tagValueExpression);
@@ -53,8 +54,8 @@ public class MatchResultToSequenceCommand implements CliCommand {
             SetNode sn = (SetNode) cu.getDecisionGraph().getNode("x");
 
             FindSupertypeResultsDgq query = new FindSupertypeResultsDgq(rnr.getModel(), sn.getTags());
-            
-            query.get( new DecisionGraphQuery.Listener() {
+
+        query.get( new DecisionGraphQuery.Listener() {
                 long foundCount = 0;
                 long missCount = 0;
                 @Override
@@ -80,10 +81,16 @@ public class MatchResultToSequenceCommand implements CliCommand {
                 public void done(DecisionGraphQuery dgq) {
                     rnr.println("Found %,d matches in %,d possible runs.", foundCount, missCount+foundCount);
                 }
+
+                @Override
+                public void loopDetected(DecisionGraphQuery dgq) {
+                    rnr.println("Loop detected with this trace - ");
+                    printRunTrace(rnr, dgq.getCurrentTrace()) ;
+                }
             });
-            
-            
-            
+
+
+
         } catch ( BadSetInstructionException bse ) {
             if ( bse.getBadLookupException() != null ) {
                 rnr.printWarning( bse.getBadLookupException().getMessage() );
@@ -94,7 +101,6 @@ public class MatchResultToSequenceCommand implements CliCommand {
             rnr.printWarning( dpe.getMessage() );
             rnr.printWarning( "Was the value or slot names entered legal? (i.e. start with a letter, no spaces, etc.)" );
         }
-        
     }
 
     private void printRunTrace(CliRunner rnr, RunTrace t) {

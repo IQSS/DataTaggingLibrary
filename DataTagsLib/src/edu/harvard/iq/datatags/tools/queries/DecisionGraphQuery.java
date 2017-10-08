@@ -11,6 +11,7 @@ public interface DecisionGraphQuery {
         void matchFound( DecisionGraphQuery dgq );
         void nonMatchFound( DecisionGraphQuery dgq );
         void done( DecisionGraphQuery dgq );
+        void loopDetected ( DecisionGraphQuery dgq );
     }
     
     RunTrace getCurrentTrace();

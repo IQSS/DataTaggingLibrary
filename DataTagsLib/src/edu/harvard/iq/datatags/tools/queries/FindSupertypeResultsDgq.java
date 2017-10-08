@@ -103,15 +103,17 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
             CompoundValue previousValue;
             CompoundValue inferredValue = valueStack.peek();
             
-            do {
-                previousValue = inferredValue;
-                CompoundValue infCapture = inferredValue; // passing to lambda, has to be effectively final.
-                inferredValue = subject.getValueInferrers().stream().map( vi -> vi.apply(infCapture) ).collect( C.compose(previousValue.getSlot()));                
-            } while ( !inferredValue.equals(previousValue) );
-            
-            if ( ! inferredValue.equals(valueStack.peek()) ) {
-                valueStack.pop();
-                valueStack.push(inferredValue);
+            if ( ! subject.getValueInferrers().isEmpty() ) {
+                do {
+                    previousValue = inferredValue;
+                    CompoundValue infCapture = inferredValue; // passing to lambda, has to be effectively final.
+                    inferredValue = subject.getValueInferrers().stream().map( vi -> vi.apply(infCapture) ).collect( C.compose(previousValue.getSlot()));                
+                } while ( !inferredValue.equals(previousValue) );
+
+                if ( ! inferredValue.equals(valueStack.peek()) ) {
+                    valueStack.pop();
+                    valueStack.push(inferredValue);
+                }
             }
             
             // go forward
@@ -131,9 +133,15 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
         public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
             currentTrace.addLast(nd);
             nodeStack.push(nd);
-            nd.getCalleeNode().accept(this);
+            if (currentTrace.contains(nd.getCalleeNode())){
+                listener.loopDetected(FindSupertypeResultsDgq.this);
+            } else {
+                nd.getCalleeNode().accept(this);
+            }
             nodeStack.pop();
             currentTrace.removeLast();
+            
+            
         }
 
         @Override
@@ -173,8 +181,6 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
             nodeStack.pop();
             currentTrace.removeLast();
         }
-        
-        
     }
     
 }
