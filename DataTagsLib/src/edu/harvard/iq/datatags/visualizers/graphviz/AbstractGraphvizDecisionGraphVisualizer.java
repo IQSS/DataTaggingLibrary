@@ -201,7 +201,7 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
     }
     
     String sanitizeIdDisplay(String s){
-        return s.replaceAll("\\\\", "\\\\\\\\");
+        return s.replaceAll("\\\\", "\\\\\\\\").replaceAll("\\[", "").replaceAll("]","/");
     }
     
     protected String makeSameRank( Set<Node> nodes ) {

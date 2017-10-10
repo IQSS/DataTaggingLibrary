@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * A node where the user has to provide an answer to a question.
+ * A node where the engine decides on the next node based on evaluation of
+ * the current value.
  *
- * @author michael
  */
 public class ConsiderNode extends Node {
 

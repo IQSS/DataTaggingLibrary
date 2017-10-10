@@ -78,7 +78,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                // check any answer to be part of the current DataTags 
                // return the node of the first write answer 
             for (ConsiderAnswer ans : nd.getAnswers()) {
-                CompoundValue answer = ans.getAnswer();
+                CompoundValue answer = ans.getValue();
                 if (currentValue.isSupersetOf(answer)) {
                     return nd.getNodeFor(ans);
                 }

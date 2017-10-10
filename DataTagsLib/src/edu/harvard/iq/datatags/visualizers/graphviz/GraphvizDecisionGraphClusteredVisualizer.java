@@ -35,10 +35,10 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
                     .gv());
             nd.getAnswers().forEach( ans -> {
                 StringBuilder label = new StringBuilder();
-                ans.getAnswer().getNonEmptySubSlots().forEach( tt -> {
+                ans.getValue().getNonEmptySubSlots().forEach( tt -> {
                     label.append(tt.getName())
                             .append("=")
-                            .append(ans.getAnswer().get(tt).accept(valueNamer))
+                            .append(ans.getValue().get(tt).accept(valueNamer))
                             .append("\n");
                 });
                 advanceTo(nd.getNodeFor(ans));

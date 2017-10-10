@@ -29,7 +29,7 @@ public class VerboseNodePrinter extends Node.VoidVisitor {
        
         rnr.println("ans: ");
         nd.getAnswers().forEach((a) -> {
-            rnr.print(a.getAnswerText());
+            rnr.print(a.getValue().toString());
             rnr.println(" -> >%s<", nd.getNodeFor(a).getId());
         });
         rnr.println();

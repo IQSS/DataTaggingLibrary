@@ -275,7 +275,7 @@ public class CliRunner {
                 List<String> args = cmdScanner.parse(userChoice);
                 CliCommand selectedCommand = commands.getOrDefault(args.get(0), COMMAND_NOT_FOUND);
                 if ( selectedCommand.requiresModel() && (getModel()==null) ) {
-                    printWarning("Connand %s requires a model. Currently, no model is loaded.", selectedCommand.command());
+                    printWarning("Command %s requires a model. Currently, no model is loaded.", selectedCommand.command());
                 } else {
                     selectedCommand.execute(this, args);
                 }

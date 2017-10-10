@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ConsiderAnswer {
 
-    private final CompoundValue answer;
+    private final CompoundValue value;
     private static final Map<CompoundValue, ConsiderAnswer> ANSWER_POOL = new ConcurrentHashMap<>();
 
     public static ConsiderAnswer get(CompoundValue ans) {
@@ -27,22 +27,18 @@ public class ConsiderAnswer {
         return ANSWER_POOL.computeIfAbsent(ans, s -> new ConsiderAnswer(s));
     }
 
-    public CompoundValue getAnswer() {
-        return answer;
+    public CompoundValue getValue() {
+        return value;
     }
 
     private ConsiderAnswer(CompoundValue ans) {
-        answer = ans;
-    }
-
-    public String getAnswerText() {
-        return answer.toString();
+        value = ans;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 13 * hash + Objects.hashCode(this.answer);
+        hash = 13 * hash + Objects.hashCode(this.value);
         return hash;
     }
 
@@ -55,12 +51,12 @@ public class ConsiderAnswer {
             return false;
         }
         final ConsiderAnswer other = (ConsiderAnswer) obj;
-        return Objects.equals(this.answer, other.answer);
+        return Objects.equals(this.value, other.value);
     }
 
     @Override
     public String toString() {
-        return "[Answer:" + answer + ']';
+        return "[Answer:" + value + ']';
     }
 
 }

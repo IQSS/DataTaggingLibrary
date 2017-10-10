@@ -80,7 +80,7 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
             currentTrace.addLast( nd );
             boolean matchFound = false;
             for (ConsiderAnswer ans : nd.getAnswers()) {
-                CompoundValue answer = ans.getAnswer();
+                CompoundValue answer = ans.getValue();
                 if (valueStack.peek().isSupersetOf(answer)) {
                     matchFound = true;
                     nd.getNodeFor(ans).accept(this);

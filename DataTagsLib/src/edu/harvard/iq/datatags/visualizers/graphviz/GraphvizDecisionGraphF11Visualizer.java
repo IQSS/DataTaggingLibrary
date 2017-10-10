@@ -54,10 +54,10 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
             int ansNodeCount=0;
             for (ConsiderAnswer ans : nd.getAnswers()) {
                 StringBuilder label = new StringBuilder();
-                ans.getAnswer().getNonEmptySubSlots().forEach( tt -> 
+                ans.getValue().getNonEmptySubSlots().forEach( tt -> 
                     label.append(tt.getName())
                             .append("=")
-                            .append(ans.getAnswer().get(tt).accept(valueNamer))
+                            .append(ans.getValue().get(tt).accept(valueNamer))
                             .append("\n")
                 );
                 String ansId = nodeId(nd) + "_" + (++ansNodeCount);
@@ -115,7 +115,7 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
         
         private String answerNodeGv( String nodeId, String ans ) {
             String answerText = ans.toLowerCase();
-            GvNode nodeBld = node(nodeId).label(ans)
+            GvNode nodeBld = node(nodeId).label(wrapAt(ans, 11))
                     .shape(GvNode.Shape.circle)
                     .width(0.7);
             switch( answerText ) {
@@ -255,7 +255,8 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
     
 	void printChart( DecisionGraph fc, PrintWriter wrt ) throws IOException {
 		wrt.println( "subgraph cluster_" + sanitizeId(fc.getId()) + " {");
-		wrt.println( String.format("label=\"%s\"", humanTitle(fc)) );
+		wrt.println( "label=\"\"" );
+//		wrt.println( String.format("label=\"%s\"", humanTitle(fc)) ); // revisit when getting the titles from the policy model
 		
         // group to subcharts
         Set<Node> subchartHeads = findSubchartHeades( fc );
