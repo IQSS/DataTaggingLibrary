@@ -14,16 +14,16 @@ import java.util.List;
  *
  * @author michael
  */
-public class VisualizeTagSpaceCommand extends DotCommand {
+public class VisualizePolicySpaceCommand extends DotCommand {
 
     @Override
     public String command() {
-        return "visualize-ts";
+        return "visualize-ps";
     }
 
     @Override
     public String description() {
-        return "Creates a visualization of th tag space, as a tree. Users can provide additional parameter for the output file.\n"
+        return "Creates a visualization of the policy space, as a tree. Users can provide additional parameter for the output file.\n"
                 + "Requires graphviz (www.graphviz.org).";
     }
     

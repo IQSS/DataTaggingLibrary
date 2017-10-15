@@ -17,7 +17,7 @@ import edu.harvard.iq.datatags.cli.commands.StatisticsCommand;
 import edu.harvard.iq.datatags.cli.commands.QuitCommand;
 import edu.harvard.iq.datatags.cli.commands.ToggleDebugMessagesCommand;
 import edu.harvard.iq.datatags.cli.commands.MatchResultToSequenceCommand;
-import edu.harvard.iq.datatags.cli.commands.VisualizeTagSpaceCommand;
+import edu.harvard.iq.datatags.cli.commands.VisualizePolicySpaceCommand;
 import edu.harvard.iq.datatags.cli.commands.LoadPolicyModelCommand;
 import edu.harvard.iq.datatags.cli.commands.NewModelCommand;
 import edu.harvard.iq.datatags.cli.commands.OpenInDesktopCommand;
@@ -128,7 +128,7 @@ public class CliRunner {
                 new QuitCommand(), new ToggleDebugMessagesCommand(), new ShowNodeCommand(),
                 new PrintStackCommand(), new RestartCommand(), new ReloadQuestionnaireCommand(),
                 new AskAgainCommand(), new ShowSlotCommand(), new VisualizeDecisionGraphCommand(),
-                new VisualizeTagSpaceCommand(), new PrintRunTraceCommand(), new LoadPolicyModelCommand(), 
+                new VisualizePolicySpaceCommand(), new PrintRunTraceCommand(), new LoadPolicyModelCommand(), 
                 new NewModelCommand(), new OpenInDesktopCommand(), new LoadLocalizationCommand(),
                 new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand(),
                 new CreateLocalizationCommand(), new OptimizeDecisionGraphCommand()

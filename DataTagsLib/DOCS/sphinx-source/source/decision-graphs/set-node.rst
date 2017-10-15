@@ -22,7 +22,7 @@ Putting the value ``b1a`` in the atomic slot ``DataTags/Mid1/Bottom1``::
 
 Adding the values ``b2b`` and ``b2c`` to the aggregate slot ``DataTags/Mid2/Bottom2``::
 
-  [set: DataTags/Mid2/Bottom2+={b2b, b2c}]
+  [set: DataTags/Mid2/Bottom2+=b2b, b2c]
 
 Combining these operations in the same node::
 
@@ -30,7 +30,7 @@ Combining these operations in the same node::
 
 For brevity, it is possible to use unique suffixes instead of the full path. The below examples are equivalent to the former one::
 
-  [set: Mid1/Bottom1=b1a; Mid2/Bottom2+={b2b, b2c}]
-  [set: Bottom1=b1a; Mid2/Bottom2+={b2b, b2c}]
+  [set: Mid1/Bottom1=b1a; Mid2/Bottom2+=b2b, b2c]
+  [set: Bottom1=b1a; Mid2/Bottom2+=b2b, b2c]
 
 Note that we could not further abbreviate ``Mid2/Bottom2`` to ``Bottom2``, as slot ``DataTags/Mid1`` also contains a sub-slot called ``Bottom2``. Thus, referencing just ``Bottom2`` would be ambiguous, and is therefore not supported.
