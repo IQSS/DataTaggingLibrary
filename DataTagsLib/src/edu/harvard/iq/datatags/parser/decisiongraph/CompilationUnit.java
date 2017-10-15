@@ -1,7 +1,7 @@
 package edu.harvard.iq.datatags.parser.decisiongraph;
 
 import edu.harvard.iq.datatags.model.graphs.Answer;
-import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
+import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
@@ -19,7 +19,7 @@ import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderOptionSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
@@ -136,8 +136,18 @@ public class CompilationUnit {
         
         astValidators.stream().flatMap( v -> v.validate(parsedFile.getAstNodes()).stream())
                                     .forEach(validationMessages::add);
-        
-        product.setStart(buildNodes(parsedFile.getAstNodes(), endAll));
+                                    
+        try {
+            product.setStart(buildNodes(parsedFile.getAstNodes(), endAll));
+        } catch ( RuntimeException re ) {
+            Throwable cause = re.getCause();
+            if ((cause != null) && (cause instanceof DataTagsParseException)) {
+                DataTagsParseException pe = (DataTagsParseException) cause;
+                validationMessages.add( new ValidationMessage(Level.ERROR, "At node " + pe.getOffendingNode() + ": " + pe.getMessage()) );
+            } else {
+                throw re;
+            }
+        }
         
         product.nodes().forEach(n->n.setCuPath(sourcePath));
     }
@@ -246,17 +256,17 @@ public class CompilationUnit {
 
                             if (slot instanceof AggregateSlot || slot instanceof AtomicSlot) {
                                 // Original node was [consider]
-                                for (AstConsiderAnswerSubNode astAns : astNode.getAnswers()) {
-                                    if (astAns.getAnswerList() == null) {
+                                for (AstConsiderOptionSubNode astAns : astNode.getOptions()) {
+                                    if (astAns.getOptionList() == null) {
                                         throw new RuntimeException(" (consider slot gets only values, not answers)");
                                     }
                                     topValue = topLevelType.createInstance();
                                     valueBuilder = new SetNodeValueBuilder(topValue, fullyQualifiedSlotName);
                                     AstSetNode.Assignment assignment;
                                     if (slot instanceof AggregateSlot) {
-                                        assignment = new AstSetNode.AggregateAssignment(astNode.getSlot(), astAns.getAnswerList());
+                                        assignment = new AstSetNode.AggregateAssignment(astNode.getSlot(), astAns.getOptionList());
                                     } else {
-                                        assignment = new AstSetNode.AtomicAssignment(astNode.getSlot(), astAns.getAnswerList().get(0).trim());
+                                        assignment = new AstSetNode.AtomicAssignment(astNode.getSlot(), astAns.getOptionList().get(0).trim());
                                     }
 
                                     if (assignment == null) {
@@ -273,12 +283,12 @@ public class CompilationUnit {
                                         }
                                     }
                                     CompoundValue answer = topValue;
-                                    res.setNodeFor(ConsiderAnswer.make(answer), buildNodes(astAns.getSubGraph(), syntacticallyNext));
+                                    res.setNodeFor(ConsiderOption.make(answer), buildNodes(astAns.getSubGraph(), syntacticallyNext));
                                 }
 
                             } else if (slot instanceof CompoundSlot) {
                                 // Original node was [when]
-                                for (AstConsiderAnswerSubNode astAns : astNode.getAnswers()) {
+                                for (AstConsiderOptionSubNode astAns : astNode.getOptions()) {
                                     if (astAns.getAssignments() == null) {
                                         throw new RuntimeException("Expecting some values for the [when] node's options.");
                                     }
@@ -300,8 +310,8 @@ public class CompilationUnit {
                                         }
                                     }
                                     CompoundValue answer = topValue;
-                                    if (res.getNodeFor(ConsiderAnswer.make(answer)) == null) {
-                                        res.setNodeFor(ConsiderAnswer.make(answer), buildNodes(astAns.getSubGraph(), syntacticallyNext));
+                                    if (res.getNodeFor(ConsiderOption.make(answer)) == null) {
+                                        res.setNodeFor(ConsiderOption.make(answer), buildNodes(astAns.getSubGraph(), syntacticallyNext));
                                     }
 
                                 }

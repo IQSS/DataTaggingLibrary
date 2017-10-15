@@ -6,23 +6,23 @@ import java.util.Objects;
 /**
  *
  */
-public class AstConsiderAnswerSubNode {
+public class AstConsiderOptionSubNode {
 
     private final List<? extends AstNode> subGraph;
-    private List<String> answerList;
+    private List<String> optionList;
     private List<AstSetNode.Assignment> assignments;
 
-    public AstConsiderAnswerSubNode(List<?> answer, List<? extends AstNode> implementation) {
+    public AstConsiderOptionSubNode(List<?> answer, List<? extends AstNode> implementation) {
         if (answer.get(0) instanceof String) {
-            answerList = (List<String>) answer;
+            optionList = (List<String>) answer;
         } else {
             assignments = (List<AstSetNode.Assignment>) answer;
         }
         this.subGraph = implementation;
     }
 
-    public List<String> getAnswerList() {
-        return answerList;
+    public List<String> getOptionList() {
+        return optionList;
     }
 
     public List<? extends AstNode> getSubGraph() {
@@ -32,14 +32,14 @@ public class AstConsiderAnswerSubNode {
         return assignments;
     }
 	public String getAnswerText() {
-        return ( answerList != null ) ? answerList.toString()
+        return ( optionList != null ) ? optionList.toString()
                                       : assignments.toString();
 	}
     
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 13 * hash + Objects.hashCode(this.answerList);
+        hash = 13 * hash + Objects.hashCode(this.optionList);
         return hash;
     }
 
@@ -48,12 +48,12 @@ public class AstConsiderAnswerSubNode {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof AstConsiderAnswerSubNode)) {
+        if (!(obj instanceof AstConsiderOptionSubNode)) {
             return false;
         }
-        final AstConsiderAnswerSubNode other = (AstConsiderAnswerSubNode) obj;
+        final AstConsiderOptionSubNode other = (AstConsiderOptionSubNode) obj;
        
-        if (!Objects.equals(this.answerList, other.answerList)) {
+        if (!Objects.equals(this.optionList, other.optionList)) {
             return false;
         }
         if (!Objects.equals(this.assignments, other.assignments)) {
@@ -64,7 +64,7 @@ public class AstConsiderAnswerSubNode {
 
     @Override
     public String toString() {
-        return "{" + getAnswerList() + ":" + getSubGraph() + "}";
+        return "{" + getOptionList() + ":" + getSubGraph() + "}";
     }
 
 }

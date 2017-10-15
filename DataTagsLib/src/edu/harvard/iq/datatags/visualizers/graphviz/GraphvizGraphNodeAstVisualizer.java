@@ -4,7 +4,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderOptionSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
@@ -99,7 +99,7 @@ public class GraphvizGraphNodeAstVisualizer extends GraphvizVisualizer {
         visualizeNodeList(node.getSubGraph(), depth);
     }
     
-    void writeAnswerNode(String nodeId, String ansNodeId, AstConsiderAnswerSubNode node, int depth) {
+    void writeAnswerNode(String nodeId, String ansNodeId, AstConsiderOptionSubNode node, int depth) {
         nodes.add(node(ansNodeId).label(nodeLabel(null, "opt")).gv());
         if (!node.getSubGraph().isEmpty()) {
             edges.add(edge(ansNodeId, sanitizeId(node.getSubGraph().get(0).getId())).label("impl").gv());
@@ -148,7 +148,7 @@ public class GraphvizGraphNodeAstVisualizer extends GraphvizVisualizer {
                     .shape(GvNode.Shape.egg)
                     .fillColor("#AFAFFA")
                     .gv());
-            node.getAnswers().forEach( answerNode -> {
+            node.getOptions().forEach( answerNode -> {
                 String ansNodeId = gvNodeId + "_ans_" + cnt.incrementAndGet();
                 edges.add(edge(gvNodeId, ansNodeId).label(answerNode.getAnswerText()).gv());
                 writeAnswerNode(gvNodeId, ansNodeId, answerNode, depth);
@@ -239,7 +239,7 @@ public class GraphvizGraphNodeAstVisualizer extends GraphvizVisualizer {
                 if (nd.getId() == null) {
                     nd.setId(nodeIdProvider.nextId());
                 }
-                nd.getAnswers().forEach(ans -> addIds(ans.getSubGraph(), nodeIdProvider));
+                nd.getOptions().forEach(ans -> addIds(ans.getSubGraph(), nodeIdProvider));
             }
 
             @Override

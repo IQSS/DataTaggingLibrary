@@ -5,7 +5,7 @@ import static edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphTerminal
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderOptionSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
@@ -173,17 +173,16 @@ public class DecisionGraphRuleParser {
         );
     }
     
-    final static Parser<AstConsiderAnswerSubNode> considerAnswerSubNode(Parser<List<? extends AstNode>> bodyParser) {
-        return Parsers.sequence(
-                nodeStructurePart("{"),
+    final static Parser<AstConsiderOptionSubNode> considerAnswerSubNode(Parser<List<? extends AstNode>> bodyParser) {
+        return Parsers.sequence(nodeStructurePart("{"),
                 Terminals.identifier().sepBy(nodeStructurePart(",")),
                 nodeStructurePart(":"),
                 bodyParser,
                 nodeStructurePart("}"),
-                (_s, answers, _c, body, _e) -> new AstConsiderAnswerSubNode(answers, body));
+                (_s, answers, _c, body, _e) -> new AstConsiderOptionSubNode(answers, body));
     }
 
-    final static Parser<List<AstConsiderAnswerSubNode>> considerAnswersSubNode(Parser<List<? extends AstNode>> bodyParser) {
+    final static Parser<List<AstConsiderOptionSubNode>> considerAnswersSubNode(Parser<List<? extends AstNode>> bodyParser) {
         return Parsers.sequence(
                 nodeStructurePart("{"),
                 nodeStructurePart("options"),
@@ -193,14 +192,13 @@ public class DecisionGraphRuleParser {
                 (_s, _name, _c, answers, _e) -> answers);
     }
 
-    final static Parser<AstConsiderAnswerSubNode> whenAnswerSubNode(Parser<List<? extends AstNode>> bodyParser) {
-        return Parsers.sequence(
-                nodeStructurePart("{"),
+    final static Parser<AstConsiderOptionSubNode> whenAnswerSubNode(Parser<List<? extends AstNode>> bodyParser) {
+        return Parsers.sequence(nodeStructurePart("{"),
                 Parsers.or(ATOMIC_ASSIGNMENT_SLOT, AGGREGATE_ASSIGNMENT_SLOT).sepBy(nodeStructurePart(";")),
                 nodeStructurePart(":"),
                 bodyParser,
                 nodeStructurePart("}"),
-                (_s, answer, _c, body, _e) -> new AstConsiderAnswerSubNode(answer, body));
+                (_s, answer, _c, body, _e) -> new AstConsiderOptionSubNode(answer, body));
     }
     
     // -------------------------------

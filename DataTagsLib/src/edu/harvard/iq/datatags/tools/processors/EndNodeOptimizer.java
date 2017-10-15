@@ -10,7 +10,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
-import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
+import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
@@ -51,7 +51,7 @@ public class EndNodeOptimizer implements DecisionGraphProcessor {
            
             @Override
             public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
-                for ( ConsiderAnswer a : nd.getAnswers() ) {
+                for ( ConsiderOption a : nd.getAnswers() ) {
                     Node ansNode = nd.getNodeFor(a);
                     if ( shouldReplace(ansNode) ) {
                         fcs.remove(ansNode);

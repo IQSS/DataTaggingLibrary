@@ -52,7 +52,6 @@ public class PolicyModelDataParserTest {
         Path basePath = Paths.get("/sample/policy-model.xml");
         
         PolicyModelData pmd = sut.read(MINIMAL_MODEL, basePath);
-        assertEquals("aDOI", pmd.getDoi());
         assertEquals(1, pmd.getReferences().size());
         assertEquals(2, pmd.getAuthors().size());
         assertEquals(new TreeSet<>(Arrays.asList("repository", "open", "force11")), pmd.getKeywords());

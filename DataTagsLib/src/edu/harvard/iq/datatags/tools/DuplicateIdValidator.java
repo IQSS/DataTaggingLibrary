@@ -3,7 +3,7 @@ package edu.harvard.iq.datatags.tools;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderOptionSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
@@ -47,7 +47,7 @@ public class DuplicateIdValidator extends NullVisitor implements DecisionGraphAs
     @Override
     public void visitImpl(AstConsiderNode nd) throws DataTagsRuntimeException {
         collect(nd);
-        for (AstConsiderAnswerSubNode ansRef : nd.getAnswers()) {
+        for (AstConsiderOptionSubNode ansRef : nd.getOptions()) {
             for (AstNode node : ansRef.getSubGraph()) {
                 node.accept(this);
             }

@@ -2,6 +2,7 @@ package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
 import java.util.List;
 import java.util.Objects;
+import static java.util.stream.Collectors.joining;
 
 /**
  * 
@@ -67,7 +68,9 @@ public class AstAskNode extends AstNode {
     }
      @Override
      public String toStringExtras() {
-         return String.format("text:«%s» terms:%s answers:%s", getTextNode().getText(), getTerms(), getAnswers());
+         return String.format("text:«%s» terms:%s answers:%s", getTextNode().getText(),
+                 getTerms() != null ? getTerms() : "(empty)", 
+                 getAnswers().stream().map(a->a.getAnswerText()).collect(joining(",","«","»")));
      }
     
 }

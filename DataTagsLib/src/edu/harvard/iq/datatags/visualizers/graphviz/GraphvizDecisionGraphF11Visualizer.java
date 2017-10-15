@@ -10,7 +10,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.model.graphs.Answer;
-import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
+import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -52,7 +52,7 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
                     .label(idLabel(nd) + "when")
                     .gv());
             int ansNodeCount=0;
-            for (ConsiderAnswer ans : nd.getAnswers()) {
+            for (ConsiderOption ans : nd.getAnswers()) {
                 StringBuilder label = new StringBuilder();
                 ans.getValue().getNonEmptySubSlots().forEach( tt -> 
                     label.append(tt.getName())

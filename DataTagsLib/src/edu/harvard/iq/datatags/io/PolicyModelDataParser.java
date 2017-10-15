@@ -113,10 +113,7 @@ public class PolicyModelDataParser {
         @Override
         public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
             switch (qName) {
-                case "version":
-                    model.setDoi(atts.getValue("doi"));
-                    break;
-
+                
                 case "person":
                     PersonAuthorData pad = new PersonAuthorData();
                     pad.setOrcid(atts.getValue("orcid"));

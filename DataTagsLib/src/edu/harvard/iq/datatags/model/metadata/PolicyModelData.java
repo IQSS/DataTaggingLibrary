@@ -23,7 +23,6 @@ public class PolicyModelData extends BaseModelData {
         YesLast
     }
     private String version;
-    private String doi;
     private String rootTypeName;
     private LocalDate releaseDate;
     private Path metadataFile, policySpacePath, decisionGraphPath, valueInferrersPath;
@@ -38,14 +37,6 @@ public class PolicyModelData extends BaseModelData {
 
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public String getDoi() {
-        return doi;
-    }
-
-    public void setDoi(String doi) {
-        this.doi = doi;
     }
 
     public LocalDate getReleaseDate() {

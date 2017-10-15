@@ -26,7 +26,7 @@ public class NodeIdAdder extends AstNode.NullVisitor {
         if (nd.getId() == null) {
             nd.setId(nodeIdProvider.nextId());
         }
-        nd.getAnswers().forEach(ans -> addIds(ans.getSubGraph()));
+        nd.getOptions().forEach(ans -> addIds(ans.getSubGraph()));
         if (nd.getElseNode() != null) {
             addIds(nd.getElseNode());
         }
