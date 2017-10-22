@@ -12,6 +12,15 @@ public abstract class AuthorData {
     
     protected String url;
     protected String name;
+    protected String email;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public interface Visitor<R> {
         public R visit( PersonAuthorData p );

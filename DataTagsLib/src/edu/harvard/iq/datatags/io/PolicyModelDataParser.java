@@ -197,15 +197,19 @@ public class PolicyModelDataParser {
                     break;
                     
                 case "affiliation":
-                    ((PersonAuthorData)currentAuthor).setAffiliation(chars());
+                    if ( currentAuthor instanceof PersonAuthorData ) {
+                        ((PersonAuthorData)currentAuthor).setAffiliation(chars());                    
+                    }
                     break;
                     
                 case "email":
-                    ((PersonAuthorData)currentAuthor).setEmail(chars());
+                    currentAuthor.setEmail(chars());
                     break;
                     
                 case "contact":
-                    ((GroupAuthorData)currentAuthor).setContact(chars());
+                    if ( currentAuthor instanceof GroupAuthorData ) {
+                        ((GroupAuthorData)currentAuthor).setContact(chars());
+                    }
                     break;
                     
                 case "space":

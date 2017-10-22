@@ -10,7 +10,6 @@ public class PersonAuthorData extends AuthorData {
     
     private String orcid;
     private String affiliation;
-    private String email;
     
     @Override
     public String displayString() {
@@ -48,13 +47,6 @@ public class PersonAuthorData extends AuthorData {
         this.affiliation = affiliation;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     @Override
     public int hashCode() {
