@@ -17,7 +17,6 @@ import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -79,7 +78,13 @@ public class MatchResultToSequenceCommand implements CliCommand {
 
                 @Override
                 public void done(DecisionGraphQuery dgq) {
-                    rnr.println("Found %,d matches in %,d possible runs.", foundCount, missCount+foundCount);
+                    if ( foundCount == 0 ) {
+                        rnr.println("No matching runs found.");
+                    } else if ( foundCount == 1 ) {
+                        rnr.println("Found a single match %,d possible runs.", missCount+foundCount);
+                    } else {
+                        rnr.println("Found %,d matches in %,d possible runs.", foundCount, missCount+foundCount);
+                    }
                 }
 
                 @Override
