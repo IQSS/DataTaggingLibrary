@@ -1,4 +1,4 @@
-:doc:`index`
+:doc:`Home <../index>` / :doc:`index`
 
 =============
 System Setup

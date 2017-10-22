@@ -1,13 +1,16 @@
 :doc:`Home <../index>`
 
+
+.. index :: Set Node
+
 Set Node
 ========
 
-A node that sets sub values in the :any:`Tags Value`. Multiple sub values can be set by the same node.
+A node that sets sub values in the :any:`Current Value`. Multiple sub values can be set by the same node.
 
-Set nodes are through nodes - after updating the tags, the engine goes on to the next node.
+Set nodes are through nodes - after updating the current value, the engine goes on to the next node.
 
-The below examples use the following tagspace::
+The below examples use the following policy space::
 
   DataTags: consists of Mid1, Mid2.
   Mid1: consists of Bottom1, Bottom2.

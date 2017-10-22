@@ -1,11 +1,11 @@
 <policy-model>
   <title>Model with Lots of Metadata</title>
   <subtitle>An example of a policy-model with full metadata.</subtitle>
-  <version doi="xyz.abc.eg5">2.0.4</version>
+  <version>2.0.4</version>
   <date>2017-05-29</date>
   <keywords>Policy model, metadata, full</keywords>
   <authors>
-    <person orcid="123-2345-67890">
+    <person orcid="123-2345-67890" url="http://www.example.com/jd">
       <name>Jane Doe</name>
       <affiliation>Institute A</affiliation>
       <email>jane.doe@ints-a.edu</email>
@@ -13,7 +13,7 @@
     <person orcid="321-2345-67890">
       <name>Joe Smith</name>
     </person>
-    <group>
+    <group url="http://www.example.com/mwg">
       <name>Metadata Working Group</name>
       <contact>info@metadata.org</contact>
     </group>

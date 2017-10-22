@@ -37,10 +37,9 @@ Node types can be divided to three groups:
   Branching Node
     A node that can have more than a single "next" node.
     Example: :any:`ask-node`.
+    
 
-.. index:: Tags Value
-
-Throughout the execution, the engine keeps a single value of the top-level type (currently, this type is called ``DataTags``), referred to as *Tags Value*. This value can be altered by :doc:`set nodes<set-node>`. At the end of the interview, this value holds the final tagging result. Additionally, the engine maintains a call stack of nodes. Pushing onto the stack is done by :doc:`call nodes<call-node>`. Popping is done by :doc:`end nodes<end-node>`.
+Throughout the execution, the engine keeps a single value of the top-level type, referred to as *Current Value*. This value can be altered by :doc:`set nodes<set-node>`. At the end of the interview, this value holds the final tagging result. Additionally, the engine maintains a call stack of nodes. Pushing onto the stack is done by :doc:`call nodes<call-node>`. Popping is done by :doc:`end nodes<end-node>`.
 
 
 .. toctree::

@@ -1,5 +1,7 @@
 :doc:`Home <../index>`
 
+.. index:: Reject Node
+
 Reject Node
 ===========
 

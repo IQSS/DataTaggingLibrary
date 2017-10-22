@@ -1,4 +1,4 @@
-:doc:`index`
+:doc:`Home <../index>` / :doc:`index`
 
 ================
 Ordering Values
@@ -27,6 +27,6 @@ The above definition defines three things:
 * The values that can be placed in the slot (``clear``, ``encrypted``...)
 * The total order of these values: ``clear`` < ``encrypted`` < ``multipartyEncrypted``
 
-It is the last point -- the total ordering -- that allows Tags to resolve the issue. *Once a value is placed in an atomic slot, it can only be replaced by a greater value* according to the total ordering of the values defined for that slot. Thus, once one part of the decision graph has concluded that the data have to be encrypted (``[set: Storage=encrypt]``), no other part of the decision graph can decide they can be stored in the clear. In the above case, the data will always be (at least) encrypted, regardless of the order in which the medical and educational parts appear in the interview.
+It is the last point -- the total ordering -- that allows PolicyModels to resolve the issue. *Once a value is placed in an atomic slot, it can only be replaced by a greater value* according to the total ordering of the values defined for that slot. Thus, once one part of the decision graph has concluded that the data have to be encrypted (``[set: Storage=encrypt]``), no other part of the decision graph can decide they can be stored in the clear. In the above case, the data will always be (at least) encrypted, regardless of the order in which the medical and educational parts appear in the interview.
 
 Sometimes it's easier to split a decision graph to a few files. Next, we'll look at how to do this using :doc:`imports<import-node>`.

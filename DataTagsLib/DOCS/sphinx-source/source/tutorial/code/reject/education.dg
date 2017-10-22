@@ -5,7 +5,8 @@ Sample toy interview
 [ask:
   {text: Do the data contains personally identifiable information?}
   {terms:
-    {Personally identifiable information: Any information about an individual... }
+    {Personally identifiable information: Any information
+       about an individual... }
   }
   {answers:
     {yes: [set: Storage=encrypt; Transfer=encrypt]}
@@ -17,5 +18,6 @@ Sample toy interview
   {text: Did you get parental consent?}
   {answers:
     {no:
-       [reject: Must get parental consent before collecting data from subjects under 18.]}}]
+       [reject: Must get parental consent before collecting
+          data from subjects under 18.]}}]
 [end]

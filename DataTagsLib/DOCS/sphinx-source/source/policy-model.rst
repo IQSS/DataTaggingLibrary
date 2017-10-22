@@ -1,5 +1,9 @@
 :doc:`Home <index>`
 
+
+.. index:: policy-model.xml
+.. index:: Policy Model Metadata
+
 Policy Model Description File
 ==============================
 
@@ -32,7 +36,7 @@ subtitle
   The subtitle of the model.
 
 version
-  The current model version. Can have ``doi`` attribute, in case this version has a DOI.
+  The current model version.
 
 date
   Release date of this model version.

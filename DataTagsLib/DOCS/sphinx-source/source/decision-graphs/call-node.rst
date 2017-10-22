@@ -1,5 +1,7 @@
 :doc:`Home <../index>`
 
+.. index:: Call Node
+
 Call Node
 =========
 

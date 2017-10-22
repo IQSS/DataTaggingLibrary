@@ -1,4 +1,4 @@
-:doc:`index`
+:doc:`Home <../index>` / :doc:`index`
 
 ==================
 Hello, World! v1.0
@@ -130,7 +130,7 @@ As for the extra end node, it is also automatically added by the compiler. End n
 Visualizations
 ---------------
 
-Some people find it easier to reason about decison graphs when they are displayed as, well, graphs. CliRunner offers this functionality, providing that Graphviz is installed. Type ``\visualize-dg`` at the prompt. CliRunner will prompt for a filename to save the visualization to, and possibly for a path to ``dot``, the Graphviz executable used. Similarly, ``\visualize-ts`` will create a tree view of the tag space.
+Some people find it easier to reason about decison graphs when they are displayed as, well, graphs. CliRunner offers this functionality, providing that Graphviz is installed. Type ``\visualize-dg`` at the prompt. CliRunner will prompt for a filename to save the visualization to, and possibly for a path to ``dot``, the Graphviz executable used. Similarly, ``\visualize-ps`` will create a tree view of the policy space.
 
 .. figure:: img/visualize-dg.png
 
@@ -139,7 +139,7 @@ Some people find it easier to reason about decison graphs when they are displaye
 
 .. figure:: img/visualize-ts.png
 
-  The result of ``visualize-ts``.
+  The result of ``visualize-ps``.
 
 
 Congratulations! You've finished your first questionnaire! To achive this, you have:

@@ -1,5 +1,7 @@
 :doc:`Home <../index>`
 
+.. index:: #import Node
+
 #Import Node
 =============
 

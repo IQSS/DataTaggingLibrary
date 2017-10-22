@@ -10,8 +10,8 @@ Domains: some of medical, education, geographic.
 
 Granularity: one of aggregate, noisy, accurate.
 
-Handling: consists of Transfer, Storage.
+Handling: consists of Transit, Storage.
 
-Transfer: one of clear, encrypt, none.
+Transit: one of clear, encrypt, none.
 
 Storage: one of clear, encrypt, multipartyEncrypt.

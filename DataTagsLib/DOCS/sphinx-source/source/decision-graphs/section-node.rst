@@ -1,5 +1,7 @@
 :doc:`Home <../index>`
 
+.. index :: Section Node
+
 Section Node
 ============
 
