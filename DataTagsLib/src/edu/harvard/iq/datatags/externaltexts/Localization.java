@@ -2,8 +2,6 @@ package edu.harvard.iq.datatags.externaltexts;
 
 import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.model.values.AbstractValue;
-import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

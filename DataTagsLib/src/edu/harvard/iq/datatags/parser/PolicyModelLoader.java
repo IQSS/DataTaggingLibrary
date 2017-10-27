@@ -134,6 +134,7 @@ public class PolicyModelLoader extends BaseModelLoader {
                     localizations = ciResolve(data.getMetadataFile().getParent(), LocalizationLoader.LOCALIZATION_DIRECTORY_NAME);
                     if ( localizations != null ) {
                         Files.list(localizations).filter(Files::isDirectory)
+                                                 .filter( d -> Files.exists(d.resolve(LocalizationLoader.LOCALIZED_METADATA_FILENAME)) )
                                                  .map(p->p.getFileName().toString())
                                                  .forEach(res.getModel()::addLocalization);
                     }

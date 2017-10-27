@@ -297,7 +297,9 @@ class AuthorToXml implements AuthorData.Visitor<List<String>> {
         List<String> res = new ArrayList<>();
         res.add( prefix + "<group>");
         res.add( prefix +"  <name>" + g.getName() + "</name>" );
-        res.add( prefix +"  <contact>" + g.getContact() + "</contact>" );
+        if ( nonEmpty(g.getContact()) ) {
+            res.add( prefix +"  <contact>" + g.getContact() + "</contact>" );
+        }
         
         res.add( prefix + "</group>");
         
