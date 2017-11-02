@@ -1,10 +1,10 @@
-:doc:`index`
+:doc:`Home <../index>` / :doc:`index`
 
 ===============
 Hello? World?
 ===============
 
-So far, we've put values into slots without asking the user for any information. That is, of course, not the common case. When we need to ask a user, Tags offers the ``ask`` node:
+So far, we've put values into slots without asking the user for any information. That is, of course, not the common case. When we need to ask a user, PolicyModels offers the ``ask`` node:
 
 .. include:: code/hello-question-world/hello-question-world.dg
    :code:
@@ -53,7 +53,7 @@ Run the questionnaire (here are the files for the :download:`tag space <code/hel
 Terms
 -------------
 
-Real-world questions are likely to contain unfamiliar terms, especially when the questions are about legal matters, and the intended audience have had little or no legal training. To clarify terms that appear in a question's ``{text:}``, Tags offers the ``{terms}`` sub-node.
+Real-world questions are likely to contain unfamiliar terms, especially when the questions are about legal matters, and the intended audience have had little or no legal training. To clarify terms that appear in a question's ``{text:}``, PolicyModels offers the ``{terms}`` sub-node.
 
 .. include:: code/hello-question-world/ask-with-terms.dg
    :code:
@@ -74,7 +74,7 @@ The terms are displayed to the user along with the question's text.
 Yes/No Special Case
 --------------------
 
-While working on Tags, we found a repeating interview pattern: The user is asked a yes/no question. On one option (typically a "yes"), the interview goes through a serious of questions before proceeding to the node pointed by the other option (typically, a "no"). To naturally support this, *if an ask node contains only a single "yes" or "no" answer, the other answer is implied, and leads to the next node following that ask node*.
+While working on PolicyModels, we found a repeating interview pattern: The user is asked a yes/no question. On one option (typically a "yes"), the interview goes through a serious of questions before proceeding to the node pointed by the other option (typically, a "no"). To naturally support this, *if an ask node contains only a single "yes" or "no" answer, the other answer is implied, and leads to the next node following that ask node*.
 
 In the :download:`below decision graph <code/hello-question-world/hello-implied-world.dg>`, the user may decide to greet other subjects.
 

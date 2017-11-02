@@ -1,5 +1,6 @@
 [#import dogs: dogs.dg]
 [#import cats: cats.dg]
+
 [>q-order< ask:
   {text: Do the dogs first?}
   {answers:
@@ -7,17 +8,11 @@
       {no:  [call: cats>cat][call:dogs>dog]}
   }
 ]
-[ask:
-	{text: Continue?}
-	{answers:
-		{yes: [todo:yes]}
-	}
-]
 [todo: specify mice]
 [>sec-frogs< section:
   {title: Add frogs}
   [todo: Add frog 1]
   [todo: Add frog 2]
 ]
-
+[set: Rice=Full]
 [end]

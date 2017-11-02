@@ -1,5 +1,9 @@
 :doc:`Home <../index>`
 
+
+.. index:: To-do Node
+
+
 To-Do Node
 ==========
 

@@ -1,0 +1,7 @@
+<policy-model>
+  <title>Consider and When</title>
+  <model>
+    <space root="DataTags">consider-when.ts</space>
+    <graph>consider-when.dg</graph>
+  </model>
+</policy-model>

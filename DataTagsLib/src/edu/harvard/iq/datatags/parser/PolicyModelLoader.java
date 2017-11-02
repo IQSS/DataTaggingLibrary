@@ -3,7 +3,6 @@ package edu.harvard.iq.datatags.parser;
 import edu.harvard.iq.datatags.externaltexts.LocalizationLoader;
 import static edu.harvard.iq.datatags.io.FileUtils.ciResolve;
 import edu.harvard.iq.datatags.model.PolicyModel;
-import edu.harvard.iq.datatags.model.inference.SupportValueInferrer;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.inference.AbstractValueInferrer;
@@ -42,7 +41,7 @@ import java.util.Set;
  * 
  * @author michael
  */
-public class PolicyModelLoader {
+public class PolicyModelLoader extends BaseModelLoader {
     
     private final List<DecisionGraphAstValidator> dgAstValidators = new ArrayList<>();
     private final List<DecisionGraphValidator> dgValidators = new ArrayList<>();
@@ -135,6 +134,7 @@ public class PolicyModelLoader {
                     localizations = ciResolve(data.getMetadataFile().getParent(), LocalizationLoader.LOCALIZATION_DIRECTORY_NAME);
                     if ( localizations != null ) {
                         Files.list(localizations).filter(Files::isDirectory)
+                                                 .filter( d -> Files.exists(d.resolve(LocalizationLoader.LOCALIZED_METADATA_FILENAME)) )
                                                  .map(p->p.getFileName().toString())
                                                  .forEach(res.getModel()::addLocalization);
                     }
@@ -146,13 +146,13 @@ public class PolicyModelLoader {
                 res.addMessage( new ValidationMessage(Level.ERROR, "Failed to create decision graph; see previous errors.") );
             }
             
+            //load valueInferrers
             try {
-                //load valueInferrers
-                if (data.getValueInferrersPath() != null){
+                if ( data.getValueInferrersPath() != null ) {
                     ValueInferenceParseResult inferenceParseResult = new ValueInferenceParser(spaceRoot).parse(data.getValueInferrersPath());
                     Set<AbstractValueInferrer> valueInferrer =  inferenceParseResult.buildValueInference();
                     model.setValueInferrers(valueInferrer);
-                    inferenceParseResult.getValidationMessages().forEach(res::addMessage);
+                    res.addMessages(inferenceParseResult.getValidationMessages());
                 }
             } catch (SyntaxErrorException ex) {
                 res.addMessage( new ValidationMessage(Level.ERROR, "Syntax error in value inference: " + ex.getMessage()));
@@ -160,6 +160,7 @@ public class PolicyModelLoader {
                 res.addMessage( new ValidationMessage(Level.ERROR, "Cannot load value inference: " + ex.getMessage()));
             }
             
+            res.addMessages( loadReadmes(data, data.getModelDirectoryPath()) );
             
         } catch (NoSuchFileException ex) {
             res.addMessage( new ValidationMessage(Level.ERROR, "File " + ex.getMessage() + " cannot be found."));

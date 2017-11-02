@@ -9,7 +9,7 @@ import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import static edu.harvard.iq.datatags.model.graphs.Answer.NO;
 import static edu.harvard.iq.datatags.model.graphs.Answer.YES;
-import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
+import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
@@ -37,7 +37,7 @@ public class RuntimeEngineStateTest {
         DecisionGraph dg = linearYesChart(chartId, 3);
         AskNode n2 = (AskNode) dg.getNode(chartId + "_2");
         ConsiderNode consider = n2.addAnswer(NO, dg.add(new ConsiderNode("1", null)));
-        CallNode caller = consider.setNodeFor(ConsiderAnswer.get(tags), dg.add(new CallNode("Caller")));
+        CallNode caller = consider.setNodeFor(ConsiderOption.get(tags), dg.add(new CallNode("Caller")));
         caller.setCalleeNode(dg.getStart());
         caller.setNextNode(new EndNode("CallerEnd"));
 

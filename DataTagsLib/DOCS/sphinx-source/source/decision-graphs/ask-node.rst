@@ -1,5 +1,7 @@
 :doc:`Home <../index>`
 
+.. index:: Ask Node
+
 Ask Node
 ========
 

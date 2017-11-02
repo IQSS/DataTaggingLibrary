@@ -1,15 +1,30 @@
-[set: Subject+=planet]
-
-[when: 
+[>qwe< ask:
+  {text: What's the subject?}
+  {terms:
+    {subject: Who we plan to greet.}
+  }
+  {answers:
+    {p: [set: Subject+=planet] }
+    {m: [set: Subject+=moon] }
+    {w: [set: Subject+=world] }
+    {u: [set: Subject+=unrecognizedOrbitingObject] }
+    {most: [set: Subject+=planet, moon, world]}
+    {none:}
+  }
+]
+[when:
         {Subject+=planet:[set: X+=a] }
         {Subject+=moon: [set: X+=b] }
+        {Subject+=world, moon: [set: X+=c] }
         {else:[set: X+=e]}
 ]
-[consider: 
+[consider:
     {slot:Subject}
     {options:
+        {world, moon:[set: X+=zzzz] }
         {world:[set: X+=c] }
         {moon: [set: X+=d] }
+        <-- { : [set: X+=xxxx]}
     }
    {else: [set: X+=f]} <---------optional
 ]

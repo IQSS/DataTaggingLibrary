@@ -11,7 +11,7 @@ import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.io.StringMapFormat;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.Answer;
-import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
+import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
@@ -77,8 +77,8 @@ import java.util.concurrent.atomic.AtomicInteger;
         public Node visit(ConsiderNode nd) {
                // check any answer to be part of the current DataTags 
                // return the node of the first write answer 
-            for (ConsiderAnswer ans : nd.getAnswers()) {
-                CompoundValue answer = ans.getAnswer();
+            for (ConsiderOption ans : nd.getAnswers()) {
+                CompoundValue answer = ans.getValue();
                 if (currentValue.isSupersetOf(answer)) {
                     return nd.getNodeFor(ans);
                 }

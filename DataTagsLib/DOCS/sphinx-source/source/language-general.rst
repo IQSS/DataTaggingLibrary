@@ -33,10 +33,13 @@ A block comment is contained between ``<*`` and ``*>``, like so::
   ]
 
 
+
+.. index:: Files
+
 Files
 -----
 
-Files are assumed to be encoded in Unicode. By convention, files describing tags spaces have a ``.ts`` suffix, while files describing decision graphs have a ``.dg`` one.
+Files are assumed to be encoded in Unicode. By convention, files describing policy spaces have a ``.pspace`` suffix, while files describing decision graphs have a ``.dg`` one.
 
 .. index:: Top-Down Support
 
@@ -64,13 +67,14 @@ In the below decision graph snippet, the ``EU-Compliance`` section is referenced
   [>EU-Compliance< todo: This section will ensure compliance with the EU regulations.]
 
 
-.. index: Text Editor Support
+.. index:: Text Editor Support
+.. index:: Atom Support
 
 
 Text-Editor Support
 -------------------
 
-It's always easier to code when the text editor helps. Tags has a `language support package`_
+It's always easier to code when the text editor helps. PolicyModels has a `language support package`_
 for the `Atom`_ text editor. It offers syntax colorizing and code templates. It could be installed from
 Atom itself or by using ``apm``::
 

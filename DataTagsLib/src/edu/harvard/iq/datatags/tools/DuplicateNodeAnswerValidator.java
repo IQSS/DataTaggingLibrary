@@ -3,7 +3,7 @@ package edu.harvard.iq.datatags.tools;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderOptionSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
@@ -35,15 +35,15 @@ public class DuplicateNodeAnswerValidator extends NullVisitor  implements Decisi
     }
       @Override
     public void visitImpl(AstConsiderNode nd) throws DataTagsRuntimeException {
-        List<AstConsiderAnswerSubNode> noduplicates = new LinkedList<>();
-        for (AstConsiderAnswerSubNode ansRef : nd.getAnswers()) {
+        List<AstConsiderOptionSubNode> noduplicates = new LinkedList<>();
+        for (AstConsiderOptionSubNode ansRef : nd.getOptions()) {
             for (AstNode implementation: ansRef.getSubGraph()) {
                 implementation.accept(this); // descend through the questionnaire structure
             }
-            for (AstConsiderAnswerSubNode ans : noduplicates) {
+            for (AstConsiderOptionSubNode ans : noduplicates) {
                 // compare answer text, since we don't want two no answers that have different implementations
-                if ( ansRef.getAnswerList() != null && ans.getAnswerList() != null ) {
-                    if (ansRef.getAnswerList().equals(ans.getAnswerList())) {
+                if ( ansRef.getOptionList() != null && ans.getOptionList() != null ) {
+                    if (ansRef.getOptionList().equals(ans.getOptionList())) {
                         validationMessages.add(new ValidationMessage(Level.WARNING, "consider node \"" + nd.getId() + "\" has duplicate answers"));
                     }
                 }

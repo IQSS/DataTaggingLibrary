@@ -1,10 +1,10 @@
-:doc:`index`
+:doc:`Home <../index>` / :doc:`index`
 
 =========
 Call/End
 =========
 
-As questionnaires grow, it is sometimes convenient to split the decision graph into sub graphs, so they are easier to manage. In order to do this, Tags offers the ``call`` node. But first, we need to look at node IDs.
+As questionnaires grow, it is sometimes convenient to split the decision graph into sub graphs, so they are easier to manage. In order to do this, PolicyModels offers the ``call`` node. But first, we need to look at node IDs.
 
 ---------
 Node IDs

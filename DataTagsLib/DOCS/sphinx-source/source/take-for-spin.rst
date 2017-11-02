@@ -3,7 +3,7 @@
 Take PolicyModels for a Spin
 =============================
 
-To start developing questionnaires using Tags and it's tools, you'll need Tags' console application, **CliRunner**. It is available from `binaries page`_ at the DataTaggingLibrary GitHub repository. There are two .zip files
+To start modeling policies using PolicyModels and it's tools, you'll need PolicyModels' console application, **CliRunner**. It is available from `binaries page`_ at the DataTaggingLibrary GitHub repository. There are two .zip files
 of interest in the release:
 
 .. _binaries page: https://github.com/IQSS/DataTaggingLibrary/releases

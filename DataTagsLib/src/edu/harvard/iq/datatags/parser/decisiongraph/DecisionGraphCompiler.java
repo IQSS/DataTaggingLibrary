@@ -183,13 +183,21 @@ public class DecisionGraphCompiler {
                     } else {
                         messages.add(new ValidationMessage((Level.ERROR), "You can only call to section node: " + calleeNode.getId()));
                     }
+                    CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
+                    if ( callNode != null ) {
+                        callNode.setCalleeNode(calleeNode);
+                    } else {
+                        messages.add( new ValidationMessage(Level.ERROR,"Linkage error: Cannot find call node ["
+                                + prefixNodes + "]" + callCalleePair.getKey()
+                                + ". See previous errors that might have caused this." ));
+                    }
                 }
             }
         }
        
         
         CompilationUnit mainCu = nameToCu.get(MAIN_CU_ID);
-        if ( mainCu != null) {
+        if ( (mainCu!=null) && (messages.stream().noneMatch(m->m.getLevel()==Level.ERROR)) ){
             mainCu.getDecisionGraph().addAllReachableNodes();
             modelData.addCompilationUnitMapping(nameToCu);
             return mainCu.getDecisionGraph();

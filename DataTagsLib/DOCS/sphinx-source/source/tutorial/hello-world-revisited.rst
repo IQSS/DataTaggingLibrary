@@ -1,4 +1,4 @@
-:doc:`index`
+:doc:`Home <../index>` / :doc:`index`
 
 ======================
 Hello World, Revisited
@@ -49,7 +49,7 @@ However, if a suffix of a given slot is unique, the system will automatically re
 Adding Notes to Slots and Values
 ---------------------------------
 
-A DataTags system should be user-friendly, and thus cannot assume its user knows everything about each tag. Therefore, Tags allows adding notes to slot and values. Unlike code comments, the notes make it to the compiled questionnaire, and thus can be displayed to the user when necessary.
+A DataTags interview system should be user-friendly, and thus cannot assume its user knows everything about each tag. Therefore, PolicyModels allows adding notes to slot and values. Unlike code comments, the notes make it to the compiled questionnaire, and thus can be displayed to the user when necessary.
 
 Notes are added as text between ``[`` and ``]``, at the definition point of the slot. Below is the "hello world" tag space definitions, with notes added:
 
@@ -93,7 +93,7 @@ A real-life usage of notes of note, can be found in the DataTaggingServer, CliRu
 Comments
 --------
 
-Like most programming languages, Tags has two types of comments: end-of-line, and block. End-of-line comments extend from the first ``<--``, to the end of the line, like so::
+Like most programming languages, PolicyModels has two types of comments: end-of-line, and block. End-of-line comments extend from the first ``<--``, to the end of the line, like so::
 
   [set: HIPAA += limitedDataset ] <-- a statement about this line
 

@@ -7,7 +7,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import static edu.harvard.iq.datatags.model.graphs.Answer.*;
-import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
+import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ContentReader;
@@ -60,10 +60,10 @@ public class ChartRunningTest {
         CompoundValue tags = ct.createInstance();
         ConsiderNode start = c1.add(new ConsiderNode("1",  null));
 
-        start.setNodeFor(ConsiderAnswer.get(tags), c1.add(new ConsiderNode("2", null)))
-                .setNodeFor(ConsiderAnswer.get(tags), c1.add(new ConsiderNode("3",  null)))
-                .setNodeFor(ConsiderAnswer.get(tags), c1.add(new ConsiderNode("4",  null)))
-                .setNodeFor(ConsiderAnswer.get(tags), c1.add(new EndNode("END")));
+        start.setNodeFor(ConsiderOption.get(tags), c1.add(new ConsiderNode("2", null)))
+                .setNodeFor(ConsiderOption.get(tags), c1.add(new ConsiderNode("3",  null)))
+                .setNodeFor(ConsiderOption.get(tags), c1.add(new ConsiderNode("4",  null)))
+                .setNodeFor(ConsiderOption.get(tags), c1.add(new EndNode("END")));
 
         c1.setStart(start);
 

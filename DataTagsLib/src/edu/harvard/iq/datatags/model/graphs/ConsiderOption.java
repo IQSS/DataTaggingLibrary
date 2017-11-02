@@ -13,36 +13,34 @@ import java.util.concurrent.ConcurrentHashMap;
  * Use {@link #get(edu.harvard.iq.datatags.model.values.CompoundValue)} or statically import
  * {@link #make(edu.harvard.iq.datatags.model.values.CompoundValue)} to obtain/generate instances.
  *
+ * TODO: This class is intended for removal (See issue #185).
+ * 
  */
-public class ConsiderAnswer {
+public class ConsiderOption {
 
-    private final CompoundValue answer;
-    private static final Map<CompoundValue, ConsiderAnswer> ANSWER_POOL = new ConcurrentHashMap<>();
+    private final CompoundValue value;
+    private static final Map<CompoundValue, ConsiderOption> OPTION_POOL = new ConcurrentHashMap<>();
 
-    public static ConsiderAnswer get(CompoundValue ans) {
+    public static ConsiderOption get(CompoundValue ans) {
         return make(ans);
     }
 
-    public static ConsiderAnswer make(CompoundValue ans) {
-        return ANSWER_POOL.computeIfAbsent(ans, s -> new ConsiderAnswer(s));
+    public static ConsiderOption make(CompoundValue ans) {
+        return OPTION_POOL.computeIfAbsent(ans, s -> new ConsiderOption(s));
     }
 
-    public CompoundValue getAnswer() {
-        return answer;
+    public CompoundValue getValue() {
+        return value;
     }
 
-    private ConsiderAnswer(CompoundValue ans) {
-        answer = ans;
-    }
-
-    public String getAnswerText() {
-        return answer.toString();
+    private ConsiderOption(CompoundValue ans) {
+        value = ans;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 13 * hash + Objects.hashCode(this.answer);
+        hash = 13 * hash + Objects.hashCode(this.value);
         return hash;
     }
 
@@ -51,16 +49,16 @@ public class ConsiderAnswer {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof ConsiderAnswer)) {
+        if (!(obj instanceof ConsiderOption)) {
             return false;
         }
-        final ConsiderAnswer other = (ConsiderAnswer) obj;
-        return Objects.equals(this.answer, other.answer);
+        final ConsiderOption other = (ConsiderOption) obj;
+        return Objects.equals(this.value, other.value);
     }
 
     @Override
     public String toString() {
-        return "[Answer:" + answer + ']';
+        return "[Answer:" + value + ']';
     }
 
 }

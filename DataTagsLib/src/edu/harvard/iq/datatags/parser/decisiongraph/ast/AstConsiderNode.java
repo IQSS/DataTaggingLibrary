@@ -2,33 +2,34 @@ package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
 import java.util.List;
 import java.util.Objects;
+import static java.util.stream.Collectors.joining;
 
 /**
  *ast consider node
  */
 public class AstConsiderNode extends AstNode {
 
-    private final List<String> _slot;
-    private final List<AstConsiderAnswerSubNode> answers;
-    private final List<? extends AstNode> _elseNode;
+    private final List<String> slot;
+    private final List<AstConsiderOptionSubNode> options;
+    private final List<? extends AstNode> elseNode;
 
-    public AstConsiderNode(String id, List<String> slot, List<AstConsiderAnswerSubNode> someAnswers, List<? extends AstNode> elseNode) {
+    public AstConsiderNode(String id, List<String> slot, List<AstConsiderOptionSubNode> someOptions, List<? extends AstNode> elseNode) {
         super(id);
-        _slot = slot;
-        answers = someAnswers;
-        _elseNode = elseNode;
+        this.slot = slot;
+        options = someOptions;
+        this.elseNode = elseNode;
     }
 
     public List<? extends AstNode> getElseNode() {
-        return _elseNode;
+        return elseNode;
     }
 
     public List<String> getSlot() {
-        return _slot;
+        return slot;
     }
 
-    public List<AstConsiderAnswerSubNode> getAnswers() {
-        return answers;
+    public List<AstConsiderOptionSubNode> getOptions() {
+        return options;
     }
 
     @Override
@@ -39,7 +40,7 @@ public class AstConsiderNode extends AstNode {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 67 * hash + Objects.hashCode(this.answers);
+        hash = 67 * hash + Objects.hashCode(this.options);
         return hash;
     }
 
@@ -53,14 +54,14 @@ public class AstConsiderNode extends AstNode {
         }
         final AstConsiderNode other = (AstConsiderNode) obj;
 
-        if (!Objects.equals(this.answers, other.answers)) {
+        if (!Objects.equals(this.options, other.options)) {
             return false;
         }
-        if (!Objects.equals(this._slot, other._slot)) {
+        if (!Objects.equals(this.slot, other.slot)) {
             return false;
         }
 
-        if (!Objects.equals(this._elseNode, other._elseNode)) {
+        if (!Objects.equals(this.elseNode, other.elseNode)) {
             return false;
         }
         return equalsAsAstNode(other);
@@ -68,7 +69,7 @@ public class AstConsiderNode extends AstNode {
 
     @Override
     public String toStringExtras() {
-        return String.format(" answers:%s", getAnswers());
+        return String.format(" options:%s", getOptions().stream().map(a->a.getOptionList()).filter(l->l!=null).map(List::toString).collect(joining(",","«","»")));
     }
 
 }

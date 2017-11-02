@@ -24,7 +24,7 @@
 ]
 [end]
 
-[>open-data< set: Transfer=clear; Storage=clear]
+[>open-data< set: Transit=clear; Storage=clear]
 [end]
 
 <** We have human data, asses privacy risks *>
@@ -45,9 +45,9 @@
 [>cbg< consider:
   {slot: Granularity}
   {options:
-    {accurate:  [set: Transfer=encrypt; Storage=multipartyEncrypt]}
-    {aggregate: [set: Transfer=encrypt; Storage=clear]}
-    {noisy:     [set: Transfer=clear; Storage=clear]}
+    {accurate:  [set: Transit=encrypt; Storage=multipartyEncrypt]}
+    {aggregate: [set: Transit=encrypt; Storage=clear]}
+    {noisy:     [set: Transit=clear; Storage=clear]}
   }
   {else:
     [call: open-data]

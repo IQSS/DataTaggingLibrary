@@ -3,6 +3,7 @@ package edu.harvard.iq.datatags.cli.commands;
 import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.io.PolicyModelDataParser;
 import edu.harvard.iq.datatags.io.PolicyModelLoadingException;
+import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.parser.PolicyModelLoadResult;
 import edu.harvard.iq.datatags.parser.PolicyModelLoader;
 import java.nio.file.Files;
@@ -60,8 +61,15 @@ public class LoadPolicyModelCommand implements CliCommand {
         PolicyModelDataParser pmdParser = new PolicyModelDataParser();
         
         try {
+            final PolicyModelData modelData = pmdParser.read(pmPath);
+            
+            if ( modelData == null ) {
+                rnr.printWarning("Error parsing model data (e.g. the policy-model.xml file).");
+                return;
+            }
+            
             PolicyModelLoadResult loadRes = PolicyModelLoader.verboseLoader()
-                                                             .load(pmdParser.read(pmPath));
+                                                             .load(modelData);
 
             if ( loadRes.isSuccessful() ) {
                 rnr.println("Model '%s' loaded", loadRes.getModel().getMetadata().getTitle());

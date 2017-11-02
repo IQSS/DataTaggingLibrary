@@ -3,7 +3,7 @@ package edu.harvard.iq.datatags.parser.decisiongraph;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
-import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderAnswerSubNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderOptionSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
@@ -393,9 +393,8 @@ public class DecisionGraphRuleParserTest {
                 + "  	{hello:[set: Subject+= world] \n}}"
                 + "  {else:  [set:Subject+=planet] }]\n"
                 + "[end]";
-        List<? extends AstNode> expected = asList(
-                new AstConsiderNode("44", asList("Greeting"),
-                        asList(new AstConsiderAnswerSubNode(
+        List<? extends AstNode> expected = asList(new AstConsiderNode("44", asList("Greeting"),
+                        asList(new AstConsiderOptionSubNode(
                                 asList("hello"),
                                 asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("world"))))))),
                         asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("planet")))))),
@@ -413,9 +412,8 @@ public class DecisionGraphRuleParserTest {
                        + "  {Greeting=hello:[set: Subject+= world] \n}"
                        + "  {else:  [set:Subject+=planet] }]\n"
                        + "[end]";
-        List<? extends AstNode> expected = asList(
-                new AstConsiderNode("44", null,
-                        asList(new AstConsiderAnswerSubNode(
+        List<? extends AstNode> expected = asList(new AstConsiderNode("44", null,
+                        asList(new AstConsiderOptionSubNode(
                                 asList(new AstSetNode.AtomicAssignment(asList("Greeting"), "hello")),
                                 asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("world"))))))),
                         asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("planet")))))),

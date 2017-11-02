@@ -2,7 +2,7 @@ package edu.harvard.iq.datatags.tools.queries;
 
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.Answer;
-import edu.harvard.iq.datatags.model.graphs.ConsiderAnswer;
+import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
@@ -79,8 +79,8 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
         public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
             currentTrace.addLast( nd );
             boolean matchFound = false;
-            for (ConsiderAnswer ans : nd.getAnswers()) {
-                CompoundValue answer = ans.getAnswer();
+            for (ConsiderOption ans : nd.getAnswers()) {
+                CompoundValue answer = ans.getValue();
                 if (valueStack.peek().isSupersetOf(answer)) {
                     matchFound = true;
                     nd.getNodeFor(ans).accept(this);

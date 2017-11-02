@@ -1,21 +1,20 @@
 
-DataTaggingLibrary
-===================
+PolicyModels
+============
 
-.. image:: /img/datatags-logo-large.png
-   :align: center
+PolicyModels started as an implementation of `DataTags`_, a project aimed to allow researchers to create proper dataset handling and sharing policies,
+even if they lack the required legal and technological expertise. Since PolicyModels allows modeling of various domains (such as social benefits or publishing decisions),
+it is now a project in its own right.
 
-The `DataTags`_ project aims to allow researchers to create proper dataset handling and sharing policies,
-even if they lack the required legal and technological expertise.
-The project is part of a the `Privacy Tools for Sharing Research Data`_ project. There are a few
-approaches for developing such system. This site uses tag spaces to describe data handling policies,
-and an imperative approach based on *decision graphs* to decide on a policy.
+
+PolicyModels is a part of a the `Privacy Tools for Sharing Research Data`_ project.
+
 
 .. _DataTags: http://datatags.org
 .. _Privacy Tools for Sharing Research Data: http://http://privacytools.seas.harvard.edu
 
 
-.. admonition :: Academic Reference
+.. admonition:: Academic Reference
 
    The DataTags concept, as well as a previous version of the code described here,
    was presented in the paper: Sharing Sensitive Data with Confidence: The Datatags System.
@@ -23,7 +22,7 @@ and an imperative approach based on *decision graphs* to decide on a policy.
    Sweeney L, Crosas M, Bar-Sinai M. Sharing Sensitive Data with Confidence: The
    Datatags System. *Technology Science.* 2015101601. October 16, 2015. http://techscience.org/a/2015101601
 
-   A more technical introduction, including theoretical explanation of tag spaces, is presented
+   A more technical introduction, including theoretical explanation of policy spaces, is presented
    at the paper: DataTags, Data Handling Policy Spaces and the Tags Language.
 
    Bar-Sinai M, Sweeney L, Crosas M. DataTags, Data Handling Policy Spaces and the Tags Language.
@@ -35,9 +34,9 @@ user goes through the interview, a *Decision Graph Engine* traverses the graph. 
 reaches a node, it performs an instruction associated with it, such
 as ``ask`` (ask the user a question) or ``set``.
 
-.. tip:: Want to take this language for a spin? :doc:`Here's how<take-for-spin>`.
+.. tip:: Want to take this toolset for a spin? :doc:`Here's how<take-for-spin>`.
 
-Tag spaces are also described by a domain specific language.
+Policy spaces are also described by a domain specific language.
 
 This site documents those two languages, and some language-related tools.
 
@@ -48,7 +47,8 @@ This site documents those two languages, and some language-related tools.
 .. _GitHub Repository: https://github.com/IQSS/DataTaggingLibrary
 .. _computer science department at the Ben-Gurion University of the Negev, Israel: http://in.bgu.ac.il/en/natural_science/cs/Pages/default.aspx
 
-Contents:
+Contents
+---------
 
 .. toctree::
    :glob:
@@ -68,9 +68,13 @@ Contents:
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`search`
 
 .. * :ref:`modindex`
+
+
+.. image:: /img/datatags-logo-large.png
+   :align: center

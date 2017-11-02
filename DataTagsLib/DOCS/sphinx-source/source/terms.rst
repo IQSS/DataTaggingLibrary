@@ -7,7 +7,7 @@ Terms and Their Meaning
 
 
   DataTags
-    A set of dataset handling policies made to math the harm a given datset may cause.
+    A set of dataset handling policies made to match the harm a given datset may cause.
     See *Sweeney L, Crosas M, Bar-Sinai M. Sharing Sensitive Data with Confidence: The Datatags System. Technology Science. 2015101601. October 16, 2015.* http://techscience.org/a/2015101601
 
   Decision Graph
@@ -15,13 +15,19 @@ Terms and Their Meaning
     Defined over a tag space.
 
   Interview
-    The act of a user answering a questionnaire. The questionnaire equivalent of a program running.
+    The act of a user answering a questionnaire. The PolicyModels equivalent of a program running.
 
-  Questionnaire
-    A pair of matching decision graph and tag space. They have to match, since the decision graph's :doc:`set nodes</decision-graphs/set-node>` mention slots and values, which have to exist in the tag space.
+  PolicyModel
+    A pair of matching decision graph, a policy space, metadata, and possibly value inferrers.
 
-  Tag space
-    A multi-dimensional space defined by tags, which are discrete dimensions.
+  Policy Space
+    A multi-dimensional space defined by slots, which are discrete, ordinal dimensions.
 
-  Tags Value
+  Current Value
     The tags being set by the interview engine. An instance of the top-level compound type. Like all such instances, defines a point in the tag space of the questionnaire.
+
+  CliRunner
+    The model developer's main tool. This is a console application, that can be used to work with policy models. It contains many commands, e.g to create, analyze, query, visualize, inspect, and execute a policy model.
+
+  PolicyModelsServer
+    A web application that can host models online. PolicyModelsServer is an open-source project managed separatly from the main PolicyModels library and commandline environment. Its sources are available on `here <https://github.com/IQSS/DataTaggingServer>`_.

@@ -1,5 +1,7 @@
 :doc:`Home <../index>`
 
+.. index:: End Node
+
 End Node
 ========
 

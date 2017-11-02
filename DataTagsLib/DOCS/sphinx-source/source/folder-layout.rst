@@ -1,5 +1,9 @@
 :doc:`Home <index>`
 
+.. index :: Folder Layout
+.. index :: Folder Structure
+.. index :: Directory Structure
+
 Folder Layout
 ====================
 

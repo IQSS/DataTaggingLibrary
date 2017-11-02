@@ -47,11 +47,8 @@ public class GroupAuthorData extends AuthorData {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final GroupAuthorData other = (GroupAuthorData) obj;
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        return Objects.equals(this.contact, other.contact);
+        final GroupAuthorData other = (GroupAuthorData) obj;        
+        return Objects.equals(this.contact, other.contact) && equals(other);
     }
     
 }

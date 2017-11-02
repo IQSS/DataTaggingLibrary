@@ -1,5 +1,9 @@
 :doc:`Home <index>`
 
+
+.. index:: Localization
+.. index:: External Texts
+
 Text Externalization and Localizations
 ========================================
 
