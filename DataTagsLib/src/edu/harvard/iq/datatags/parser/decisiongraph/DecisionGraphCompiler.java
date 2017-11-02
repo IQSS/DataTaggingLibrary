@@ -5,6 +5,7 @@ import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.slots.AggregateSlot;
 import edu.harvard.iq.datatags.model.slots.AtomicSlot;
@@ -154,13 +155,18 @@ public class DecisionGraphCompiler {
                     if ( calleeCU != null ) {
                         String prefixNodes = modelData.getModelDirectoryPath().relativize(calleeCU.getSourcePath()).toString();
                         Node calleeNode = calleeCU.getDecisionGraph().getNode("[" + prefixNodes + "]" + calleeName);
-                        nameToCu.put(calleeCuName, calleeCU);
-                        if ( calleeNode != null ) {
-                            prefixNodes = modelData.getModelDirectoryPath().relativize(cu.getSourcePath()).toString();
-                            CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
-                            callNode.setCalleeNode(calleeNode);
+                        //Check if the callee node is Section Node
+                        if (calleeNode instanceof SectionNode){
+                            nameToCu.put(calleeCuName, calleeCU);
+                            if ( calleeNode != null ) {
+                                prefixNodes = modelData.getModelDirectoryPath().relativize(cu.getSourcePath()).toString();
+                                CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
+                                callNode.setCalleeNode(calleeNode);
+                            } else {
+                                messages.add(new ValidationMessage(Level.ERROR, "cannot find target node with id " + calleeCuName + ">" +  calleeName));
+                            }
                         } else {
-                            messages.add(new ValidationMessage(Level.ERROR, "cannot find target node with id " + calleeCuName + ">" +  calleeName));
+                            messages.add(new ValidationMessage((Level.ERROR), "You can only call to section node: " + calleeNode.getId()));
                         }
                     } else {
                         messages.add(new ValidationMessage(Level.ERROR, "cannot find target file with id " + calleeCuName));
@@ -170,8 +176,13 @@ public class DecisionGraphCompiler {
                     // link to node within same compilation unit
                     String prefixNodes = modelData.getModelDirectoryPath().relativize(cu.getSourcePath()).toString();
                     Node calleeNode = cu.getDecisionGraph().getNode( "[" + prefixNodes + "]" + callCalleePair.getValue() );
-                    CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
-                    callNode.setCalleeNode(calleeNode);
+                    //Check if the callee node is Section Node
+                    if (calleeNode instanceof SectionNode){
+                        CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
+                        callNode.setCalleeNode(calleeNode);
+                    } else {
+                        messages.add(new ValidationMessage((Level.ERROR), "You can only call to section node: " + calleeNode.getId()));
+                    }
                 }
             }
         }

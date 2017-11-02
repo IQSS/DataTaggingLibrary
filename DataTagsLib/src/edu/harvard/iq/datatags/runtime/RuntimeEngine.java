@@ -156,7 +156,11 @@ import java.util.concurrent.atomic.AtomicInteger;
                 if (node instanceof SectionNode){
                     listener.ifPresent(l -> l.sectionEnded(RuntimeEngine.this, node));
                 }
-                return node.getNextNode();
+                if (stack.peek() instanceof CallNode){
+                    return stack.pop().getNextNode();
+                } else {
+                    return node.getNextNode();
+                }
             }
         }
         

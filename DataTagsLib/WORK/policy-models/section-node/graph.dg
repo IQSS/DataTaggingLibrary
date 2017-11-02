@@ -5,8 +5,8 @@
     {first: Before the section regarding the cats.}
   }
   {answers:
-      {yes: [call: dogs][call: cats]}
-      {no: [call: cats][call:dogs]}
+      {yes: [call: dogs]}
+      {no: [call:dogs]}
   }
 ]
 [todo: specify mice]
@@ -29,8 +29,8 @@
       {hounds: [set: Dogs += Pluto, Lassie]}
     }
   ]
+  [>dog_section_set< set: SetDogs = dWorks]
 ]
-[end]
 
 [>cats< section:
   {title: Cats}
@@ -42,5 +42,5 @@
       {none: }
     }
   ]
+  [>dog_section_set< set: SetCats = cWorks]
 ]
-[end]

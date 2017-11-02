@@ -15,26 +15,25 @@ NOT TO BE USED AS A LEGAL ADVICE
       [>filter-medical< ask:
         {text: Do the data contain health or medical information?}
         {answers:
-          {yes: [call: medical>start]}}
+          {yes: [call: medical>medicalSection]}}
         ]
         [>filter-ppra< ask:
           {text: Was the data collected from students in an elementary or secondary school?}
           {answers:
-            {yes: [call: ppra>start]}
+            {yes: [call: ppra>ppraSection]}
           }
         ]
         [>filter-ferpa< ask:
           {text: Do the data contain any information derived from ministry of education data?}
           {answers:
-            {yes: [call: ferpa>start]}
+            {yes: [call: ferpa>ferpaSection]}
           }]
-        [call: gov>Gov1]
-        [call: dppa>DPPA1]
+        [call: gov>govSection]
+        [call: dppa>dppaSection]
         [>futures< todo: Future additions go here.]}
       {no:  [set: Code=blue; Identity=noPersonData] }
     }]
   [call: dua]
-  [end]
 
   [>dua< section:
     {title: Data Use Agreements}
@@ -61,7 +60,6 @@ NOT TO BE USED AS A LEGAL ADVICE
     }
   ]
 ]
-[end]
 <*
 DISCLAIMER:
 NOT TO BE USED AS A LEGAL ADVICE

@@ -2,76 +2,78 @@
 	DISCLAIMER:
 	NOT TO BE USED AS A LEGAL ADVICE
 *>
-[>DPPA1< ask:
-	{text: Do the data contain personal information obtained from a state department of motor vehicles?}
-  {answers:
-    {yes:
-  		[>DPPA2< ask:
-  			{text: Do the DMV records contain PII?}
-        {answers:
-          {yes:
-    				[>DPPA2a< ask:
-    					{text: Did you get conscent from the data subjects?}
-              {answers:
-      					{yes:
-      						[set: DPPA+=highlyRestricted; Code=orange; Harm=civil; Effort=identifiable; Transit=encrypt; Storage=serverEncrypt]}
-      					{no:
-      						[reject: DPPA violation]
-          }}]}
-    			{no:
-    				[set: Code=yellow; Harm=shame; Effort=identifiable; Transit=encrypt; Storage=serverEncrypt]
-    				[>DPPA3< ask:
-    					{text: Is disclosure of the personal information required by the Driver's Privacy Protection Act?}
-              {answers:
-                {yes:
-      						[set: DPPA+=required]}
-      					{no:
-      						[>DPPA4< ask:
-      							{text: Is the disclosure of these records made in accordance with the driver's license record disclosure law (state law)?}
-                    {answers:
-                      {no:
-        								[reject: Possible violation of state law on disclosure of drivers' records]
-                  }}]
-      						[>DPPA5< ask:
-      							{text: Was consent obtained from the person about whom the information pertains by the State DMV in response to a request for an individual record?}
-                    {answers:
-                      {yes:
-        								[>DPPA5a< ask:
-        									{text: Was the obtained consent limited in any way, such as purpose, duration, parties that may receive the data?}
-                          {answers:
-          									{yes:
-          										[set: DPPA+=stateConsentLimited]}
-          									{no:
-          										[set: DPPA+=stateConsentBroad]}
-                          }]}
-        							{no:
-        								[>DPPA6< ask:
-        									{text: Was consent obtained from the individuals whose information is contained in the data by the requester of the records?}
-                          {answers:
-          									{yes:
-          										[>DPPA6a< ask:
-          											{text: Was the obtained consent limited in any way, such as purpose, duration, parties that may receive the data?}
-                                {answers:
-                                  {yes:
-                                    [set: DPPA+=requesterConsentLimited]}
-                                  {no:
-                                    [set: DPPA+=requesterConsentBroad]}
-                                }]}
-          									{no:
-          										[>DPPA7< ask:
-          											{text: Were the data obtained for use in research activities?}
-                                {answers:
-            											{yes: [set: DPPA+=research]}
-            											{no:
-            												[>DPPA8< ask:
-            													{text: Was the personal information obtained under one of the other fourteen permissible uses for the disclosure of drivers' records?}
-                                      {answers:
-                                        {yes:
-              														[set: DPPA+=exception]}
-              													{no:
-              														[reject: possible violation of the DPPA: depositor has not cited one of the required or permissible uses for disclosure.]}
-                      }]}}]}}] <-- DPPA6
-}}]}}]}}]}}] <-- DPPA1
+[>dppaSection< section:
+	[>DPPA1< ask:
+		{text: Do the data contain personal information obtained from a state department of motor vehicles?}
+	  {answers:
+		{yes:
+			[>DPPA2< ask:
+				{text: Do the DMV records contain PII?}
+			{answers:
+			  {yes:
+						[>DPPA2a< ask:
+							{text: Did you get conscent from the data subjects?}
+				  {answers:
+							{yes:
+								[set: DPPA+=highlyRestricted; Code=orange; Harm=civil; Effort=identifiable; Transit=encrypt; Storage=serverEncrypt]}
+							{no:
+								[reject: DPPA violation]
+			  }}]}
+					{no:
+						[set: Code=yellow; Harm=shame; Effort=identifiable; Transit=encrypt; Storage=serverEncrypt]
+						[>DPPA3< ask:
+							{text: Is disclosure of the personal information required by the Driver's Privacy Protection Act?}
+				  {answers:
+					{yes:
+								[set: DPPA+=required]}
+							{no:
+								[>DPPA4< ask:
+									{text: Is the disclosure of these records made in accordance with the driver's license record disclosure law (state law)?}
+						{answers:
+						  {no:
+											[reject: Possible violation of state law on disclosure of drivers' records]
+					  }}]
+								[>DPPA5< ask:
+									{text: Was consent obtained from the person about whom the information pertains by the State DMV in response to a request for an individual record?}
+						{answers:
+						  {yes:
+											[>DPPA5a< ask:
+												{text: Was the obtained consent limited in any way, such as purpose, duration, parties that may receive the data?}
+							  {answers:
+												{yes:
+													[set: DPPA+=stateConsentLimited]}
+												{no:
+													[set: DPPA+=stateConsentBroad]}
+							  }]}
+										{no:
+											[>DPPA6< ask:
+												{text: Was consent obtained from the individuals whose information is contained in the data by the requester of the records?}
+							  {answers:
+												{yes:
+													[>DPPA6a< ask:
+														{text: Was the obtained consent limited in any way, such as purpose, duration, parties that may receive the data?}
+									{answers:
+									  {yes:
+										[set: DPPA+=requesterConsentLimited]}
+									  {no:
+										[set: DPPA+=requesterConsentBroad]}
+									}]}
+												{no:
+													[>DPPA7< ask:
+														{text: Were the data obtained for use in research activities?}
+									{answers:
+															{yes: [set: DPPA+=research]}
+															{no:
+																[>DPPA8< ask:
+																	{text: Was the personal information obtained under one of the other fourteen permissible uses for the disclosure of drivers' records?}
+										  {answers:
+											{yes:
+																		[set: DPPA+=exception]}
+																	{no:
+																		[reject: possible violation of the DPPA: depositor has not cited one of the required or permissible uses for disclosure.]}
+						  }]}}]}}] <-- DPPA6
+	}}]}}]}}]}}] <-- DPPA1
+] <-- dppaSection
 <*
 	DISCLAIMER:
 	NOT TO BE USED AS A LEGAL ADVICE

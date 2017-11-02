@@ -166,9 +166,15 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
                 }
             } else {
                 ThroughNode lastCall = nodeStack.pop();
-                lastCall.getNextNode().accept(this);
-                nodeStack.push(lastCall);
-                
+                if (nodeStack.peek() instanceof CallNode){
+                    CallNode callNode = (CallNode)nodeStack.pop();
+                    callNode.getNextNode().accept(this);
+                    nodeStack.push(callNode);
+                    nodeStack.push(lastCall);
+                } else {
+                    lastCall.getNextNode().accept(this);
+                    nodeStack.push(lastCall);
+                }
             }
             currentTrace.removeLast();        
         }

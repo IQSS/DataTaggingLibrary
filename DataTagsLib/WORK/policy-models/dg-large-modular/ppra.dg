@@ -2,53 +2,55 @@
 	DISCLAIMER:
 	NOT TO BE USED AS A LEGAL ADVICE
 *>
-[>start< ask:
-  {text: Do the data contain information collected from students in a survey or assessment concerning any of the covered categories?}
-  {answers:
-   {yes:
-    [>ppra2a< ask:
-      {text: Do the data contain any student PII?}
-      {answers:
-        {yes:
-          [set: PPRA+=protected; Code=orange; Harm=civil;
-                Transit=encrypt; Storage=serverEncrypt; Effort=identifiable]}
-        {no:
-          [set: PPRA+=protectedDeidentified; Code=green; Harm=minimal;
-                Transit=clear; Storage=clear; Effort=deidentified]}
-    }]
-    [>ppra3< ask:
-      {text:Was the survey or assessment funded, in whole or in part, by the US Department of Education?}
-      {answers:
-        {yes:
-          [>ppra4< ask:
-            {text: Was written consent obtained from the parents or students prior to the data collection?}
-            {answers:
-              {yes:
-                [set: PPRA+=consent]
-                [end]
-              }
-              {no:
-                [reject: Possible PPRA violation - no collection consent]}
-              {Not Sure:
-                [reject: Please clarify wheather a consent was obtained.]}
-    }]}}] <-- ppra3
-}}] <-- ppra2
+[>ppraSection< section: 
+	[>start< ask:
+	  {text: Do the data contain information collected from students in a survey or assessment concerning any of the covered categories?}
+	  {answers:
+	   {yes:
+		[>ppra2a< ask:
+		  {text: Do the data contain any student PII?}
+		  {answers:
+			{yes:
+			  [set: PPRA+=protected; Code=orange; Harm=civil;
+					Transit=encrypt; Storage=serverEncrypt; Effort=identifiable]}
+			{no:
+			  [set: PPRA+=protectedDeidentified; Code=green; Harm=minimal;
+					Transit=clear; Storage=clear; Effort=deidentified]}
+		}]
+		[>ppra3< ask:
+		  {text:Was the survey or assessment funded, in whole or in part, by the US Department of Education?}
+		  {answers:
+			{yes:
+			  [>ppra4< ask:
+				{text: Was written consent obtained from the parents or students prior to the data collection?}
+				{answers:
+				  {yes:
+					[set: PPRA+=consent]
+					[end]
+				  }
+				  {no:
+					[reject: Possible PPRA violation - no collection consent]}
+				  {Not Sure:
+					[reject: Please clarify wheather a consent was obtained.]}
+		}]}}] <-- ppra3
+	}}] <-- ppra2
 
-[>ppra5< ask:
-  {text: Was any of the personal information in the data collected from students for the purpose of marketing or sale?}
-  {answers:
-    {yes: [set:PPRA+=marketing]}}
-]
-[>ppra6< ask:
-  {text: Does the school in which the information was collected receive any funds from the US Department of Education?}
-  {answers:
-    {yes:
-      [>ppra7< ask:
-        {text: Were parents provided with notice and an opportunity to opt out of the collection and disclosure of the information?}
-        {answers:
-          {no: [reject: Possible PPRA violation due to school’s failure to provide parents with the opportunity to opt out of the data collection]}
-          {yes: [set: PPRA+=optOutProvided]}}]
-}}]
+	[>ppra5< ask:
+	  {text: Was any of the personal information in the data collected from students for the purpose of marketing or sale?}
+	  {answers:
+		{yes: [set:PPRA+=marketing]}}
+	]
+	[>ppra6< ask:
+	  {text: Does the school in which the information was collected receive any funds from the US Department of Education?}
+	  {answers:
+		{yes:
+		  [>ppra7< ask:
+			{text: Were parents provided with notice and an opportunity to opt out of the collection and disclosure of the information?}
+			{answers:
+			  {no: [reject: Possible PPRA violation due to school’s failure to provide parents with the opportunity to opt out of the data collection]}
+			  {yes: [set: PPRA+=optOutProvided]}}]
+	}}]
+] <-- ppraSection
 <*
 	DISCLAIMER:
 	NOT TO BE USED AS A LEGAL ADVICE

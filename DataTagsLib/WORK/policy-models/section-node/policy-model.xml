@@ -5,7 +5,7 @@
   <date>2017-05-29</date>
   <keywords>policy model, section, nodes</keywords><!-- suggested keywords list here. -->
   <authors>
-    <person orcid="123-2345-67890">
+    <person orcid="123-2345-67890" url="test.com">
       <name>Dane Joe</name>
     </person>
   </authors>

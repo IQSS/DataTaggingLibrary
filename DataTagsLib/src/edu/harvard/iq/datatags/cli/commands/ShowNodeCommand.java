@@ -25,6 +25,7 @@ public class ShowNodeCommand implements CliCommand {
     public void execute(CliRunner rnr, List<String> args) throws Exception {
         if ( args.size() < 2 ) {
             rnr.printWarning("Please supply node id.");
+            return;
         }
         Node soughtNode = rnr.getModel().getDecisionGraph().getNode(args.get(1));
         if ( soughtNode == null ) {

@@ -2,101 +2,102 @@
 	DISCLAIMER:
 	NOT TO BE USED AS A LEGAL ADVICE
 *>
-[>start< ask:
-	{text: Do the data contain information related to substance abuse diagnosis, referral, or treatment?}
-  {answers:
-    { yes:
-  		[>MR2a< ask:
-  			{text:Were the data obtained from a federally assisted drug abuse program after March 20, 1972, or a federally assisted alcohol abuse program after May 13, 1974 (+exceptions)?}
-        {answers:
-          { yes:
-    				[>MR3< ask:
-    					{text:Do any of the substance abuse records contain direct or referential PII?}
-              {answers:
-      					{no:
-      						[set: Part2=deidentified; Effort=deidentified; Storage=clear; Transit=clear; Code=green] }
-      					{yes:
-      						[>MR4< ask:
-      							{text: Were the data maintained in connection with the US Department of Veterans Affairs or US Armed Services?}
-                    {answers:
-                      {yes:
-        								[>MR4a< ask:
-        									{text: Were the data maintained by the Department of Veterans Affairs either shared with the patients’ consent for the purposes of scientific research, or shared without consent but in connection with a medical emergency or public health activity related to HIV?}
-                          {answers:
-                            {no: [reject: reject data and flag for review; possible violation of 38 U.S.C. 4132 due to the release of VA medical records without a valid exception.]}
-          									{yes: [>XXXs< set: Part2=veteransMedicalData; Code=orange; Harm=civil; Transit=encrypt; Effort=identifiable] }
-                          }]}
-      								{no:
-      									[>MR5< ask:
-      										{text: Did the individuals provide written consent for the disclosure of their information?}
-                          {answers:
-                            {yes:
-        											[set: Part2=consent; Code=orange; Harm=civil; Transit=encrypt; Storage=serverEncrypt; Effort=identifiable]}
-        										{no:
-        											[>MR6< ask:
-        												{text:Were the data shared by the substance abuse program for scientific research purposes?}
-                                {answers:
-          												{yes:
-          													[set: Part2=scientificResearch; Code=orange; Harm=civil; Transit=encrypt; Storage=serverEncrypt; Effort=identifiable]}
-                        }]}}] <-- MR5
-      		}}]}}] <-- MR3
-}}]}}] <-- MR2
+[>medicalSection< section:
+	[>start< ask:
+	   {text: Do the data contain information related to substance abuse diagnosis, referral, or treatment?}
+	  {answers:
+		{ yes:
+			[>MR2a< ask:
+				{text:Were the data obtained from a federally assisted drug abuse program after March 20, 1972, or a federally assisted alcohol abuse program after May 13, 1974 (+exceptions)?}
+			{answers:
+			  { yes:
+						[>MR3< ask:
+							{text:Do any of the substance abuse records contain direct or referential PII?}
+				  {answers:
+							{no:
+								[set: Part2=deidentified; Effort=deidentified; Storage=clear; Transit=clear; Code=green] }
+							{yes:
+								[>MR4< ask:
+									{text: Were the data maintained in connection with the US Department of Veterans Affairs or US Armed Services?}
+						{answers:
+						  {yes:
+											[>MR4a< ask:
+												{text: Were the data maintained by the Department of Veterans Affairs either shared with the patients’ consent for the purposes of scientific research, or shared without consent but in connection with a medical emergency or public health activity related to HIV?}
+							  {answers:
+								{no: [reject: reject data and flag for review; possible violation of 38 U.S.C. 4132 due to the release of VA medical records without a valid exception.]}
+												{yes: [>XXXs< set: Part2=veteransMedicalData; Code=orange; Harm=civil; Transit=encrypt; Effort=identifiable] }
+							  }]}
+										{no:
+											[>MR5< ask:
+												{text: Did the individuals provide written consent for the disclosure of their information?}
+							  {answers:
+								{yes:
+														[set: Part2=consent; Code=orange; Harm=civil; Transit=encrypt; Storage=serverEncrypt; Effort=identifiable]}
+													{no:
+														[>MR6< ask:
+															{text:Were the data shared by the substance abuse program for scientific research purposes?}
+									{answers:
+															{yes:
+																[set: Part2=scientificResearch; Code=orange; Harm=civil; Transit=encrypt; Storage=serverEncrypt; Effort=identifiable]}
+							}]}}] <-- MR5
+				}}]}}] <-- MR3
+	}}]}}] <-- MR2
 
-[>MR7< ask:
-	{text: Do the data contain information from a covered entity or business associate of a covered entity?}
-  {answers:
-  	{no: [end] }
-  	{Not Sure:
-  		[reject:  The PII issue has to be cleared before depositing the data.]}
-  	{yes:
-  		[>MR8< ask:
-  			{text: Have all direct identifiers been removed from the data?}
-        {answers:
-    			{yes:
-    				[set: HIPAA+=safeHarborDeidentified; Code=green; Harm=minimal; Transit=clear; Storage=clear; Effort=deidentified]
-    				[end]}
-    			{no:
-    				[>MR8a< ask:
-    					{text: Has an expert in statistical or scientific principles and methods for deidentification certified that the data have been deidentified?}
-              {answers:
-                {yes:
-      						[set:HIPAA+=expertDetermination; Code=green; Harm=minimal; Transit=clear; Storage=clear; Effort=deidentified]
-      						[end]}
-      					{no:
-      						[>MR9< ask:
-      							{text: Do the data constitute a limited data set under the HIPAA Privacy Rule?}
-                    {answers:
-        							{yes:
-        								[set:HIPAA+=limitedDataset; Code=green; Harm=minimal; Transit=clear; Storage=clear; Effort=deidentified]
-        								[end]
-                  }}] <-- MR9
-      						[>MR10< ask:
-      							{text: Do the data contain protected health information from medical records?}
-                    {answers:
-                      {yes:
-        								[>MR11< ask:
-        									{text: Do the data contain health information from patients who have provided written authorization for their information to be disclosed to or used by third parties?}
-                          {answers:
-        								    {yes: [set: HIPAA+=authorization; Harm=civil; Effort=identifiable; Code=orange; Transit=encrypt; Storage=serverEncrypt]}
-          									{no:
-          										[>MR12< ask:
-          											{text: Has an oversight body reviewed how the data will be used or disclosed and approved a request to alter or waive the Authorization requirement?}
-                                {answers:
-                                  {yes: [set: HIPAA+=waiver; Code=orange; Harm=civil; Storage=serverEncrypt; Transit=encrypt; Effort=identifiable]}
-            											{no:
-            												[>MR13< ask:
-            													{text: Were the data disclosed pursuant to a HIPAA business associate contract?}
-                                      {answers:
-                                        {yes: [set: HIPAA+=businessAssociateContract; Code=orange; Harm=civil; Transit=encrypt; Storage=serverEncrypt; Effort=identifiable]
-                                    }}] <-- MR13
-                              }}] <-- MR12
-                        }}] <-- MR11
-        }}] <-- MR10
-    }}] <-- MR8a
-  }}] <-- MR8
-}}] <-- MR7
-[end]
-<*
+
+	[>MR7< ask:
+		{text: Do the data contain information from a covered entity or business associate of a covered entity?}
+	  {answers:
+		{no: [end] }
+		{Not Sure:
+			[reject:  The PII issue has to be cleared before depositing the data.]}
+		{yes:
+			[>MR8< ask:
+				{text: Have all direct identifiers been removed from the data?}
+			{answers:
+					{yes:
+						[set: HIPAA+=safeHarborDeidentified; Code=green; Harm=minimal; Transit=clear; Storage=clear; Effort=deidentified]
+						[end]}
+					{no:
+						[>MR8a< ask:
+							{text: Has an expert in statistical or scientific principles and methods for deidentification certified that the data have been deidentified?}
+				  {answers:
+					{yes:
+								[set:HIPAA+=expertDetermination; Code=green; Harm=minimal; Transit=clear; Storage=clear; Effort=deidentified]
+								[end]}
+							{no:
+								[>MR9< ask:
+									{text: Do the data constitute a limited data set under the HIPAA Privacy Rule?}
+						{answers:
+										{yes:
+											[set:HIPAA+=limitedDataset; Code=green; Harm=minimal; Transit=clear; Storage=clear; Effort=deidentified]
+											[end]
+					  }}] <-- MR9
+								[>MR10< ask:
+									{text: Do the data contain protected health information from medical records?}
+						{answers:
+						  {yes:
+											[>MR11< ask:
+												{text: Do the data contain health information from patients who have provided written authorization for their information to be disclosed to or used by third parties?}
+							  {answers:
+												{yes: [set: HIPAA+=authorization; Harm=civil; Effort=identifiable; Code=orange; Transit=encrypt; Storage=serverEncrypt]}
+												{no:
+													[>MR12< ask:
+														{text: Has an oversight body reviewed how the data will be used or disclosed and approved a request to alter or waive the Authorization requirement?}
+									{answers:
+									  {yes: [set: HIPAA+=waiver; Code=orange; Harm=civil; Storage=serverEncrypt; Transit=encrypt; Effort=identifiable]}
+															{no:
+																[>MR13< ask:
+																	{text: Were the data disclosed pursuant to a HIPAA business associate contract?}
+										  {answers:
+											{yes: [set: HIPAA+=businessAssociateContract; Code=orange; Harm=civil; Transit=encrypt; Storage=serverEncrypt; Effort=identifiable]
+										}}] <-- MR13
+								  }}] <-- MR12
+							}}] <-- MR11
+			}}] <-- MR10
+		}}] <-- MR8a
+	  }}] <-- MR8
+	}}] <-- MR7
+] <-- medicalSection<*
 	DISCLAIMER:
 	NOT TO BE USED AS A LEGAL ADVICE
 *>

@@ -86,7 +86,7 @@ public class ReachableNodesCollector extends Node.VoidVisitor {
     void visitThroughNode( ThroughNode nd ) {
         if ( collection.contains(nd) ) return;
         collection.add(nd);
-        if ( nd.getNextNode() != null ) {
+        if ( nd.getNextNode() != null) {
             nd.getNextNode().accept(this);
         }
     }

@@ -148,6 +148,149 @@ public class FindSupertypeResultsDgqTest {
         assertEquals("runs",12, missCount+foundCount);
     }
     
+    @Test
+    public void testGetWithCallAndSection() throws DataTagsParseException, IOException {
+        //set up
+        String code = "[call: dogs]\n" +
+                        "[end]\n" +
+                        "\n" +
+                        "[>dogs< section:\n" +
+                        "  {title: Dogs!}\n" +
+                        "  [>q-dogType< ask:\n" +
+                        "    {text: What type of dogs?}\n" +
+                        "    {answers:\n" +
+                        "      {none: }\n" +
+                        "      {animated: [set: Dogs += Pluto]}\n" +
+                        "      {cute: [set: Dogs += Rex, Lassie]}\n" +
+                        "      {hounds: [set: Dogs += Pluto, Lassie]}\n" +
+                        "    }\n" +
+                        "  ]\n" +
+                        "  [>dog_section_set< set: SetDogs = dWorks]\n" +
+                        "]\n" +
+                        "\n" +
+                        "[>cats< section:\n" +
+                        "  {title: Cats}\n" +
+                        "  [>q:cats:group< ask:\n" +
+                        "    {text: What cats?}\n" +
+                        "    {answers:\n" +
+                        "      {all: [set: Cats += Tom, Shmil, Mitzi]}\n" +
+                        "      {some: [set: Cats += Tom, Shmil]}\n" +
+                        "      {none: }\n" +
+                        "    }\n" +
+                        "  ]\n" +
+                        "  [>dog_section_set< set: SetCats = cWorkss]\n" +
+                        "]";
+        String spaceTags = "Base: consists of Cats, Dogs, Rice, SetDogs, SetCats.\n" +
+                            "Cats: some of Tom, Shmil, Mitzi.\n" +
+                            "Dogs[A friendly mamle with a tail]: some of\n" +
+                            "  Rex [\"King\", in Latin],\n" +
+                            "  Pluto [This dog user to be a star, then a planet, now a big rock.],\n" +
+                            "  Lassie [Eventually comes home.].\n" +
+                            "Rice: one of White, Full.\n" +
+                            "SetDogs: one of dWorks.\n" +
+                            "SetCats: one of cWorks.\n";
+        
+        Map<Path,String> pathToString = new HashMap<>();
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("/main.dg"));
+        pmd.setMetadataFile(Paths.get("/test/main.dg"));
+        pathToString.put(Paths.get("/main.dg"), code);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+        TagSpaceParser tsp = new TagSpaceParser();
+        root = tsp.parse(spaceTags).buildType("Base");
+        DecisionGraph chart = dgc.compile(root.get(), pmd, new ArrayList<>());
+        policyModel = new PolicyModel();
+        policyModel.setDecisionGraph(chart);
+        policyModel.setSpaceRoot(root.get());
+        
+        //test
+        SetNode sn = getSetNode("SetDogs = dWorks");
+        dgq = new FindSupertypeResultsDgq(policyModel, sn.getTags());
+        dgq.get( listener );
+        assertEquals("match",4, foundCount);
+        assertEquals("runs",4, missCount+foundCount);
+        
+        foundCount = 0;
+        missCount = 0;
+        sn = getSetNode("SetCats = cWorks");
+        dgq = new FindSupertypeResultsDgq(policyModel, sn.getTags());
+        dgq.get( listener );
+        assertEquals("match",0, foundCount);
+        assertEquals("runs",4, missCount+foundCount);
+        
+    }
+    
+    @Test
+    public void testGetWithSections() throws DataTagsParseException, IOException {
+        //set up
+        String code =   "[>dogs< section:\n" +
+                        "  {title: Dogs!}\n" +
+                        "  [>q-dogType< ask:\n" +
+                        "    {text: What type of dogs?}\n" +
+                        "    {answers:\n" +
+                        "      {none: }\n" +
+                        "      {animated: [set: Dogs += Pluto]}\n" +
+                        "      {cute: [set: Dogs += Rex, Lassie]}\n" +
+                        "      {hounds: [set: Dogs += Pluto, Lassie]}\n" +
+                        "    }\n" +
+                        "  ]\n" +
+                        "  [>dog_section_set< set: SetDogs = dWorks]\n" +
+                        "]\n" +
+                        "\n" +
+                        "[>cats< section:\n" +
+                        "  {title: Cats}\n" +
+                        "  [>q:cats:group< ask:\n" +
+                        "    {text: What cats?}\n" +
+                        "    {answers:\n" +
+                        "      {all: [set: Cats += Tom, Shmil, Mitzi]}\n" +
+                        "      {some: [set: Cats += Tom, Shmil]}\n" +
+                        "      {none: }\n" +
+                        "    }\n" +
+                        "  ]\n" +
+                        "  [>dog_section_set< set: SetCats = cWorks]\n" +
+                        "]";
+        String spaceTags = "Base: consists of Cats, Dogs, Rice, SetDogs, SetCats.\n" +
+                            "Cats: some of Tom, Shmil, Mitzi.\n" +
+                            "Dogs[A friendly mamle with a tail]: some of\n" +
+                            "  Rex [\"King\", in Latin],\n" +
+                            "  Pluto [This dog user to be a star, then a planet, now a big rock.],\n" +
+                            "  Lassie [Eventually comes home.].\n" +
+                            "Rice: one of White, Full.\n" +
+                            "SetDogs: one of dWorks.\n" +
+                            "SetCats: one of cWorks.\n";
+        
+        Map<Path,String> pathToString = new HashMap<>();
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("/main.dg"));
+        pmd.setMetadataFile(Paths.get("/test/main.dg"));
+        pathToString.put(Paths.get("/main.dg"), code);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+        TagSpaceParser tsp = new TagSpaceParser();
+        root = tsp.parse(spaceTags).buildType("Base");
+        DecisionGraph chart = dgc.compile(root.get(), pmd, new ArrayList<>());
+        policyModel = new PolicyModel();
+        policyModel.setDecisionGraph(chart);
+        policyModel.setSpaceRoot(root.get());
+        
+        //test
+        SetNode sn = getSetNode("SetDogs = dWorks");
+        dgq = new FindSupertypeResultsDgq(policyModel, sn.getTags());
+        dgq.get( listener );
+        assertEquals("match",12, foundCount);
+        assertEquals("runs",12, missCount+foundCount);
+        
+        foundCount = 0;
+        missCount = 0;
+        sn = getSetNode("SetCats = cWorks");
+        dgq = new FindSupertypeResultsDgq(policyModel, sn.getTags());
+        dgq.get( listener );
+        assertEquals("match",12, foundCount);
+        assertEquals("runs",12, missCount+foundCount);
+        
+    }
+    
     private SetNode getSetNode(String tagValue) throws DataTagsParseException{
         String tagValueExpression = "[>x< set: " + tagValue + "]";
         CompilationUnit cu = new CompilationUnit(tagValueExpression);
@@ -162,5 +305,4 @@ public class FindSupertypeResultsDgqTest {
         }
         return (SetNode) cu.getDecisionGraph().getNode("x");
     }
-    
 }

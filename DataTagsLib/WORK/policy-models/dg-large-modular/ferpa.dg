@@ -2,66 +2,67 @@
 	DISCLAIMER:
 	NOT TO BE USED AS A LEGAL ADVICE
 *>
-[>start< ask:
-  {text: Do the data contain any information derived from institutional records directly related to a student?}
-  {answers:
-    {no: [end]}
-  }
-]
-[>ferpa10< ask:
-  {text: Do the data include personally identifiable information about a student?}
-  {answers:
-    {no:
-      [set: FERPA+=deidentified; Code=green; Harm=minimal; Storage=clear; Transit=clear; Effort=deidentified]
-      [end]
-}}]
-[>ferpa11< ask:
-  {text:  Did the educational agency or institution designate all of the personally identifiable information in the data as directory information?}
-  {answers:
-    {yes:
-      [>ferpa11a< ask:
-        {text: Did any of the students in the data, or their parents, if the students are under 18, request to opt out of the release of their information as directory information?}
-        {answers:
-          {yes: [set: FERPA+=directoryOptOut; Code=yellow; Harm=shame; Transit=encrypt; Storage=serverEncrypt; Effort=identifiable]}
-          {no: [set: FERPA+=directoryInfo; Code=green; Harm=minimal; Effort=identifiable]}
-        }
-      ]
-      [end]
-}}] <-- ferpa11
+[>ferpaSection< section:
+	[>start< ask:
+	  {text: Do the data contain any information derived from institutional records directly related to a student?}
+	  {answers:
+		{no: [end]}
+	  }
+	]
+	[>ferpa10< ask:
+	  {text: Do the data include personally identifiable information about a student?}
+	  {answers:
+		{no:
+		  [set: FERPA+=deidentified; Code=green; Harm=minimal; Storage=clear; Transit=clear; Effort=deidentified]
+		  [end]
+	}}]
+	[>ferpa11< ask:
+	  {text:  Did the educational agency or institution designate all of the personally identifiable information in the data as directory information?}
+	  {answers:
+		{yes:
+		  [>ferpa11a< ask:
+			{text: Did any of the students in the data, or their parents, if the students are under 18, request to opt out of the release of their information as directory information?}
+			{answers:
+			  {yes: [set: FERPA+=directoryOptOut; Code=yellow; Harm=shame; Transit=encrypt; Storage=serverEncrypt; Effort=identifiable]}
+			  {no: [set: FERPA+=directoryInfo; Code=green; Harm=minimal; Effort=identifiable]}
+			}
+		  ]
+		  [end]
+	}}] <-- ferpa11
 
-[>ferpa12< ask:
-  {text: Did the parents or guardians of the students, or the students themselves if they were adults or emancipated minors at the time of the data collection, provide written consent authorizing disclosure of their information?}
-  {answers:
-    {yes:
-       [set: FERPA+=consent; Code=yellow; Harm=shame; Transit=encrypt; Effort=identifiable]
-       [todo: Consent sub-routine] }
-    {no:
-      [>ferpa13< ask:
-        {text: Are the data being disclosed to a school official or contractor with a legitimate educational interest?}
-        {answers:
-          {yes:
-            [set: FERPA+=schoolOfficial; Code=yellow; Harm=shame; Transit=encrypt; Effort=identifiable] }
-        }
-      ]
-      [>ferpa14< ask:
-        {text:
-           Are the data being disclosed for a purpose allowed by law?}
-        {answers:
-          {yes:
-            [set: FERPA+=study; Code=yellow; Harm=shame; Transit=encrypt; Effort=identifiable]
-        }}
-      ]
-      [>ferpa15< ask:
-        {text: Are the data being disclosed for the purpose of conducting an audit or evaluation of a federal- or state-supported education program?}
-        {answers:
-          {yes:
-            [set: FERPA+=audit; Code=yellow; Harm=shame; Transit=encrypt; Effort=identifiable]
-            [todo: DUA subroutine]}
-          {no:
-            [reject: FERPA violation by disclosing data that should not be disclosed.]
-      }}] <-- ferpa15
-}}] <-- ferpa12
-[end]
+	[>ferpa12< ask:
+	  {text: Did the parents or guardians of the students, or the students themselves if they were adults or emancipated minors at the time of the data collection, provide written consent authorizing disclosure of their information?}
+	  {answers:
+		{yes:
+		   [set: FERPA+=consent; Code=yellow; Harm=shame; Transit=encrypt; Effort=identifiable]
+		   [todo: Consent sub-routine] }
+		{no:
+		  [>ferpa13< ask:
+			{text: Are the data being disclosed to a school official or contractor with a legitimate educational interest?}
+			{answers:
+			  {yes:
+				[set: FERPA+=schoolOfficial; Code=yellow; Harm=shame; Transit=encrypt; Effort=identifiable] }
+			}
+		  ]
+		  [>ferpa14< ask:
+			{text:
+			   Are the data being disclosed for a purpose allowed by law?}
+			{answers:
+			  {yes:
+				[set: FERPA+=study; Code=yellow; Harm=shame; Transit=encrypt; Effort=identifiable]
+			}}
+		  ]
+		  [>ferpa15< ask:
+			{text: Are the data being disclosed for the purpose of conducting an audit or evaluation of a federal- or state-supported education program?}
+			{answers:
+			  {yes:
+				[set: FERPA+=audit; Code=yellow; Harm=shame; Transit=encrypt; Effort=identifiable]
+				[todo: DUA subroutine]}
+			  {no:
+				[reject: FERPA violation by disclosing data that should not be disclosed.]
+		  }}] <-- ferpa15
+	}}] <-- ferpa12
+] <-- ferpaSection
 <*
 	DISCLAIMER:
 	NOT TO BE USED AS A LEGAL ADVICE
