@@ -68,11 +68,12 @@ public class UnreachableNodeValidatorTest {
                         "  {answers:\n" +
                         "    {yes: [call:shouldWork]}}]\n" +
                         "[>end1< end]\n" +
-                        "[>shouldWork< ask: \n" +
+                        "[>shouldWork< section:" + 
+                        " [ask: \n" +
                         "  {text: This should work.}\n" +
                         "  {answers:\n" +
                         "    {yes: [>reject1< reject: Good it works.]}\n" +
-                        "    {no: [>reject2< reject: This should have worked.]}}]";
+                        "    {no: [>reject2< reject: This should have worked.]}}]]";
         
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();

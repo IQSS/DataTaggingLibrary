@@ -8,6 +8,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import static edu.harvard.iq.datatags.model.graphs.Answer.*;
 import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ContentReader;
@@ -98,7 +99,7 @@ public class ChartRunningTest {
 
     @Test
     public void chartWithCall() throws DataTagsParseException, IOException {
-        String code = "[>a< todo:a][>b< todo:a][>c< call:n][>e<end][>n< end]";
+        String code = "[>a< todo:a][>b< todo:a][>c< call:n][>e<end][>n< section: {title: bla} [>d< end]]";
         
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();
@@ -111,7 +112,8 @@ public class ChartRunningTest {
         
         assertExecutionTrace(chart, Arrays.asList("[.." + File.separator + "main.dg]a",
                 "[.." + File.separator + "main.dg]b", "[.." + File.separator + "main.dg]c", 
-                "[.." + File.separator + "main.dg]n", "[.." + File.separator + "main.dg]e"), false);
+                "[.." + File.separator + "main.dg]n","[.." + File.separator + "main.dg]d",
+                "[.." + File.separator + "main.dg]e"), false);
     }
 
     @Test
@@ -121,15 +123,16 @@ public class ChartRunningTest {
 
         AskNode n2 = (AskNode) rec.getNode(chartId + "_2");
         CallNode caller = n2.addAnswer(NO, rec.add(new CallNode("Caller")));
-        caller.setCalleeNode(rec.getStart()); //put the first node
+        caller.setCalleeNode(new SectionNode("bla", "sec_1",rec.getStart(), new EndNode("SectionEnd")));
+//        caller.setCalleeNode(rec.getStart()); //put the first node
         caller.setNextNode(new EndNode("CallerEnd"));
 
         assertExecutionTrace(rec,
                 C.list(YES, NO,
                         YES, NO,
                         YES, YES, YES),
-                C.list("rec_1", "rec_2", "Caller",
-                        "rec_1", "rec_2", "Caller",
+                C.list("rec_1", "rec_2", "Caller", "sec_1",
+                        "rec_1", "rec_2", "Caller", "sec_1",
                         "rec_1", "rec_2", "rec_3", "rec_END",
                         "CallerEnd", "CallerEnd"),
                 true);
@@ -146,7 +149,7 @@ public class ChartRunningTest {
 
         AskNode n2 = (AskNode) rec.getNode(chartId + "_2");
         CallNode caller = n2.addAnswer(NO, rec.add(new CallNode("Caller")));
-        caller.setCalleeNode(rec.getStart());
+        caller.setCalleeNode(new SectionNode("bla", "sec_1",rec.getStart(), new EndNode("SectionEnd")));
         caller.setNextNode(new EndNode("CallerEnd"));
 
         assertExecutionTrace(rec,
@@ -156,11 +159,11 @@ public class ChartRunningTest {
                         YES, NO,
                         YES, NO,
                         YES, YES, YES),
-                C.list("rec_1", "rec_2", "Caller",
-                        "rec_1", "rec_2", "Caller",
-                        "rec_1", "rec_2", "Caller",
-                        "rec_1", "rec_2", "Caller",
-                        "rec_1", "rec_2", "Caller",
+                C.list("rec_1", "rec_2", "Caller", "sec_1",
+                        "rec_1", "rec_2", "Caller","sec_1",
+                        "rec_1", "rec_2", "Caller", "sec_1",
+                        "rec_1", "rec_2", "Caller", "sec_1",
+                        "rec_1", "rec_2", "Caller", "sec_1",
                         "rec_1", "rec_2", "rec_3", "rec_END",
                         "CallerEnd", "CallerEnd", "CallerEnd", "CallerEnd", "CallerEnd"),
                 true);

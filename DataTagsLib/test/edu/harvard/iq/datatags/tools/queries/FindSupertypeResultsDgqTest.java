@@ -63,6 +63,31 @@ public class FindSupertypeResultsDgqTest {
     
     @Before
     public void setUp() throws IOException, SyntaxErrorException, SemanticsErrorException {
+        
+      
+        listener = new DecisionGraphQuery.Listener() {
+            @Override
+            public void started(DecisionGraphQuery dgq) {}
+            @Override
+            public void matchFound(DecisionGraphQuery dgq) {
+                foundCount++;
+            }
+            @Override
+            public void nonMatchFound(DecisionGraphQuery dgq) {
+                missCount++;
+            }
+            @Override
+            public void done(DecisionGraphQuery dgq) {}
+            @Override
+            public void loopDetected(DecisionGraphQuery dgq) {}
+        };
+    }
+
+    /**
+     * Test of get method, of class FindSupertypeResultsDgq.
+     */
+    @Test
+    public void testGet() throws DataTagsParseException, IOException {
         String code = "[set: Atomic=val0]\n" +
                         "[ask:\n" +
                         "  {text: Set atomic }\n" +
@@ -109,30 +134,6 @@ public class FindSupertypeResultsDgqTest {
         policyModel = new PolicyModel();
         policyModel.setDecisionGraph(chart);
         policyModel.setSpaceRoot(root.get());
-      
-        listener = new DecisionGraphQuery.Listener() {
-            @Override
-            public void started(DecisionGraphQuery dgq) {}
-            @Override
-            public void matchFound(DecisionGraphQuery dgq) {
-                foundCount++;
-            }
-            @Override
-            public void nonMatchFound(DecisionGraphQuery dgq) {
-                missCount++;
-            }
-            @Override
-            public void done(DecisionGraphQuery dgq) {}
-            @Override
-            public void loopDetected(DecisionGraphQuery dgq) {}
-        };
-    }
-
-    /**
-     * Test of get method, of class FindSupertypeResultsDgq.
-     */
-    @Test
-    public void testGet() throws DataTagsParseException {
         SetNode sn = getSetNode("Aggregate += optA,optB,optC");
         dgq = new FindSupertypeResultsDgq(policyModel, sn.getTags());
         dgq.get( listener );
@@ -178,7 +179,7 @@ public class FindSupertypeResultsDgqTest {
                         "      {none: }\n" +
                         "    }\n" +
                         "  ]\n" +
-                        "  [>dog_section_set< set: SetCats = cWorkss]\n" +
+                        "  [>dog_section_set< set: SetCats = cWorks]\n" +
                         "]";
         String spaceTags = "Base: consists of Cats, Dogs, Rice, SetDogs, SetCats.\n" +
                             "Cats: some of Tom, Shmil, Mitzi.\n" +
