@@ -19,7 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
+ * This is the command behind "find-runs". It outputs all the paths
+ * of an interview, that result in tag values that are a superset of the 
+ * value query.
+ * 
  * @author michael
  */
 public class MatchResultToSequenceCommand implements CliCommand {
@@ -51,12 +54,14 @@ public class MatchResultToSequenceCommand implements CliCommand {
                 }
             }
             SetNode sn = (SetNode) cu.getDecisionGraph().getNode("x");
-
+            System.out.println(sn.getTags());
+            
             FindSupertypeResultsDgq query = new FindSupertypeResultsDgq(rnr.getModel(), sn.getTags());
 
-        query.get( new DecisionGraphQuery.Listener() {
+            query.get( new DecisionGraphQuery.Listener() {
                 long foundCount = 0;
                 long missCount = 0;
+                long rejectCount = 0;
                 @Override
                 public void matchFound(DecisionGraphQuery dgq) {
                     foundCount++;
@@ -68,22 +73,36 @@ public class MatchResultToSequenceCommand implements CliCommand {
                 @Override
                 public void nonMatchFound(DecisionGraphQuery dgq) {
                     missCount++;
-                    if ( missCount%1000==0 ) {
-                        rnr.println("%d runs inspected", missCount);
+                    if ( totalRunsInspected()%1000==0 ) {
+                        rnr.println(" - So far: %,d matches, %,d misses, %,d rejects", foundCount, missCount, rejectCount);
+                    }
+                }
+                
+                @Override
+                public void rejectionFound(DecisionGraphQuery dgq) {
+                    rejectCount++;
+                    if ( totalRunsInspected()%1000==0 ) {
+                        rnr.println(" - So far: %,d matches, %,d misses, %,d rejects", foundCount, missCount, rejectCount);
                     }
                 }
 
                 @Override
-                public void started(DecisionGraphQuery dgq) { }
+                public void started(DecisionGraphQuery dgq) {
+                    rnr.println("started");
+                }
 
                 @Override
                 public void done(DecisionGraphQuery dgq) {
-                    if ( foundCount == 0 ) {
-                        rnr.println("No matching runs found.");
-                    } else if ( foundCount == 1 ) {
-                        rnr.println("Found a single match %,d possible runs.", missCount+foundCount);
-                    } else {
-                        rnr.println("Found %,d matches in %,d possible runs.", foundCount, missCount+foundCount);
+                    switch ((int)foundCount) {
+                        case 0:
+                            rnr.println("No matching runs found, out of %,d possible runs.", missCount);
+                            break;
+                        case 1:
+                            rnr.println("Found a single match %,d possible runs.", missCount+foundCount);
+                            break;
+                        default:
+                            rnr.println("Found %,d matches in %,d possible runs.", foundCount, missCount+foundCount);
+                            break;
                     }
                 }
 
@@ -91,6 +110,10 @@ public class MatchResultToSequenceCommand implements CliCommand {
                 public void loopDetected(DecisionGraphQuery dgq) {
                     rnr.println("Loop detected with this trace - ");
                     printRunTrace(rnr, dgq.getCurrentTrace()) ;
+                }
+                
+                private long totalRunsInspected() {
+                    return foundCount + missCount + rejectCount;
                 }
             });
 

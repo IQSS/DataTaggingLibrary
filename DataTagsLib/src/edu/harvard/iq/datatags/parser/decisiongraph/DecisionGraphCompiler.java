@@ -176,8 +176,10 @@ public class DecisionGraphCompiler {
                     // link to node within same compilation unit
                     String prefixNodes = modelData.getModelDirectoryPath().relativize(cu.getSourcePath()).toString();
                     Node calleeNode = cu.getDecisionGraph().getNode( "[" + prefixNodes + "]" + callCalleePair.getValue() );
-                    //Check if the callee node is Section Node
-                    if (calleeNode instanceof SectionNode){
+                    if ( calleeNode == null ) {
+                        messages.add(new ValidationMessage((Level.ERROR), "Calling nonexistent node: " + "[" + prefixNodes + "]" + callCalleePair.getValue()));
+                    } else if (calleeNode instanceof SectionNode){
+                        //Check if the callee node is Section Node
                         CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
                         callNode.setCalleeNode(calleeNode);
                     } else {

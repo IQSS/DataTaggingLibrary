@@ -62,7 +62,11 @@ public class CollectionHelper {
 	}
 	
 	public <T> T last( List<T> list ) {
-		return list.get( list.size()-1 );
+        if ( list instanceof LinkedList ) {
+            return ((LinkedList<T>)list).getLast();
+        } else {
+            return list.get( list.size()-1 );
+        }
 	}
 	
 	public <T> Set<T> set( T... items ) {
