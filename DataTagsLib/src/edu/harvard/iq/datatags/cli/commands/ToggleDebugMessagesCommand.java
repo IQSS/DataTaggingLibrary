@@ -11,7 +11,7 @@ public class ToggleDebugMessagesCommand implements CliCommand {
 
     @Override
     public String command() {
-        return "debug-messages";
+        return "debug";
     }
 
     @Override
@@ -26,8 +26,31 @@ public class ToggleDebugMessagesCommand implements CliCommand {
     
     @Override
     public void execute(CliRunner rnr, List<String> args) throws Exception {
-        rnr.setPrintDebugMessages(! rnr.getPrintDebugMessages() );
-        rnr.printMsg("Debug messages %s", (rnr.getPrintDebugMessages() ? "On" : "Off"));
+        if ( args.size() > 1 ) {
+            switch ( args.get(1).toLowerCase().trim() ) {
+                case "on" :
+                case "1" :
+                case "true" :
+                case "yes" :
+                    rnr.setPrintDebugMessages(true);
+                    break;
+                case "off":
+                case "0":
+                case "false":
+                case "no":
+                    rnr.setPrintDebugMessages(false);
+                    break;
+                default:
+                    rnr.printWarning("Unknown parameter %s. Please use on/off.", args.get(1));
+            }
+        }
+        rnr.printMsg( "Debug messages are [%s]%s" , 
+                toParamStr(rnr.getPrintDebugMessages()),
+                args.size()==1 ? (" (use `debug " + toParamStr(rnr.getPrintDebugMessages()) + "` to change.)") : ""
+                );
     }
     
+    private String toParamStr( boolean b ) {
+        return b?"on":"off";
+    }
 }
