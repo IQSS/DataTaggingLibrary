@@ -9,6 +9,8 @@ import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst;
 import edu.harvard.iq.datatags.parser.decisiongraph.SetNodeValueBuilder;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.model.inference.SupportValueInferrer;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.values.AbstractValue.CompareResult;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst.InferencePairAst;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
@@ -88,8 +90,10 @@ public class ValueInferenceParseResult {
                     if (!valueInferrer.getInferencePairs().isEmpty()){
                         CompoundValue lastMinimalCoorinate = valueInferrer.getInferencePairs()
                                 .get(valueInferrer.getInferencePairs().size() - 1).getMinimalCoordinate();
-                        isOk = lastMinimalCoorinate.project(minimalCoordinates.getNonEmptySubSlots()).isEmpty() ? false
-                                : minimalCoordinates.project(lastMinimalCoorinate.getNonEmptySubSlots()).isBigger(lastMinimalCoorinate.project(minimalCoordinates.getNonEmptySubSlots())).orElse(false);
+                        Set<AbstractSlot> minimalCoordNonEmptySlots = minimalCoordinates.getNonEmptySubSlots();
+                        
+                        isOk = lastMinimalCoorinate.project(minimalCoordNonEmptySlots).isEmpty() ? false
+                                : minimalCoordinates.project(lastMinimalCoorinate.getNonEmptySubSlots()).compare(lastMinimalCoorinate.project(minimalCoordNonEmptySlots))==CompareResult.Bigger;
                         if ( !isOk ) {
                             validationMessages.add(new ValidationMessage(Level.ERROR,
                                     "Slots are not ordered hierarchically - " + lastMinimalCoorinate.toString() + " and " + minimalCoordinates));

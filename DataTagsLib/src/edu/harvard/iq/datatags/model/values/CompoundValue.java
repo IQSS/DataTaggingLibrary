@@ -2,6 +2,9 @@ package edu.harvard.iq.datatags.model.values;
 
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.slots.AggregateSlot;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -253,34 +256,7 @@ public class CompoundValue extends AbstractValue{
         return hasBigger ? CompareResult.Bigger : CompareResult.Smaller;
         
     }
-    
-    public Optional<Boolean> isBigger(CompoundValue other) {
-        List<AbstractValue> thisValues = new ArrayList<>();
-        List<AbstractValue> otherValues = new ArrayList<>();
-        getNonEmptySubSlots().forEach(slot -> thisValues.add(get(slot)));
-        other.getNonEmptySubSlots().forEach(slot -> otherValues.add(other.get(slot)));
-        
-        Predicate<AbstractValue> predicate = new Predicate<AbstractValue>() {
-            @Override 
-            public boolean test(AbstractValue v) {        
-            int vPosition = thisValues.indexOf(v);
-            if ( v instanceof AtomicValue ) {
-                AtomicValue thisValue = (AtomicValue) v;
-                AtomicValue otherValue = (AtomicValue) otherValues.get(vPosition);
-                return (thisValue.compareTo(otherValue) >= 0);
-            } else {
-                AggregateValue thisValue = (AggregateValue) v;
-                AggregateValue otherValue = (AggregateValue) otherValues.get(vPosition);
-                return (thisValue.getValues().containsAll(otherValue.getValues()));
-            }}
-        };
-
-        if ( thisValues.stream().allMatch(predicate)          ) return Optional.of(Boolean.TRUE);
-        if ( thisValues.stream().allMatch(predicate.negate()) ) return Optional.of(Boolean.FALSE);
-        
-        return Optional.empty();
-    }
-    
+   
     /**
      * 
      * @return (@code true} iff no slots are set.

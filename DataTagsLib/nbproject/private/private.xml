@@ -16,11 +16,14 @@
             <file>file:/C:/Users/user/Desktop/DataTagging/DataTaggingLibrary%20-%20import/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/cli/commands/MatchResultToSequenceCommand.java</file>
         </group>
         <group name="DataTags">
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/cli/commands/MatchResultToSequenceCommand.java</file>
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/runtime/RuntimeEngine.java</file>
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/test/edu/harvard/iq/datatags/tools/queries/FindSupertypeResultsDgqTest.java</file>
-            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/model/graphs/nodes/Node.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/cli/CliRunner.java</file>
             <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/tools/queries/FindSupertypeResultsDgq.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/parser/decisiongraph/DecisionGraphCompiler.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/test/edu/harvard/iq/QueryTests.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/mains/DecisionGraphValidations.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/mains/DecisionGraphCompiling.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/test/edu/harvard/iq/datatags/tools/queries/FindSupertypeResultsDgqTest.java</file>
+            <file>file:/Users/michael/Documents/PhD/IQSS/Data-Tags/DataTaggingLibrary/DataTagsLib/src/edu/harvard/iq/datatags/cli/commands/MatchResultToSequenceCommand.java</file>
         </group>
     </open-files>
 </project-private>
