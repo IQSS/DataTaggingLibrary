@@ -90,7 +90,7 @@ public class PolicyModelLoader extends BaseModelLoader {
                 TagSpaceParseResult spaceParseRes = new TagSpaceParser().parse(data.getPolicySpacePath());
                 spaceRoot = spaceParseRes.buildType(data.getRootTypeName()).orElse(null);
                 if ( spaceRoot == null ) {
-                    res.addMessage( new ValidationMessage(Level.ERROR, "Type '" + data.getRootTypeName() + "', used as policy space root, is not defined. ") );
+                    res.addMessage( new ValidationMessage(Level.ERROR, "Slot '" + data.getRootTypeName() + "', used as policy space root, is not defined. ") );
                     return res;
                 }
                 model.setSpaceRoot(spaceRoot);

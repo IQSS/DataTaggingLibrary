@@ -2,18 +2,13 @@ package edu.harvard.iq.datatags.model.values;
 
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.slots.AbstractSlot;
-import edu.harvard.iq.datatags.model.slots.AggregateSlot;
-import edu.harvard.iq.datatags.model.slots.AtomicSlot;
-import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -52,7 +47,8 @@ public class CompoundValue extends AbstractValue{
         if (getSlot().getSubSlots().contains(slot)) {
             return fields.get(slot);
         } else {
-            throw new IllegalArgumentException("Slot " + getSlot() + " does not have a sub-slot " + slot + ".");
+            throw new IllegalArgumentException("Slot " + getSlot() + " does not have a sub-slot " + slot + ". Available slots are " +
+                                                getSlot().getSubSlots().stream().map( s -> s.getName() ).collect( joining(",","[","]")) );
         }
     }
 

@@ -75,11 +75,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
         @Override
         public Node visit(ConsiderNode nd) {
-               // check any answer to be part of the current DataTags 
-               // return the node of the first write answer 
+            // check any answer to be part of the current DataTags 
+            // return the node of the first write answer 
+            
             for (ConsiderOption ans : nd.getAnswers()) {
-                CompoundValue answer = ans.getValue();
-                if (currentValue.isSupersetOf(answer)) {
+                CompoundValue optionValue = ans.getValue();
+                if (currentValue.isSupersetOf(optionValue)) {
                     return nd.getNodeFor(ans);
                 }
             }

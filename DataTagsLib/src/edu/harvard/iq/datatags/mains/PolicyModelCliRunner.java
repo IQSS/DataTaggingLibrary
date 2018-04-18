@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.mains;
 
+import edu.harvard.iq.datatags.PolicyModelsInfo;
 import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.cli.commands.LoadPolicyModelCommand;
 import java.nio.file.Files;
@@ -17,6 +18,7 @@ public class PolicyModelCliRunner {
         
         CliRunner cliRunner = new CliRunner();
         cliRunner.printSplashScreen();
+        cliRunner.println("PolicyModels library version: " + PolicyModelsInfo.getVersionString() );
         
         if ( args.length > 0 ) {
             Path modelPath = Paths.get(args[0]);
