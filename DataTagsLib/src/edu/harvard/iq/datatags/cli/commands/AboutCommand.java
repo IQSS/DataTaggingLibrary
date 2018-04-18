@@ -46,14 +46,15 @@ public class AboutCommand implements CliCommand {
         if ( model != null ) {
             rnr.printTitle("Current Model");
             PolicyModelData metadata = model.getMetadata();
-            rnr.println("   title: %s", metadata.getTitle() );
+            rnr.println("title:\t%s", metadata.getTitle() );
             if ( nonEmpty(metadata.getSubTitle()) ) {
-                rnr.println("       : %s", metadata.getSubTitle());
+                rnr.println("      \t %s", metadata.getSubTitle());
             }
-            rnr.println("keywords: %s", metadata.getKeywords().stream().collect(joining("\", \"", "\"", "\"")));
+            rnr.println("keywords:\t%s", metadata.getKeywords().stream().collect(joining("\", \"", "\"", "\"")));
+            rnr.println("version:\t%s", metadata.getVersion() );
+            rnr.println("authors:");
             
-            rnr.println(" version: %s", metadata.getVersion() );
-            rnr.println(" authors:");
+            rnr.println("Space root:\t%s", rnr.getModel().getSpaceRoot().getName());
             
             AuthorVisitor prt = new AuthorVisitor(rnr);
             metadata.getAuthors().forEach(e->e.accept(prt));
