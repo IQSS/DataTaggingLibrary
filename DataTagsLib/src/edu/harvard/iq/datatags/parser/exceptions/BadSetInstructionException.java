@@ -1,6 +1,5 @@
 package edu.harvard.iq.datatags.parser.exceptions;
 
-import edu.harvard.iq.datatags.model.slots.SlotValueLookupResult;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 
 /**

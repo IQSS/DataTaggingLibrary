@@ -9,11 +9,13 @@ import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.exceptions.BadLookupException;
+import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.joining;
 
 /**
  *
@@ -31,7 +33,11 @@ public class SetNodeValueBuilder implements AstSetNode.Assignment.Visitor {
 
     @Override
     public void visit(AstSetNode.AtomicAssignment aa) {
-        final CompoundValue additionPoint = descend(C.tail(fullyQualifiedSlotName.get(aa.getSlot())), topValue);
+        List<String> slotName = fullyQualifiedSlotName.get(aa.getSlot());
+        if ( slotName == null ) {
+            throw new RuntimeException( new BadSetInstructionException("Cannot find slot named '" + aa.getSlot().stream().collect(joining("/")) + "'.", null));
+        }
+        final CompoundValue additionPoint = descend(C.tail(slotName), topValue);
         AbstractSlot valueType = additionPoint.getSlot().getSubSlot(C.last(aa.getSlot()));
         if (valueType == null) {
             throw new RuntimeException("Type '" + additionPoint.getSlot().getName()
