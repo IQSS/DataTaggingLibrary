@@ -1,8 +1,0 @@
-<localized-model>
-  <title>${TITLE}</title>
-  <subtitle>${SUBTITLE}</subtitle>
-  <keywords>${KEYWORDS}</keywords>
-  <authors>
-    ${AUTHORS}
-  </authors>
-</localized-model>
