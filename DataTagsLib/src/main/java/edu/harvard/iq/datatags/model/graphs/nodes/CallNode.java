@@ -83,9 +83,14 @@ public class CallNode extends ThroughNode {
                 public Integer visit(SetNode nd) throws DataTagsRuntimeException {
                     return nd.hashCode();
                 }
-
+                
                 @Override
                 public Integer visit(SectionNode nd) throws DataTagsRuntimeException {
+                    return nd.hashCode();
+                }
+
+                @Override
+                public Integer visit(PartNode nd) throws DataTagsRuntimeException {
                     return nd.hashCode();
                 }
 

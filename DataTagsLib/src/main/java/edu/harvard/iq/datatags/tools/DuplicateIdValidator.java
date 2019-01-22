@@ -8,6 +8,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode.NullVisitor;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstPartNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
@@ -91,6 +92,11 @@ public class DuplicateIdValidator extends NullVisitor implements DecisionGraphAs
     
     @Override
     public void visitImpl(AstSectionNode nd) throws DataTagsRuntimeException {
+        collect(nd);
+    }
+    
+    @Override
+    public void visitImpl(AstPartNode nd) throws DataTagsRuntimeException {
         collect(nd);
     }
     

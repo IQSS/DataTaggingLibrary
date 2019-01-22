@@ -5,6 +5,7 @@ import edu.harvard.iq.datatags.tools.ReachableNodesCollector;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,6 +23,7 @@ public class DecisionGraph {
 
     private URI source;
     private Node start;
+    private List<Node> parts = new LinkedList<>();
     private final Map<String, Node> nodes = new HashMap<>();
     private String id;
 
@@ -112,6 +114,17 @@ public class DecisionGraph {
         this.id = id;
     }
 
+    public List<Node> getParts() {
+        return parts;
+    }
+    
+    public void addPart(Node part) {
+        if (!nodes.containsKey(part.getId())) {
+            add(part);
+        }
+        parts.add(part);
+    }
+    
     /**
      * Adds {@code prefix} to all node ids in the graph.
      * @param prefix the prefix to add.

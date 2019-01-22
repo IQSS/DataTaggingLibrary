@@ -8,6 +8,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
@@ -24,6 +25,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstPartNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
@@ -136,9 +138,21 @@ public class CompilationUnit {
         
         astValidators.stream().flatMap( v -> v.validate(parsedFile.getAstNodes()).stream())
                                     .forEach(validationMessages::add);
+        //Validate that part doesn't contain other parts
+        List <AstNode> parts = parsedFile.getAstNodes().stream().filter(node -> node instanceof AstPartNode).collect(Collectors.toList());
+          parts.forEach(part -> {
+                ((AstPartNode) part).getAstNodes().forEach(node -> {
+                    if(node instanceof AstPartNode) {
+                        throw new RuntimeException(new DataTagsParseException(node, "Error: part can't contain another part (at node " + node + ")"));
+                    }
+                });
+          });
                                     
         try {
-            product.setStart(buildNodes(parsedFile.getAstNodes(), endAll));
+            //Build Parts separately
+            List <AstNode> mainNodes = parsedFile.getAstNodes().stream().filter(node -> !(node instanceof AstPartNode)).collect(Collectors.toList());
+            product.setStart(buildNodes(mainNodes, endAll));
+            parts.forEach(part -> product.addPart(buildNodes(Collections.singletonList(part), endAll)));
         } catch ( RuntimeException re ) {
             Throwable cause = re.getCause();
             if ((cause != null) && (cause instanceof DataTagsParseException)) {
@@ -390,10 +404,19 @@ public class CompilationUnit {
                         @Override
                         public Node visit(AstSectionNode astNode) {
                             final SectionNode sectionNode = new SectionNode(astNode.getId(), astNode.getInfo() != null ? astNode.getInfo().getText() : "");
-                            Node startNode = buildNodes(astNode.getStartNode(), endAll);
+                            Node startNode = buildNodes(astNode.getAstNodes(), endAll);
                             sectionNode.setStartNode(startNode);
                             sectionNode.setNextNode(buildNodes(C.tail(astNodes), defaultNode));
                             return product.add(sectionNode);
+                        }
+                        
+                        @Override
+                        public Node visit(AstPartNode astNode) {
+                            final PartNode partNode = new PartNode(astNode.getId(), astNode.getInfo() != null ? astNode.getInfo().getText() : "");
+                            Node startNode = buildNodes(astNode.getAstNodes(), endAll);
+                            partNode.setStartNode(startNode);
+                            buildNodes(C.tail(astNodes), defaultNode);
+                            return product.add(partNode);
                         }
 
                     });

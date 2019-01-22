@@ -13,6 +13,7 @@ import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.inference.AbstractValueInferrer;
@@ -54,6 +55,10 @@ import java.util.concurrent.atomic.AtomicInteger;
         void sectionStarted(RuntimeEngine ngn, Node node);
         
         void sectionEnded(RuntimeEngine ngn, Node node);
+        
+        void partStarted(RuntimeEngine ngn, Node node);
+        
+        void partEnded(RuntimeEngine ngn, Node node);
     }
 
     /**
@@ -169,6 +174,12 @@ import java.util.concurrent.atomic.AtomicInteger;
         public Node visit(SectionNode nd) throws DataTagsRuntimeException{
             listener.ifPresent(l -> l.sectionStarted(RuntimeEngine.this, nd));
             stack.push(nd);
+            return nd.getStartNode();
+        }
+
+        @Override
+        public Node visit(PartNode nd) throws DataTagsRuntimeException {
+            listener.ifPresent(l -> l.sectionStarted(RuntimeEngine.this, nd));
             return nd.getStartNode();
         }
         

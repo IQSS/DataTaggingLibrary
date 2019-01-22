@@ -9,6 +9,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
@@ -279,6 +280,11 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
             public void visitImpl(CallNode nd) throws DataTagsRuntimeException {}
             @Override
             public void visitImpl(EndNode nd) throws DataTagsRuntimeException {}
+
+            @Override
+            public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
         };
         
         

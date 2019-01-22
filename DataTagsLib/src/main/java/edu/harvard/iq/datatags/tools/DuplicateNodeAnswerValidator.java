@@ -9,6 +9,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode.NullVisitor;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstPartNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
@@ -95,6 +96,11 @@ public class DuplicateNodeAnswerValidator extends NullVisitor  implements Decisi
     
     @Override
     public void visitImpl(AstSectionNode nd) throws DataTagsRuntimeException {
+        // do nothing unless node ref is an AskNodeRef
+    }
+    
+    @Override
+    public void visitImpl(AstPartNode nd) throws DataTagsRuntimeException {
         // do nothing unless node ref is an AskNodeRef
     }
     

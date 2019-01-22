@@ -5,6 +5,7 @@ import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.slots.AggregateSlot;
@@ -155,8 +156,8 @@ public class DecisionGraphCompiler {
                     if ( calleeCU != null ) {
                         String prefixNodes = modelData.getModelDirectoryPath().relativize(calleeCU.getSourcePath()).toString();
                         Node calleeNode = calleeCU.getDecisionGraph().getNode("[" + prefixNodes + "]" + calleeName);
-                        //Check if the callee node is Section Node
-                        if (calleeNode instanceof SectionNode){
+                        //Check if the callee node is Part Node
+                        if (calleeNode instanceof PartNode){
                             nameToCu.put(calleeCuName, calleeCU);
                             if ( calleeNode != null ) {
                                 prefixNodes = modelData.getModelDirectoryPath().relativize(cu.getSourcePath()).toString();
@@ -166,7 +167,7 @@ public class DecisionGraphCompiler {
                                 messages.add(new ValidationMessage(Level.ERROR, "cannot find target node with id " + calleeCuName + ">" +  calleeName));
                             }
                         } else {
-                            messages.add(new ValidationMessage((Level.ERROR), "You can only call to section node: " + calleeNode.getId()));
+                            messages.add(new ValidationMessage((Level.ERROR), "You can only call to part node: " + calleeNode.getId()));
                         }
                     } else {
                         messages.add(new ValidationMessage(Level.ERROR, "cannot find target file with id " + calleeCuName));
@@ -178,12 +179,12 @@ public class DecisionGraphCompiler {
                     Node calleeNode = cu.getDecisionGraph().getNode( "[" + prefixNodes + "]" + callCalleePair.getValue() );
                     if ( calleeNode == null ) {
                         messages.add(new ValidationMessage((Level.ERROR), "Calling nonexistent node: " + "[" + prefixNodes + "]" + callCalleePair.getValue()));
-                    } else if (calleeNode instanceof SectionNode){
-                        //Check if the callee node is Section Node
+                    //Check if the callee node is Part Node
+                    } else if (calleeNode instanceof PartNode){
                         CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
                         callNode.setCalleeNode(calleeNode);
                     } else {
-                        messages.add(new ValidationMessage((Level.ERROR), "You can only call to section node: " + calleeNode.getId()));
+                        messages.add(new ValidationMessage((Level.ERROR), "You can only call to part node: " + calleeNode.getId()));
                     }
                     CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
                     if ( callNode != null ) {

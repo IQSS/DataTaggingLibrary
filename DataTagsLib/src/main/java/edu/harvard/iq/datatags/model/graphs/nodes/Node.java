@@ -22,6 +22,8 @@ public abstract class Node {
         
         R visit(SectionNode nd) throws DataTagsRuntimeException;
 
+        R visit(PartNode nd) throws DataTagsRuntimeException;
+        
         R visit(RejectNode nd) throws DataTagsRuntimeException;
 
         R visit(CallNode nd) throws DataTagsRuntimeException;
@@ -29,6 +31,7 @@ public abstract class Node {
         R visit(ToDoNode nd) throws DataTagsRuntimeException;
 
         R visit(EndNode nd) throws DataTagsRuntimeException;
+
         
     }
 
@@ -54,6 +57,12 @@ public abstract class Node {
 
         @Override
         public Void visit(SectionNode nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
+        
+        @Override
+        public Void visit(PartNode nd) throws DataTagsRuntimeException {
             visitImpl(nd);
             return null;
         }
@@ -91,6 +100,8 @@ public abstract class Node {
         
         public abstract void visitImpl(SectionNode nd) throws DataTagsRuntimeException;
 
+        public abstract void visitImpl(PartNode nd) throws DataTagsRuntimeException;
+        
         public abstract void visitImpl(RejectNode nd) throws DataTagsRuntimeException;
 
         public abstract void visitImpl(CallNode nd) throws DataTagsRuntimeException;

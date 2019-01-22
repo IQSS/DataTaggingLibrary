@@ -12,6 +12,7 @@ import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
@@ -221,6 +222,25 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
                 advanceTo(nd.getNextNode());
                 out.println(edge(nodeId(nd.getStartNode()), nodeId(nd.getNextNode())).gv()+" [ltail=cluster_section_" + nodeId(nd) + "]");
             }
+        }
+
+        @Override
+        public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
+            String nodeTitle = nd.getTitle();
+            if ( nodeTitle.length() > 140 ) {
+                nodeTitle = nodeTitle.substring(0,140) + "...";
+            }
+            out.println( node(nodeId(nd))
+                    .label( idLabel(nd) + wrap(nodeTitle) )
+                    .gv());
+
+            out.println("subgraph cluster_part_" + nodeId(nd)  + "{ ");
+            out.println("label=\"Part " + nd.getTitle() + "\"");
+            advanceTo(nd.getStartNode());
+            out.println("}");
+            
+            out.println(edge(nodeId(nd), nodeId(nd.getStartNode())).gv());
+      
         }
         
 		

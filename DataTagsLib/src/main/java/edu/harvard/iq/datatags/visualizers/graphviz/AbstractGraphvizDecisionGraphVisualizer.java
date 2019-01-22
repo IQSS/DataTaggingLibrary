@@ -6,6 +6,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
@@ -136,6 +137,12 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
                 candidates.remove(nd.getNextNode());
                 nd.getNextNode().accept(this);
                 
+                candidates.remove(nd.getStartNode());
+                nd.getStartNode().accept(this);
+            }
+            
+            @Override
+            public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
                 candidates.remove(nd.getStartNode());
                 nd.getStartNode().accept(this);
             }

@@ -9,6 +9,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
@@ -150,6 +151,28 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
             advanceTo(nd.getNextNode());
             out.println(edge(nodeId(nd.getStartNode()), nodeId(nd.getNextNode())).gv()+" [ltail=cluster_" + nodeId(nd) + "]");
             
+        }
+
+        @Override
+        public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
+            String nodeTitle = nd.getTitle();
+            if (nodeTitle.length() > 140) {
+                nodeTitle = nodeTitle.substring(0, 140) + "...";
+            }
+            out.println(node(nodeId(nd))
+                    .shape(GvNode.Shape.folder)
+                    .fillColor("#AADDFF")
+                    .label(idLabel(nd) + wrap(nodeTitle))
+                    .gv());
+            
+            out.println("subgraph cluster_" + nodeId(nd)  + "{ ");
+            out.println("label=\"Part " + nd.getTitle() + "\"");
+            advanceTo(nd.getStartNode());
+            out.println("}");
+            
+            out.println(edge(nodeId(nd), nodeId(nd.getStartNode())).gv());
+           
+//            out.println(edge(nodeId(nd.getStartNode())).gv()+" [ltail=cluster_" + nodeId(nd) + "]");
         }
 
     }

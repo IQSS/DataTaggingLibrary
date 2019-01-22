@@ -27,7 +27,9 @@ public abstract class AstNode {
 
         T visit(AstTodoNode astNode);
         
-        T visit (AstSectionNode astNode);
+        T visit(AstSectionNode astNode);
+
+        T visit(AstPartNode astNode);
 
     }
 
@@ -81,6 +83,12 @@ public abstract class AstNode {
             visitImpl(nd);
             return null;
         }
+        
+        @Override
+        public Void visit(AstPartNode nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
 
         
         public abstract void visitImpl(AstConsiderNode nd) throws DataTagsRuntimeException;
@@ -98,6 +106,8 @@ public abstract class AstNode {
         public abstract void visitImpl(AstEndNode nd) throws DataTagsRuntimeException;
         
         public abstract void visitImpl(AstSectionNode nd) throws DataTagsRuntimeException;
+        
+        public abstract void visitImpl(AstPartNode nd) throws DataTagsRuntimeException;
         
     }
 

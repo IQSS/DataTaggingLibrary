@@ -5,25 +5,24 @@
  */
 package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
-import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import java.util.List;
 
 /**
  *
- * @author mor_vilozni
+ * @author mor
  */
-public class AstSectionNode extends AstNode{
+public class AstPartNode extends AstNode{
 
     private AstInfoSubNode info;
     private List<? extends AstNode> astNodes;
-    
-    public AstSectionNode(String id, AstInfoSubNode info, List<? extends AstNode> astNodes) {
+
+    public AstPartNode(String id, AstInfoSubNode info, List<? extends AstNode> astNodes) {
         super(id);
         this.info = info;
         this.astNodes = astNodes;
     }
     
-    public AstSectionNode(String id, List<? extends AstNode> astNodes) {
+    public AstPartNode(String id, List<? extends AstNode> astNodes) {
         super(id);
         this.astNodes = astNodes;
     }
@@ -31,19 +30,18 @@ public class AstSectionNode extends AstNode{
     public AstInfoSubNode getInfo(){
         return this.info;
     }
-
-    public AstSectionNode(String id) {
+    
+    public AstPartNode(String id) {
         super(id);
     }
     
     public List<? extends AstNode> getAstNodes(){
         return this.astNodes;
     }
-    
+
     @Override
     public <T> T accept(Visitor<T> v) {
         return v.visit(this);
     }
-    
     
 }

@@ -34,6 +34,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.values.AbstractValue;
 import edu.harvard.iq.datatags.runtime.RuntimeEngine;
@@ -527,7 +528,12 @@ public class CliRunner {
                 
                 @Override
                 public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-                printMsg("Started section " + nd.getTitle() );
+                    printMsg("Started section " + nd.getTitle() );
+                }
+
+                @Override
+                public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
+                    printMsg("Started part " + nd.getTitle() );
                 }
                 
             });
@@ -565,6 +571,20 @@ public class CliRunner {
         public void sectionEnded(RuntimeEngine ngn, Node node) {
             if (printDebugMessages) {
                 printMsg("Finished section");
+            }
+        }
+
+        @Override
+        public void partStarted(RuntimeEngine ngn, Node node) {
+            if (printDebugMessages) {
+                printMsg("Started part");
+            }
+        }
+
+        @Override
+        public void partEnded(RuntimeEngine ngn, Node node) {
+            if (printDebugMessages) {
+                printMsg("Finished part");
             }
         }
     }

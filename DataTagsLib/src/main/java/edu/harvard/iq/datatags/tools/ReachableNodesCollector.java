@@ -9,6 +9,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.HashSet;
@@ -71,6 +72,13 @@ public class ReachableNodesCollector extends Node.VoidVisitor {
         if ( collection.contains(nd) ) return;
         nd.getStartNode().accept(this);
         visitThroughNode(nd);
+    }
+    
+    @Override
+    public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
+        if ( collection.contains(nd) ) return;
+        collection.add(nd);
+        nd.getStartNode().accept(this);
     }
     
     @Override

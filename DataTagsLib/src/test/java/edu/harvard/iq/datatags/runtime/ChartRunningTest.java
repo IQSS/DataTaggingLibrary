@@ -99,7 +99,7 @@ public class ChartRunningTest {
 
     @Test
     public void chartWithCall() throws DataTagsParseException, IOException {
-        String code = "[>a< todo:a][>b< todo:a][>c< call:n][>e<end][>n< section: {title: bla} [>d< end]]";
+        String code = "[>a< todo:a][>b< todo:a][>c< call:n][>e<end][-->n< {title: bla} [>d< end]--]";
         
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();

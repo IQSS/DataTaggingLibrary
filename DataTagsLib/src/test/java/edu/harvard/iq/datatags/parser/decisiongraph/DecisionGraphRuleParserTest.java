@@ -10,6 +10,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstInfoSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNodeHead;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstPartNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
@@ -24,8 +25,10 @@ import java.util.Collections;
 import java.util.List;
 import org.jparsec.Parser;
 import org.jparsec.Parsers;
+import org.jparsec.error.ParserException;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -187,6 +190,30 @@ public class DecisionGraphRuleParserTest {
         assertEquals(new AstSectionNode("id", new AstInfoSubNode("bla bla"),
                 asList(new AstTodoNode(null, "bla"))),
                 sut.parse("[>id<section:{title: bla bla}[todo: bla]]"));
+    }
+    
+    @Test(expected = ParserException.class) 
+    public void partNodeNoId() {
+        Parser<List<? extends AstNode>> bodyParser
+                = Parsers.or(DecisionGraphRuleParser.END_NODE, DecisionGraphRuleParser.TODO_NODE).many().cast();
+        Parser<AstPartNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.partNode(bodyParser));
+        sut.parse("[-- {title: bla bla}\n[todo: bla] ]");
+    }
+
+    @Test
+    public void partNodeWithId() {
+        Parser<List<? extends AstNode>> bodyParser
+                = Parsers.or(DecisionGraphRuleParser.END_NODE, DecisionGraphRuleParser.TODO_NODE).many().cast();
+        Parser<AstPartNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.partNode(bodyParser));
+        assertEquals(new AstPartNode("id", new AstInfoSubNode("bla bla"),
+                asList(new AstTodoNode(null, "bla"))),
+                sut.parse("[-->id< {title: bla bla}\n[todo: bla] --]"));
+        assertEquals(new AstPartNode("id",
+                asList(new AstTodoNode(null, "bla"))),
+                sut.parse("[-->id< \n\n [todo: bla]\n\n\n --]"));
+        assertEquals(new AstPartNode("id", new AstInfoSubNode("bla bla"),
+                asList(new AstTodoNode(null, "bla"))),
+                sut.parse("[-->id<{title: bla bla}[todo: bla]--]"));
     }
 
     @Test

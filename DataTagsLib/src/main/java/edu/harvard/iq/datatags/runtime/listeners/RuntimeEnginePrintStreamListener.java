@@ -62,4 +62,14 @@ public class RuntimeEnginePrintStreamListener implements RuntimeEngine.Listener 
     public void sectionEnded(RuntimeEngine ngn, Node node) {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void partStarted(RuntimeEngine ngn, Node node) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void partEnded(RuntimeEngine ngn, Node node) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

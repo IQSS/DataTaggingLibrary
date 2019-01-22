@@ -68,12 +68,12 @@ public class UnreachableNodeValidatorTest {
                         "  {answers:\n" +
                         "    {yes: [call:shouldWork]}}]\n" +
                         "[>end1< end]\n" +
-                        "[>shouldWork< section:" + 
+                        "[-->shouldWork<" + 
                         " [ask: \n" +
                         "  {text: This should work.}\n" +
                         "  {answers:\n" +
                         "    {yes: [>reject1< reject: Good it works.]}\n" +
-                        "    {no: [>reject2< reject: This should have worked.]}}]]";
+                        "    {no: [>reject2< reject: This should have worked.]}}]--]";
         
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();
@@ -160,6 +160,44 @@ public class UnreachableNodeValidatorTest {
         assertEquals( EnumSet.of(ValidationMessage.Level.WARNING), actualLevels );
         assertEquals( expectedEntityIds, actualEntitiesIds );
     }
-
     
+    @Test
+    public void validateUnreachableNodesTest_unreachableParts() throws BadSetInstructionException, DataTagsParseException, IOException {
+        String code = "[-->part<\n" +
+                        " {title: Part - start}\n" +
+                        " [>blaID< todo: bla bla]\n" +
+                        " [>CallID< call: callid]\n" +
+                        "--]\n" +
+                        "[-->callid<\n" +
+                        " {title: bla}\n" +
+                        " [>sTodo< todo: bla]\n" +
+                        "--]";
+        
+        Map<Path, String> pathToString = new HashMap<>();
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("/main.dg"));
+        pmd.setMetadataFile(Paths.get("/test/main.dg"));
+        pathToString.put(Paths.get("/main.dg"), code);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+        decisionGraph = dgc.compile(new CompoundSlot("", ""), pmd, new ArrayList<>());
+                
+        List<ValidationMessage> messages = instance.validate(decisionGraph);
+        
+        Set<String> expectedEntityIds = new HashSet<>(Arrays.asList("[../main.dg]part","[../main.dg]CallID","[../main.dg]blaID","[../main.dg]callid", "[../main.dg]sTodo"));
+        
+        Set<String> actualEntitiesIds = new HashSet<>();
+        Set<ValidationMessage.Level> actualLevels = EnumSet.noneOf(ValidationMessage.Level.class);
+        
+        messages.stream().forEach((vm) -> {
+            actualEntitiesIds.addAll(
+                    ((NodeValidationMessage)vm).getEntities().stream()
+                                               .map( Node::getId )
+                                               .collect(Collectors.toSet()) );
+            actualLevels.add(vm.getLevel());
+        });
+        
+        assertEquals( EnumSet.of(ValidationMessage.Level.WARNING), actualLevels );
+        assertEquals( expectedEntityIds, actualEntitiesIds );
+    }
 }

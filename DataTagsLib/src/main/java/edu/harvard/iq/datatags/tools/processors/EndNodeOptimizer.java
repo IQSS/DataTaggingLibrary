@@ -12,6 +12,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
@@ -97,8 +98,12 @@ public class EndNodeOptimizer implements DecisionGraphProcessor {
             }
             
             @Override 
-            public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{} 
+            public void visitImpl(SectionNode nd) throws DataTagsRuntimeException{
+                visitThroughNode(nd);
+            } 
             
+            @Override
+            public void visitImpl(PartNode nd) throws DataTagsRuntimeException{}
             
             private void visitThroughNode( ThroughNode nd) {
                 if ( shouldReplace(nd.getNextNode()) ) {
