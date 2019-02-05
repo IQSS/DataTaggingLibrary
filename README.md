@@ -3,7 +3,7 @@ DataTags Language Tools
 
 ![DataTags Logo](DataTagsLib/DOCS/datatags-logo-large.png)
 
-Part of a the [DataTags](http://datatags.org) project, this library contains tools for the DataTags Decision Graph language, used to create questionnaires and tag spaces. Here you can find:
+Part of the [DataTags](http://datatags.org) project, this library contains tools for the DataTags Decision Graph language, used to create questionnaires and tag spaces. Here you can find:
 
 [![Documentation Status](http://readthedocs.org/projects/datatagginglibrary/badge/?version=latest)](http://datatagginglibrary.readthedocs.io/)
 [![Build Status](https://travis-ci.org/IQSS/DataTaggingLibrary.svg?branch=develop)](https://travis-ci.org/IQSS/DataTaggingLibrary)
