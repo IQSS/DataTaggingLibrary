@@ -16,8 +16,8 @@ import java.util.Objects;
 public class RuntimeEngineState implements java.io.Serializable {
     
     private RuntimeEngineStatus status;
-    private URL flowchartSetSource;
-    private String flowchartSetVersion;
+    private URL decisionGraphSetSource;
+    private String decisionGraphSetVersion;
     
     private String currentNodeId;
     private final Deque<String> stack = new LinkedList<>();
@@ -40,20 +40,20 @@ public class RuntimeEngineState implements java.io.Serializable {
         this.status = status;
     }
 
-    public URL getFlowchartSetSource() {
-        return flowchartSetSource;
+    public URL getDecisionGraphSetSource() {
+        return decisionGraphSetSource;
     }
 
-    public void setFlowchartSetSource(URL flowchartSetSource) {
-        this.flowchartSetSource = flowchartSetSource;
+    public void setDecisionGraphSetSource(URL decisionGraphSetSource) {
+        this.decisionGraphSetSource = decisionGraphSetSource;
     }
 
-    public String getFlowchartSetVersion() {
-        return flowchartSetVersion;
+    public String getDecisionGraphSetVersion() {
+        return decisionGraphSetVersion;
     }
 
-    public void setFlowchartSetVersion(String flowchartSetVersion) {
-        this.flowchartSetVersion = flowchartSetVersion;
+    public void setDecisionGraphSetVersion(String decisionGraphSetVersion) {
+        this.decisionGraphSetVersion = decisionGraphSetVersion;
     }
 
     public String getCurrentNodeId() {
@@ -92,10 +92,10 @@ public class RuntimeEngineState implements java.io.Serializable {
         if (this.status != other.status) {
             return false;
         }
-        if (!Objects.equals(this.flowchartSetSource, other.flowchartSetSource)) {
+        if (!Objects.equals(this.decisionGraphSetSource, other.decisionGraphSetSource)) {
             return false;
         }
-        if (!Objects.equals(this.flowchartSetVersion, other.flowchartSetVersion)) {
+        if (!Objects.equals(this.decisionGraphSetVersion, other.decisionGraphSetVersion)) {
             return false;
         }
         if (!Objects.equals(this.currentNodeId, other.currentNodeId)) {
