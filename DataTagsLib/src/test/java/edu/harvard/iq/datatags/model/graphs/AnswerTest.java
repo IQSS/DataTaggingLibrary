@@ -34,9 +34,9 @@ public class AnswerTest {
 
     @Test
     public void testPooling() {
-        assertTrue( Answer.get("a") == Answer.get("a") );
-        assertTrue( Answer.get("a") != Answer.get("b") );
-        assertTrue( Answer.get("a") != Answer.get("aa") );
+        assertTrue( Answer.withName("a") == Answer.withName("a") );
+        assertTrue( Answer.withName("a") != Answer.withName("b") );
+        assertTrue( Answer.withName("a") != Answer.withName("aa") );
     }
     
 }

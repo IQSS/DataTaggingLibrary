@@ -250,10 +250,10 @@ public class DecisionGraphParseResultTest {
         EndNode end = new EndNode((nodeIdProvider.nextId()));
         PartNode callPart = new PartNode("bla", todoNode, "duh");
         start.setText("why?");
-        start.addAnswer(Answer.get("dunno"), new EndNode("de"));
+        start.addAnswer(Answer.withName("dunno"), new EndNode("de"));
         final CallNode whyNotCallNode = new CallNode("wnc", callPart);
         whyNotCallNode.setNextNode(end);
-        start.addAnswer(Answer.get("why not"), whyNotCallNode);
+        start.addAnswer(Answer.withName("why not"), whyNotCallNode);
 
         DecisionGraph expected = new DecisionGraph();
         expected.add(start);

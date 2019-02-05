@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * allow object reuse (there are typically a lot of similar answers in a questionnaire)
  * instances may be pooled, which is why the class constructor is private. 
  * 
- * Use {@link #get(java.lang.String)} to obtain/generate instances.
+ * Use {@link #withName(java.lang.String)} to obtain/generate instances.
  * 
  * @author michael
  */
@@ -21,15 +21,15 @@ public class Answer {
 	
 	private final String answerText;
     
-    public static Answer get(String anAnswerText) {
+    public static Answer withName(String anAnswerText) {
         String canonical = anAnswerText.intern();
 		return ANSWER_POOL.computeIfAbsent(canonical,  s -> new Answer(s) );
 	}
 	
     static {
         // Initialize now, when ANSWER_POOL is there.
-        YES = get("yes");
-        NO  = get("no");
+        YES = withName("yes");
+        NO  = withName("no");
     }
     
 	private Answer(String anAnswerText) {

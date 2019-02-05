@@ -343,7 +343,7 @@ public class CompilationUnit {
 
                             Node syntacticallyNext = buildNodes(C.tail(astNodes), defaultNode);
 
-                            astNode.getAnswers().forEach(ansSubNode -> res.addAnswer(Answer.get(ansSubNode.getAnswerText()),
+                            astNode.getAnswers().forEach(ansSubNode -> res.addAnswer(Answer.withName(ansSubNode.getAnswerText()),
                                     buildNodes(ansSubNode.getSubGraph(), syntacticallyNext)));
 
                             impliedAnswers(res).forEach(ans -> res.addAnswer(ans, syntacticallyNext));
