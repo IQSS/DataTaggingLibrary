@@ -1,10 +1,10 @@
 [>WW< ask:
   {text: Noname node #1 }
   {answers:
-      {yes: [todo: first TODO in dogs.dg]}
+      {yes: [>never-set< set: Test=Work]}
   }
 ]
-[>dog< section:
+[-->dog<
   {title: Dogs!}
   [>q-dogType< ask:
     {text: What type of dogs?}
@@ -15,4 +15,4 @@
       {hounds: [>3< set: Dogs += Pluto, Lassie]}
     }
   ]
-]
+--]

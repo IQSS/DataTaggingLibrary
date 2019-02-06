@@ -1,4 +1,4 @@
-[>cat< section:
+[-->cat<
   {title: Cats}
   [>q-cats-group< ask:
     {text: What cats?}
@@ -8,4 +8,4 @@
       {none: }
     }
   ]
-]
+--]

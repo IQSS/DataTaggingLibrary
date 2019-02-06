@@ -177,7 +177,10 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
         
         @Override
         public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            if( isDebugMode() ) dumpCurrentTrace();
+            currentTrace.addLast(nd);
+            nd.getStartNode().accept(this);
+            currentTrace.removeLast();
         }
 
         @Override
@@ -197,7 +200,7 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
                 
             } else {
                 // Find out what is the next node to get to. This depends
-                // on the stack structure - did we just finished a called section,
+                // on the stack structure - did we just finished a called part,
                 // or was this a section we traversed into.
                 List<ThroughNode> poppedStack = popStackStackForward();
                 ThroughNode newNodeStackTop = peekStackStack();
