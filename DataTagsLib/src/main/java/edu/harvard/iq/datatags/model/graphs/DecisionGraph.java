@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.model.graphs;
 
+import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.tools.ReachableNodesCollector;
 import java.net.URI;
@@ -132,9 +133,11 @@ public class DecisionGraph {
     public void prefixNodeIds( String prefix ) {
         List<Node> nodeList = new ArrayList<>(nodes.values());
         nodeList.stream().forEachOrdered( n -> {
-            nodes.remove(n.getId());
-            n.setId( prefix + n.getId() );
-            nodes.put(n.getId(), n);
+            if( !(n instanceof EndNode) ){
+                nodes.remove(n.getId());
+                n.setId( prefix + n.getId() );
+                nodes.put(n.getId(), n);
+            }
         });
     }
     
