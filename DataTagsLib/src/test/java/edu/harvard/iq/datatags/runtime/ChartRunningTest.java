@@ -112,8 +112,8 @@ public class ChartRunningTest {
         
         assertExecutionTrace(chart, Arrays.asList("[.." + File.separator + "main.dg]a",
                 "[.." + File.separator + "main.dg]b", "[.." + File.separator + "main.dg]c", 
-                "[.." + File.separator + "main.dg]n","[.." + File.separator + "main.dg]d",
-                "[.." + File.separator + "main.dg]e"), false);
+                "[.." + File.separator + "main.dg]n","d",
+                "e"), false);
     }
 
     @Test

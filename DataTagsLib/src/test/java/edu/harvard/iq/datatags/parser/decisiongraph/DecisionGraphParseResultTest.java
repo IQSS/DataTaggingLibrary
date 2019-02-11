@@ -620,8 +620,8 @@ public class DecisionGraphParseResultTest {
         assertEquals( C.set("[.." + File.separator + "a.dg]nd-1",
                             "[.." + File.separator + "b.dg]nd-2", "[.." + File.separator + "b.dg]nd-3", 
                             "[.." + File.separator + "a.dg]nd-4", "[.." + File.separator + "a.dg]nd-5",
-                            "[.." + File.separator + "b.dg][.." + File.separator + "a.dg][SYN-END]", 
-                            "[.." + File.separator + "a.dg][SYN-END]"), actual.nodeIds());
+                            "[SYN-END]", 
+                            "[SYN-END]"), actual.nodeIds());
     }
     
     private DecisionGraph normalize(DecisionGraph dg) {
