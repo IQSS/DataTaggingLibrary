@@ -1,0 +1,83 @@
+digraph decisionGraph {
+fontname="Courier"
+graph[splines=ortho, nodesep=1, concentrate=true compound=true]
+edge [style=dotted arrowhead=open]
+node [shape=Mrecord fillcolor="#3B8298" style="filled" fontcolor=white color=white fontname="Helvetica" fontsize="10"]
+start[ fillcolor="transparent" shape="none" fontcolor="#3B8298" fontsize="12" ]
+subgraph cluster_DecisionGraph_172 {
+label="DecisionGraph-2"
+subgraph cluster__18_091_19 {
+label="[#1]"; color="#AABBDD"; labeljust="l"
+_18_091_19[ label="Do the dogs first?" ]
+_18_091_19_yes[ fillcolor="white" shape="circle" color="#515151" fontcolor="#515151" style="dashed" label="Yes" ]
+_18_091_19 -> _18_091_19_yes[ arrowhead="none" ]
+_18_092_19[ fillcolor="#BBBBFF" shape="cds" label="dogs" ]
+_18_093_19[ fillcolor="#BBBBFF" shape="cds" label="cats" ]
+_18_096_19[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nspecify mice" ]
+_18_097_19[ label="Add frogs" ]
+subgraph cluster_section__18_097_19{ 
+label="Section Add frogs"
+_18_098_19[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nAdd frog 1" ]
+_18_099_19[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nAdd frog 2" ]
+_18_098_19 -> _18_099_19
+}
+_18_097_19 -> _18_098_19
+_18_0910_19[ fillcolor="#77A576" label="Rice=Full\n" ]
+_18_098_19 -> _18_0910_19 [ltail=cluster_section__18_097_19]
+_18_096_19 -> _18_097_19
+_18_093_19 -> _18_096_19
+_18_092_19 -> _18_093_19
+_18_091_19_yes -> _18_092_19
+_18_091_19_no[ fillcolor="#515151" shape="circle" fontcolor="white" label="No" ]
+_18_091_19 -> _18_091_19_no[ arrowhead="none" ]
+_18_094_19[ fillcolor="#BBBBFF" shape="cds" label="cats" ]
+_18_095_19[ fillcolor="#BBBBFF" shape="cds" label="dogs" ]
+_18_095_19 -> _18_096_19
+_18_094_19 -> _18_095_19
+_18_091_19_no -> _18_094_19
+}
+subgraph cluster_cats {
+label="cats"; color="#AABBDD"; labeljust="l"
+cats[ label="cats\nCats" ]
+subgraph cluster_section_cats{ 
+label="Section Cats"
+_18_0917_19[ label="What cats?" ]
+_18_0917_19_all[ fillcolor="#3B8298" shape="circle" fontcolor="white" label="all" ]
+_18_0917_19 -> _18_0917_19_all[ arrowhead="none" ]
+_18_0918_19[ fillcolor="#77A576" label="Cats=\{Tom,Shmil,Mitzi\}\n" ]
+_18_0917_19_all -> _18_0918_19
+_18_0917_19_some[ fillcolor="#3B8298" shape="circle" fontcolor="white" label="some" ]
+_18_0917_19 -> _18_0917_19_some[ arrowhead="none" ]
+_18_0919_19[ fillcolor="#77A576" label="Cats=\{Tom,Shmil\}\n" ]
+_18_0917_19_some -> _18_0919_19
+_18_0917_19_none[ fillcolor="#3B8298" shape="circle" fontcolor="white" label="none" ]
+_18_0917_19 -> _18_0917_19_none[ arrowhead="none" ]
+}
+cats -> _18_0917_19
+}
+subgraph cluster_dogs {
+label="dogs"; color="#AABBDD"; labeljust="l"
+dogs[ label="dogs\nDogs!" ]
+subgraph cluster_section_dogs{ 
+label="Section Dogs!"
+_18_0912_19[ label="What type of dogs?" ]
+_18_0912_19_none[ fillcolor="#3B8298" shape="circle" fontcolor="white" label="none" ]
+_18_0912_19 -> _18_0912_19_none[ arrowhead="none" ]
+_18_0912_19_animated[ fillcolor="#3B8298" shape="circle" fontcolor="white" label="animated" ]
+_18_0912_19 -> _18_0912_19_animated[ arrowhead="none" ]
+_18_0913_19[ fillcolor="#77A576" label="Dogs=\{Pluto\}\n" ]
+_18_0912_19_animated -> _18_0913_19
+_18_0912_19_cute[ fillcolor="#3B8298" shape="circle" fontcolor="white" label="cute" ]
+_18_0912_19 -> _18_0912_19_cute[ arrowhead="none" ]
+_18_0914_19[ fillcolor="#77A576" label="Dogs=\{Rex,Lassie\}\n" ]
+_18_0912_19_cute -> _18_0914_19
+_18_0912_19_hounds[ fillcolor="#3B8298" shape="circle" fontcolor="white" label="hounds" ]
+_18_0912_19 -> _18_0912_19_hounds[ arrowhead="none" ]
+_18_0915_19[ fillcolor="#77A576" label="Dogs=\{Pluto,Lassie\}\n" ]
+_18_0912_19_hounds -> _18_0915_19
+}
+dogs -> _18_0912_19
+}
+}
+start -> _18_091_19[ penwidth="1.0" color="#3B8298" style="solid" ]{rank=source; start}
+}

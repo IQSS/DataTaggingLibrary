@@ -1,0 +1,41 @@
+digraph decisionGraph {
+graph [fontname="Courier" concentrate=true compound=true]
+edge [fontname="Helvetica" fontsize="10"]
+node [fillcolor="lightgray" style="filled" fontname="Helvetica" fontsize="10"]
+start[ fillcolor="transparent" shape="none" fontcolor="#008800" fontsize="16" ]
+{rank=source; start}
+subgraph cluster_DecisionGraph_172 {
+label="DecisionGraph-2"
+subgraph cluster_toplevel_18_091_19 {
+label="[#1]"; color="#AABBDD"; labeljust="l"
+_18_091_19[ fillcolor="#AADDAA" shape="rect" label="Set\nSubject=\{planet\}\n" ]
+_18_092_19[ shape="egg" label="consider\n" ]
+_18_093_19[ fillcolor="#AADDAA" shape="rect" label="Set\nX=\{a\}\n" ]
+_18_096_19[ shape="egg" label="consider\n" ]
+_18_097_19[ fillcolor="#AADDAA" shape="rect" label="Set\nX=\{c\}\n" ]
+_18_0910_19[ fillcolor="#000000" shape="point" width="0.2" fontcolor="#AAAAAA" label="x" height="0.2" ]
+_18_097_19 -> _18_0910_19
+_18_096_19 -> _18_097_19[ taillabel="Subject=\{world\}
+" ]
+_18_098_19[ fillcolor="#AADDAA" shape="rect" label="Set\nX=\{d\}\n" ]
+_18_098_19 -> _18_0910_19
+_18_096_19 -> _18_098_19[ taillabel="Subject=\{moon\}
+" ]
+_18_099_19[ fillcolor="#AADDAA" shape="rect" label="Set\nX=\{f\}\n" ]
+_18_099_19 -> _18_0910_19
+_18_096_19 -> _18_099_19[ taillabel="else" ]
+_18_093_19 -> _18_096_19
+_18_092_19 -> _18_093_19[ taillabel="Subject=\{planet\}
+" ]
+_18_094_19[ fillcolor="#AADDAA" shape="rect" label="Set\nX=\{b\}\n" ]
+_18_094_19 -> _18_096_19
+_18_092_19 -> _18_094_19[ taillabel="Subject=\{moon\}
+" ]
+_18_095_19[ fillcolor="#AADDAA" shape="rect" label="Set\nX=\{e\}\n" ]
+_18_095_19 -> _18_096_19
+_18_092_19 -> _18_095_19[ taillabel="else" ]
+_18_091_19 -> _18_092_19
+}
+}
+start -> _18_091_19[ penwidth="4.0" color="#008800" ]
+}

@@ -1,0 +1,45 @@
+digraph decisionGraph {
+fontname="Courier"
+graph[splines=ortho, nodesep=1, concentrate=true compound=true]
+edge [style=dotted arrowhead=open]
+node [shape=Mrecord fillcolor="#3B8298" style="filled" fontcolor=white color=white fontname="Helvetica" fontsize="10"]
+start[ fillcolor="transparent" shape="none" fontcolor="#3B8298" fontsize="12" ]
+subgraph cluster_DecisionGraph_172 {
+label="DecisionGraph-2"
+subgraph cluster__18_091_19 {
+label="[#1]"; color="#AABBDD"; labeljust="l"
+_18_091_19[ fillcolor="#77A576" label="Subject=\{planet\}\n" ]
+_18_092_19[ label="when" ]
+_18_092_19_1[ fillcolor="#515151" fontcolor="white" label="Subject=\{planet\}\n" ]
+_18_092_19 -> _18_092_19_1[ arrowhead="none" ]
+_18_093_19[ fillcolor="#77A576" label="X=\{a\}\n" ]
+_18_096_19[ label="when" ]
+_18_096_19_1[ fillcolor="#515151" fontcolor="white" label="Subject=\{world\}\n" ]
+_18_096_19 -> _18_096_19_1[ arrowhead="none" ]
+_18_097_19[ fillcolor="#77A576" label="X=\{c\}\n" ]
+_18_096_19_1 -> _18_097_19
+_18_096_19_2[ fillcolor="#515151" fontcolor="white" label="Subject=\{moon\}\n" ]
+_18_096_19 -> _18_096_19_2[ arrowhead="none" ]
+_18_098_19[ fillcolor="#77A576" label="X=\{d\}\n" ]
+_18_096_19_2 -> _18_098_19
+_18_096_19_ELSE[ fillcolor="#515151" fontcolor="white" label="else" ]
+_18_096_19 -> _18_096_19_ELSE[ arrowhead="none" ]
+_18_099_19[ fillcolor="#77A576" label="X=\{f\}\n" ]
+_18_096_19_ELSE -> _18_099_19
+_18_093_19 -> _18_096_19 [headport=ne]
+_18_092_19_1 -> _18_093_19
+_18_092_19_2[ fillcolor="#515151" fontcolor="white" label="Subject=\{moon\}\n" ]
+_18_092_19 -> _18_092_19_2[ arrowhead="none" ]
+_18_094_19[ fillcolor="#77A576" label="X=\{b\}\n" ]
+_18_094_19 -> _18_096_19 [headport=ne]
+_18_092_19_2 -> _18_094_19
+_18_092_19_ELSE[ fillcolor="#515151" fontcolor="white" label="else" ]
+_18_092_19 -> _18_092_19_ELSE[ arrowhead="none" ]
+_18_095_19[ fillcolor="#77A576" label="X=\{e\}\n" ]
+_18_095_19 -> _18_096_19 [headport=ne]
+_18_092_19_ELSE -> _18_095_19
+_18_091_19 -> _18_092_19
+}
+}
+start -> _18_091_19[ penwidth="1.0" color="#3B8298" style="solid" ]{rank=source; start}
+}

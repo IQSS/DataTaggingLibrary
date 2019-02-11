@@ -1,0 +1,41 @@
+digraph decisionGraph {
+edge [fontname="Helvetica" fontsize="10"]
+node [fillcolor="lightgray" style="filled" fontname="Helvetica" fontsize="10"]
+rankdir=LR
+graph [overlap=true ranksep=3]
+DataTags[label="DataTags" shape="octagon" peripheries="2"]
+Greeting[label="Greeting" shape="egg"]
+Greeting_ignore[label="ignore" shape="box"]
+Greeting_hi[label="hi" shape="box"]
+Greeting_hello[label="hello" shape="box"]
+Greeting__15hug_15[label="_hug_" shape="box"]
+Subject[label="Subject" shape="egg" peripheries="2"]
+Subject_world[label="world" shape="box"]
+Subject_planet[label="planet" shape="box"]
+Subject_moon[label="moon" shape="box"]
+Subject_unrecognizedOrbitingObject[label="unrecognizedOrbitingObject" shape="box"]
+X[label="X" shape="egg" peripheries="2"]
+X_a[label="a" shape="box"]
+X_b[label="b" shape="box"]
+X_c[label="c" shape="box"]
+X_d[label="d" shape="box"]
+X_e[label="e" shape="box"]
+X_f[label="f" shape="box"]
+DataTags -> Greeting
+Greeting -> Greeting_ignore
+Greeting -> Greeting_hi
+Greeting -> Greeting_hello
+Greeting -> Greeting__15hug_15
+DataTags -> Subject
+Subject -> Subject_world
+Subject -> Subject_planet
+Subject -> Subject_moon
+Subject -> Subject_unrecognizedOrbitingObject
+DataTags -> X
+X -> X_a
+X -> X_b
+X -> X_c
+X -> X_d
+X -> X_e
+X -> X_f
+}
