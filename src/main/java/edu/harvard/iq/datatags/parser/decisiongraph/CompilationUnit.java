@@ -1,7 +1,6 @@
 package edu.harvard.iq.datatags.parser.decisiongraph;
 
 import edu.harvard.iq.datatags.model.graphs.Answer;
-import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
@@ -297,7 +296,7 @@ public class CompilationUnit {
                                         }
                                     }
                                     CompoundValue answer = topValue;
-                                    res.setNodeFor(ConsiderOption.make(answer), buildNodes(astAns.getSubGraph(), syntacticallyNext));
+                                    res.setNodeFor(answer, buildNodes(astAns.getSubGraph(), syntacticallyNext));
                                 }
 
                             } else if (slot instanceof CompoundSlot) {
@@ -324,8 +323,8 @@ public class CompilationUnit {
                                         }
                                     }
                                     CompoundValue answer = topValue;
-                                    if (res.getNodeFor(ConsiderOption.make(answer)) == null) {
-                                        res.setNodeFor(ConsiderOption.make(answer), buildNodes(astAns.getSubGraph(), syntacticallyNext));
+                                    if (res.getNodeFor(answer) == null) {
+                                        res.setNodeFor(answer, buildNodes(astAns.getSubGraph(), syntacticallyNext));
                                     }
 
                                 }

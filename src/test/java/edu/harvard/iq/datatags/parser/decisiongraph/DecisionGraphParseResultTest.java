@@ -13,7 +13,6 @@ import edu.harvard.iq.datatags.model.slots.AtomicSlot;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
-import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
 import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
@@ -204,7 +203,7 @@ public class DecisionGraphParseResultTest {
         ((AggregateValue) tags.get(t2)).add(t2Items.valueOf("world"));
 
         ConsiderNode start = new ConsiderNode("1", whyNotCallNode);
-        start.setNodeFor(ConsiderOption.get(tags), whyNotCallNode2);
+        start.setNodeFor(tags, whyNotCallNode2);
         DecisionGraph expected = new DecisionGraph();
         expected.add(whyNotCallNode);
         expected.add(start);

@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.model.graphs.nodes;
 
-import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
+import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,8 +15,8 @@ import java.util.Objects;
  */
 public class ConsiderNode extends Node {
 
-    private final List<ConsiderOption> answers = new LinkedList<>();
-    private final Map<ConsiderOption, Node> nextNodeByAnswer = new HashMap<>();
+    private final List<CompoundValue> answers = new LinkedList<>();
+    private final Map<CompoundValue, Node> nextNodeByAnswer = new HashMap<>();
     private final Node elseNode;
 
     public ConsiderNode(String id, Node anElseNode) {
@@ -38,7 +38,7 @@ public class ConsiderNode extends Node {
      * @param node the node
      * @return {@code node}, for convenience, call chaining, etc.
      */
-    public <T extends Node> T setNodeFor(ConsiderOption answer, T node) {
+    public <T extends Node> T setNodeFor(CompoundValue answer, T node) {
         if ( ! answers.contains(answer) ) {
             answers.add(answer);
         }
@@ -46,7 +46,7 @@ public class ConsiderNode extends Node {
         return node;
     }
 
-    public Node getNodeFor(ConsiderOption answer) {
+    public Node getNodeFor(CompoundValue answer) {
         return nextNodeByAnswer.get(answer);
     }
 
@@ -55,7 +55,7 @@ public class ConsiderNode extends Node {
         return elseNode;
     }
 
-    public List<ConsiderOption> getAnswers() {
+    public List<CompoundValue> getAnswers() {
         return answers;
     }
     

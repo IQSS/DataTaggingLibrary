@@ -2,7 +2,6 @@ package edu.harvard.iq.datatags.tools.queries;
 
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.Answer;
-import edu.harvard.iq.datatags.model.graphs.ConsiderOption;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
@@ -89,11 +88,10 @@ public class FindSupertypeResultsDgq implements DecisionGraphQuery {
             if ( isDebugMode() ) dumpCurrentTrace();
             currentTrace.addLast( nd );
             boolean matchFound = false;
-            for (ConsiderOption ans : nd.getAnswers()) {
-                CompoundValue answer = ans.getValue();
+            for (CompoundValue answer : nd.getAnswers()) {
                 if (valueStack.peek().isSupersetOf(answer)) {
                     matchFound = true;
-                    nd.getNodeFor(ans).accept(this);
+                    nd.getNodeFor(answer).accept(this);
                 }
             }
             if ( ! matchFound ) {
