@@ -85,7 +85,7 @@ public class SetNodeValueBuilder implements AstSetNode.Assignment.Visitor {
         valueType.accept(new AbstractSlot.VoidVisitor() {
             @Override
             public void visitAtomicSlotImpl(AtomicSlot t) {
-                throw new RuntimeException("Slot " + aa.getSlot() + " is compound, not aggregate. Can't assign values here.");
+                throw new RuntimeException("Slot " + aa.getSlot() + " is atomic, not aggregate. Can't assign values here.");
             }
 
             @Override
