@@ -10,8 +10,8 @@ import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphClusteredVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizDecisionGraphF11Visualizer;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpacePathsVizualizer;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpaceVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizPolicySpacePathsVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizPolicySpaceTreeVisualizer;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -71,12 +71,12 @@ public class DecisionGraphCompiling {
         }
         
         PolicyModel model = loadRes.getModel();
-        GraphvizTagSpaceVisualizer tagViz = new GraphvizTagSpaceVisualizer(model.getSpaceRoot());
+        GraphvizPolicySpaceTreeVisualizer tagViz = new GraphvizPolicySpaceTreeVisualizer(model.getSpaceRoot());
         Path tagsOutPath = modelFile.resolveSibling(modelFile.getFileName().toString() + ".ps-plain.gv");
         System.out.println("Writing " + tagsOutPath);
         tagViz.vizualize(tagsOutPath);
         
-        GraphvizTagSpacePathsVizualizer tagPViz = new GraphvizTagSpacePathsVizualizer(model.getSpaceRoot());
+        GraphvizPolicySpacePathsVisualizer tagPViz = new GraphvizPolicySpacePathsVisualizer(model.getSpaceRoot());
         tagsOutPath = modelFile.resolveSibling(modelFile.getFileName().toString() + ".ps-paths.gv");
         System.out.println("Writing " + tagsOutPath);
         tagPViz.vizualize(tagsOutPath);

@@ -2,7 +2,9 @@ package edu.harvard.iq.datatags.cli.commands;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
 import edu.harvard.iq.datatags.cli.ProcessOutputDumper;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpacePathsVizualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizPolicySpacePathsVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizPolicySpaceTreeVisualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizVisualizer;
 import java.awt.Desktop;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -24,15 +26,19 @@ public class VisualizePolicySpaceCommand extends DotCommand {
     @Override
     public String description() {
         return "Creates a visualization of the policy space, as a tree. Users can provide additional parameter for the output file.\n"
+                + "Use -t for tree-like visualization.\n"
                 + "Requires graphviz (www.graphviz.org).";
     }
     
     @Override
     protected void executeWithDot(Path pathToDot, CliRunner rnr, List<String> args) throws Exception {
-        GraphvizTagSpacePathsVizualizer viz = new GraphvizTagSpacePathsVizualizer(rnr.getModel().getSpaceRoot());
+        boolean usingTreeViz = args.contains("-t");
+        GraphvizVisualizer viz = usingTreeViz
+                                        ? new GraphvizPolicySpaceTreeVisualizer(rnr.getModel().getSpaceRoot())
+                                        : new GraphvizPolicySpacePathsVisualizer(rnr.getModel().getSpaceRoot());
         
         Path outputPath;
-        outputPath = getOuputFilePath(rnr, args, rnr.getModel().getMetadata().getPolicySpacePath(), "-ps");
+        outputPath = getOuputFilePath(rnr, args, rnr.getModel().getMetadata().getPolicySpacePath(), (usingTreeViz?"-t":"")+"-ps");
         
         String[] fileNameComponents = outputPath.getFileName().toString().split("\\.");
         String fileExtension = (fileNameComponents.length>1)?fileNameComponents[fileNameComponents.length-1]:"pdf";

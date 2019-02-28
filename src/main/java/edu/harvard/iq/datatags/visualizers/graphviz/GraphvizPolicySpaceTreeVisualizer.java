@@ -14,11 +14,11 @@ import java.util.List;
  * Visualizes a {@link AbstractSlot} as a tree.
  * @author michael
  */
-public class GraphvizTagSpaceVisualizer extends GraphvizVisualizer {
+public class GraphvizPolicySpaceTreeVisualizer extends GraphvizVisualizer {
 	
 	private final AbstractSlot topLevel;
 
-	public GraphvizTagSpaceVisualizer(AbstractSlot topLevel) {
+	public GraphvizPolicySpaceTreeVisualizer(AbstractSlot topLevel) {
 		this.topLevel = topLevel;
 	}
 

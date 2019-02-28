@@ -17,11 +17,11 @@ import java.util.List;
  * Visualizes a tag space based on the qualified names, or paths, of each slot.
  * @author michael
  */
-public class GraphvizTagSpacePathsVizualizer extends GraphvizVisualizer {
+public class GraphvizPolicySpacePathsVisualizer extends GraphvizVisualizer {
 	
 	private final AbstractSlot topLevel;
 
-	public GraphvizTagSpacePathsVizualizer(AbstractSlot topLevel) {
+	public GraphvizPolicySpacePathsVisualizer(AbstractSlot topLevel) {
 		this.topLevel = topLevel;
 	}
 

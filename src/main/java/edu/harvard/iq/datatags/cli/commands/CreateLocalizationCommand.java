@@ -273,18 +273,14 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
             }
 
             @Override
-            public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {}
-            @Override
-            public void visitImpl(SetNode nd) throws DataTagsRuntimeException {}
-            @Override
-            public void visitImpl(CallNode nd) throws DataTagsRuntimeException {}
-            @Override
-            public void visitImpl(EndNode nd) throws DataTagsRuntimeException {}
-
-            @Override
             public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                createNodeLocalizationFile(nodesDir, nd, nd.getTitle());
             }
+
+            @Override public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {}
+            @Override public void visitImpl(SetNode nd)      throws DataTagsRuntimeException {}
+            @Override public void visitImpl(CallNode nd)     throws DataTagsRuntimeException {}
+            @Override public void visitImpl(EndNode nd)      throws DataTagsRuntimeException {}
         };
         
         
@@ -331,7 +327,7 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
     private void createLocalizedModel(CliRunner rnr) throws IOException {
         rnr.print(" - Creating "+LocalizationLoader.LOCALIZED_METADATA_FILENAME+" file");
         
-        try ( InputStream rIn=getClass().getResourceAsStream("localized-model-template.xml");
+        try ( InputStream rIn=getClass().getClassLoader().getResourceAsStream("localized-model-template.xml");
               BufferedReader rdr = new BufferedReader(new InputStreamReader(rIn)) 
         ) {
             List<String> xmlTemplate = new ArrayList<>(50);  

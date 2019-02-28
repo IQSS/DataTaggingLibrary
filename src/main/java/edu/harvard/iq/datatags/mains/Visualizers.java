@@ -4,7 +4,7 @@ import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
-import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizTagSpacePathsVizualizer;
+import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizPolicySpacePathsVisualizer;
 import edu.harvard.iq.datatags.visualizers.graphviz.GraphvizVisualizer;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -26,7 +26,7 @@ public class Visualizers {
         TagSpaceParser tagsParser = new TagSpaceParser();
         CompoundSlot baseType = tagsParser.parse(tagsFile).buildType("DataTags").get();
         
-        GraphvizVisualizer tagViz = new GraphvizTagSpacePathsVizualizer(baseType);
+        GraphvizVisualizer tagViz = new GraphvizPolicySpacePathsVisualizer(baseType);
         Path tagsOutPath = tagsFile.resolveSibling(tagsFile.getFileName().toString() + ".gv");
         System.out.println("Writing " + tagsOutPath );
 		tagViz.vizualize( tagsOutPath );

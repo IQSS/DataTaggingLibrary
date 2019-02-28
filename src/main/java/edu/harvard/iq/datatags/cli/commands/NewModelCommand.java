@@ -86,7 +86,7 @@ public class NewModelCommand extends AbstractCliCommand {
     
     private void createModel() throws IOException {
         // read the template
-        try ( InputStream rIn=getClass().getResourceAsStream("policy-model-template.xml");
+        try ( InputStream rIn=getClass().getClassLoader().getResourceAsStream("policy-model-template.xml");
               BufferedReader rdr = new BufferedReader(new InputStreamReader(rIn)) 
         ) {
             List<String> xmlTemplate = new ArrayList<>(50);  
