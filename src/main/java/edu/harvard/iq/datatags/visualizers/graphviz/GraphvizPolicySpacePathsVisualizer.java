@@ -10,8 +10,10 @@ import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Visualizes a tag space based on the qualified names, or paths, of each slot.
@@ -28,6 +30,7 @@ public class GraphvizPolicySpacePathsVisualizer extends GraphvizVisualizer {
 	@Override
 	void printHeader(PrintWriter out) throws IOException {
 		super.printHeader(out);
+        out.println("graph [concentrate=true]");
 		out.println();
 	}
 	
@@ -52,7 +55,7 @@ public class GraphvizPolicySpacePathsVisualizer extends GraphvizVisualizer {
                 t.getItemType().values().forEach( val -> {
                     String sValue = sTypeName+"_"+sanitizeId( val.getName() );
                     nodes.add( sValue + "[label=\""+val.getName()+"\" shape=\"egg\" fillcolor=\"#CCCCFF\"]");
-                    edges.add( sTypeName + ":n -> " + sValue + "[ dir=\"back\" style=\"dashed\"]"  );
+                    edges.add( sTypeName + " -> " + sValue + "[ dir=\"back\" style=\"dashed\"]"  );
                 });
 			}
 
@@ -73,19 +76,38 @@ public class GraphvizPolicySpacePathsVisualizer extends GraphvizVisualizer {
 
             private String makeHtml(AtomicSlot t) {
                 StringBuilder sb = new StringBuilder();
-                sb.append("<TABLE border=\"1\" cellborder=\"0\" cellspacing=\"0\" cellpadding=\"4\"><TR>");
-                sb.append("<TD>one of:</TD>");
+                
+                sb.append("<TABLE border=\"1\" cellborder=\"0\" cellspacing=\"0\" cellpadding=\"4\">");
+                
+                int totalCharacterCount = t.values().stream().mapToInt(v->v.getName().length()).sum();
+                int perRow = (totalCharacterCount>50) ? (int)Math.ceil(Math.sqrt(t.values().size())):Integer.MAX_VALUE;
+                
+                List<String> cells = new ArrayList<>(t.values().size()+1);
                 int startRGB[] = {200,200,255};
                 int endRGB[] = {255,80,80};
                 int step=0;
+                StringBuilder rowSb = new StringBuilder();
                 for ( AtomicValue at:t.values() ) {
                     String htmlCol = "#"+ mix(startRGB[0], endRGB[0], step, t.values().size())
                                         + mix(startRGB[1], endRGB[1], step, t.values().size())
                                         + mix(startRGB[2], endRGB[2], step, t.values().size());
-                    sb.append("<TD BGCOLOR=\"").append(htmlCol).append("\">").append(at.getName()).append("</TD>");
+                    rowSb.append("<TD BGCOLOR=\"").append(htmlCol).append("\">").append(at.getName()).append("</TD>");
                     step++;
+                    if ( step%perRow == 0 ) {
+                        cells.add(rowSb.toString());
+                        rowSb.setLength(0);
+                    }
                  }
-                sb.append("</TR></TABLE>");
+                if ( rowSb.length() > 0 ) {
+                    cells.add( rowSb.toString() );
+                }
+                if ( cells.size() == 1 ) {
+                    sb.append("<TR><TD>one of:</TD>");
+                } else {
+                    sb.append("<TR><TD rowspan=\"").append(cells.size()+1).append("\">one of:</TD></TR><TR>");
+                }
+                sb.append( cells.stream().collect(joining("</TR><TR>")) );
+                sb.append( "</TR></TABLE>" );
                 
                 return sb.toString();
             }
