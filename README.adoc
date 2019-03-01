@@ -34,4 +34,4 @@ decision graph runner].
 [NOTE]
 DataTags is part of the http://privacytools.seas.harvard.edu[Privacy
 Tools for Sharing Research Data] project. The code in this repository is
-a http://netbeans.org[NetBeans] project.
+a http://maven.apache.org[maven] project.
