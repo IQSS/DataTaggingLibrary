@@ -4,6 +4,8 @@ import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ContainerNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ContinueNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
@@ -111,7 +113,7 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
         
         Node.VoidVisitor remover = new Node.VoidVisitor() {
             @Override
-            public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
+            public void visitImpl(AskNode nd) {
                 nd.getAnswers().stream().map( nd::getNodeFor )
                                .forEach( ansNode -> { 
                                    candidates.remove(ansNode); 
@@ -120,7 +122,7 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
             }
 
             @Override
-            public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
+            public void visitImpl(ConsiderNode nd) {
                 nd.getAnswers().stream().map( nd::getNodeFor )
                                .forEach( ansNode -> { 
                                    candidates.remove(ansNode); 
@@ -133,7 +135,7 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
             }
 
             @Override
-            public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
+            public void visitImpl(SectionNode nd) {
                 candidates.remove(nd.getNextNode());
                 nd.getNextNode().accept(this);
                 
@@ -142,38 +144,39 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
             }
             
             @Override
-            public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
+            public void visitImpl(PartNode nd) {
                 candidates.remove(nd.getStartNode());
                 nd.getStartNode().accept(this);
             }
 
             /// Through nodes - remove next node, and then proceed using it
             @Override
-            public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
+            public void visitImpl(SetNode nd) {
                 candidates.remove(nd.getNextNode());
                 nd.getNextNode().accept(this);
             }
 
             @Override
-            public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
+            public void visitImpl(CallNode nd){
                 candidates.remove(nd.getNextNode());
                 nd.getNextNode().accept(this);
             }
 
             @Override
-            public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
+            public void visitImpl(ToDoNode nd){
                 candidates.remove(nd.getNextNode());
                 nd.getNextNode().accept(this);
             }
             
             /// Terminal nodes - Nothing to do.
             @Override
-            public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-            }
+            public void visitImpl(RejectNode nd) {}
 
             @Override
-            public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
-            }
+            public void visitImpl(EndNode nd) {}
+            
+            @Override
+            public void visitImpl(ContinueNode nd ) {}
 
         };
         
@@ -190,7 +193,13 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
         for ( Node nd : getDecisionGraph().nodes() ) {
             if ( nd instanceof CallNode ) {
                 CallNode cn = (CallNode) nd;
-                out.println( GvEdge.edge(nodeId(cn), nodeId(cn.getCalleeNode())).gv() );
+                Node dest = cn.getCalleeNode();
+                if ( dest instanceof PartNode ) {
+                    dest = ((PartNode)dest).getStartNode();
+                }
+                if ( dest != null ) {
+                    out.println( makeEdge(cn, dest).add("lhead", "cluster_" + sanitizeId(cn.getCalleeNode().getId())).gv() );   
+                }                
             }
         }
     }
@@ -211,7 +220,27 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
         return s.replaceAll("\\\\", "\\\\\\\\").replaceAll("\\[", "").replaceAll("]","/");
     }
     
+    GvEdge makeEdge( Node from, Node to ) {
+        GvEdge edge = new GvEdge(sanitizeId(from.getId()), sanitizeId(to.getId()));
+        if ( to instanceof SectionNode ) {
+            edge = new GvEdge(sanitizeId(from.getId()), sanitizeId(((SectionNode) to).getStartNode().getId()));
+            edge.add("lhead", "cluster_" + sanitizeId(to.getId()) );
+        }
+        
+        return edge;
+    }
+    
     protected String makeSameRank( Set<Node> nodes ) {
-        return nodes.stream().map( nd->sanitizeId(nd.getId()) ).collect( joining(",", "{rank=same ", "}"));
+        return nodes.stream()
+                    .map( nd->getFirstNonContainerNode(nd))
+                    .map( nd->sanitizeId(nd.getId()) )
+                    .collect( joining(",", "{rank=same ", "}"));
+    }
+    
+    protected Node getFirstNonContainerNode( Node nd ) {
+        while ( nd instanceof ContainerNode ) {
+            nd = ((ContainerNode)nd).getStartNode();
+        }
+        return nd;
     }
 }

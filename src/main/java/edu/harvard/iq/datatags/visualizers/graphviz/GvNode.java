@@ -59,6 +59,14 @@ public class GvNode extends GvObject<GvNode> {
         return add("width", Double.toString(sz) );
     }
     
+    public GvNode height( double sz ) {
+        return add("height", Double.toString(sz) );
+    }
+    
+    public GvNode hidden() {
+        return shape(Shape.none).label("").width(0).height(0).fillColor("transparent");
+    }
+    
     @Override
     protected String gvTitle() {
         return sanitizeId(id);

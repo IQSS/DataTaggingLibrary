@@ -1,14 +1,13 @@
 package edu.harvard.iq.datatags.model.graphs.nodes;
 
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
-import java.util.List;
 import java.util.Objects;
 
 /**
- * TODO: Add
+ * A node that logically groups part of the interview.
  * @author michael
  */
-public class SectionNode extends ThroughNode{
+public class SectionNode extends ThroughNode implements ContainerNode {
     
     private String title;
     
@@ -42,6 +41,7 @@ public class SectionNode extends ThroughNode{
         this.title = title;
     }
 
+    @Override
     public Node getStartNode() {
         return startNode;
     }

@@ -1,5 +1,7 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
+
 /**
  * An edge in GraphViz.
  * 

@@ -1,0 +1,169 @@
+digraph decisionGraph {
+fontname="Courier"
+graph[splines=ortho, nodesep=1, concentrate=true compound=true]
+edge [style=dotted arrowhead=open]
+node [shape=Mrecord fillcolor="#3B8298" style="filled" fontcolor=white color=white fontname="Helvetica" fontsize="10"]
+NODE___________START_[ fillcolor="transparent" shape="none" fontcolor="#3B8298" fontsize="12" label="Start" ]
+subgraph cluster_DecisionGraph_2d1 {
+label=""
+_5bgraph_2edg_5dcats[ label="graph.dg/cats\n" ]
+subgraph cluster_part__5bgraph_2edg_5dcats{ 
+label="Part "
+_5bgraph_2edg_5dsec_3acats[ label="graph.dg/sec:cats\nCats" ]
+subgraph cluster_section__5bgraph_2edg_5dsec_3acats{ 
+label="Section Cats"
+_5bgraph_2edg_5dq_3acats_3agroup[ label="graph.dg/q:cats:group\nWhat cats?" ]
+_5bgraph_2edg_5dq_3acats_3agroup_to__5bgraph_2edg_5d_5b_2313_5d[ fillcolor="#3B8298" shape="circle" width="0.7" fontcolor="white" label="all" ]
+_5bgraph_2edg_5dq_3acats_3agroup -> _5bgraph_2edg_5dq_3acats_3agroup_to__5bgraph_2edg_5d_5b_2313_5d[ arrowhead="none" ]
+_5bgraph_2edg_5d_5b_2313_5d[ fillcolor="#77A576" label="Cats=\{Tom,Shmil,Mitzi\}\n" ]
+_5bgraph_2edg_5d_5b_2313_5d -> _5bgraph_2edg_5dsec_3acats_5f_5bCNT_5d
+_5bgraph_2edg_5dq_3acats_3agroup_to__5bgraph_2edg_5d_5b_2313_5d -> _5bgraph_2edg_5d_5b_2313_5d
+_5bgraph_2edg_5dq_3acats_3agroup_to__5bgraph_2edg_5d_5b_2314_5d[ fillcolor="#3B8298" shape="circle" width="0.7" fontcolor="white" label="some" ]
+_5bgraph_2edg_5dq_3acats_3agroup -> _5bgraph_2edg_5dq_3acats_3agroup_to__5bgraph_2edg_5d_5b_2314_5d[ arrowhead="none" ]
+_5bgraph_2edg_5d_5b_2314_5d[ fillcolor="#77A576" label="Cats=\{Tom,Shmil\}\n" ]
+_5bgraph_2edg_5d_5b_2314_5d -> _5bgraph_2edg_5dsec_3acats_5f_5bCNT_5d
+_5bgraph_2edg_5dq_3acats_3agroup_to__5bgraph_2edg_5d_5b_2314_5d -> _5bgraph_2edg_5d_5b_2314_5d
+_5bgraph_2edg_5dq_3acats_3agroup_to__5bgraph_2edg_5d_5b_2315_5d[ fillcolor="#3B8298" shape="circle" width="0.7" fontcolor="white" label="none" ]
+_5bgraph_2edg_5dq_3acats_3agroup -> _5bgraph_2edg_5dq_3acats_3agroup_to__5bgraph_2edg_5d_5b_2315_5d[ arrowhead="none" ]
+_5bgraph_2edg_5d_5b_2315_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nPlaceholder" ]
+_5bgraph_2edg_5d_5b_2315_5d -> _5bgraph_2edg_5dsec_3acats_5f_5bCNT_5d
+_5bgraph_2edg_5dq_3acats_3agroup_to__5bgraph_2edg_5d_5b_2315_5d -> _5bgraph_2edg_5d_5b_2315_5d
+}
+_5bgraph_2edg_5dsec_3acats -> _5bgraph_2edg_5dq_3acats_3agroup
+_5bgraph_2edg_5ddog_5fsection_5fset[ fillcolor="#77A576" label="graph.dg/dog_section_set\nSetCats=cWorks\n" ]
+_5bgraph_2edg_5dq_3acats_3agroup -> _5bgraph_2edg_5ddog_5fsection_5fset [ltail=cluster_section__5bgraph_2edg_5dsec_3acats]
+}
+_5bgraph_2edg_5dcats -> _5bgraph_2edg_5dsec_3acats
+_5bgraph_2edg_5ddogs[ label="graph.dg/dogs\n" ]
+subgraph cluster_part__5bgraph_2edg_5ddogs{ 
+label="Part "
+_5bgraph_2edg_5dsec_3adogs[ label="graph.dg/sec:dogs\nDogs!" ]
+subgraph cluster_section__5bgraph_2edg_5dsec_3adogs{ 
+label="Section Dogs!"
+_5bgraph_2edg_5dq_2ddogType[ label="graph.dg/q-dogType\nWhat type of dogs?" ]
+_5bgraph_2edg_5dq_2ddogType_to__5bgraph_2edg_5dsec_3adogs_5f_5bCNT_5d[ fillcolor="#3B8298" shape="circle" width="0.7" fontcolor="white" label="none" ]
+_5bgraph_2edg_5dq_2ddogType -> _5bgraph_2edg_5dq_2ddogType_to__5bgraph_2edg_5dsec_3adogs_5f_5bCNT_5d[ arrowhead="none" ]
+_5bgraph_2edg_5dq_2ddogType_to__5bgraph_2edg_5dsec_3adogs_5f_5bCNT_5d -> _5bgraph_2edg_5dsec_3adogs_5f_5bCNT_5d
+_5bgraph_2edg_5dq_2ddogType_to__5bgraph_2edg_5d_5b_2310_5d[ fillcolor="#3B8298" shape="circle" width="0.7" fontcolor="white" label="animated" ]
+_5bgraph_2edg_5dq_2ddogType -> _5bgraph_2edg_5dq_2ddogType_to__5bgraph_2edg_5d_5b_2310_5d[ arrowhead="none" ]
+_5bgraph_2edg_5d_5b_2310_5d[ fillcolor="#77A576" label="Dogs=\{Pluto\}\n" ]
+_5bgraph_2edg_5d_5b_2310_5d -> _5bgraph_2edg_5dsec_3adogs_5f_5bCNT_5d
+_5bgraph_2edg_5dq_2ddogType_to__5bgraph_2edg_5d_5b_2310_5d -> _5bgraph_2edg_5d_5b_2310_5d
+_5bgraph_2edg_5dq_2ddogType_to__5bgraph_2edg_5d_5b_2311_5d[ fillcolor="#3B8298" shape="circle" width="0.7" fontcolor="white" label="cute" ]
+_5bgraph_2edg_5dq_2ddogType -> _5bgraph_2edg_5dq_2ddogType_to__5bgraph_2edg_5d_5b_2311_5d[ arrowhead="none" ]
+_5bgraph_2edg_5d_5b_2311_5d[ fillcolor="#77A576" label="Dogs=\{Rex,Lassie\}\n" ]
+_5bgraph_2edg_5d_5b_2311_5d -> _5bgraph_2edg_5dsec_3adogs_5f_5bCNT_5d
+_5bgraph_2edg_5dq_2ddogType_to__5bgraph_2edg_5d_5b_2311_5d -> _5bgraph_2edg_5d_5b_2311_5d
+_5bgraph_2edg_5dq_2ddogType_to__5bgraph_2edg_5d_5b_2312_5d[ fillcolor="#3B8298" shape="circle" width="0.7" fontcolor="white" label="hounds" ]
+_5bgraph_2edg_5dq_2ddogType -> _5bgraph_2edg_5dq_2ddogType_to__5bgraph_2edg_5d_5b_2312_5d[ arrowhead="none" ]
+_5bgraph_2edg_5d_5b_2312_5d[ fillcolor="#77A576" label="Dogs=\{Pluto,Lassie\}\n" ]
+_5bgraph_2edg_5d_5b_2312_5d -> _5bgraph_2edg_5dsec_3adogs_5f_5bCNT_5d
+_5bgraph_2edg_5dq_2ddogType_to__5bgraph_2edg_5d_5b_2312_5d -> _5bgraph_2edg_5d_5b_2312_5d
+}
+_5bgraph_2edg_5dsec_3adogs -> _5bgraph_2edg_5dq_2ddogType
+dog_5fsection_5fset[ fillcolor="#77A576" label="dog_section_set\nSetDogs=dWorks\n" ]
+_5bgraph_2edg_5dq_2ddogType -> dog_5fsection_5fset [ltail=cluster_section__5bgraph_2edg_5dsec_3adogs]
+}
+_5bgraph_2edg_5ddogs -> _5bgraph_2edg_5dsec_3adogs
+_5bgraph_2edg_5dq_2dorder[ label="graph.dg/q-order\nDo the dogs first?" ]
+_5bgraph_2edg_5dq_2dorder_to__5bgraph_2edg_5d_5b_231_5d[ fillcolor="white" shape="circle" color="#515151" width="0.7" fontcolor="#515151" style="dashed" label="Yes" ]
+_5bgraph_2edg_5dq_2dorder -> _5bgraph_2edg_5dq_2dorder_to__5bgraph_2edg_5d_5b_231_5d[ arrowhead="none" ]
+_5bgraph_2edg_5d_5b_231_5d[ fillcolor="#BBBBFF" shape="cds" label="graph.dg/dogs" ]
+_5bgraph_2edg_5ddogs[ label="graph.dg/dogs\n" ]
+subgraph cluster_part__5bgraph_2edg_5ddogs{ 
+label="Part "
+}
+_5bgraph_2edg_5ddogs -> _5bgraph_2edg_5dsec_3adogs
+_5bgraph_2edg_5d_5b_232_5d[ fillcolor="#BBBBFF" shape="cds" label="graph.dg/cats" ]
+_5bgraph_2edg_5dcats[ label="graph.dg/cats\n" ]
+subgraph cluster_part__5bgraph_2edg_5dcats{ 
+label="Part "
+}
+_5bgraph_2edg_5dcats -> _5bgraph_2edg_5dsec_3acats
+_5bgraph_2edg_5d_5b_235_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nspecify mice" ]
+_5bgraph_2edg_5dsec_2dfrogs[ label="graph.dg/sec-frogs\nAdd frogs" ]
+subgraph cluster_section__5bgraph_2edg_5dsec_2dfrogs{ 
+label="Section Add frogs"
+_5bgraph_2edg_5d_5b_236_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nAdd frog 1" ]
+_5bgraph_2edg_5d_5b_237_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nAdd frog 2" ]
+_5bgraph_2edg_5d_5b_237_5d -> _5bgraph_2edg_5dsec_2dfrogs_5f_5bCNT_5d
+_5bgraph_2edg_5d_5b_236_5d -> _5bgraph_2edg_5d_5b_237_5d
+}
+_5bgraph_2edg_5dsec_2dfrogs -> _5bgraph_2edg_5d_5b_236_5d
+_5bgraph_2edg_5d_5b_238_5d[ fillcolor="#77A576" label="Rice=Full\n" ]
+_5bgraph_2edg_5d_5b_239_5d[ fillcolor="#BBBBFF" shape="cds" label="graph.dg/metadata" ]
+_5bgraph_2edg_5dmetadata[ label="graph.dg/metadata\nMetadata part" ]
+subgraph cluster_part__5bgraph_2edg_5dmetadata{ 
+label="Part Metadata part"
+_5bgraph_2edg_5d_5b_2316_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nStart this section" ]
+_5bgraph_2edg_5dsec_3am1[ label="graph.dg/sec:m1\nmetadata one" ]
+subgraph cluster_section__5bgraph_2edg_5dsec_3am1{ 
+label="Section metadata one"
+m1a[ label="m1a\naaa?" ]
+m1a_to__5bgraph_2edg_5d_5b_2317_5d[ fillcolor="#3B8298" shape="circle" width="0.7" fontcolor="white" label="a" ]
+m1a -> m1a_to__5bgraph_2edg_5d_5b_2317_5d[ arrowhead="none" ]
+_5bgraph_2edg_5d_5b_2317_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\naaa" ]
+_5bgraph_2edg_5d_5b_2317_5d -> _5bgraph_2edg_5dsec_3am1_5f_5bCNT_5d
+m1a_to__5bgraph_2edg_5d_5b_2317_5d -> _5bgraph_2edg_5d_5b_2317_5d
+m1a_to__5bgraph_2edg_5d_5b_2318_5d[ fillcolor="#3B8298" shape="circle" width="0.7" fontcolor="white" label="b" ]
+m1a -> m1a_to__5bgraph_2edg_5d_5b_2318_5d[ arrowhead="none" ]
+_5bgraph_2edg_5d_5b_2318_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nbbb" ]
+_5bgraph_2edg_5d_5b_2319_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nccc" ]
+_5bgraph_2edg_5d_5b_2319_5d -> _5bgraph_2edg_5dsec_3am1_5f_5bCNT_5d
+_5bgraph_2edg_5d_5b_2318_5d -> _5bgraph_2edg_5d_5b_2319_5d
+m1a_to__5bgraph_2edg_5d_5b_2318_5d -> _5bgraph_2edg_5d_5b_2318_5d
+}
+_5bgraph_2edg_5dsec_3am1 -> m1a
+_5bgraph_2edg_5dsec_3am2[ label="graph.dg/sec:m2\nmetadata too" ]
+subgraph cluster_section__5bgraph_2edg_5dsec_3am2{ 
+label="Section metadata too"
+_5bgraph_2edg_5dm1a[ label="graph.dg/m1a\nxxx?" ]
+_5bgraph_2edg_5dm1a_to__5bgraph_2edg_5d_5b_2320_5d[ fillcolor="#3B8298" shape="circle" width="0.7" fontcolor="white" label="x" ]
+_5bgraph_2edg_5dm1a -> _5bgraph_2edg_5dm1a_to__5bgraph_2edg_5d_5b_2320_5d[ arrowhead="none" ]
+_5bgraph_2edg_5d_5b_2320_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nxxx" ]
+_5bgraph_2edg_5d_5b_2320_5d -> _5bgraph_2edg_5dsec_3am2_5f_5bCNT_5d
+_5bgraph_2edg_5dm1a_to__5bgraph_2edg_5d_5b_2320_5d -> _5bgraph_2edg_5d_5b_2320_5d
+_5bgraph_2edg_5dm1a_to__5bgraph_2edg_5d_5b_2321_5d[ fillcolor="#3B8298" shape="circle" width="0.7" fontcolor="white" label="y" ]
+_5bgraph_2edg_5dm1a -> _5bgraph_2edg_5dm1a_to__5bgraph_2edg_5d_5b_2321_5d[ arrowhead="none" ]
+_5bgraph_2edg_5d_5b_2321_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nyyy" ]
+_5bgraph_2edg_5d_5b_2322_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nzzz" ]
+_5bgraph_2edg_5d_5b_2322_5d -> _5bgraph_2edg_5dsec_3am2_5f_5bCNT_5d
+_5bgraph_2edg_5d_5b_2321_5d -> _5bgraph_2edg_5d_5b_2322_5d
+_5bgraph_2edg_5dm1a_to__5bgraph_2edg_5d_5b_2321_5d -> _5bgraph_2edg_5d_5b_2321_5d
+_5bgraph_2edg_5dm1a_to__5bgraph_2edg_5d_5b_2323_5d[ fillcolor="#3B8298" shape="circle" width="0.7" fontcolor="white" label="z" ]
+_5bgraph_2edg_5dm1a -> _5bgraph_2edg_5dm1a_to__5bgraph_2edg_5d_5b_2323_5d[ arrowhead="none" ]
+_5bgraph_2edg_5d_5b_2323_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nqqq" ]
+_5bgraph_2edg_5d_5b_2324_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\nwww" ]
+_5bgraph_2edg_5d_5b_2325_5d[ fillcolor="#AAFFAA" shape="note" fontcolor="#888888" label="todo\neee" ]
+_5bgraph_2edg_5d_5b_2325_5d -> _5bgraph_2edg_5dsec_3am2_5f_5bCNT_5d
+_5bgraph_2edg_5d_5b_2324_5d -> _5bgraph_2edg_5d_5b_2325_5d
+_5bgraph_2edg_5d_5b_2323_5d -> _5bgraph_2edg_5d_5b_2324_5d
+_5bgraph_2edg_5dm1a_to__5bgraph_2edg_5d_5b_2323_5d -> _5bgraph_2edg_5d_5b_2323_5d
+}
+_5bgraph_2edg_5dsec_3am2 -> _5bgraph_2edg_5dm1a
+m1a -> _5bgraph_2edg_5dsec_3am2 [ltail=cluster_section__5bgraph_2edg_5dsec_3am1]
+_5bgraph_2edg_5d_5b_2316_5d -> _5bgraph_2edg_5dsec_3am1
+}
+_5bgraph_2edg_5dmetadata -> _5bgraph_2edg_5d_5b_2316_5d
+_5bgraph_2edg_5d_5b_238_5d -> _5bgraph_2edg_5d_5b_239_5d
+_5bgraph_2edg_5d_5b_236_5d -> _5bgraph_2edg_5d_5b_238_5d [ltail=cluster_section__5bgraph_2edg_5dsec_2dfrogs]
+_5bgraph_2edg_5d_5b_235_5d -> _5bgraph_2edg_5dsec_2dfrogs
+_5bgraph_2edg_5d_5b_232_5d -> _5bgraph_2edg_5d_5b_235_5d
+_5bgraph_2edg_5d_5b_231_5d -> _5bgraph_2edg_5d_5b_232_5d
+_5bgraph_2edg_5dq_2dorder_to__5bgraph_2edg_5d_5b_231_5d -> _5bgraph_2edg_5d_5b_231_5d
+_5bgraph_2edg_5dq_2dorder_to__5bgraph_2edg_5d_5b_233_5d[ fillcolor="#515151" shape="circle" width="0.7" fontcolor="white" label="No" ]
+_5bgraph_2edg_5dq_2dorder -> _5bgraph_2edg_5dq_2dorder_to__5bgraph_2edg_5d_5b_233_5d[ arrowhead="none" ]
+_5bgraph_2edg_5d_5b_233_5d[ fillcolor="#BBBBFF" shape="cds" label="graph.dg/cats" ]
+_5bgraph_2edg_5d_5b_234_5d[ fillcolor="#BBBBFF" shape="cds" label="graph.dg/dogs" ]
+_5bgraph_2edg_5d_5b_234_5d -> _5bgraph_2edg_5d_5b_235_5d
+_5bgraph_2edg_5d_5b_233_5d -> _5bgraph_2edg_5d_5b_234_5d
+_5bgraph_2edg_5dq_2dorder_to__5bgraph_2edg_5d_5b_233_5d -> _5bgraph_2edg_5d_5b_233_5d
+_5bgraph_2edg_5dmetadata[ label="graph.dg/metadata\nMetadata part" ]
+subgraph cluster_part__5bgraph_2edg_5dmetadata{ 
+label="Part Metadata part"
+}
+_5bgraph_2edg_5dmetadata -> _5bgraph_2edg_5d_5b_2316_5d
+{rank=same _5bgraph_2edg_5dq_3acats_3agroup,_5bgraph_2edg_5dq_2ddogType,_5bgraph_2edg_5dq_2dorder,_5bgraph_2edg_5d_5b_2316_5d}
+}
+NODE___________START_ -> _5bgraph_2edg_5dq_2dorder[ penwidth="1.0" color="#3B8298" style="solid" ]{rank=source; NODE___________START_}
+}

@@ -10,6 +10,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ContinueNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.slots.AbstractSlot;
@@ -270,6 +271,11 @@ public class EagerSetCallsOptimizer implements DecisionGraphProcessor {
             public Conclusion visitImpl(EndNode nd) throws DataTagsRuntimeException {
                 return null;
             }
+            
+            @Override
+            public Conclusion visitImpl(ContinueNode nd) throws DataTagsRuntimeException {
+                return null;
+            }
 
             @Override
             public Conclusion visit(ConsiderNode nd) throws DataTagsRuntimeException {
@@ -381,13 +387,19 @@ public class EagerSetCallsOptimizer implements DecisionGraphProcessor {
         public Conclusion visit(EndNode nd) throws DataTagsRuntimeException {
             return visitImpl(nd);
         }
+        
+        @Override
+        public Conclusion visit(ContinueNode nd) throws DataTagsRuntimeException {
+            return visitImpl(nd);
+        }
 
-        public abstract Conclusion visitImpl( AskNode nd    ) throws DataTagsRuntimeException;
-        public abstract Conclusion visitImpl( SetNode nd    ) throws DataTagsRuntimeException;
-        public abstract Conclusion visitImpl( RejectNode nd ) throws DataTagsRuntimeException;
-        public abstract Conclusion visitImpl( CallNode nd   ) throws DataTagsRuntimeException;
-        public abstract Conclusion visitImpl( ToDoNode nd   ) throws DataTagsRuntimeException;
-        public abstract Conclusion visitImpl( EndNode nd    ) throws DataTagsRuntimeException;
+        public abstract Conclusion visitImpl( AskNode nd      ) throws DataTagsRuntimeException;
+        public abstract Conclusion visitImpl( SetNode nd      ) throws DataTagsRuntimeException;
+        public abstract Conclusion visitImpl( RejectNode nd   ) throws DataTagsRuntimeException;
+        public abstract Conclusion visitImpl( CallNode nd     ) throws DataTagsRuntimeException;
+        public abstract Conclusion visitImpl( ToDoNode nd     ) throws DataTagsRuntimeException;
+        public abstract Conclusion visitImpl( EndNode nd      ) throws DataTagsRuntimeException;
+        public abstract Conclusion visitImpl( ContinueNode nd ) throws DataTagsRuntimeException;
 
     }
 }

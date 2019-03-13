@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.harvard.iq.datatags.model.graphs.nodes;
 
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
@@ -12,7 +7,7 @@ import java.util.Objects;
  *
  * @author mor
  */
-public class PartNode extends Node{
+public class PartNode extends Node  implements ContainerNode {
 
     private String title;
     private Node startNode;
@@ -40,6 +35,7 @@ public class PartNode extends Node{
         this.title = title;
     }
 
+    @Override
     public Node getStartNode() {
         return startNode;
     }

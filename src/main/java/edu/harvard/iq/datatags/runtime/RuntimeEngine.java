@@ -12,6 +12,7 @@ import edu.harvard.iq.datatags.io.StringMapFormat;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ContinueNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ThroughNode;
@@ -150,22 +151,31 @@ import java.util.concurrent.atomic.AtomicInteger;
             return calleeNode;
         }
 
+        /**
+         * Pop out from the topmost {@code [call]}.
+         */
         @Override
         public Node visit(EndNode nd) throws DataTagsRuntimeException {
-            if (stack.isEmpty()) {
-                setStatus(RuntimeEngineStatus.Accept);
-                return null;
-            } else {
-                ThroughNode node = stack.pop();
-                if (node instanceof SectionNode){
-                    listener.ifPresent(l -> l.sectionEnded(RuntimeEngine.this, node));
-                }
-                if (stack.peek() instanceof CallNode){
-                    return stack.pop().getNextNode();
+            while ( ! stack.isEmpty() ) {
+                if ( stack.peek() instanceof SectionNode ) {
+                    // dispose sections
+                    stack.pop();
                 } else {
-                    return node.getNextNode();
+                    // got to the called node.
+                    return stack.pop().getNextNode();
                 }
             }
+            // if we got here, the stack is empty and so the run is over.
+            setStatus(RuntimeEngineStatus.Accept);
+            return null;
+        }
+        
+        /**
+         * Skip rest of current section, and continue to the node after it.
+         */
+        @Override
+        public Node visit( ContinueNode nd ) throws DataTagsRuntimeException {
+            return stack.pop().getNextNode();
         }
         
         @Override

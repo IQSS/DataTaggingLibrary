@@ -3,6 +3,7 @@ package edu.harvard.iq.datatags.cli;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ContinueNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
@@ -85,6 +86,12 @@ public class VerboseNodePrinter extends Node.VoidVisitor {
     @Override
     public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
         rnr.printTitle("Node >%s<: [end]", nd.getId());
+        rnr.println();
+    }
+    
+    @Override
+    public void visitImpl(ContinueNode nd) throws DataTagsRuntimeException {
+        rnr.printTitle("Node >%s<: [continue]", nd.getId());
         rnr.println();
     }
     

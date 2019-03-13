@@ -17,3 +17,4 @@ DataTagsWebApp/scripts/vars.sh
 /DataTagsLib/WORK/**/*.pdf
 /DataTagsLib/WORK/**/*.gv
 /DataTagsWebApp/datatags-app-nb/datatags-app/nbproject/private/
+/nbproject/

@@ -5,6 +5,7 @@ import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ContinueNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
@@ -32,7 +33,6 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.NodeIdAdder;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
 import edu.harvard.iq.datatags.parser.exceptions.BadLookupException;
-import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
@@ -250,7 +250,7 @@ public class CompilationUnit {
         try {
             return astNodes.isEmpty()
                     ? defaultNode
-                    : C.head(astNodes).accept(new AstNode.Visitor<Node>() {   // TODO this creates an instance for each node. Can't we re-use it?
+                    : C.head(astNodes).accept(new AstNode.Visitor<Node>() {   
 
                         @Override
                         // build consider node from ast-consider-node 
@@ -367,11 +367,8 @@ public class CompilationUnit {
                                 astNode.getAssignments().forEach(asnmnt -> asnmnt.accept(valueBuilder));
                             } catch (RuntimeException re) {
                                 if ( re.getCause() instanceof BadLookupException ) {
-                                    //validationMessages.add(new ValidationMessage(Level.ERROR, "Duplicate import name " + e.getKey() + ", at path - "  + sourcePath)))
-//                                    throw new RuntimeException(new BadSetInstructionException(re.getMessage() + " (at node " + astNode + ")", astNode, (BadLookupException) re.getCause()));
                                     validationMessages.add(new ValidationMessage(Level.ERROR,re.getMessage() + " (at node " + astNode + ")"));
                                 } else {
-//                                    throw new RuntimeException(new BadSetInstructionException(re.getMessage() + " (at node " + astNode + ")", astNode));
                                     validationMessages.add(new ValidationMessage(Level.ERROR,re.getMessage() + " (at node " + astNode + ")"));
                                 }
                             }
@@ -403,9 +400,9 @@ public class CompilationUnit {
                         @Override
                         public Node visit(AstSectionNode astNode) {
                             final SectionNode sectionNode = new SectionNode(astNode.getId(), astNode.getInfo() != null ? astNode.getInfo().getText() : "");
-                            Node startNode = buildNodes(astNode.getAstNodes(), endAll);
-                            sectionNode.setStartNode(startNode);
                             sectionNode.setNextNode(buildNodes(C.tail(astNodes), defaultNode));
+                            sectionNode.setStartNode(buildNodes(astNode.getAstNodes(), new ContinueNode(sectionNode.getId()+"_[CNT]")));
+                            
                             return product.add(sectionNode);
                         }
                         
@@ -417,8 +414,8 @@ public class CompilationUnit {
                             buildNodes(C.tail(astNodes), defaultNode);
                             return product.add(partNode);
                         }
-
                     });
+            
         } catch (RuntimeException re) {
             Throwable cause = re.getCause();
             if ((cause != null) && (cause instanceof DataTagsParseException)) {

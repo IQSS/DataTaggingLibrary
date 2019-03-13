@@ -31,6 +31,8 @@ public abstract class Node {
         R visit(ToDoNode nd) throws DataTagsRuntimeException;
 
         R visit(EndNode nd) throws DataTagsRuntimeException;
+        
+        R visit(ContinueNode nd)  throws DataTagsRuntimeException;
 
         
     }
@@ -91,6 +93,11 @@ public abstract class Node {
             return null;
         }
         
+        @Override
+        public Void visit(ContinueNode nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
 
         public abstract void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException;
 
@@ -109,6 +116,8 @@ public abstract class Node {
         public abstract void visitImpl(ToDoNode nd) throws DataTagsRuntimeException;
 
         public abstract void visitImpl(EndNode nd) throws DataTagsRuntimeException;
+        
+        public abstract void visitImpl(ContinueNode nd) throws DataTagsRuntimeException;
         
     }
 
@@ -156,8 +165,5 @@ public abstract class Node {
     public void setCuPath(Path cuPath) {
         this.cuPath = cuPath;
     }
-    
-    
-    
-    
+
 }

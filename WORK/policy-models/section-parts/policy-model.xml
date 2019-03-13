@@ -1,0 +1,16 @@
+<policy-model>
+  <title>Sections and Parts</title>
+  <subtitle>See how to logically and semantically group nodes</subtitle>
+  <version doi="xyz">0.4</version>
+  <date>2019-03-13</date>
+  <keywords>policy model, section, nodes, parts</keywords><!-- suggested keywords list here. -->
+  <authors>
+    <person orcid="123-2345-67890" url="test.com">
+      <name>Dane Joe</name>
+    </person>
+  </authors>
+  <model answers-order="yes-first">
+    <space root="Base">definitions.ts</space>
+    <graph>graph.dg</graph>
+  </model>
+</policy-model>

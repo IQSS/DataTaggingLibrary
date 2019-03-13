@@ -133,7 +133,7 @@ public class FindSupertypeResultsDgqTest {
         assertEquals("runs",1, missCount+foundCount);
     }
     
-    
+    @Ignore("See #202")
     @Test
     public void testSanitySection() throws DataTagsParseException, IOException {
         System.out.println("testGet");
@@ -171,6 +171,7 @@ public class FindSupertypeResultsDgqTest {
         assertEquals("runs",1, missCount+foundCount);
     }
     
+    @Ignore("See #202")
     @Test
     public void testSanitySection2() throws DataTagsParseException, IOException {
         System.out.println("testGet");
@@ -466,6 +467,7 @@ public class FindSupertypeResultsDgqTest {
         
     }
     
+    @Ignore
     @Test
     public void testGetWithSections() throws DataTagsParseException, IOException {
         System.out.println("testGetWithSections");

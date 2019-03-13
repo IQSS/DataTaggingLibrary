@@ -3,10 +3,10 @@ package edu.harvard.iq.datatags.parser.decisiongraph;
 import static edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ContinueNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.slots.AggregateSlot;
 import edu.harvard.iq.datatags.model.slots.AtomicSlot;
@@ -40,15 +40,15 @@ public class DecisionGraphCompiler {
     public static final String MAIN_CU_ID = "<main>";
     
     /**
-     * Id of the synthetic [end] node added to all compiled graphs.
+     * Id of the synthetic {@code [end]} node added to all compiled graphs.
      */
     public static final String SYNTHETIC_END_NODE_ID = "[SYN-END]";
     
     /**
      * "Miranda node" - added to nodes that do not have their own end node.
      */
-    EndNode endAll = new EndNode(SYNTHETIC_END_NODE_ID);
-
+    final EndNode endAll = new EndNode(SYNTHETIC_END_NODE_ID);
+    
     /**
      * Maps a name of a slot to its fully qualified version (i.e from the top
      * type). For fully qualified names this is an identity function.
