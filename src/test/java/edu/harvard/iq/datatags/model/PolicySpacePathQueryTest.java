@@ -54,7 +54,6 @@ public class PolicySpacePathQueryTest {
         assertEquals( new PolicySpacePathQuery.SlotTypeResult(((CompoundSlot)baseType.getSubSlot("cmp")).getSubSlot("cmp_a"), path), actual );
     }
     
-    
     @Test
     public void testFindAggregateValue() {
         List<String> path = Arrays.asList("top","agg", "B");
@@ -109,7 +108,6 @@ public class PolicySpacePathQueryTest {
         assertEquals( new PolicySpacePathQuery.NotFoundResult(path), actual );
     }
     
-    
     @Test
     public void testNotFindSlot2() {
         List<String> path = Arrays.asList("top","cmpXXX", "XXX");
@@ -124,14 +122,12 @@ public class PolicySpacePathQueryTest {
         assertEquals( new PolicySpacePathQuery.NotFoundResult(path), actual );
     }
     
-    
     @Test
     public void testNotFindBadBaseName() {
         List<String> path = Arrays.asList("topXXX","cmp", "cmp_b");
         Result actual = sut.get(path);
         assertEquals( new PolicySpacePathQuery.NotFoundResult(path), actual );
     }
-    
     
     @Test
     public void testNotFindEmpty() {

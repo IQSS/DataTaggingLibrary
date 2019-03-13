@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.mains;
 
+import edu.harvard.iq.datatags.externaltexts.TrivialLocalization;
 import edu.harvard.iq.datatags.io.PolicyModelDataParser;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
@@ -101,6 +102,12 @@ public class DecisionGraphCompiling {
         System.out.println("Writing: " + outfile);
         f11Viz.setDecisionGraph(dg);
         f11Viz.vizualize(outfile);
+        
+        System.out.println("Trivial Localization");
+        TrivialLocalization tl = new TrivialLocalization(model);
+        System.out.println(tl.getLocalizedAnswers());
+        System.out.println(tl.getLocalizedModelData());
+        System.out.println(tl.getLocalizedNodeIds());
 
     }
 
