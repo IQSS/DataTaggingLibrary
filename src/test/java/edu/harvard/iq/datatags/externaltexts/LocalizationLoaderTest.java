@@ -1,6 +1,5 @@
 package edu.harvard.iq.datatags.externaltexts;
 
-import static java.nio.file.Files.lines;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +16,6 @@ public class LocalizationLoaderTest {
     public LocalizationLoaderTest() {
     }
 
-    /**
-     * Test of load method, of class LocalizationLoader.
-     */
     @Test
     public void testLoadAnswers() throws Exception {
         List<String> source = Arrays.asList(
