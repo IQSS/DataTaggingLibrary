@@ -95,6 +95,13 @@ public class LocalizedModelDataParser {
         @Override
         public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
             switch (qName) {
+                case "localized-model":
+                    String direction = atts.getValue("direction");
+                    if ( direction!=null ) {
+                        model.setDirection(direction);
+                    }
+                    break;
+                    
                 case "person":
                     PersonAuthorData pad = new PersonAuthorData();
                     pad.setOrcid(atts.getValue("orcid"));

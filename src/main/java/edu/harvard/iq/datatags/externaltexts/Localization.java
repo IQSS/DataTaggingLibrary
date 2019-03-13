@@ -91,6 +91,15 @@ public class Localization {
     public Optional<String> getSlotValueText( AbstractValue tv ) {
         return Optional.ofNullable(slotValuesText.get(tv));
     }
+
+    public String getDirection() {
+        return localizedModelData.getDirection();
+    }
+
+    
+    public boolean isRtl() {
+        return getDirection()!=null && getDirection().equals("rtl");
+    }
     
     @Override
     public String toString() {

@@ -6,6 +6,7 @@ import edu.harvard.iq.datatags.model.metadata.PersonAuthorData;
 import java.util.Arrays;
 import java.util.TreeSet;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -63,6 +64,21 @@ public class LocalizedModelDataParserTest {
         ref.setUrl("http://url");
         ref.setText("ref1 text");
         assertEquals(Arrays.asList(ref), lmd.getReferences());
+        
+    } 
+    
+    @Test
+    public void testDirection() throws LocalizationException {
+        LocalizedModelDataParser sut = new LocalizedModelDataParser("test-lang");
+        String source = MINIMAL_MODEL.replace("<localized-model>", "<localized-model direction=\"RTL\">");
+        LocalizedModelData lmd = sut.read(source);
+        
+        assertEquals("rtl", lmd.getDirection());
+        
+        Localization ll = new Localization("he");
+        ll.setLocalizedModelData(lmd);
+        
+        assertTrue( ll.isRtl() );
         
     } 
 }

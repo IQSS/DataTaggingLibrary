@@ -10,13 +10,26 @@ import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 public class LocalizedModelData extends BaseModelData {
     
     private String language;
-
+    
+    private String direction;
+    
     public String getLanguage() {
         return language;
     }
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String aDirection) {
+        direction = aDirection;
+        if ( direction!=null ) {
+            direction = direction.toLowerCase();
+        }
     }
     
 }
