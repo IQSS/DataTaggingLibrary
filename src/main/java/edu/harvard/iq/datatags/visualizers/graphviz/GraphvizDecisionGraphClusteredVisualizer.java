@@ -42,20 +42,24 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
                     .label(idLabel(nd) + "consider\n")
                     .gv());
             nd.getAnswers().forEach( option -> {
-                StringBuilder label = new StringBuilder();
-                option.getNonEmptySubSlots().forEach( tt -> {
-                    label.append(tt.getName())
-                            .append("=")
-                            .append(option.get(tt).accept(valueNamer))
-                            .append("\n");
-                });
-                advanceTo(nd.getNodeFor(option));
-                out.println(makeEdge(nd, nd.getNodeFor(option)).tailLabel(label.toString()).gv());
+                if ( shouldLinkTo(nd.getNodeFor(option)) ) {
+                    StringBuilder label = new StringBuilder();
+                    option.getNonEmptySubSlots().forEach( tt -> {
+                        label.append(tt.getName())
+                                .append("=")
+                                .append(option.get(tt).accept(valueNamer))
+                                .append("\n");
+                    });
+                    advanceTo(nd.getNodeFor(option));
+                    out.println(makeEdge(nd, nd.getNodeFor(option)).tailLabel(label.toString()).gv());
+                }
             });
             
             if ( nd.getElseNode() != null ) {
-                advanceTo(nd.getElseNode());
-                out.println(makeEdge(nd, nd.getElseNode()).tailLabel("else").gv());
+                if ( shouldLinkTo(nd.getElseNode()) ) {
+                    advanceTo(nd.getElseNode());
+                    out.println(makeEdge(nd, nd.getElseNode()).tailLabel("else").gv());
+                }
             }
         }
 
