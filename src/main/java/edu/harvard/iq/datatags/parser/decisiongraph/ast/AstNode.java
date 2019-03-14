@@ -31,6 +31,8 @@ public abstract class AstNode {
 
         T visit(AstPartNode astNode);
 
+        T visit(AstContinueNode aThis);
+
     }
 
     public static abstract class NullVisitor implements Visitor<Void> {
@@ -89,6 +91,12 @@ public abstract class AstNode {
             visitImpl(nd);
             return null;
         }
+        
+        @Override
+        public Void visit(AstContinueNode nd) throws DataTagsRuntimeException {
+            visitImpl(nd);
+            return null;
+        }
 
         
         public abstract void visitImpl(AstConsiderNode nd) throws DataTagsRuntimeException;
@@ -108,6 +116,8 @@ public abstract class AstNode {
         public abstract void visitImpl(AstSectionNode nd) throws DataTagsRuntimeException;
         
         public abstract void visitImpl(AstPartNode nd) throws DataTagsRuntimeException;
+        
+        public abstract void visitImpl(AstContinueNode nd) throws DataTagsRuntimeException;
         
     }
 

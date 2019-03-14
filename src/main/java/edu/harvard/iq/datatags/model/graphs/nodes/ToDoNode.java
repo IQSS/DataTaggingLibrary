@@ -13,7 +13,7 @@ public class ToDoNode extends ThroughNode {
 	
 	public ToDoNode(String id, String aTodoText) {
 		super(id);
-        todoText = aTodoText;
+                todoText = aTodoText;
 	}
 	
 	@Override

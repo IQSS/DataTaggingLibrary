@@ -5,6 +5,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderOptionSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstContinueNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstInfoSubNode;
@@ -212,6 +213,27 @@ public class DecisionGraphRuleParserTest {
         assertEquals(new AstPartNode("id", new AstInfoSubNode("bla bla"),
                 asList(new AstTodoNode(null, "bla"))),
                 sut.parse("[-->id<{title: bla bla}[todo: bla]--]"));
+    }
+    
+    @Test
+    public void continueNodeWithId() {
+        Parser<AstContinueNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.CONTINUE_NODE);
+        assertEquals(new AstContinueNode("123"), sut.parse("[>123< continue]"));
+        assertEquals(new AstContinueNode("123"), sut.parse("[ >123< continue]"));
+        assertEquals(new AstContinueNode("123"), sut.parse("[>123< continue ]"));
+        assertEquals(new AstContinueNode("123"), sut.parse("[>123<continue]"));
+        assertEquals(new AstContinueNode("123"), sut.parse("[>123<\ncontinue]"));
+        assertEquals(new AstContinueNode("123"), sut.parse("[>123< <-- That's the id? " + "\ncontinue]"));
+    }
+    
+    @Test
+    public void continueNodeWithoutId() {
+        Parser<AstContinueNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.CONTINUE_NODE);
+        assertEquals(new AstContinueNode(null), sut.parse("[ continue]"));
+        assertEquals(new AstContinueNode(null), sut.parse("[ continue ]"));
+        assertEquals(new AstContinueNode(null), sut.parse("[continue]"));
+        assertEquals(new AstContinueNode(null), sut.parse("[\ncontinue]"));
+        assertEquals(new AstContinueNode(null), sut.parse("[ <-- That's the id? " + "\ncontinue]"));
     }
 
     @Test

@@ -5,6 +5,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderOptionSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstContinueNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode.NullVisitor;
@@ -100,8 +101,14 @@ public class DuplicateIdValidator extends NullVisitor implements DecisionGraphAs
         collect(nd);
     }
     
+    @Override
+    public void visitImpl(AstContinueNode nd) throws DataTagsRuntimeException {
+        collect(nd);
+    }
+    
     private void collect( AstNode nd ) {
         nodesById.computeIfAbsent(nd.getId(), str -> new ArrayList<>(1)).add(nd);
     }
+
 
 }
