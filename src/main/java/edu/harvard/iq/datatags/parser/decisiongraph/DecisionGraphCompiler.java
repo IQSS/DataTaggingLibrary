@@ -3,7 +3,6 @@ package edu.harvard.iq.datatags.parser.decisiongraph;
 import static edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
-import edu.harvard.iq.datatags.model.graphs.nodes.ContinueNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
 import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
@@ -167,7 +166,7 @@ public class DecisionGraphCompiler {
                                 messages.add(new ValidationMessage(Level.ERROR, "cannot find target node with id " + calleeCuName + ">" +  calleeName));
                             }
                         } else {
-                            messages.add(new ValidationMessage((Level.ERROR), "You can only call to part node: " + calleeNode.getId()));
+                            messages.add(new ValidationMessage((Level.ERROR), "You can only call [part] nodes: " + calleeNode.getId()));
                         }
                     } else {
                         messages.add(new ValidationMessage(Level.ERROR, "cannot find target file with id " + calleeCuName));
@@ -184,7 +183,7 @@ public class DecisionGraphCompiler {
                         CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
                         callNode.setCalleeNode(calleeNode);
                     } else {
-                        messages.add(new ValidationMessage((Level.ERROR), "You can only call to part node: " + calleeNode.getId()));
+                        messages.add(new ValidationMessage((Level.ERROR), "You can only call [part] nodes: " + calleeNode.getId()));
                     }
                     CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
                     if ( callNode != null ) {

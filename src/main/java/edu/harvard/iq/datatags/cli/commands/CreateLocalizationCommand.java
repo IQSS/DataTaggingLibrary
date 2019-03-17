@@ -295,7 +295,11 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
     }
     
     private void createNodeLocalizationFile( Path nodesDir, Node node, String content) {
-        Path relativePath = Paths.get(node.getId().substring(1, node.getId().indexOf("]")));
+        String effNodeId = node.getId();
+        if ( effNodeId.startsWith("[") ) {
+            effNodeId = effNodeId.substring(1, node.getId().indexOf("]"));
+        }
+        Path relativePath = Paths.get(effNodeId);
         //delete the .dg from file name
         String fileName = relativePath.toString();
         fileName = fileName.endsWith(".dg") ? fileName.substring(0, fileName.length() - 3) : fileName;

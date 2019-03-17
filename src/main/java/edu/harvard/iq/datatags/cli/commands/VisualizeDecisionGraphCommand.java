@@ -45,6 +45,11 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
         Path outputPath;
         outputPath = getOuputFilePath(rnr, args, rnr.getModel().getMetadata().getDecisionGraphPath(), "-dg");
         
+        if ( ! Files.exists(outputPath.getParent()) ) {
+            rnr.printWarning("Parent directory does not exist: '%s'", outputPath.getParent());
+            return;
+        }
+        
         String[] fileNameComponents = outputPath.getFileName().toString().split("\\.");
         String fileExtension = ((fileNameComponents.length>1)?fileNameComponents[fileNameComponents.length-1]:"pdf").toLowerCase();
         
