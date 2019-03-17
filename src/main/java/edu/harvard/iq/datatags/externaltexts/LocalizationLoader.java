@@ -137,15 +137,20 @@ public class LocalizationLoader extends BaseModelLoader {
         
         // load nodes that have localization ids.
         model.getDecisionGraph().nodes().forEach( node -> {
-           String nodeName = node.getId().substring(node.getId().indexOf("]")+1, node.getId().length());
+            String nodeName = node.getId().substring(node.getId().indexOf("]")+1, node.getId().length());
            
-           Path relativePath = Paths.get(node.getId().substring(1, node.getId().indexOf("]")));
-           //delete the .dg from file name
-           String fileName = relativePath.toString();
-           fileName = fileName.endsWith(".dg") ? fileName.substring(0, fileName.length() - 3) : fileName;
-           relativePath = Paths.get(fileName);
+            String effNodeId = node.getId();
+            if ( effNodeId.startsWith("[") ) {
+                effNodeId = effNodeId.substring(1, node.getId().indexOf("]"));
+            }
+            Path relativePath = Paths.get(effNodeId);
            
-           if ( relativePath != null ) {
+            //delete the .dg from file name
+            String fileName = relativePath.toString();
+            fileName = fileName.endsWith(".dg") ? fileName.substring(0, fileName.length() - 3) : fileName;
+            relativePath = Paths.get(fileName);
+
+            if ( relativePath != null ) {
                for ( String ext : new String[]{".md", ".mdown", ".txt"}) {
                    Path attempt = localizationPath.resolve(NODE_DIRECTORY_NAME).resolve(relativePath.resolve(nodeName + ext)) ;
                                                     
@@ -154,7 +159,7 @@ public class LocalizationLoader extends BaseModelLoader {
                        break;   
                    }
                }
-           }
+            }
         });
     }
 
