@@ -90,4 +90,13 @@ public class NodeIdAdder extends AstNode.NullVisitor {
         }
         addIds(nd.getAstNodes());
     }
+
+    @Override
+    public void visitImpl(AstContinueNode nd) throws DataTagsRuntimeException {
+        if(nd.getId() == null) {
+            nd.setId(nodeIdProvider.nextId());
+        }
+    }
+    
+    
 }

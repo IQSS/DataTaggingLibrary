@@ -7,6 +7,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderOptionSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstContinueNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstEndNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstImport;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstInfoSubNode;
@@ -211,6 +212,12 @@ public class DecisionGraphRuleParser {
             nodeStructurePart("]"),
             ( _s, nhr, _e ) -> new AstEndNode(nhr.getId()));
     
+    final static Parser<AstContinueNode> CONTINUE_NODE = Parsers.sequence(
+            nodeStructurePart("["),
+            nodeHead("continue"),
+            nodeStructurePart("]"),
+            ( _s, nhr, _e ) -> new AstContinueNode(nhr.getId()));
+    
     final static Parser<AstTodoNode> TODO_NODE = Parsers.sequence(
             nodeStructurePart("["),
             nodeHead("todo"),
@@ -330,7 +337,7 @@ public class DecisionGraphRuleParser {
     // -------------------------------
     final static Parser<ParsedFile> graphParser() {
         Parser.Reference<List<? extends AstNode>> nodeListParserRef = Parser.newReference();
-        Parser<? extends AstNode> singleAstNode = Parsers.or(END_NODE, CALL_NODE, TODO_NODE, REJECT_NODE, SET_NODE, 
+        Parser<? extends AstNode> singleAstNode = Parsers.or(END_NODE, CALL_NODE, TODO_NODE, REJECT_NODE, SET_NODE, CONTINUE_NODE, 
                 askNode(nodeListParserRef.lazy()), considerNode(nodeListParserRef.lazy()), whenNode(nodeListParserRef.lazy()), sectionNode(nodeListParserRef.lazy()),
                 partNode(nodeListParserRef.lazy()));
         Parser<List<? extends AstNode>> nodeSequence = singleAstNode.many().cast();

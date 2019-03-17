@@ -7,7 +7,9 @@ import edu.harvard.iq.datatags.model.graphs.nodes.ConsiderNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import static edu.harvard.iq.datatags.model.graphs.Answer.*;
+import edu.harvard.iq.datatags.model.graphs.nodes.ContinueNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ContentReader;
@@ -167,6 +169,46 @@ public class ChartRunningTest {
                         "CallerEnd", "CallerEnd", "CallerEnd", "CallerEnd", "CallerEnd"),
                 true);
 
+    }
+    
+    @Test
+    public void chartWithContinue() throws IOException {
+        String code = "[>1< section:\n" +
+                    "   [>2< ask:\n" +
+                    "     {text:what?}\n" +
+                    "     {answers:\n" +
+                    "       {yes:[>3<end]}\n" +
+                    "       {no:[>4<continue]}\n" +
+                    "     }\n" +
+                    "  ]\n" +
+                    "]\n" +
+                    "[>6<todo: todo]";
+        Map<Path, String> pathToString = new HashMap<>();
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("/main.dg"));
+        pmd.setMetadataFile(Paths.get("/test/main.dg"));
+        pathToString.put(Paths.get("/main.dg"), code);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+        DecisionGraph chart = dgc.compile(new CompoundSlot("", ""), pmd, new ArrayList<>());
+        
+        String flowChartName = "flowChart";
+        DecisionGraph c1 = new DecisionGraph(flowChartName);
+        
+        AskNode start = c1.add(new AskNode("2"));
+        start.addAnswer(YES, c1.add(new EndNode("3")));
+        start.addAnswer(NO, c1.add(new ContinueNode("4")));
+        SectionNode section = new SectionNode("", "1", start, new ToDoNode("6", "todo").setNextNode(new EndNode("SYN-END")));
+        c1.setStart(section);
+
+        assertExecutionTrace(chart,
+                C.list(NO),
+                C.list("[.." + File.separator + "main.dg]1", "[.." + File.separator + "main.dg]2",
+                        "[.." + File.separator + "main.dg]4", "[.." + File.separator + "main.dg]6","[SYN-END]"), false);
+        
+        assertExecutionTrace(chart,
+                C.list(YES),
+                C.list("[.." + File.separator + "main.dg]1", "[.." + File.separator + "main.dg]2", "3"), false);
     }
 
     /**

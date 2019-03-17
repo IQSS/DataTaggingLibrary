@@ -13,7 +13,9 @@ import edu.harvard.iq.datatags.model.slots.AtomicSlot;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.graphs.Answer;
+import edu.harvard.iq.datatags.model.graphs.nodes.ContinueNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.PartNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParseResult;
@@ -419,6 +421,56 @@ public class DecisionGraphParseResultTest {
                 "--]\n" +
                 "[>c< todo: c_todo]\n" +
                 "[>d< todo: d_todo]";
+
+        Map<Path, String> pathToString = new HashMap<>();
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("/main.dg"));
+        pmd.setMetadataFile(Paths.get("/test/main.dg"));
+        pathToString.put(Paths.get("/main.dg"), code);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+        DecisionGraph actual = dgc.compile(emptyTagSpace, pmd, new ArrayList<>());
+        
+        normalize(actual);
+        normalize(expected);
+
+        expected.nodes().forEach(n -> assertEquals(n, actual.getNode(n.getId())));
+        actual.nodes().forEach(n -> assertEquals(n, expected.getNode(n.getId())));
+
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void continueTest() throws Exception {
+        SectionNode sectionNode = new SectionNode("1", "");
+        AskNode askNode = new AskNode("2");
+        ToDoNode todo = new ToDoNode("6", "todo");
+        ContinueNode continueNode = new ContinueNode("4");
+        EndNode finalEndNode = new EndNode("[SYN-END]");
+        askNode.setText("what?");
+        askNode.addAnswer(Answer.withName("yes"), new EndNode("3"));
+        askNode.addAnswer(Answer.withName("no"), continueNode);
+        sectionNode.setStartNode(askNode);
+        todo.setNextNode(finalEndNode);
+        sectionNode.setNextNode(todo);
+       
+        
+        
+        DecisionGraph expected = new DecisionGraph();
+        expected.add(sectionNode);
+        expected.setStart(sectionNode);
+        expected.prefixNodeIds("[.." + File.separator + "main.dg]");
+
+        String code = " [>1< section:\n" +
+                        "   [>2< ask:\n" +
+                        "     {text:what?}" + 
+                        "     {answers:\n" +
+                        "       {yes:[>3<end]}\n" +
+                        "       {no:[>4<continue]}\n" +
+                        "     }\n" +
+                        "   ]\n" +
+                        " ]\n" +
+                        " [>6<todo: todo]";
 
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();
