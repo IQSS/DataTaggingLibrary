@@ -18,8 +18,6 @@ import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Set;
 
 /**
@@ -30,8 +28,22 @@ import java.util.Set;
  */
 public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDecisionGraphVisualizer {
     
+    /** Draws links between call nodes and their callees. */
     private boolean drawCallLinks = false;
+    
+    /** 
+     * Draws [end] nodes. Good for structural debugging, but otherwise adds a lot of
+     * visual noise.
+     */
     private boolean drawEndNodes = false;
+    
+    /**
+     * Concentrates edges (Graphviz graph feature). When {@code true}, Graphviz will 
+     * attempt to join edges that go to the same destination node.
+     * 
+     * Causes crash in Graphviz versions below 2.40, so should be turned off for these.
+     */
+    private boolean concentrate = true;
     
     private class NodePainter extends AbstractGraphvizDecisionGraphVisualizer.AbstractNodePainter {
         
@@ -74,8 +86,10 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
                     .label(idLabel(nd) + "ask\n" + wrap(nodeText))
                     .gv());
             nd.getAnswers().forEach( ans -> {
-                advanceTo(nd.getNodeFor(ans));
-                out.println(makeEdge(nd, nd.getNodeFor(ans)).tailLabel(ans.getAnswerText()).gv());
+                if ( shouldLinkTo(nd.getNodeFor(ans)) ) {
+                    advanceTo(nd.getNodeFor(ans));
+                    out.println(makeEdge(nd, nd.getNodeFor(ans)).tailLabel(ans.getAnswerText()).gv());
+                }
             });
         }
 
@@ -200,7 +214,10 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
     void printHeader(PrintWriter bOut) throws IOException {
         PrintWriter out = new PrintWriter(bOut, true);
         out.println("digraph decisionGraph {");
-        out.println("graph [fontname=\"Courier\" concentrate=true compound=true]");
+        out.println("graph [fontname=\"Courier\" " 
+                    + (concentrate ? "concentrate=true " : "" )
+                    + "compound=true]");
+        
         out.println("edge [fontname=\"Helvetica\" fontsize=\"10\"]");
         out.println("node [fillcolor=\"lightgray\" style=\"filled\" fontname=\"Helvetica\" fontsize=\"10\"]");
         out.println(node(START_NODE_NAME)
@@ -254,6 +271,10 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
 
     public void setDrawEndNodes(boolean drawEndNodes) {
         this.drawEndNodes = drawEndNodes;
+    }
+
+    public void setConcentrate(boolean concentrate) {
+        this.concentrate = concentrate;
     }
     
 }

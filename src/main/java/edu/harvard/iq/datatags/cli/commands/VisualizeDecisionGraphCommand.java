@@ -31,8 +31,12 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
         return "Creates a visualization of the decision graph. Requires graphviz (www.graphviz.org).\n"
                 + "Can be invoked with a parameter for output file name. The filename extension is used to determine"
                 + "the output format (options are .pdf .png .gv .jpg .svg).\n"
-                + "Invoke with `-style=f11` for alternative graph styling.\n"
-                + "When using f11 style, end nodes are typically not drawn; use -show-ends to draw them as well.";
+                + "Invoke with `--style=f11` for alternative graph styling.\n"
+                + "When using f11 style, end nodes are typically not drawn; use --show-ends to draw them as well.\n"
+                + "--show-ends  draws end nodes\n"
+                + "--no-concentrate prevents edge concentration\n"
+                + "--call-links draws links between [call] nodes and thier callees.";
+        
     }
 
     @Override
@@ -45,9 +49,16 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
         String fileExtension = ((fileNameComponents.length>1)?fileNameComponents[fileNameComponents.length-1]:"pdf").toLowerCase();
         
         Set<String> argSet = args.stream().map(s->s.toLowerCase()).collect(toSet());
-        AbstractGraphvizDecisionGraphVisualizer viz = argSet.contains("-style=f11") 
-                                                            ? new GraphvizDecisionGraphF11Visualizer(argSet.contains("-show-ends")) 
+        AbstractGraphvizDecisionGraphVisualizer viz = argSet.contains("--style=f11") 
+                                                            ? new GraphvizDecisionGraphF11Visualizer(argSet.contains("--show-ends")) 
                                                             : new GraphvizDecisionGraphClusteredVisualizer();
+        
+        if ( viz instanceof GraphvizDecisionGraphClusteredVisualizer ) {
+            GraphvizDecisionGraphClusteredVisualizer gvv = (GraphvizDecisionGraphClusteredVisualizer) viz;
+            gvv.setConcentrate(! argSet.contains("--no-concentrate"));
+            gvv.setDrawEndNodes(argSet.contains("--show-ends"));
+            gvv.setDrawCallLinks(argSet.contains("--call-links"));
+        }
         viz.setDecisionGraph(rnr.getModel().getDecisionGraph());
 
         if ( fileExtension.equals("gv") || fileExtension.equals("dot") ) {
