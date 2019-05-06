@@ -73,9 +73,7 @@ public class Localization {
     }
     
     public void setSlotTexts( AbstractSlot st, LocalizationTexts texts ) {
-//        if ( text.trim().length() > 0 ) {
-            slotsTexts.put(st, texts);
-//        }
+        slotsTexts.put(st, texts);
     }
     
     public Optional<LocalizationTexts> getSlotText( AbstractSlot st ) {
@@ -83,9 +81,7 @@ public class Localization {
     }
     
     public void setSlotValueTexts( AbstractValue tv, LocalizationTexts texts ) {
-//        if ( text.trim().length() > 0 ) {
-            slotValuesTexts.put(tv, texts);
-//        }
+        slotValuesTexts.put(tv, texts);
     }
     
     public Optional<LocalizationTexts> getSlotValueText( AbstractValue tv ) {

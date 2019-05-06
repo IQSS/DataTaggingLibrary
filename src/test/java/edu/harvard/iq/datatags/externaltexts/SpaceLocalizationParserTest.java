@@ -141,14 +141,14 @@ public class SpaceLocalizationParserTest {
             "big note"
         );
         Map<String,LocalizationTexts> expected = new HashMap<>();
-        expected.put("Base/Dogs/Pluto", new LocalizationTexts(null, null, null));
-        expected.put("Base/Cats/Shmil", new LocalizationTexts(null, null, "big note for Shmil"));
-        expected.put("Base/Cats/Mitzi", new LocalizationTexts(null, "small note", null));
+        expected.put("Base/Dogs/Pluto",  new LocalizationTexts(null, null, null));
+        expected.put("Base/Cats/Shmil",  new LocalizationTexts(null, null, "big note for Shmil"));
+        expected.put("Base/Cats/Mitzi",  new LocalizationTexts(null, "small note", null));
         expected.put("Base/Dogs/Lassie", new LocalizationTexts(null, "small note", "big note"));
-        expected.put("Base/Rice",       new LocalizationTexts("heRice", null, null));
-        expected.put("Base/Dogs/Rex",   new LocalizationTexts("heRex", null, "big note"));
-        expected.put("Base/Rice/Full",  new LocalizationTexts("heFull", "small note", null));
-        expected.put("Base/Cats/Tom",   new LocalizationTexts("heTom", "small note", "big note,\nmulti lines"));
+        expected.put("Base/Rice",        new LocalizationTexts("heRice", null, null));
+        expected.put("Base/Dogs/Rex",    new LocalizationTexts("heRex", null, "big note"));
+        expected.put("Base/Rice/Full",   new LocalizationTexts("heFull", "small note", null));
+        expected.put("Base/Cats/Tom",    new LocalizationTexts("heTom", "small note", "big note,\nmulti lines"));
         
         boolean parseRes = sut.parse(input.stream());
         if ( ! parseRes ) { 

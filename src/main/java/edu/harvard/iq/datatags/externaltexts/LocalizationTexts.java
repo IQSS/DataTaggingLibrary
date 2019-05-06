@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.harvard.iq.datatags.externaltexts;
 
 import java.util.Objects;
 
 /**
- *
+ * Localization texts for state space items (i.e slots and values).
+ * 
  * @author mor
  */
 public class LocalizationTexts {
@@ -55,6 +51,5 @@ public class LocalizationTexts {
         }
         return true;
     }
-    
     
 }

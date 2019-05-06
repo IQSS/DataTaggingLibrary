@@ -3,6 +3,10 @@ package edu.harvard.iq.datatags.externaltexts;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.metadata.AuthorData;
 import edu.harvard.iq.datatags.model.metadata.ModelReference;
+import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
+import static edu.harvard.iq.datatags.util.PolicySpaceHelper.name;
+import static edu.harvard.iq.datatags.util.PolicySpaceHelper.note;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -64,6 +68,18 @@ public class TrivialLocalization extends Localization {
     public boolean isRtl() {
         return false;
     }
+    
+    @Override
+    public Optional<LocalizationTexts> getSlotText( AbstractSlot st ) {
+        return Optional.of(new LocalizationTexts(st.getName(), st.getNote(), null));
+    }
+    
+    
+    @Override
+    public Optional<LocalizationTexts> getSlotValueText( AbstractValue tv ) {
+        return Optional.of(new LocalizationTexts(name(tv), note(tv), null));
+    }
+
     
     private class TriviallyLocalizedModelData extends LocalizedModelData {
 
