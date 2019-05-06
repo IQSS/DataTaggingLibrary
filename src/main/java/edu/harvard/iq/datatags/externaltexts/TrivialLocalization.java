@@ -20,9 +20,11 @@ public class TrivialLocalization extends Localization {
     
     private final PolicyModel model;
     private final LocalizedModelData modelData;
+    public static final String LANGUAGE_NAME = "__model__";
+          
     
     public TrivialLocalization(PolicyModel pm) {
-        super("model");
+        super(LANGUAGE_NAME);
         model = pm;
         modelData = new TriviallyLocalizedModelData();
     }

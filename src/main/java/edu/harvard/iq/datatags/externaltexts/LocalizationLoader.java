@@ -110,13 +110,13 @@ public class LocalizationLoader extends BaseModelLoader {
                     (path,text) -> qry.get(path).accept(new PolicySpacePathQuery.Result.Visitor<Void>() {
                            @Override
                            public Void visit(PolicySpacePathQuery.TagValueResult tvr) {
-                               retVal.setSlotValueText(tvr.value, text);
+                               retVal.setSlotValueTexts(tvr.value, text);
                                return null;
                            }
 
                            @Override
                            public Void visit(PolicySpacePathQuery.SlotTypeResult str) {
-                               retVal.setSlotText(str.value, text);
+                               retVal.setSlotTexts(str.value, text);
                                return null;
                            }
 

@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 public class SpaceLocalizationParser {
     
     private final Pattern typeStart = Pattern.compile("^[a-zA-Z_][a-zA-Z0-9_]*(/[a-zA-Z_][a-zA-Z0-9_]*)*:.*$");
+    private final Pattern notesSeparator = Pattern.compile("^(\\h*-){3,}(\\h*)$", Pattern.MULTILINE);
     
     private final PolicySpaceIndex spaceIndex;
     
@@ -29,7 +30,7 @@ public class SpaceLocalizationParser {
     
     private boolean hasError = false;
     
-    private final Map<List<String>, String> spaceEntityText = new HashMap<>();
+    private final Map<List<String>, LocalizationTexts> spaceEntityText = new HashMap<>();
     
     public SpaceLocalizationParser(PolicySpaceIndex spaceIndex) {
         this.spaceIndex = spaceIndex;
@@ -46,14 +47,7 @@ public class SpaceLocalizationParser {
         
         lines.map( l -> new NumberedString(l, idxer.incrementAndGet()))
              .map( l -> l.copy(l.string.split("<--")[0].trim()) )
-             .flatMap( l -> {
-                 if ( isInlineSlotStart(l.string) ) {
-                     String[] comps = l.string.split(":",2);
-                     return Stream.of(l.copy("# " + comps[0]), l.copy(comps[1]));
-                 } else {
-                     return Stream.of(l);
-                 }
-             }).forEach(nl -> {   // format now cannonized to be "# slot/or/value/path\n lines of text"
+             .forEach(nl -> {   // format now cannonized to be "# slot/or/value/path\n lines of text"
                  String curLine = nl.string;
                  if ( curLine.startsWith("#") ) {
                      validateTypeExists( cleanEntityReference(curLine), nl.number );
@@ -71,15 +65,21 @@ public class SpaceLocalizationParser {
         return typeStart.matcher(line).matches();
     }
 
-    private void addTypeData(String typeText, Map<List<String>, String> retVal) {
+    private void addTypeData(String typeText, Map<List<String>, LocalizationTexts> retVal) {
         if ( typeText.trim().isEmpty() ) return;
-        
-        String[] comps = typeText.split("\n",2);
+        String[] comps = typeText.split("\n",3); //comps[0]-slot/value, cpmps[1]-name, comps[2]-notes
         comps[0] = cleanEntityReference(comps[0]);
         
         Set<List<String>> fullTypeRefs = spaceIndex.get(comps[0]);
         if ( fullTypeRefs.size() == 1 ) {
-            retVal.put(fullTypeRefs.iterator().next(), comps[1].trim());
+            String[] notes = new String[]{"", ""};;
+            if(comps.length > 2 && !comps[2].trim().isEmpty()){
+                if(notesSeparator.split(comps[2]).length == 2){
+                    notes = notesSeparator.split(comps[2], 2);    
+                } else notes[0] = comps[2].trim();
+                
+            }
+            retVal.put(fullTypeRefs.iterator().next(), new LocalizationTexts(("".equals(comps[1])) ? null : comps[1].trim(), ("".equals(notes[0])) ? null : notes[0].trim(), ("".equals(notes[1])) ? null : notes[1].trim()));
         }
     }
 
@@ -125,7 +125,7 @@ public class SpaceLocalizationParser {
         return messages;
     }
 
-    public Map<List<String>, String> getSpaceEnitiyTexts() {
+    public Map<List<String>, LocalizationTexts> getSpaceEnitiyTexts() {
         return spaceEntityText;
     }
     

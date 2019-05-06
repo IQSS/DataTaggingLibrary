@@ -28,9 +28,9 @@ public class Localization {
     
     private final Map<String, String> nodeText = new HashMap<>();
     
-    private final Map<AbstractSlot, String> slotsText = new HashMap<>();
+    private final Map<AbstractSlot, LocalizationTexts> slotsTexts = new HashMap<>();
     
-    private final Map<AbstractValue, String> slotValuesText = new HashMap<>();
+    private final Map<AbstractValue, LocalizationTexts> slotValuesTexts = new HashMap<>();
     
     public Localization(String language) {
         this.language = language;
@@ -72,24 +72,24 @@ public class Localization {
         return nodeText.keySet();
     }
     
-    public void setSlotText( AbstractSlot st, String text ) {
-        if ( text.trim().length() > 0 ) {
-            slotsText.put(st, text);
-        }
+    public void setSlotTexts( AbstractSlot st, LocalizationTexts texts ) {
+//        if ( text.trim().length() > 0 ) {
+            slotsTexts.put(st, texts);
+//        }
     }
     
-    public Optional<String> getSlotText( AbstractSlot st ) {
-        return Optional.ofNullable(slotsText.get(st));
+    public Optional<LocalizationTexts> getSlotText( AbstractSlot st ) {
+        return Optional.ofNullable(slotsTexts.get(st));
     }
     
-    public void setSlotValueText( AbstractValue tv, String text ) {
-        if ( text.trim().length() > 0 ) {
-            slotValuesText.put(tv, text);
-        }
+    public void setSlotValueTexts( AbstractValue tv, LocalizationTexts texts ) {
+//        if ( text.trim().length() > 0 ) {
+            slotValuesTexts.put(tv, texts);
+//        }
     }
     
-    public Optional<String> getSlotValueText( AbstractValue tv ) {
-        return Optional.ofNullable(slotValuesText.get(tv));
+    public Optional<LocalizationTexts> getSlotValueText( AbstractValue tv ) {
+        return Optional.ofNullable(slotValuesTexts.get(tv));
     }
 
     public String getDirection() {

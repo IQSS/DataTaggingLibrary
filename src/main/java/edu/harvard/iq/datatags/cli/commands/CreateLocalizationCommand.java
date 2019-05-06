@@ -172,12 +172,14 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
                     String curPath = curPath();
                     
                     prt.println("# " + curPath );
-                    prt.println(nonEmpty(t.getNote()) ? t.getNote() : ("<-- TODO: describe " + curPath) );
+                    prt.println( t.getName() );
+                    prt.println(nonEmpty(t.getNote()) ? t.getNote() : "" );
                     prt.println();
                     
                     t.values().forEach( v -> {
                         prt.println("# " + curPath + "/" + v.getName() );
-                        prt.println(nonEmpty(v.getNote()) ? v.getNote() : ("<-- TODO: describe " + curPath + "/" + v.getName()) );
+                        prt.println( v.getName() );
+                        prt.println(nonEmpty(v.getNote()) ? v.getNote() : "" );
                         prt.println();
                     });
                     
@@ -190,12 +192,14 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
                     String curPath = curPath();
                     
                     prt.println("# " + curPath );
-                    prt.println(nonEmpty(t.getNote()) ? t.getNote() : ("<-- TODO: describe " + curPath) );
+                    prt.println( t.getName() );
+                    prt.println(nonEmpty(t.getNote()) ? t.getNote() : "" );
                     prt.println();
                     
                     t.getItemType().values().forEach( v -> {
                         prt.println("# " + curPath + "/" + v.getName() );
-                        prt.println(nonEmpty(v.getNote()) ? v.getNote() : ("<-- TODO: describe " + curPath + "/" + v.getName()) );
+                        prt.println( v.getName() );
+                        prt.println(nonEmpty(v.getNote()) ? v.getNote() : "" );
                         prt.println();
                     });
                     
@@ -208,7 +212,8 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
                     stack.push(t.getName());
                     
                     prt.println("# " + curPath() );
-                    prt.println(nonEmpty(t.getNote()) ? t.getNote() : ("<-- TODO: describe " + curPath() ) );
+                    prt.println( t.getName() );
+                    prt.println(nonEmpty(t.getNote()) ? t.getNote() : "" );
                     prt.println();
                     
                     t.getSubSlots().forEach( ft -> ft.accept(this) );
