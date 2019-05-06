@@ -18,10 +18,10 @@ import java.util.Set;
  */
 public class TrivialLocalization extends Localization {
     
-    private final PolicyModel model;
-    private final LocalizedModelData modelData;
     public static final String LANGUAGE_NAME = "__model__";
           
+    private final PolicyModel model;
+    private final LocalizedModelData modelData;
     
     public TrivialLocalization(PolicyModel pm) {
         super(LANGUAGE_NAME);
@@ -34,7 +34,6 @@ public class TrivialLocalization extends Localization {
         return "[TrivialLocalization model:"+model.getMetadata().getTitle() 
                 + " v" + model.getMetadata().getVersion() + "]";
     }
-
 
     @Override
     public Set<String> getLocalizedNodeIds() {
@@ -61,11 +60,16 @@ public class TrivialLocalization extends Localization {
         return modelData;
     }
     
+    @Override
+    public boolean isRtl() {
+        return false;
+    }
+    
     private class TriviallyLocalizedModelData extends LocalizedModelData {
 
         @Override
         public String getLanguage() {
-            return "model";
+            return LANGUAGE_NAME;
         }
 
         @Override

@@ -177,10 +177,10 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
         public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
             out.println("subgraph cluster_" + nodeId(nd)  + "{ ");
             out.println("label=\"Section " + nd.getTitle() + "\"");
-            out.println( node(sanitizeId(nd.getId()+"__[scstart]")).hidden().gv() );
+//            out.println( node(sanitizeId(nd.getId()+"__[scstart]")).hidden().gv() );
             advanceTo(nd.getStartNode());
             out.println("}");
-            out.println( edge(sanitizeId(nd.getId()+"__[scstart]"), nodeId(nd.getStartNode())).gv() );
+//            out.println( edge(sanitizeId(nd.getId()+"__[scstart]"), nodeId(nd.getStartNode())).gv() );
                         
             advanceTo(nd.getNextNode());
             if ( shouldLinkTo(nd.getNextNode()) ) {
@@ -233,7 +233,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
     @Override
     protected void printBody(PrintWriter out) throws IOException {
         printChart(theGraph, new PrintWriter(out, true));
-        out.println(edge(START_NODE_NAME, nodeId(theGraph.getStart()))
+        out.println(makeEdge(START_NODE_NAME, theGraph.getStart())
                 .color("#008800")
                 .penwidth(4)
                 .gv());

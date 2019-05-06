@@ -21,6 +21,7 @@ import edu.harvard.iq.datatags.model.values.AbstractValue;
 import edu.harvard.iq.datatags.model.values.ToDoValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
+import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -221,10 +222,14 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
     }
     
     GvEdge makeEdge( Node from, Node to ) {
-        GvEdge edge = new GvEdge(sanitizeId(from.getId()), sanitizeId(to.getId()));
-        if ( to instanceof SectionNode ) {
-            edge = new GvEdge(sanitizeId(from.getId()), sanitizeId(((SectionNode) to).getStartNode().getId()));
-            edge.add("lhead", "cluster_" + sanitizeId(to.getId()) );
+        return makeEdge(sanitizeId(from.getId()),to);
+    }
+    
+    GvEdge makeEdge( String fromGvNodeId, Node to ) {
+        Node arrowDest = getFirstNonContainerNode(to);
+        GvEdge edge = edge(fromGvNodeId, nodeId(arrowDest));
+        if ( to instanceof ContainerNode ) {
+            edge = edge.add("lhead", "cluster_"+nodeId(((ContainerNode)to).getStartNode()));
         }
         
         return edge;

@@ -98,7 +98,9 @@ public class Localization {
 
     
     public boolean isRtl() {
-        return getDirection()!=null && getDirection().equals("rtl");
+        return localizedModelData!=null 
+                 && getDirection()!=null 
+                    && getDirection().equals("rtl");
     }
     
     @Override

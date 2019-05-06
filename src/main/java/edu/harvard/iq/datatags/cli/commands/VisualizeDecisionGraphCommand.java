@@ -45,7 +45,7 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
         Path outputPath;
         outputPath = getOuputFilePath(rnr, args, rnr.getModel().getMetadata().getDecisionGraphPath(), "-dg");
         
-        if ( ! Files.exists(outputPath.getParent()) ) {
+        if ( ! Files.exists(outputPath.toAbsolutePath().getParent()) ) {
             rnr.printWarning("Parent directory does not exist: '%s'", outputPath.getParent());
             return;
         }
