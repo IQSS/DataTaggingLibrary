@@ -3,7 +3,10 @@ package edu.harvard.iq.datatags.model.values;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -20,7 +23,7 @@ public class CompoundValue extends AbstractValue{
 
     private static final Resolver RESOLVER = new Resolver();
 
-    private final Map<AbstractSlot, AbstractValue> fields = new HashMap<>();
+    private final Map<AbstractSlot, AbstractValue> fields = new LinkedHashMap<>();
 
     public CompoundValue(CompoundSlot type) {
         super(type);

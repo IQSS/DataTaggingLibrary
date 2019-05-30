@@ -82,7 +82,7 @@ public class CompoundValueTest {
         
         lunch3.put( bagType.valueOf("paper") );
         lunch3.put( burritoOfL2 );
-        
+
         assertTrue( lunch1.project(lunch2.getNonEmptySubSlots()).isEmpty() );
         assertEquals( lunch1, lunch3.project(lunch1.getNonEmptySubSlots()) );
         assertEquals( lunch2, lunch3.project(lunch2.getNonEmptySubSlots()) );

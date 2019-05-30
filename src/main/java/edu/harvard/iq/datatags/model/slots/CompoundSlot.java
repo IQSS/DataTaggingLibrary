@@ -3,6 +3,7 @@ package edu.harvard.iq.datatags.model.slots;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Set;
  * @author michael
  */
 public class CompoundSlot extends AbstractSlot {
-	private final Set<AbstractSlot> subSlots = new HashSet<>();
+	private final Set<AbstractSlot> subSlots = new LinkedHashSet<>();
 
 	public CompoundSlot(String name, String note) {
 		super(name, note);
