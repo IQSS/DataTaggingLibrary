@@ -1,4 +1,4 @@
-<localized-model direction="ltr">
+<localized-model direction="ltr" ui-lang="en">
   <title>${TITLE}</title>
   <subtitle>${SUBTITLE}</subtitle>
   <keywords>${KEYWORDS}</keywords>
