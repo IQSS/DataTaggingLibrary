@@ -4,6 +4,7 @@ import edu.harvard.iq.datatags.model.metadata.GroupAuthorData;
 import edu.harvard.iq.datatags.model.metadata.ModelReference;
 import edu.harvard.iq.datatags.model.metadata.PersonAuthorData;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.TreeSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -81,4 +82,30 @@ public class LocalizedModelDataParserTest {
         assertTrue( ll.isRtl() );
         
     } 
+    
+    @Test
+    public void testUiLang() throws LocalizationException {
+        LocalizedModelDataParser sut = new LocalizedModelDataParser("test-uiLang");
+        String source = MINIMAL_MODEL.replace("<localized-model>", "<localized-model direction=\"LTR\" ui-lang=\"en\">");
+        LocalizedModelData lmd = sut.read(source);
+        
+        
+        Localization ll = new Localization("en");
+        ll.setLocalizedModelData(lmd);
+        
+        assertEquals(Optional.of("en"), ll.getUiLang());
+    }
+    
+    @Test
+    public void testUiLangEmpty() throws LocalizationException {
+        LocalizedModelDataParser sut = new LocalizedModelDataParser("test-uiLang");
+        String source = MINIMAL_MODEL.replace("<localized-model>", "<localized-model direction=\"LTR\">");
+        LocalizedModelData lmd = sut.read(source);
+        
+        
+        Localization ll = new Localization("en");
+        ll.setLocalizedModelData(lmd);
+        
+        assertEquals(Optional.empty(), ll.getUiLang());
+    }
 }

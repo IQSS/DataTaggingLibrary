@@ -100,6 +100,10 @@ public class LocalizedModelDataParser {
                     if ( direction!=null ) {
                         model.setDirection(direction);
                     }
+                    String uiLang = atts.getValue("ui-lang");
+                    if ( uiLang!=null ) {
+                        model.setUiLang(uiLang);
+                    }
                     break;
                     
                 case "person":

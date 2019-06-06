@@ -91,6 +91,10 @@ public class Localization {
     public String getDirection() {
         return localizedModelData.getDirection();
     }
+    
+    public Optional<String> getUiLang() {
+        return Optional.ofNullable(localizedModelData.getUiLang()).filter(s -> !s.isEmpty());
+    }
 
     
     public boolean isRtl() {
