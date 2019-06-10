@@ -2,6 +2,7 @@ package edu.harvard.iq.datatags.model.graphs;
 
 import edu.harvard.iq.datatags.model.graphs.nodes.EndNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.Node;
+import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.tools.ReachableNodesCollector;
 import java.net.URI;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.StreamSupport;
+
 
 /**
  * A single decision graph that can be traversed (e.g for execution).
@@ -102,7 +105,7 @@ public class DecisionGraph {
     public Iterable<Node> nodes() {
         return nodes.values();
     }
-
+    
     public Set<String> nodeIds() {
         return nodes.keySet();
     }
