@@ -62,7 +62,7 @@ public class TodoCommand extends AbstractCliCommand {
         
         stringBuilder.append("\n## TODO nodes\n");
         stringBuilder.append(StreamSupport.stream(rnr.getModel().getDecisionGraph().nodes().spliterator(), true).filter(node -> (node instanceof ToDoNode))
-                .map(n -> (ToDoNode)n).map(n->n.toString()).collect(Collectors.joining("\n - ", " - ","")));
+                .map(n -> (ToDoNode)n).map(n->n.getId() + ": " + n.getTodoText()).collect(Collectors.joining("\n - ", " - ","")));
         
         if(hasFlag("f", args)) {
             List<String> noFlags = noFlags(args);
