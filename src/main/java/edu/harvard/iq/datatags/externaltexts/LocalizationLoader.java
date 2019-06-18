@@ -28,18 +28,13 @@ import java.util.stream.Stream;
  */
 public class LocalizationLoader extends BaseModelLoader {
     
-    public static final String LOCALIZATION_DIRECTORY_NAME = "languages";
-    public static final String ANSWERS_FILENAME = "answers.txt";
-    public static final String LOCALIZED_METADATA_FILENAME = "localized-model.xml";
-    public static final String NODE_DIRECTORY_NAME = "nodes";
-    public static final String SPACE_DATA_FILENAME = "space.md";
     
     private final List<ValidationMessage> messages = new ArrayList<>();
     
     public Localization load( PolicyModel model, String localizationName ) throws IOException, LocalizationException {
         messages.clear();
         Path baseLocalizationPath = model.getMetadata().getModelDirectoryPath();
-        Path localizationPath = baseLocalizationPath.resolve(LOCALIZATION_DIRECTORY_NAME)
+        Path localizationPath = baseLocalizationPath.resolve(FsLocalizationIO.LOCALIZATION_DIRECTORY_NAME)
                                                     .resolve(localizationName);
         
         if ( ! Files.exists(localizationPath) ) {
@@ -53,12 +48,12 @@ public class LocalizationLoader extends BaseModelLoader {
                 
         Localization retVal = new Localization(localizationName);
         
-        Path answersFilePath = ciResolve(localizationPath, ANSWERS_FILENAME);
+        Path answersFilePath = ciResolve(localizationPath, FsLocalizationIO.ANSWERS_FILENAME);
         if ( answersFilePath != null ) {
             loadAnswers( Files.lines(answersFilePath, StandardCharsets.UTF_8), retVal );
         }
         
-        Path modelLocalizationPath = ciResolve(localizationPath, LOCALIZED_METADATA_FILENAME);
+        Path modelLocalizationPath = ciResolve(localizationPath, FsLocalizationIO.LOCALIZED_METADATA_FILENAME);
         if ( modelLocalizationPath != null ) {
             LocalizedModelDataParser lmdp = new LocalizedModelDataParser(retVal.getLanguage());
             retVal.setLocalizedModelData(lmdp.read(modelLocalizationPath));
@@ -66,7 +61,7 @@ public class LocalizationLoader extends BaseModelLoader {
         
         messages.addAll( loadReadmes(retVal.getLocalizedModelData(), localizationPath) );
         
-        Path spacePath = ciResolve(localizationPath, SPACE_DATA_FILENAME);
+        Path spacePath = ciResolve(localizationPath, FsLocalizationIO.SPACE_DATA_FILENAME);
         if ( spacePath != null ) {
             loadTagspaceData( retVal, model.getSpaceRoot(), spacePath );
         }
@@ -136,7 +131,7 @@ public class LocalizationLoader extends BaseModelLoader {
     private void loadNodeData(Localization loc, PolicyModel model, Path localizationPath) throws IOException {
         
         // load nodes that have localization ids.
-        model.getDecisionGraph().nodes().forEach( node -> {
+        model.getDecisionGraph().nodes().forEach(node -> {
             String nodeName = node.getId().substring(node.getId().indexOf("]")+1, node.getId().length());
            
             String effNodeId = node.getId();
@@ -152,7 +147,7 @@ public class LocalizationLoader extends BaseModelLoader {
 
             if ( relativePath != null ) {
                for ( String ext : new String[]{".md", ".mdown", ".txt"}) {
-                   Path attempt = localizationPath.resolve(NODE_DIRECTORY_NAME).resolve(relativePath.resolve(nodeName + ext)) ;
+                   Path attempt = localizationPath.resolve(FsLocalizationIO.NODE_DIRECTORY_NAME).resolve(relativePath.resolve(nodeName + ext)) ;
                                                     
                    if ( Files.exists(attempt) ) {
                        loc.addNodeText(node.getId(), readAll(attempt));

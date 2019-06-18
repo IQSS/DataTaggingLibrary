@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.cli.commands;
 
 import edu.harvard.iq.datatags.cli.CliRunner;
+import edu.harvard.iq.datatags.externaltexts.FsLocalizationIO;
 import edu.harvard.iq.datatags.externaltexts.LocalizationLoader;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
@@ -37,16 +38,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * A command that creates a localization
@@ -104,7 +108,7 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
         if ( localizationName.isEmpty() ) return null;
         localizationName = localizationName.replaceAll("\\\\", "_").replaceAll("/", "_");
         Path localizationsDir = rnr.getModel().getDirectory()
-                                    .resolve(LocalizationLoader.LOCALIZATION_DIRECTORY_NAME)
+                                    .resolve(FsLocalizationIO.LOCALIZATION_DIRECTORY_NAME)
                                     .resolve(localizationName);
         
         if ( Files.exists(localizationsDir) ) {
@@ -129,7 +133,7 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
             }
         }
         rnr.print(".");
-        try ( BufferedWriter bwrt = Files.newBufferedWriter(localizationPath.resolve(LocalizationLoader.ANSWERS_FILENAME));
+        try ( BufferedWriter bwrt = Files.newBufferedWriter(localizationPath.resolve(FsLocalizationIO.ANSWERS_FILENAME));
               PrintWriter prt = new PrintWriter(bwrt) ){
             List<String> orderedAnswers = new ArrayList<>(answers);
             Collections.sort(orderedAnswers);
@@ -159,8 +163,8 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
     }
 
     private void createPolicySpace(CliRunner rnr) throws IOException {
-        rnr.print(" - Creating " + LocalizationLoader.SPACE_DATA_FILENAME + " file");
-        try ( BufferedWriter bwrt = Files.newBufferedWriter(localizationPath.resolve(LocalizationLoader.SPACE_DATA_FILENAME));
+        rnr.print(" - Creating " + FsLocalizationIO.SPACE_DATA_FILENAME + " file");
+        try ( BufferedWriter bwrt = Files.newBufferedWriter(localizationPath.resolve(FsLocalizationIO.SPACE_DATA_FILENAME));
               PrintWriter prt = new PrintWriter(bwrt) ){
             rnr.getModel().getSpaceRoot().accept(new AbstractSlot.VoidVisitor(){
                 
@@ -238,8 +242,8 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
     
     private void createNodeFiles(CliRunner rnr) throws IOException {
         rnr.print(" - Creating node files");
-        
-        final Path nodesDir = localizationPath.resolve(LocalizationLoader.NODE_DIRECTORY_NAME);
+        final Map<String, Path> nodesPaths = FsLocalizationIO.getNodesPath(StreamSupport.stream(rnr.getModel().getDecisionGraph().nodes().spliterator(), true).collect(Collectors.toSet()));
+        final Path nodesDir = localizationPath.resolve(FsLocalizationIO.NODE_DIRECTORY_NAME);
         if ( ! Files.exists(nodesDir) ) {
             Files.createDirectory(nodesDir);
         }
@@ -260,27 +264,27 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
                                                              .append("\n")
                     );
                 }
-                createNodeLocalizationFile(nodesDir, nd, sb.toString());
+                FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesPaths.get(nd.getId()), sb.toString());
             }
 
             @Override
             public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-                createNodeLocalizationFile(nodesDir, nd, nd.getTitle());
+                FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesPaths.get(nd.getId()), nd.getTitle());
             }
 
             @Override
             public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-                createNodeLocalizationFile(nodesDir, nd, nd.getReason());
+                FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesPaths.get(nd.getId()), nd.getReason());
             }
 
             @Override
             public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
-                createNodeLocalizationFile(nodesDir, nd, nd.getTodoText());
+                FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesPaths.get(nd.getId()), nd.getTodoText());
             }
 
             @Override
             public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
-                createNodeLocalizationFile(nodesDir, nd, nd.getTitle());
+                FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesPaths.get(nd.getId()), nd.getTitle());
             }
 
             @Override public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {}
@@ -295,48 +299,12 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
             if ( AstNodeIdProvider.isAutoId(nd.getId()) ) return;
             nd.accept(writer);
         });
-        
         rnr.println("..Done");
     }
     
-    private void createNodeLocalizationFile( Path nodesDir, Node node, String content) {
-        String effNodeId = node.getId();
-        if ( effNodeId.startsWith("[") ) {
-            effNodeId = effNodeId.substring(1, node.getId().indexOf("]"));
-        }
-        Path relativePath = Paths.get(effNodeId);
-        //delete the .dg from file name
-        String fileName = relativePath.toString();
-        fileName = fileName.endsWith(".dg") ? fileName.substring(0, fileName.length() - 3) : fileName;
-        relativePath = Paths.get(fileName);
-        
-        Path nodeDir;
-        Path secFol = nodesDir.resolve(relativePath);
-        if ( ! Files.exists(secFol) ) {
-            try {
-                Files.createDirectories(secFol);
-            } catch (IOException ex) {
-                Logger.getLogger(CreateLocalizationCommand.class.getName()).log(Level.SEVERE, "Error creating directory for node localizatoin", ex);
-            }
-        }
-        
-        String nodeName = node.getId().substring(node.getId().indexOf("]")+1, node.getId().length());
-        nodeDir = secFol.resolve(nodeName + ".md");
-        if ( nodeDir != null ) {
-            createFileWithContent(nodeDir, content);
-        }
-    }
-    
-    private void createFileWithContent(Path p, String c) {
-        try {
-            Files.write(p, c.getBytes());
-        } catch (IOException ex) {
-            Logger.getLogger(CreateLocalizationCommand.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
     private void createLocalizedModel(CliRunner rnr) throws IOException {
-        rnr.print(" - Creating "+LocalizationLoader.LOCALIZED_METADATA_FILENAME+" file");
+        rnr.print(" - Creating "+FsLocalizationIO.LOCALIZED_METADATA_FILENAME+" file");
         
         try ( InputStream rIn=getClass().getClassLoader().getResourceAsStream("localized-model-template.xml");
               BufferedReader rdr = new BufferedReader(new InputStreamReader(rIn)) 
@@ -352,7 +320,7 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
             Stream<String> processedLines = xmlTemplate.stream().flatMap(s->processSingleLine(s, data).stream());
             
             rnr.print(".");
-            Files.write(localizationPath.resolve(LocalizationLoader.LOCALIZED_METADATA_FILENAME),
+            Files.write(localizationPath.resolve(FsLocalizationIO.LOCALIZED_METADATA_FILENAME),
                         processedLines.collect(toList()));
         }
         
@@ -393,5 +361,6 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
         }
         return Collections.singletonList(out);
     }
+    
 
 }

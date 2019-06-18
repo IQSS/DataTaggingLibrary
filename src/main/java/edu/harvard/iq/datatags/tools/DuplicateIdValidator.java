@@ -94,11 +94,18 @@ public class DuplicateIdValidator extends NullVisitor implements DecisionGraphAs
     @Override
     public void visitImpl(AstSectionNode nd) throws DataTagsRuntimeException {
         collect(nd);
+        for (AstNode an : nd.getAstNodes()) {
+            an.accept(this);
+        }
     }
     
     @Override
     public void visitImpl(AstPartNode nd) throws DataTagsRuntimeException {
         collect(nd);
+        for (AstNode an : nd.getAstNodes()) {
+            an.accept(this);
+        }
+        
     }
     
     @Override

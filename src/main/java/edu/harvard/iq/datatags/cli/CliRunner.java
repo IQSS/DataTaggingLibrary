@@ -24,6 +24,7 @@ import edu.harvard.iq.datatags.cli.commands.OpenInDesktopCommand;
 import edu.harvard.iq.datatags.cli.commands.PrintRunTraceCommand;
 import edu.harvard.iq.datatags.cli.commands.PrintStackCommand;
 import edu.harvard.iq.datatags.cli.commands.TodoCommand;
+import edu.harvard.iq.datatags.cli.commands.UpdateLocalizationCommand;
 import edu.harvard.iq.datatags.io.StringMapFormat;
 import edu.harvard.iq.datatags.model.PolicyModel;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
@@ -134,7 +135,7 @@ public class CliRunner {
                 new VisualizePolicySpaceCommand(), new PrintRunTraceCommand(), new LoadPolicyModelCommand(), 
                 new NewModelCommand(), new OpenInDesktopCommand(), new LoadLocalizationCommand(),
                 new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand(),
-                new CreateLocalizationCommand(), new OptimizeDecisionGraphCommand(), new TodoCommand()
+                new CreateLocalizationCommand(), new OptimizeDecisionGraphCommand(), new TodoCommand(), new UpdateLocalizationCommand()
         ).forEach(c -> commands.put(c.command(), c));
         
         // shortcuts

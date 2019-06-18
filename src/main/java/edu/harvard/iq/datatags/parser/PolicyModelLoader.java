@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.parser;
 
+import edu.harvard.iq.datatags.externaltexts.FsLocalizationIO;
 import edu.harvard.iq.datatags.externaltexts.LocalizationLoader;
 import static edu.harvard.iq.datatags.io.FileUtils.ciResolve;
 import edu.harvard.iq.datatags.model.PolicyModel;
@@ -131,10 +132,10 @@ public class PolicyModelLoader extends BaseModelLoader {
                 // Load localizations
                 Path localizations;
                 try {
-                    localizations = ciResolve(data.getMetadataFile().getParent(), LocalizationLoader.LOCALIZATION_DIRECTORY_NAME);
+                    localizations = ciResolve(data.getMetadataFile().getParent(), FsLocalizationIO.LOCALIZATION_DIRECTORY_NAME);
                     if ( localizations != null ) {
                         Files.list(localizations).filter(Files::isDirectory)
-                                                 .filter( d -> Files.exists(d.resolve(LocalizationLoader.LOCALIZED_METADATA_FILENAME)) )
+                                                 .filter( d -> Files.exists(d.resolve(FsLocalizationIO.LOCALIZED_METADATA_FILENAME)) )
                                                  .map(p->p.getFileName().toString())
                                                  .forEach(res.getModel()::addLocalization);
                     }
