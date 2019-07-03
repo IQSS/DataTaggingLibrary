@@ -34,3 +34,19 @@ Eventually comes home.
 # Base/Rice/Full
 <-- TODO: describe Base/Rice/Full
 
+# Base/SetDogs
+SetDogs
+
+
+# Base/SetDogs/dWorks
+dWorks
+
+
+# Base/SetCats
+SetCats
+
+
+# Base/SetCats/cWorks
+cWorks
+
+

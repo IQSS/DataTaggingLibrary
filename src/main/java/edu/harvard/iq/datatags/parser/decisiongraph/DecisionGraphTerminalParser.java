@@ -35,9 +35,9 @@ public class DecisionGraphTerminalParser {
 
     static final String NODE_TEXT_TERMINATORS = ":]}";
     static final List<String> NODE_STRUCTURE_TOKENS = Arrays.asList("/", "+=", "=", ",", ";",
-            "[--", "[", ":", "{", "}", "]", "#", "--]",
+            "[--", "[", ":", "{", "}", "]", "#", "--]", "(", ")",
             "else", "slot", "when", "consider", "ask", "set", "end", "reject", "call", "todo", "continue",
-            "text", "terms", "answers", "options", "section", "part", "title", "#import", "as");
+            "text", "terms", "answers", "options", "section", "part", "title", "#import", "\\as", "\\not", "\\or", "\\and", "\\is", "\\in", "\\contains", "\\hasValue", "\\>", "\\<", "\\>=", "\\<=", "\\=");
     static final Terminals NODE_STRUCTURE_TERMINALS = Terminals.operators(NODE_STRUCTURE_TOKENS);
 
     static final Parser<Object> TOKENIZER;
@@ -51,7 +51,8 @@ public class DecisionGraphTerminalParser {
     static final Parser<Fragment> NODE_TEXT = notAmong(NODE_TEXT_TERMINATORS).many1()
             .source().map(s -> Tokens.fragment(s, Tags.TEXT_BODY));
 
-    static final Parser<Fragment> KEYWORDS = Parsers.or(string("ask"), string("set"), string("end"), string("reject"), string("call"), string("todo"), string("section"))
+    static final Parser<Fragment> KEYWORDS = Parsers.or(string("ask"), string("set"), string("end"), string("reject"), string("call"), string("todo"), string("section"), 
+            string("\\not"), string("\\or"), string("\\and"), string("\\is"), string("\\in"), string("\\contains"), string("\\hasValue"))
             .source().map(s -> Tokens.fragment(s, Tags.KEYWORD));
 
     static final Parser<String> NODE_ID_VALUE = 

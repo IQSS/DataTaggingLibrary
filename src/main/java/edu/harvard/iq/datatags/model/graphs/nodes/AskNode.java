@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.model.graphs.nodes;
 
 import edu.harvard.iq.datatags.model.graphs.Answer;
+import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.BooleanExpression;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ public class AskNode extends Node {
      */
     private final List<Answer> answers = new LinkedList<>();
     private final Map<Answer, Node> nextNodeByAnswer = new HashMap<>();
+    private Map<Answer, BooleanExpression> answerToBE = new HashMap<>();
     private final HashMap<String, String> terms = new HashMap<>();
     private final List<String> termOrder = new ArrayList<>();
     private String text;
@@ -43,9 +45,10 @@ public class AskNode extends Node {
      * @param node the node
      * @return {@code node}, for convenience, call chaining, etc.
      */
-    public <T extends Node> T addAnswer(Answer answer, T node) {
+    public <T extends Node> T addAnswer(Answer answer, T node, BooleanExpression be) {
         answers.add(answer);
         nextNodeByAnswer.put(answer, node);
+        answerToBE.put(answer, be);
         return node;
     }
     
@@ -58,7 +61,7 @@ public class AskNode extends Node {
         if ( answers.contains(answer) ) {
             nextNodeByAnswer.put(answer, node);
         } else {
-            addAnswer(answer, node);
+            addAnswer(answer, node, answerToBE.get(node));
         }
         return node;
     }

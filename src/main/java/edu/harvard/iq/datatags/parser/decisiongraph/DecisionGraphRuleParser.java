@@ -21,7 +21,14 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTextSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.AndExpAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.BooleanExpressionAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.EqualsExpAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.GreaterThanExpAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.NotExpAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.SmallerThanExpAst;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 import org.jparsec.Parser;
@@ -84,6 +91,84 @@ public class DecisionGraphRuleParser {
         return Parsers.or(parsers).many().source();
     }
     
+    final static Parser<BooleanExpressionAst> EQUALS = Parsers.sequence(IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
+            nodeStructurePart("\\="),
+            IDENTIFIER_WITH_KEYWORDS,
+            (path, op, value) -> new EqualsExpAst(path, value)
+    );
+    
+    
+    final static Parser<BooleanExpressionAst> GREATER_THAN = Parsers.sequence(IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
+            nodeStructurePart("\\>"),
+            IDENTIFIER_WITH_KEYWORDS,
+            (path, op, value) -> new GreaterThanExpAst(path, value)
+    );
+    
+    final static Parser<BooleanExpressionAst> GREATER_EQ_THAN = Parsers.sequence(IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
+            nodeStructurePart("\\>="),
+            IDENTIFIER_WITH_KEYWORDS,
+            (path, op, value) -> new AndExpAst(new GreaterThanExpAst(path, value), new EqualsExpAst(path, value))
+    );
+    
+    final static Parser<BooleanExpressionAst> SMALLER_EQ_THAN = Parsers.sequence(IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
+            nodeStructurePart("\\<="),
+            IDENTIFIER_WITH_KEYWORDS,
+            (path, op, value) -> new AndExpAst(new SmallerThanExpAst(path, value), new EqualsExpAst(path, value))
+    );
+    
+    final static Parser<BooleanExpressionAst> SMALLER_THAN = Parsers.sequence(
+            IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
+            nodeStructurePart("\\<"),
+            IDENTIFIER_WITH_KEYWORDS,
+            (path, op, value) -> new SmallerThanExpAst(path, value)
+    );
+    
+    static Parser<BooleanExpressionAst> AND_EXP( Parser<BooleanExpressionAst> bep ) {
+        return Parsers.sequence(
+            bep,
+            nodeStructurePart("\\and"),
+            bep,
+            (op1, and, op2) -> new AndExpAst(op1, op2)
+         );
+    }
+    
+    static Parser<BooleanExpressionAst> OR_EXP( Parser<BooleanExpressionAst> bep ) {
+        return Parsers.sequence(
+            bep,
+            nodeStructurePart("\\or"),
+            bep,
+            (op1, and, op2) -> new NotExpAst(new AndExpAst(new NotExpAst(op1), new NotExpAst(op2)))
+        );
+    }
+    
+    static Parser<BooleanExpressionAst> NOT_EXP( Parser<BooleanExpressionAst> bep ) { 
+        return Parsers.sequence(
+            nodeStructurePart("\\not"),
+            bep,
+            (not, op) -> new NotExpAst(op)
+        );
+    }
+    
+    static Parser<BooleanExpressionAst> BOOLEAN_EXP_WITH_PARENTHESIS(Parser<BooleanExpressionAst> bep) {
+        return Parsers.sequence(
+            nodeStructurePart("("),
+            bep,
+            nodeStructurePart(")"),
+            (_s, be, _e) -> be
+        );
+    }
+    
+    static Parser<BooleanExpressionAst> BOOLEAN_EXP(Parser<BooleanExpressionAst> bep) {
+        return ATOMIC_BOOLEAN_EXPRESSION.or(recursiveBooleanExpression(bep));
+    }
+    
+    static Parser<BooleanExpressionAst> recursiveBooleanExpression( Parser<BooleanExpressionAst> bep ) {
+        return AND_EXP(bep).or(OR_EXP(bep)).or(NOT_EXP(bep));
+    }
+    
+    static Parser<BooleanExpressionAst> ATOMIC_BOOLEAN_EXPRESSION = Parsers.or(EQUALS, GREATER_THAN, GREATER_EQ_THAN, SMALLER_THAN, SMALLER_EQ_THAN);
+            
+    
     final static Parser<AstSetNode.AtomicAssignment> ATOMIC_ASSIGNMENT_SLOT = Parsers.sequence(
             IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
             nodeStructurePart("="),
@@ -135,22 +220,23 @@ public class DecisionGraphRuleParser {
     );
     
     
-    final static Parser<AstAnswerSubNode> answerSubNode( Parser<List<? extends AstNode>> bodyParser ) {
+    final static Parser<AstAnswerSubNode> answerSubNode( Parser<List<? extends AstNode>> bodyParser, Parser<BooleanExpressionAst> bep ) {
         return Parsers.sequence(
             nodeStructurePart("{"),
+            BOOLEAN_EXP_WITH_PARENTHESIS(bep).optional(null),
             textbodyUpTo(":"),
             nodeStructurePart(":"),
             bodyParser,
             nodeStructurePart("}"),
-            (_s, name, _c, body, _e) -> new AstAnswerSubNode(name.trim(), body));
+            (_s, be, name, _c, body, _e) -> new AstAnswerSubNode(name.trim(), body, be));
     }
     
-    final static Parser<List<AstAnswerSubNode>> answersSubNode( Parser<List<? extends AstNode>> bodyParser ) {
+    final static Parser<List<AstAnswerSubNode>> answersSubNode( Parser<List<? extends AstNode>> bodyParser, Parser<BooleanExpressionAst> bep ) {
         return Parsers.sequence(
             nodeStructurePart("{"),
             nodeStructurePart("answers"),
             nodeStructurePart(":"),
-            answerSubNode(bodyParser).many1(),
+            answerSubNode(bodyParser, bep).many1(),
             nodeStructurePart("}"),
             (_s, _name, _c, answers, _e) -> answers );
     }
@@ -250,7 +336,7 @@ public class DecisionGraphRuleParser {
             nodeStructurePart("]"),
             ( _s, head, _c, slots, _e) -> new AstSetNode(head.getId(), slots));
             
-    final static Parser<AstAskNode> askNode( Parser<List<? extends AstNode>> bodyParser ) {
+    final static Parser<AstAskNode> askNode( Parser<List<? extends AstNode>> bodyParser, Parser<BooleanExpressionAst> bep ) {
         return Parsers.sequence(
                 Parsers.sequence(
                         nodeStructurePart("["),
@@ -259,7 +345,7 @@ public class DecisionGraphRuleParser {
                         (_s, h, _c) -> h ),
                 TEXT_SUBNODE,
                 TERMS_SUBNODE.optional(null),
-                answersSubNode(bodyParser),
+                answersSubNode(bodyParser, bep),
                 nodeStructurePart("]"),
                 ( head, text, terms, answers, _e) -> new AstAskNode( head.getId(), text, terms, answers ));
     }       
@@ -336,10 +422,13 @@ public class DecisionGraphRuleParser {
     // Program-level parsers.
     // -------------------------------
     final static Parser<ParsedFile> graphParser() {
+        Parser.Reference<BooleanExpressionAst> boolExpParserRef = Parser.newReference();
         Parser.Reference<List<? extends AstNode>> nodeListParserRef = Parser.newReference();
+        Parser<BooleanExpressionAst> BOOL = ATOMIC_BOOLEAN_EXPRESSION.or(recursiveBooleanExpression(boolExpParserRef.lazy()));
         Parser<? extends AstNode> singleAstNode = Parsers.or(END_NODE, CALL_NODE, TODO_NODE, REJECT_NODE, SET_NODE, CONTINUE_NODE, 
-                askNode(nodeListParserRef.lazy()), considerNode(nodeListParserRef.lazy()), whenNode(nodeListParserRef.lazy()), sectionNode(nodeListParserRef.lazy()),
+                askNode(nodeListParserRef.lazy(), BOOL), considerNode(nodeListParserRef.lazy()), whenNode(nodeListParserRef.lazy()), sectionNode(nodeListParserRef.lazy()),
                 partNode(nodeListParserRef.lazy()));
+        boolExpParserRef.set(BOOL);
         Parser<List<? extends AstNode>> nodeSequence = singleAstNode.many().cast();
         nodeListParserRef.set(nodeSequence);
 

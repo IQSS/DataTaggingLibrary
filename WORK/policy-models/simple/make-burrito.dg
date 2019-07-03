@@ -3,6 +3,7 @@
   {text: Are you a vegeterian?}
   {answers:
     {yes: [set: Main=tofu] }
+    <-- {may: [todo:may] }
     {no: [>ft< ask:
       {text: Beef?}
       {answers:
@@ -15,7 +16,7 @@
 [>sides< ask:
   {text: Which Offer?}
   {answers:
-    {the works:
+    {Main = beef works:
       [set: Wrap=wheat; Side+=rice,corn,guacamole,cream,cheese ]
       [set: Bag=paper]
     }
@@ -27,6 +28,8 @@
     }
   }
 ]
+[>added< todo: added]
+<-- [>what< todo: end]
 <*
 [>extras< ask:
   {text: How 'bout some extras? }

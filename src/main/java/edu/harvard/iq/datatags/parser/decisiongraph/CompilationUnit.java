@@ -13,6 +13,7 @@ import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.BooleanExpression;
 import edu.harvard.iq.datatags.model.slots.AggregateSlot;
 import edu.harvard.iq.datatags.model.slots.AtomicSlot;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
@@ -33,6 +34,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.NodeIdAdder;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.BooleanExpressionAst;
 import edu.harvard.iq.datatags.parser.exceptions.BadLookupException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
@@ -342,9 +344,14 @@ public class CompilationUnit {
                             }
 
                             Node syntacticallyNext = buildNodes(C.tail(astNodes), defaultNode);
-
-                            astNode.getAnswers().forEach(ansSubNode -> res.addAnswer(Answer.withName(ansSubNode.getAnswerText()),
-                                    buildNodes(ansSubNode.getSubGraph(), syntacticallyNext)));
+                           
+                            astNode.getAnswers().forEach(ansSubNode -> {
+                                                    //check for be
+                                                    BooleanExpressionAst currBE = ansSubNode.getBoolExp();
+                                                    res.addAnswer(Answer.withName(ansSubNode.getAnswerText()),
+                                                        buildNodes(ansSubNode.getSubGraph(), syntacticallyNext));
+                                                    }
+                                                );
 
                             impliedAnswers(res).forEach(ans -> res.addAnswer(ans, syntacticallyNext));
 

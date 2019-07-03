@@ -46,7 +46,7 @@
     }
   ]
 ]
-[>dog_section_set< set: SetCats = cWorks]
+[>cat_section_set< set: SetCats = cWorks]
 --]
 
 [-->metadata<
@@ -65,7 +65,7 @@
 
 [>sec:m2< section:
   {title: metadata too}
-  [>m1a< ask:
+  [>m1a1< ask:
     {text: xxx?}
     {answers:
       {x: [todo: xxx]}

@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.parser.decisiongraph.ast;
 
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.BooleanExpressionAst;
 import java.util.List;
 import java.util.Objects;
 
@@ -9,11 +10,13 @@ import java.util.Objects;
  */
 public class AstAnswerSubNode {
     private final List<? extends AstNode> subGraph;
-	private final String answerText;
+    private final String answerText;
+    private final BooleanExpressionAst boolExp;
 
-    public AstAnswerSubNode(String text, List<? extends AstNode> implementation) {
+    public AstAnswerSubNode(String text, List<? extends AstNode> implementation, BooleanExpressionAst boolExp) {
         answerText = text;
         this.subGraph = implementation;
+        this.boolExp = boolExp;
     }
 
 	public String getAnswerText() {
@@ -22,6 +25,10 @@ public class AstAnswerSubNode {
 	
     public List<? extends AstNode> getSubGraph() {
         return subGraph;
+    }
+
+    public BooleanExpressionAst getBoolExp() {
+        return boolExp;
     }
 
     @Override

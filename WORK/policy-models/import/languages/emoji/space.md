@@ -34,3 +34,19 @@ Eventually comes home.
 # Base/Rice/Full
 <-- TODO: describe Base/Rice/Full
 
+# Base/Rice/Super
+Super
+
+
+# Base/Test
+Test
+
+
+# Base/Test/Work
+Work
+
+
+# Base/Test/Not
+Not
+
+

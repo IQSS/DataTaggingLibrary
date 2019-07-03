@@ -19,6 +19,10 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTextSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.BooleanExpressionAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.EqualsExpAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.GreaterThanExpAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.NotExpAst;
 import java.util.Arrays;
 import static java.util.Arrays.asList;
 import java.util.Collections;
@@ -405,10 +409,10 @@ public class DecisionGraphRuleParserTest {
 
         Parser<AstAnswerSubNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.answerSubNode(bodyParser));
 
-        assertEquals(new AstAnswerSubNode("yes", asList(new AstTodoNode("td", "do this"), new AstTodoNode("te", "do that"))),
+        assertEquals(new AstAnswerSubNode("yes", asList(new AstTodoNode("td", "do this"), new AstTodoNode("te", "do that")), null),
                 sut.parse("{yes: [>td< todo:do this][>te< todo: do that]}"));
 
-        assertEquals(new AstAnswerSubNode("Dorothy Stein", asList(new AstTodoNode("td", "do this"), new AstTodoNode("te", "do that"))),
+        assertEquals(new AstAnswerSubNode("Dorothy Stein", asList(new AstTodoNode("td", "do this"), new AstTodoNode("te", "do that")), null),
                 sut.parse("{Dorothy Stein: [>td< todo:do this][>te< todo: do that]}"));
     }
 
@@ -419,12 +423,12 @@ public class DecisionGraphRuleParserTest {
 
         Parser<List<AstAnswerSubNode>> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.answersSubNode(bodyParser));
 
-        assertEquals(asList(new AstAnswerSubNode("yes", asList(new AstTodoNode("td", "do this"), new AstTodoNode("te", "do that")))),
+        assertEquals(asList(new AstAnswerSubNode("yes", asList(new AstTodoNode("td", "do this"), new AstTodoNode("te", "do that")), null)),
                 sut.parse("{answers: {yes: [>td< todo:do this][>te< todo: do that]}}"));
 
-        assertEquals(asList(new AstAnswerSubNode("yes", asList(new AstTodoNode("td", "do this"))),
-                new AstAnswerSubNode("no", asList(new AstTodoNode("td", "do this"), new AstTodoNode("te", "do that"))),
-                new AstAnswerSubNode("maybe so", asList(new AstTodoNode("td", "do this"), new AstEndNode(null)))),
+        assertEquals(asList(new AstAnswerSubNode("yes", asList(new AstTodoNode("td", "do this")), null),
+                new AstAnswerSubNode("no", asList(new AstTodoNode("td", "do this"), new AstTodoNode("te", "do that")), null),
+                new AstAnswerSubNode("maybe so", asList(new AstTodoNode("td", "do this"), new AstEndNode(null)), null)),
                 sut.parse("{answers: "
                         + "{yes: [>td< todo:do this]}"
                         + "{no: [>td< todo:do this][>te< todo: do that]}"
@@ -432,6 +436,47 @@ public class DecisionGraphRuleParserTest {
                         + "}"));
     }
 
+    @Test
+    public void booleanExpressionTest() {
+        Parser.Reference<BooleanExpressionAst> boolExpParserRef = Parser.newReference();
+        Parser<BooleanExpressionAst> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.BOOLEAN_EXP(boolExpParserRef.lazy()));
+        boolExpParserRef.set(sut);
+        
+        assertEquals(sut.parse("Greeting\\=hello"), new EqualsExpAst(asList("Greeting"), "hello"));
+        assertEquals(sut.parse("\\not Greeting\\=hello"), new NotExpAst(new EqualsExpAst(asList("Greeting"), "hello")));
+    }
+    
+    @Test
+    public void booleanExpressionWithParensTest() {
+        Parser.Reference<BooleanExpressionAst> boolExpParserRef = Parser.newReference();
+        Parser<BooleanExpressionAst> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.BOOLEAN_EXP_WITH_PARENTHESIS(boolExpParserRef));
+        boolExpParserRef.set(boolExpParserRef.lazy());
+        assertEquals(sut.parse("(Greeting\\=hello)"), new EqualsExpAst(asList("Greeting"), "hello"));
+    }
+    
+    
+    @Test
+    public void answersNodeTestWithBoolExp() {
+        Parser<List<? extends AstNode>> bodyParser
+                = Parsers.or(DecisionGraphRuleParser.END_NODE, DecisionGraphRuleParser.TODO_NODE).many().cast();
+
+        Parser<List<AstAnswerSubNode>> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.answersSubNode(bodyParser));
+        
+        
+        
+        assertEquals(asList(new AstAnswerSubNode("yes", asList(new AstTodoNode("td", "do this"), new AstTodoNode("te", "do that")), new EqualsExpAst(asList("Greeting"), "hello"))),
+                sut.parse("{answers: {(Greeting=hello) yes: [>td< todo:do this][>te< todo: do that]}}"));
+
+        assertEquals(asList(new AstAnswerSubNode("yes", asList(new AstTodoNode("td", "do this")), new EqualsExpAst(asList("Greeting"), "hello")),
+                new AstAnswerSubNode("no", asList(new AstTodoNode("td", "do this"), new AstTodoNode("te", "do that")), new EqualsExpAst(asList("Greeting"), "hello")),
+                new AstAnswerSubNode("maybe so", asList(new AstTodoNode("td", "do this"), new AstEndNode(null)), new GreaterThanExpAst(asList("Greeting"), "hello"))),
+                sut.parse("{answers: "
+                        + "{(Greeting=hello)yes: [>td< todo:do this]}"
+                        + "{(Greeting = hello) no: [>td< todo:do this][>te< todo: do that]}"
+                        + "{(Greeting>hello) maybe so: [>td< todo:do this][end]}"
+                        + "}"));
+    }
+    
     @Test
     public void testConsiderNode() {
         String program = "[>44< consider:\n"
@@ -481,8 +526,8 @@ public class DecisionGraphRuleParserTest {
         assertEquals(new AstAskNode("id",
                 new AstTextSubNode("why do that?"),
                 asList(new AstTermSubNode("that", "a thingy")),
-                asList(new AstAnswerSubNode("yes", asList(new AstEndNode(null))),
-                        new AstAnswerSubNode("no", asList(new AstEndNode("no-end"))))),
+                asList(new AstAnswerSubNode("yes", asList(new AstEndNode(null)), null),
+                        new AstAnswerSubNode("no", asList(new AstEndNode("no-end")), null))),
                 sut.parse("[>id< ask:"
                         + " {text: why do that?} "
                         + "  {terms: {that: a thingy} }"
@@ -494,8 +539,8 @@ public class DecisionGraphRuleParserTest {
         assertEquals(new AstAskNode("id",
                 new AstTextSubNode("why do that?"),
                 null,
-                asList(new AstAnswerSubNode("yes", asList(new AstEndNode(null))),
-                        new AstAnswerSubNode("no", asList(new AstEndNode("no-end"))))),
+                asList(new AstAnswerSubNode("yes", asList(new AstEndNode(null)), null),
+                        new AstAnswerSubNode("no", asList(new AstEndNode("no-end")), null))),
                 sut.parse("[>id< ask:"
                         + " {text: why do that?} "
                         + "   {answers: "
@@ -539,11 +584,11 @@ public class DecisionGraphRuleParserTest {
                         asList(new AstAnswerSubNode("yes",
                                 asList(new AstSetNode(null, asList(new AstSetNode.AtomicAssignment(asList("identity"), "personData"))),
                                         new AstCallNode(null, "medRecs"),
-                                        new AstTodoNode(null, "Arrest and Conviction Records"))),
+                                        new AstTodoNode(null, "Arrest and Conviction Records")), null),
                                 new AstAnswerSubNode("no",
-                                        asList(new AstSetNode(null, asList(new AstSetNode.AtomicAssignment(asList("identity"), "noPersonData"))))),
+                                        asList(new AstSetNode(null, asList(new AstSetNode.AtomicAssignment(asList("identity"), "noPersonData")))), null),
                                 new AstAnswerSubNode("not sure",
-                                        asList(new AstRejectNode(null, "please check"))))),
+                                        asList(new AstRejectNode(null, "please check")),null))),
                 new AstCallNode(null, "dua"),
                 new AstEndNode(null)
         );
