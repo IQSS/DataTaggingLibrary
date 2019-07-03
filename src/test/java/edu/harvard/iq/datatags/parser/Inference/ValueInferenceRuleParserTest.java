@@ -2,7 +2,9 @@ package edu.harvard.iq.datatags.parser.Inference;
 
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst.InferencePairAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AggregateSlotValuePair;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AtomicSlotValuePair;
 import java.util.Arrays;
 import static java.util.Arrays.asList;
 import java.util.List;
@@ -47,12 +49,10 @@ public class ValueInferenceRuleParserTest {
     public void testValueInferrerParser() {
         Parser<ValueInferrerAst> sut = ValueInferenceTerminalParser.buildParser(ValueInferenceRuleParser.valueInferrerParser());
         //Atomic
-        InferencePairAst firstPair = new InferencePairAst(asList(
-                                        new AstSetNode.AtomicAssignment(asList("A"), "a0"), 
-                                        new AstSetNode.AtomicAssignment(asList("B"), "b0")), "Blue");
-        InferencePairAst secondPair = new InferencePairAst(asList(
-                                        new AstSetNode.AtomicAssignment(asList("A"), "a1"), 
-                                        new AstSetNode.AtomicAssignment(asList("B"), "b1")), "Red");
+        InferencePairAst firstPair = new InferencePairAst(asList(new AtomicSlotValuePair(asList("A"), "a0"), 
+                                        new AtomicSlotValuePair(asList("B"), "b0")), "Blue");
+        InferencePairAst secondPair = new InferencePairAst(asList(new AtomicSlotValuePair(asList("A"), "a1"), 
+                                        new AtomicSlotValuePair(asList("B"), "b1")), "Red");
         ValueInferrerAst actual = sut.parse("[Color: support" 
                                             + "[A=a0; B=b0 -> Blue]"
                                             + "[A=a1; B=b1 -> Red]" 
@@ -68,12 +68,10 @@ public class ValueInferenceRuleParserTest {
         assertEquals(expected, actual);
         
         //Aggregate
-        firstPair = new InferencePairAst(asList(
-                                        new AstSetNode.AggregateAssignment(asList("A"), asList("a0")),
-                                        new AstSetNode.AggregateAssignment(asList("B"), asList("b0"))), "Blue");
-        secondPair = new InferencePairAst(asList(
-                                        new AstSetNode.AggregateAssignment(asList("A"), asList("a1")),
-                                        new AstSetNode.AggregateAssignment(asList("B"), asList("b1"))), "Red");
+        firstPair = new InferencePairAst(asList(new AggregateSlotValuePair(asList("A"), asList("a0")),
+                                        new AggregateSlotValuePair(asList("B"), asList("b0"))), "Blue");
+        secondPair = new InferencePairAst(asList(new AggregateSlotValuePair(asList("A"), asList("a1")),
+                                        new AggregateSlotValuePair(asList("B"), asList("b1"))), "Red");
         actual = sut.parse("[Color: support" 
                             + "[A+=a0; B+=b0 -> Blue]"
                             + "[A+=a1; B+=b1 -> Red]" 
@@ -81,12 +79,10 @@ public class ValueInferenceRuleParserTest {
         expected = new ValueInferrerAst(asList("Color"), asList(firstPair, secondPair), "support");
         assertEquals(expected, actual);
         
-        firstPair = new InferencePairAst(asList(
-                                        new AstSetNode.AggregateAssignment(Arrays.asList("Base/A".split("/")), asList("a0")),
-                                        new AstSetNode.AggregateAssignment(Arrays.asList("Base/B".split("/")), asList("b0"))), "Blue");
-        secondPair = new InferencePairAst(asList(
-                                        new AstSetNode.AggregateAssignment(Arrays.asList("Base/A".split("/")), asList("a1")),
-                                        new AstSetNode.AggregateAssignment(Arrays.asList("Base/B".split("/")), asList("b1"))), "Red");
+        firstPair = new InferencePairAst(asList(new AggregateSlotValuePair(Arrays.asList("Base/A".split("/")), asList("a0")),
+                                        new AggregateSlotValuePair(Arrays.asList("Base/B".split("/")), asList("b0"))), "Blue");
+        secondPair = new InferencePairAst(asList(new AggregateSlotValuePair(Arrays.asList("Base/A".split("/")), asList("a1")),
+                                        new AggregateSlotValuePair(Arrays.asList("Base/B".split("/")), asList("b1"))), "Red");
         actual = sut.parse("[Color: support" 
                             + "[Base/A+=a0; Base/B+=b0 -> Blue]"
                             + "[Base/A+=a1; Base/B+=b1 -> Red]" 
@@ -102,15 +98,12 @@ public class ValueInferenceRuleParserTest {
     public void testValueInferrerListParser(){
         Parser<List<ValueInferrerAst>> sut = ValueInferenceTerminalParser.buildParser(ValueInferenceRuleParser.valueInferrersParser());
         //Atomic
-        InferencePairAst firstPair = new InferencePairAst(asList(
-                                        new AstSetNode.AtomicAssignment(asList("A"), "a0"), 
-                                        new AstSetNode.AtomicAssignment(asList("B"), "b0")), "Blue");
-        InferencePairAst secondPair = new InferencePairAst(asList(
-                                        new AstSetNode.AtomicAssignment(asList("A"), "a1"), 
-                                        new AstSetNode.AtomicAssignment(asList("B"), "b1")), "Red");
-        InferencePairAst thirdPair = new InferencePairAst(asList(
-                                        new AstSetNode.AggregateAssignment(asList("TestI"), asList("yes")),
-                                        new AstSetNode.AtomicAssignment(asList("TestII"), "no")), "Works");
+        InferencePairAst firstPair = new InferencePairAst(asList(new AtomicSlotValuePair(asList("A"), "a0"), 
+                                        new AtomicSlotValuePair(asList("B"), "b0")), "Blue");
+        InferencePairAst secondPair = new InferencePairAst(asList(new AtomicSlotValuePair(asList("A"), "a1"), 
+                                        new AtomicSlotValuePair(asList("B"), "b1")), "Red");
+        InferencePairAst thirdPair = new InferencePairAst(asList(new AggregateSlotValuePair(asList("TestI"), asList("yes")),
+                                        new AtomicSlotValuePair(asList("TestII"), "no")), "Works");
         List<ValueInferrerAst> actual = sut.parse("[Color: support\n" 
                                                     + "[A=a0; B=b0 -> Blue]\n"
                                                     + "[A=a1; B=b1 -> Red]\n" 

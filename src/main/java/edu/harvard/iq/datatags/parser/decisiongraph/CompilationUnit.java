@@ -18,6 +18,7 @@ import edu.harvard.iq.datatags.model.slots.AtomicSlot;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AggregateSlotValuePair;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderOptionSubNode;
@@ -31,8 +32,10 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AtomicSlotValuePair;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.NodeIdAdder;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.SlotValuePair;
 import edu.harvard.iq.datatags.parser.exceptions.BadLookupException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
@@ -173,7 +176,7 @@ public class CompilationUnit {
         compile(aFullyQualifiedSlotName, aTopLevelType, globalEndNode, astValidators);
     }   
     
-    private AbstractSlot findSlot(List<String> astSlot, CompoundValue topValue, SetNodeValueBuilder valueBuilder) {
+    private AbstractSlot findSlot(List<String> astSlot, CompoundValue topValue, ValueBuilder valueBuilder) {
         AbstractSlot slot;
 
         if (astSlot == null || C.last(astSlot).equals(topLevelType.getName())) {
@@ -257,7 +260,7 @@ public class CompilationUnit {
                         // build consider node from ast-consider-node 
                         public Node visit(AstConsiderNode astNode) {
                             CompoundValue topValue = topLevelType.createInstance();
-                            SetNodeValueBuilder valueBuilder = new SetNodeValueBuilder(topValue, fullyQualifiedSlotName);
+                            ValueBuilder valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
 
                             Node syntacticallyNext = buildNodes(C.tail(astNodes), defaultNode);
                             Node elseNode = syntacticallyNext;
@@ -275,19 +278,19 @@ public class CompilationUnit {
                                         throw new RuntimeException(" (consider slot gets only values, not answers)");
                                     }
                                     topValue = topLevelType.createInstance();
-                                    valueBuilder = new SetNodeValueBuilder(topValue, fullyQualifiedSlotName);
-                                    AstSetNode.Assignment assignment;
+                                    valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
+                                    SlotValuePair slotValuePair;
                                     if (slot instanceof AggregateSlot) {
-                                        assignment = new AstSetNode.AggregateAssignment(astNode.getSlot(), astAns.getOptionList());
+                                        slotValuePair = new AggregateSlotValuePair(astNode.getSlot(), astAns.getOptionList());
                                     } else {
-                                        assignment = new AstSetNode.AtomicAssignment(astNode.getSlot(), astAns.getOptionList().get(0).trim());
+                                        slotValuePair = new AtomicSlotValuePair(astNode.getSlot(), astAns.getOptionList().get(0).trim());
                                     }
 
-                                    if (assignment == null) {
+                                    if (slotValuePair == null) {
                                         throw new RuntimeException(new DataTagsParseException(astNode, "Error: bad assignment (at node " + astNode + ")"));
                                     }
                                     try {
-                                        assignment.accept(valueBuilder);
+                                        slotValuePair.accept(valueBuilder);
                                     } catch (RuntimeException re) {
                                         if (re.getCause() instanceof DataTagsParseException) {
                                             ((DataTagsParseException) re.getCause()).setOffendingNode(astNode);
@@ -303,17 +306,17 @@ public class CompilationUnit {
                             } else if (slot instanceof CompoundSlot) {
                                 // Original node was [when]
                                 for (AstConsiderOptionSubNode astAns : astNode.getOptions()) {
-                                    if (astAns.getAssignments() == null) {
+                                    if (astAns.getSlotValuePairs() == null) {
                                         throw new RuntimeException("Expecting some values for the [when] node's options.");
                                     }
                                     topValue = topLevelType.createInstance();
-                                    valueBuilder = new SetNodeValueBuilder(topValue, fullyQualifiedSlotName);
+                                    valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
 
-                                    List<AstSetNode.Assignment> assignments = astAns.getAssignments();
+                                    List<SlotValuePair> slotValuePairs = astAns.getSlotValuePairs();
 
                                     try {
-                                        for (AstSetNode.Assignment asnmnt : assignments) {
-                                            asnmnt.accept(valueBuilder);
+                                        for (SlotValuePair slotValue : slotValuePairs) {
+                                            slotValue.accept(valueBuilder);
                                         }
                                     } catch (RuntimeException re) {
                                         if (re.getCause() instanceof DataTagsParseException) {
@@ -363,7 +366,7 @@ public class CompilationUnit {
                         @Override
                         public Node visit(AstSetNode astNode) {
                             final CompoundValue topValue = topLevelType.createInstance();
-                            SetNodeValueBuilder valueBuilder = new SetNodeValueBuilder(topValue, fullyQualifiedSlotName);
+                            ValueBuilder valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
                             try {
                                 astNode.getAssignments().forEach(asnmnt -> asnmnt.accept(valueBuilder));
                             } catch (RuntimeException re) {

@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.visualizers.graphviz;
 
 import edu.harvard.iq.datatags.parser.decisiongraph.AstNodeIdProvider;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AggregateSlotValuePair;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
@@ -16,6 +17,8 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AtomicSlotValuePair;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.SlotValuePair;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.datatags.visualizers.graphviz.GvNode.node;
@@ -176,14 +179,14 @@ public class GraphvizGraphNodeAstVisualizer extends GraphvizVisualizer {
 
         setNodeTypeHandler(AstSetNode.class, (AstSetNode node, int depth) -> {
             final StringBuilder sb = new StringBuilder();
-            AstSetNode.Assignment.Visitor asgnmntPainter = new AstSetNode.Assignment.Visitor() {
+            SlotValuePair.Visitor asgnmntPainter = new SlotValuePair.Visitor() {
                 @Override
-                public void visit(AstSetNode.AtomicAssignment aa) {
+                public void visit(AtomicSlotValuePair aa) {
                     sb.append(aa.getSlot()).append("=").append(aa.getValue()).append(" ");
                 }
 
                 @Override
-                public void visit(AstSetNode.AggregateAssignment aa) {
+                public void visit(AggregateSlotValuePair aa) {
                     sb.append(aa.getSlot()).append("+={").append(aa.getValue()).append("}").append(" ");
                 }
             };

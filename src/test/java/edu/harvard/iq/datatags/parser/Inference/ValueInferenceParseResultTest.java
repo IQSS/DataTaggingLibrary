@@ -8,6 +8,7 @@ import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst.InferencePairAst;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AtomicSlotValuePair;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParseResult;
@@ -95,12 +96,9 @@ public class ValueInferenceParseResultTest {
         cvT.put(asT.valueOf("Works"));
         cvTI.put(asTI.valueOf("yes"));
         
-        InferencePairAst firstAstPair = new InferencePairAst(asList(
-                                        new AstSetNode.AtomicAssignment(asList("A"), "a0")), "Blue");
-        InferencePairAst secondAstPair = new InferencePairAst(asList(
-                                        new AstSetNode.AtomicAssignment(asList("A"), "a1")), "Red");
-        InferencePairAst thirdAstPair = new InferencePairAst(asList(
-                                        new AstSetNode.AtomicAssignment(asList("TestI"), "yes")), "Works");
+        InferencePairAst firstAstPair = new InferencePairAst(asList(new AtomicSlotValuePair(asList("A"), "a0")), "Blue");
+        InferencePairAst secondAstPair = new InferencePairAst(asList(new AtomicSlotValuePair(asList("A"), "a1")), "Red");
+        InferencePairAst thirdAstPair = new InferencePairAst(asList(new AtomicSlotValuePair(asList("TestI"), "yes")), "Works");
         List<ValueInferrerAst> inferences = asList(new ValueInferrerAst(asList("Color"), asList(firstAstPair, secondAstPair), "support"),
                                                 new ValueInferrerAst(asList("Test"), asList(thirdAstPair), "support"));
         

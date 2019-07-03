@@ -1,6 +1,6 @@
 package edu.harvard.iq.datatags.parser.Inference.ast;
 
-import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode.Assignment;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.SlotValuePair;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,15 +11,15 @@ import java.util.Objects;
 public class ValueInferrerAst {
     
     public static class InferencePairAst {
-        private final List<Assignment> minimalCoordinate;
+        private final List<SlotValuePair> minimalCoordinate;
         private final String inferredValue;
 
-        public InferencePairAst(List<Assignment> minimalCoordinate, String inferredValue) {
+        public InferencePairAst(List<SlotValuePair> minimalCoordinate, String inferredValue) {
             this.minimalCoordinate = minimalCoordinate;
             this.inferredValue = inferredValue;
         }
 
-        public List<Assignment> getMinimalCoordinate() {
+        public List<SlotValuePair> getMinimalCoordinate() {
             return minimalCoordinate;
         }
 

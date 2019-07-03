@@ -1,6 +1,7 @@
 package edu.harvard.iq.datatags.parser.decisiongraph;
 
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphTerminalParser.Tags;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AggregateSlotValuePair;
 import static edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphTerminalParser.nodeStructurePart;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
@@ -20,6 +21,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTextSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AtomicSlotValuePair;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,18 +86,16 @@ public class DecisionGraphRuleParser {
         return Parsers.or(parsers).many().source();
     }
     
-    final static Parser<AstSetNode.AtomicAssignment> ATOMIC_ASSIGNMENT_SLOT = Parsers.sequence(
-            IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
+    final static Parser<AtomicSlotValuePair> ATOMIC_ASSIGNMENT_SLOT = Parsers.sequence(IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
             nodeStructurePart("="),
             IDENTIFIER_WITH_KEYWORDS,
-            (path, _eq, value) -> new AstSetNode.AtomicAssignment(path, value.trim())
+            (path, _eq, value) -> new AtomicSlotValuePair(path, value.trim())
         );
     
-    final static Parser<AstSetNode.AggregateAssignment> AGGREGATE_ASSIGNMENT_SLOT = Parsers.sequence(
-            IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
+    final static Parser<AggregateSlotValuePair> AGGREGATE_ASSIGNMENT_SLOT = Parsers.sequence(IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
             nodeStructurePart("+="),
             IDENTIFIER_WITH_KEYWORDS.sepBy( nodeStructurePart(",") ),
-            (path, _eq, value) -> new AstSetNode.AggregateAssignment(path, value)
+            (path, _eq, value) -> new AggregateSlotValuePair(path, value)
         );
     
     final static Parser<AstTextSubNode> TEXT_SUBNODE = Parsers.sequence(
