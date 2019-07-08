@@ -23,6 +23,7 @@ public class SlotHelper {
      * @param valueName
      * @return The tag value pointed by the slot name.
      * @throws RuntimeException When the value is not there, or is not distinct.
+     * @TODO: Move to test utilities.
      */
     static public AbstractValue safeGet( AbstractSlot tt, String slotName, String valueName ) {
         return tt.lookupValue(slotName, valueName).accept(new SlotValueLookupResult.SuccessFailVisitor<AbstractValue, RuntimeException>(){
