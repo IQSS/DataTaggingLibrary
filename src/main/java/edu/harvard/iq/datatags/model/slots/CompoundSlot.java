@@ -1,9 +1,12 @@
 package edu.harvard.iq.datatags.model.slots;
 
 import edu.harvard.iq.datatags.model.values.CompoundValue;
+import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -15,31 +18,46 @@ import java.util.Set;
  * @author michael
  */
 public class CompoundSlot extends AbstractSlot {
-	private final Set<AbstractSlot> subSlots = new LinkedHashSet<>();
+	private final Map<String,AbstractSlot> subSlots = new LinkedHashMap<>();
 
 	public CompoundSlot(String name, String note) {
 		super(name, note);
 	}
 	
 	public void addSubSlot( AbstractSlot tt ) {
-		subSlots.add( tt );
+        if ( tt == null ) throw new IllegalArgumentException("Cannot add a null slot");
+		subSlots.put( tt.getName(), tt );
 	}
 	
 	public Set<AbstractSlot> getSubSlots() {
-		return Collections.unmodifiableSet(subSlots);
+		return Collections.unmodifiableSet(new HashSet<>(subSlots.values()));
 	}
 	
 	public void removeSubSlot( AbstractSlot tt ) {
-		subSlots.remove(tt);
+		subSlots.remove(tt.getName());
 	}
     
-    public AbstractSlot getSubSlot( String typeName ) {
-        for ( AbstractSlot tt : getSubSlots() ) {
-            if ( tt.getName().equals(typeName) ) {
-                return tt;
+    public AbstractSlot getSubSlot( String subSlotName ) {
+        return subSlots.get(subSlotName);
+    }
+    
+    public AbstractSlot getSubSlot( List<String> subSlotPath ) {
+        if ( subSlotPath.isEmpty() ) {
+            return this;
+        } else {
+            AbstractSlot next = getSubSlot(C.head(subSlotPath));
+            if ( next == null ) return null;
+            if ( next instanceof CompoundSlot ) {
+                return ((CompoundSlot)next).getSubSlot(C.tail(subSlotPath));
+            } else {
+                if ( subSlotPath.size() == 1  ) {
+                    return next;
+                } else {
+                    return null;
+                }
             }
+            
         }
-        return null;
     }
     
     public CompoundValue createInstance() {

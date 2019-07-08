@@ -262,6 +262,30 @@ public class CompoundSlotTest {
 		
 		assertEquals( cvExpected, cv1.composeWith(cv2) );
 		
-		
 	}
+    
+    @Test
+    public void testGetSubSlot() {
+        AtomicSlot simpleT1 = new AtomicSlot( "On1", null );
+        AtomicSlot simpleT2 = new AtomicSlot( "On2", null );
+        AtomicSlot simpleT3 = new AtomicSlot( "On3", null );
+        AtomicSlot simpleT4 = new AtomicSlot( "On4", null );
+        CompoundSlot cLevel2a = new CompoundSlot("C-2a", "");
+        CompoundSlot cLevel2b = new CompoundSlot("C-2b", "");
+        CompoundSlot sut = new CompoundSlot("C-1", "");
+        
+        cLevel2a.addSubSlot(simpleT1);
+        cLevel2a.addSubSlot(simpleT2);
+        cLevel2b.addSubSlot(simpleT3);
+        sut.addSubSlot(cLevel2a);
+        sut.addSubSlot(cLevel2b);
+        sut.addSubSlot(simpleT4);
+        
+        assertNull( sut.getSubSlot(C.list("I'm","not","there")));
+        assertNull( sut.getSubSlot(C.list("On4", "no", "slots","in","atomic")) );
+        assertEquals( simpleT4, sut.getSubSlot(C.list("On4")));
+        assertEquals( simpleT4, sut.getSubSlot(C.list("On4")));
+        assertEquals( sut, sut.getSubSlot(C.list()));
+        assertNull( sut.getSubSlot(C.list("C-2a", "On1", "XXX")));
+    }
 }

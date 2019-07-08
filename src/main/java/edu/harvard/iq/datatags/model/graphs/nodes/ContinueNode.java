@@ -4,9 +4,9 @@ import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
 
 /**
- * A node that tells the system to continue execution from its container's next node.
- * As an example, when getting to a {@code ContinueNode} while in a {@link SectionNode},
- * execution continues from the section's {@link SectionNode#getNextNode()}.
+ * A node that tells the system to continue execution from the current section's
+ * next node. In other words, skips the rest of the sections and moved on to 
+ * whatever is after it.
  * 
  * @author michael
  */
