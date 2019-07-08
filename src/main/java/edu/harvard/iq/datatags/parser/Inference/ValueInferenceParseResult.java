@@ -6,12 +6,13 @@ import edu.harvard.iq.datatags.model.inference.ComplianceValueInferrer;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst;
-import edu.harvard.iq.datatags.parser.decisiongraph.SetNodeValueBuilder;
+import edu.harvard.iq.datatags.parser.decisiongraph.ValueBuilder;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.model.inference.SupportValueInferrer;
 import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.model.values.AbstractValue.CompareResult;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst.InferencePairAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AtomicSlotValuePair;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
 import edu.harvard.iq.datatags.tools.ValidationMessage.Level;
 import java.util.HashMap;
@@ -70,7 +71,7 @@ public class ValueInferenceParseResult {
             for ( InferencePairAst pair : i.getInferencePairs() ) {
                     // For each pair
                     final CompoundValue minimalCoordinates = topLevelType.createInstance();
-                    SetNodeValueBuilder valueBuilder = new SetNodeValueBuilder(minimalCoordinates, fullyQualifiedSlotName);
+                    ValueBuilder valueBuilder = new ValueBuilder(minimalCoordinates, fullyQualifiedSlotName);
                     try {
                         pair.getMinimalCoordinate().forEach(asnmnt -> asnmnt.accept(valueBuilder));
                     } catch (RuntimeException re) {
@@ -78,10 +79,10 @@ public class ValueInferenceParseResult {
                     }
                     // minimalCoordinates -> CompoundValue from all minimalCoordinates
 
-                    AstSetNode.AtomicAssignment asnmnt = new AstSetNode.AtomicAssignment
+                    AtomicSlotValuePair asnmnt = new AtomicSlotValuePair
                                                                 (i.getSlot(), pair.getInferredValue());
                     final CompoundValue inferredValue = topLevelType.createInstance();
-                    SetNodeValueBuilder valueBuilderForInferredValue = new SetNodeValueBuilder
+                    ValueBuilder valueBuilderForInferredValue = new ValueBuilder
                                                                 (inferredValue, fullyQualifiedSlotName);
                     asnmnt.accept(valueBuilderForInferredValue);
 

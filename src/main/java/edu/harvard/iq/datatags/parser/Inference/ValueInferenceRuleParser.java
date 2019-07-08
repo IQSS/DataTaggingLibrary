@@ -3,7 +3,9 @@ package edu.harvard.iq.datatags.parser.Inference;
 import static edu.harvard.iq.datatags.parser.Inference.ValueInferenceTerminalParser.valueInferrerStructurePart;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst;
 import edu.harvard.iq.datatags.parser.Inference.ast.ValueInferrerAst.InferencePairAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AggregateSlotValuePair;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AtomicSlotValuePair;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -35,18 +37,16 @@ public class ValueInferenceRuleParser {
                 ).source().map( String::trim );
     }
     
-    final static Parser<AstSetNode.AtomicAssignment> ATOMIC_ASSIGNMENT_SLOT = Parsers.sequence(
-            IDENTIFIER_WITH_KEYWORDS.sepBy(valueInferrerStructurePart("/")),
+    final static Parser<AtomicSlotValuePair> ATOMIC_ASSIGNMENT_SLOT = Parsers.sequence(IDENTIFIER_WITH_KEYWORDS.sepBy(valueInferrerStructurePart("/")),
             valueInferrerStructurePart("="),
             IDENTIFIER_WITH_KEYWORDS,
-            (path, _eq, value) -> new AstSetNode.AtomicAssignment(path, value.trim())
+            (path, _eq, value) -> new AtomicSlotValuePair(path, value.trim())
         );
     
-    final static Parser<AstSetNode.AggregateAssignment> AGGREGATE_ASSIGNMENT_SLOT = Parsers.sequence(
-            IDENTIFIER_WITH_KEYWORDS.sepBy(valueInferrerStructurePart("/")),
+    final static Parser<AggregateSlotValuePair> AGGREGATE_ASSIGNMENT_SLOT = Parsers.sequence(IDENTIFIER_WITH_KEYWORDS.sepBy(valueInferrerStructurePart("/")),
             valueInferrerStructurePart("+="),
             IDENTIFIER_WITH_KEYWORDS.sepBy( valueInferrerStructurePart(",") ),
-            (path, _eq, value) -> new AstSetNode.AggregateAssignment(path, value)
+            (path, _eq, value) -> new AggregateSlotValuePair(path, value)
         );
     
     final static Parser<InferencePairAst> InferencePairParser() {

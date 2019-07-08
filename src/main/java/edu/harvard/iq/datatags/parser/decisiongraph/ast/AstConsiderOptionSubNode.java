@@ -10,13 +10,13 @@ public class AstConsiderOptionSubNode {
 
     private final List<? extends AstNode> subGraph;
     private List<String> optionList;
-    private List<AstSetNode.Assignment> assignments;
+    private List<SlotValuePair> slotValuePairs;
 
     public AstConsiderOptionSubNode(List<?> answer, List<? extends AstNode> implementation) {
         if (answer.get(0) instanceof String) {
             optionList = (List<String>) answer;
         } else {
-            assignments = (List<AstSetNode.Assignment>) answer;
+            slotValuePairs = (List<SlotValuePair>) answer;
         }
         this.subGraph = implementation;
     }
@@ -28,12 +28,12 @@ public class AstConsiderOptionSubNode {
     public List<? extends AstNode> getSubGraph() {
         return subGraph;
     }
-    public List<AstSetNode.Assignment> getAssignments(){
-        return assignments;
+    public List<SlotValuePair> getSlotValuePairs(){
+        return slotValuePairs;
     }
 	public String getAnswerText() {
         return ( optionList != null ) ? optionList.toString()
-                                      : assignments.toString();
+                                      : slotValuePairs.toString();
 	}
     
     @Override
@@ -56,7 +56,7 @@ public class AstConsiderOptionSubNode {
         if (!Objects.equals(this.optionList, other.optionList)) {
             return false;
         }
-        if (!Objects.equals(this.assignments, other.assignments)) {
+        if (!Objects.equals(this.slotValuePairs, other.slotValuePairs)) {
             return false;
         }
         return Objects.equals(this.subGraph, other.subGraph);

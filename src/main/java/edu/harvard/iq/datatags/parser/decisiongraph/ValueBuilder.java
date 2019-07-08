@@ -6,8 +6,11 @@ import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.model.slots.ToDoSlot;
 import edu.harvard.iq.datatags.model.values.AggregateValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AggregateSlotValuePair;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AtomicSlotValuePair;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.SlotValuePair;
 import edu.harvard.iq.datatags.parser.exceptions.BadLookupException;
 import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
@@ -21,18 +24,18 @@ import static java.util.stream.Collectors.joining;
  *
  * @author mor_vilozni
  */
-public class SetNodeValueBuilder implements AstSetNode.Assignment.Visitor {
+public class ValueBuilder implements SlotValuePair.Visitor {
 
     private final CompoundValue topValue;
     private final Map<List<String>, List<String>> fullyQualifiedSlotName;
 
-    public SetNodeValueBuilder(CompoundValue aTopValue, Map<List<String>, List<String>> typeIndex) {
+    public ValueBuilder(CompoundValue aTopValue, Map<List<String>, List<String>> typeIndex) {
         topValue = aTopValue;
         fullyQualifiedSlotName = typeIndex;
     }
 
     @Override
-    public void visit(AstSetNode.AtomicAssignment aa) {
+    public void visit(AtomicSlotValuePair aa) {
         List<String> slotName = fullyQualifiedSlotName.get(aa.getSlot());
         if ( slotName == null ) {
             throw new RuntimeException( new BadSetInstructionException("Cannot find slot named '" + aa.getSlot().stream().collect(joining("/")) + "'.", null));
@@ -71,7 +74,7 @@ public class SetNodeValueBuilder implements AstSetNode.Assignment.Visitor {
     }
 
     @Override
-    public void visit(AstSetNode.AggregateAssignment aa) {
+    public void visit(AggregateSlotValuePair aa) {
         final List<String> fullyQualifiedName = fullyQualifiedSlotName.get(aa.getSlot());
         if (fullyQualifiedName == null) {
             throw new RuntimeException(new DataTagsParseException((AstNode) null, "slot '"

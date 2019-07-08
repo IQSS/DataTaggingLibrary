@@ -13,6 +13,6 @@ import edu.harvard.iq.datatags.model.values.CompoundValue;
  */
 public abstract class BooleanExpression {
     
-    abstract public boolean gen(CompoundValue ps);
+    abstract public boolean evaluate(CompoundValue ps);
     
 }

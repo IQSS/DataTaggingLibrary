@@ -5,26 +5,17 @@
  */
 package edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions;
 
-import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 
 /**
  *
  * @author mor
  */
-public class GreaterThanExp extends BooleanExpression {
-    
-    private AtomicValue valueInSlot;
-    private AtomicValue value;
+public class TrueExp extends BooleanExpression {
 
-    public GreaterThanExp(AtomicValue valueInSlot, AtomicValue value) {
-        this.valueInSlot = valueInSlot;
-        this.value = value;
-    }
-    
     @Override
     public boolean evaluate(CompoundValue ps) {
-        return (valueInSlot.compare(value) == AtomicValue.CompareResult.Bigger);
+        return true;
     }
     
 }

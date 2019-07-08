@@ -19,8 +19,8 @@ public class NotExp extends BooleanExpression {
     }
     
     @Override
-    public boolean gen(CompoundValue ps) {
-        return !op.gen(ps);
+    public boolean evaluate(CompoundValue ps) {
+        return !op.evaluate(ps);
     }
     
 }

@@ -24,7 +24,7 @@ public class EqualsExp extends BooleanExpression {
     }
 
     @Override
-    public boolean gen(CompoundValue ps) {
+    public boolean evaluate(CompoundValue ps) {
         return (valueInSlot.compare(value) == AtomicValue.CompareResult.Same);
     }
     

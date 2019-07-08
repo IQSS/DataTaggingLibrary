@@ -14,11 +14,13 @@ import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.BooleanExpression;
+import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.EqualsExp;
 import edu.harvard.iq.datatags.model.slots.AggregateSlot;
 import edu.harvard.iq.datatags.model.slots.AtomicSlot;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AggregateSlotValuePair;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderOptionSubNode;
@@ -32,10 +34,21 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstRejectNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSectionNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AtomicSlotValuePair;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.NodeIdAdder;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.BooleanExpressionAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.SlotValuePair;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.AndExpAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.AtomicExpressionAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.EqualsExpAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.GreaterThanExpAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.NotExpAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.RecursiveExpressionAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.SmallerThanExpAst;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.TrueExpAst;
 import edu.harvard.iq.datatags.parser.exceptions.BadLookupException;
+import static java.util.Arrays.asList;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
@@ -175,7 +188,7 @@ public class CompilationUnit {
         compile(aFullyQualifiedSlotName, aTopLevelType, globalEndNode, astValidators);
     }   
     
-    private AbstractSlot findSlot(List<String> astSlot, CompoundValue topValue, SetNodeValueBuilder valueBuilder) {
+    private AbstractSlot findSlot(List<String> astSlot, CompoundValue topValue, ValueBuilder valueBuilder) {
         AbstractSlot slot;
 
         if (astSlot == null || C.last(astSlot).equals(topLevelType.getName())) {
@@ -259,7 +272,7 @@ public class CompilationUnit {
                         // build consider node from ast-consider-node 
                         public Node visit(AstConsiderNode astNode) {
                             CompoundValue topValue = topLevelType.createInstance();
-                            SetNodeValueBuilder valueBuilder = new SetNodeValueBuilder(topValue, fullyQualifiedSlotName);
+                            ValueBuilder valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
 
                             Node syntacticallyNext = buildNodes(C.tail(astNodes), defaultNode);
                             Node elseNode = syntacticallyNext;
@@ -277,19 +290,19 @@ public class CompilationUnit {
                                         throw new RuntimeException(" (consider slot gets only values, not answers)");
                                     }
                                     topValue = topLevelType.createInstance();
-                                    valueBuilder = new SetNodeValueBuilder(topValue, fullyQualifiedSlotName);
-                                    AstSetNode.Assignment assignment;
+                                    valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
+                                    SlotValuePair slotValuePair;
                                     if (slot instanceof AggregateSlot) {
-                                        assignment = new AstSetNode.AggregateAssignment(astNode.getSlot(), astAns.getOptionList());
+                                        slotValuePair = new AggregateSlotValuePair(astNode.getSlot(), astAns.getOptionList());
                                     } else {
-                                        assignment = new AstSetNode.AtomicAssignment(astNode.getSlot(), astAns.getOptionList().get(0).trim());
+                                        slotValuePair = new AtomicSlotValuePair(astNode.getSlot(), astAns.getOptionList().get(0).trim());
                                     }
 
-                                    if (assignment == null) {
+                                    if (slotValuePair == null) {
                                         throw new RuntimeException(new DataTagsParseException(astNode, "Error: bad assignment (at node " + astNode + ")"));
                                     }
                                     try {
-                                        assignment.accept(valueBuilder);
+                                        slotValuePair.accept(valueBuilder);
                                     } catch (RuntimeException re) {
                                         if (re.getCause() instanceof DataTagsParseException) {
                                             ((DataTagsParseException) re.getCause()).setOffendingNode(astNode);
@@ -305,17 +318,17 @@ public class CompilationUnit {
                             } else if (slot instanceof CompoundSlot) {
                                 // Original node was [when]
                                 for (AstConsiderOptionSubNode astAns : astNode.getOptions()) {
-                                    if (astAns.getAssignments() == null) {
+                                    if (astAns.getSlotValuePairs() == null) {
                                         throw new RuntimeException("Expecting some values for the [when] node's options.");
                                     }
                                     topValue = topLevelType.createInstance();
-                                    valueBuilder = new SetNodeValueBuilder(topValue, fullyQualifiedSlotName);
+                                    valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
 
-                                    List<AstSetNode.Assignment> assignments = astAns.getAssignments();
+                                    List<SlotValuePair> slotValuePairs = astAns.getSlotValuePairs();
 
                                     try {
-                                        for (AstSetNode.Assignment asnmnt : assignments) {
-                                            asnmnt.accept(valueBuilder);
+                                        for (SlotValuePair slotValue : slotValuePairs) {
+                                            slotValue.accept(valueBuilder);
                                         }
                                     } catch (RuntimeException re) {
                                         if (re.getCause() instanceof DataTagsParseException) {
@@ -346,12 +359,82 @@ public class CompilationUnit {
                             Node syntacticallyNext = buildNodes(C.tail(astNodes), defaultNode);
                            
                             astNode.getAnswers().forEach(ansSubNode -> {
-                                                    //check for be
-                                                    BooleanExpressionAst currBE = ansSubNode.getBoolExp();
-                                                    res.addAnswer(Answer.withName(ansSubNode.getAnswerText()),
-                                                        buildNodes(ansSubNode.getSubGraph(), syntacticallyNext));
-                                                    }
-                                                );
+                                    //check for be
+                                    BooleanExpressionAst currBE = ansSubNode.getBoolExp();
+                                    
+//                                    SlotValuePair slotValuePair;
+//                                    switch(currBE.getSlotType()){
+//                                        case "atomic":
+//                                            slotValuePair = new AtomicSlotValuePair(
+//                                                    ((AtomicExpressionAst) currBE).getValueInSlot(), ((AtomicExpressionAst) currBE).getValue());
+//                                            break;
+//                                        case "aggregate":
+//                                            slotValuePair = new AggregateSlotValuePair(
+//                                                    ((AtomicExpressionAst) currBE).getValueInSlot(), asList(((AtomicExpressionAst) currBE).getValue()));
+//                                            break;
+//                                        case "compuond":
+//                                      }
+                                    try {
+                                        currBE.accept(new BooleanExpressionAst.Visitor() {
+                                            @Override
+                                            public void visit(GreaterThanExpAst exp) {
+                                                CompoundValue topValue = topLevelType.createInstance();
+                                                ValueBuilder valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
+                                                AtomicExpressionAst ae = (AtomicExpressionAst) currBE;
+                                                SlotValuePair slotValuePair = new AtomicSlotValuePair(
+                                                        ae.getValueInSlot(), ae.getValue());
+                                                slotValuePair.accept(valueBuilder);
+                                            }
+
+                                            @Override
+                                            public void visit(SmallerThanExpAst exp) {
+                                                CompoundValue topValue = topLevelType.createInstance();
+                                                ValueBuilder valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
+                                                AtomicExpressionAst ae = (AtomicExpressionAst) currBE;
+                                                SlotValuePair slotValuePair = new AtomicSlotValuePair(
+                                                        ae.getValueInSlot(), ae.getValue());
+                                                slotValuePair.accept(valueBuilder);
+                                            }
+
+                                            @Override
+                                            public void visit(EqualsExpAst exp) {
+                                                CompoundValue topValue = topLevelType.createInstance();
+                                                ValueBuilder valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
+                                                AtomicExpressionAst ae = (AtomicExpressionAst) currBE;
+                                                SlotValuePair slotValuePair = new AtomicSlotValuePair(
+                                                        ae.getValueInSlot(), ae.getValue());
+                                                slotValuePair.accept(valueBuilder);
+                                                BooleanExpression be = new EqualsExp(topLevelType.getSubSlot(C.last(ae.getValueInSlot())), topValue.get(topLevelType.getSubSlot(ae.getValue())));
+                                            }
+
+                                            @Override
+                                            public void visit(NotExpAst exp) {
+                                                exp.getOp().accept(this);
+                                            }
+
+                                            @Override
+                                            public void visit(AndExpAst exp) {
+                                                exp.getFirstOp().accept(this);
+                                                exp.getSecondOp().accept(this);
+                                            }
+
+                                            @Override
+                                            public void visit(TrueExpAst exp) {
+                                                
+                                            }
+                                        });
+                                    } catch (RuntimeException re) {
+                                        if (re.getCause() instanceof DataTagsParseException) {
+                                            ((DataTagsParseException) re.getCause()).setOffendingNode(astNode);
+                                            throw re;
+                                        } else {
+                                            throw new RuntimeException(re.getMessage() + " (at node " + astNode + ")", re);
+                                        }
+                                    }
+                                    res.addAnswer(Answer.withName(ansSubNode.getAnswerText()),
+                                        buildNodes(ansSubNode.getSubGraph(), syntacticallyNext));
+                                    }
+                                );
 
                             impliedAnswers(res).forEach(ans -> res.addAnswer(ans, syntacticallyNext));
 
@@ -370,7 +453,7 @@ public class CompilationUnit {
                         @Override
                         public Node visit(AstSetNode astNode) {
                             final CompoundValue topValue = topLevelType.createInstance();
-                            SetNodeValueBuilder valueBuilder = new SetNodeValueBuilder(topValue, fullyQualifiedSlotName);
+                            ValueBuilder valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
                             try {
                                 astNode.getAssignments().forEach(asnmnt -> asnmnt.accept(valueBuilder));
                             } catch (RuntimeException re) {

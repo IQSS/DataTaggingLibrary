@@ -22,8 +22,8 @@ public class AndExp extends BooleanExpression{
     }
     
     @Override
-    public boolean gen(CompoundValue ps) {
-        return op1.gen(ps) && op2.gen(ps);
+    public boolean evaluate(CompoundValue ps) {
+        return op1.evaluate(ps) && op2.evaluate(ps);
     }
     
 }

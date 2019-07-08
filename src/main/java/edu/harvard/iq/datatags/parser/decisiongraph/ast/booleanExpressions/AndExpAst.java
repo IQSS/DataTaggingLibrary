@@ -5,6 +5,7 @@
  */
 package edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions;
 
+import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.BooleanExpression;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import java.util.Objects;
 
@@ -57,6 +58,21 @@ public class AndExpAst extends BooleanExpressionAst {
 
     public BooleanExpressionAst getSecondOp() {
         return op2;
+    }
+
+    @Override
+    BooleanExpression build() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getSlotType() {
+        return "compound";
+    }
+
+    @Override
+    public void accept(Visitor v) {
+        v.visit(this);
     }
     
 }

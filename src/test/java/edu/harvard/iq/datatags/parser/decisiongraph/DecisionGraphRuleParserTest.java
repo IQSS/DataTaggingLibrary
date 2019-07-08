@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.parser.decisiongraph;
 
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AggregateSlotValuePair;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
@@ -18,6 +19,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTermSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTextSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstTodoNode;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AtomicSlotValuePair;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.BooleanExpressionAst;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.EqualsExpAst;
@@ -242,50 +244,50 @@ public class DecisionGraphRuleParserTest {
 
     @Test
     public void atomicAssignmentSlotTest() {
-        Parser<AstSetNode.AtomicAssignment> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.ATOMIC_ASSIGNMENT_SLOT);
+        Parser<AtomicSlotValuePair> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.ATOMIC_ASSIGNMENT_SLOT);
 
-        assertEquals(new AstSetNode.AtomicAssignment(asList("s"), "v"), sut.parse("s=v"));
-        assertEquals(new AstSetNode.AtomicAssignment(asList("s"), "v"), sut.parse("s =v"));
-        assertEquals(new AstSetNode.AtomicAssignment(asList("s"), "v"), sut.parse("s= v"));
-        assertEquals(new AstSetNode.AtomicAssignment(asList("s"), "v"), sut.parse("s = v "));
-        assertEquals(new AstSetNode.AtomicAssignment(asList("s"), "v"), sut.parse("s = v"));
-        assertEquals(new AstSetNode.AtomicAssignment(asList("top", "mid", "bottom"), "aValue"), sut.parse("top/mid/bottom=aValue"));
-        assertEquals(new AstSetNode.AtomicAssignment(asList("top", "mid", "bottom"), "aValue"),
+        assertEquals(new AtomicSlotValuePair(asList("s"), "v"), sut.parse("s=v"));
+        assertEquals(new AtomicSlotValuePair(asList("s"), "v"), sut.parse("s =v"));
+        assertEquals(new AtomicSlotValuePair(asList("s"), "v"), sut.parse("s= v"));
+        assertEquals(new AtomicSlotValuePair(asList("s"), "v"), sut.parse("s = v "));
+        assertEquals(new AtomicSlotValuePair(asList("s"), "v"), sut.parse("s = v"));
+        assertEquals(new AtomicSlotValuePair(asList("top", "mid", "bottom"), "aValue"), sut.parse("top/mid/bottom=aValue"));
+        assertEquals(new AtomicSlotValuePair(asList("top", "mid", "bottom"), "aValue"),
                 sut.parse("top / mid / bottom = aValue"));
 
     }
 
     @Test
     public void atomicAssignmentSlotKeywordTest() {
-        Parser<AstSetNode.AtomicAssignment> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.ATOMIC_ASSIGNMENT_SLOT);
-        assertEquals(new AstSetNode.AtomicAssignment(asList("gsk"), "set"), sut.parse("gsk=set"));
-        assertEquals(new AstSetNode.AtomicAssignment(asList("ask"), "set"), sut.parse("ask=set"));
-        assertEquals(new AstSetNode.AtomicAssignment(asList("ask", "askyy", "askset", "askMMset"), "set"), sut.parse("ask/askyy/askset/askMMset=set"));
+        Parser<AtomicSlotValuePair> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.ATOMIC_ASSIGNMENT_SLOT);
+        assertEquals(new AtomicSlotValuePair(asList("gsk"), "set"), sut.parse("gsk=set"));
+        assertEquals(new AtomicSlotValuePair(asList("ask"), "set"), sut.parse("ask=set"));
+        assertEquals(new AtomicSlotValuePair(asList("ask", "askyy", "askset", "askMMset"), "set"), sut.parse("ask/askyy/askset/askMMset=set"));
     }
 
     @Test
     public void aggregateAssignmentSlotTest() {
-        Parser<AstSetNode.AggregateAssignment> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.AGGREGATE_ASSIGNMENT_SLOT);
-        assertEquals(new AstSetNode.AggregateAssignment(asList("s"), Arrays.asList("v")), sut.parse("s+=v"));
-        assertEquals(new AstSetNode.AggregateAssignment(asList("top", "mid", "bottom"),
+        Parser<AggregateSlotValuePair> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.AGGREGATE_ASSIGNMENT_SLOT);
+        assertEquals(new AggregateSlotValuePair(asList("s"), Arrays.asList("v")), sut.parse("s+=v"));
+        assertEquals(new AggregateSlotValuePair(asList("top", "mid", "bottom"),
                 asList("val1", "val2", "val3")),
                 sut.parse("top/mid/bottom+=val1, val2, val3"));
     }
 
     @Test
     public void aggregateAssignmentSlotWithKeywordsTest() {
-        Parser<AstSetNode.AggregateAssignment> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.AGGREGATE_ASSIGNMENT_SLOT);
-        assertEquals(new AstSetNode.AggregateAssignment(asList("set"), Arrays.asList("ask")), sut.parse("set+=ask"));
-        assertEquals(new AstSetNode.AggregateAssignment(asList("xset"), Arrays.asList("xask")), sut.parse("xset+=xask"));
-        assertEquals(new AstSetNode.AggregateAssignment(asList("setx"), Arrays.asList("askx")), sut.parse("setx+=askx"));
-        assertEquals(new AstSetNode.AggregateAssignment(asList("xsetx"), Arrays.asList("xaskx")), sut.parse("xsetx+=xaskx"));
-        assertEquals(new AstSetNode.AggregateAssignment(asList("xsetxsetx"), Arrays.asList("xaskxsetx")), sut.parse("xsetxsetx+=xaskxsetx"));
+        Parser<AggregateSlotValuePair> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.AGGREGATE_ASSIGNMENT_SLOT);
+        assertEquals(new AggregateSlotValuePair(asList("set"), Arrays.asList("ask")), sut.parse("set+=ask"));
+        assertEquals(new AggregateSlotValuePair(asList("xset"), Arrays.asList("xask")), sut.parse("xset+=xask"));
+        assertEquals(new AggregateSlotValuePair(asList("setx"), Arrays.asList("askx")), sut.parse("setx+=askx"));
+        assertEquals(new AggregateSlotValuePair(asList("xsetx"), Arrays.asList("xaskx")), sut.parse("xsetx+=xaskx"));
+        assertEquals(new AggregateSlotValuePair(asList("xsetxsetx"), Arrays.asList("xaskxsetx")), sut.parse("xsetxsetx+=xaskxsetx"));
     }
 
     @Test
     public void setNodeSimple() {
         Parser<AstSetNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.SET_NODE);
-        AstSetNode expected = new AstSetNode(null, asList(new AstSetNode.AtomicAssignment(asList("k"), "v")));
+        AstSetNode expected = new AstSetNode(null, asList(new AtomicSlotValuePair(asList("k"), "v")));
         assertEquals(expected, sut.parse("[set: k=v]"));
         assertEquals(expected, sut.parse("[set:k=v]"));
         assertEquals(expected, sut.parse("[set: k=v ]"));
@@ -294,7 +296,7 @@ public class DecisionGraphRuleParserTest {
     @Test
     public void setNodeSimpleWithId() {
         Parser<AstSetNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.SET_NODE);
-        AstSetNode expected = new AstSetNode("Set!", asList(new AstSetNode.AtomicAssignment(asList("k"), "v")));
+        AstSetNode expected = new AstSetNode("Set!", asList(new AtomicSlotValuePair(asList("k"), "v")));
         assertEquals(expected, sut.parse("[>Set!<set: k=v]"));
         assertEquals(expected, sut.parse("[>Set!< set: k=v]"));
         assertEquals(expected, sut.parse("[>Set!< set: k = v ]"));
@@ -303,7 +305,7 @@ public class DecisionGraphRuleParserTest {
     @Test
     public void setNodeSimpleAggregate() {
         Parser<AstSetNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.SET_NODE);
-        AstSetNode expected = new AstSetNode("Set!", asList(new AstSetNode.AggregateAssignment(asList("k"), asList("v"))));
+        AstSetNode expected = new AstSetNode("Set!", asList(new AggregateSlotValuePair(asList("k"), asList("v"))));
         assertEquals(expected, sut.parse("[>Set!<set: k+=v]"));
         assertEquals(expected, sut.parse("[>Set!< set: k += v]"));
         assertEquals(expected, sut.parse("[>Set!< set: k+=v ]"));
@@ -313,19 +315,19 @@ public class DecisionGraphRuleParserTest {
     public void setNodeAggregate() {
         Parser<AstSetNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.SET_NODE);
         AstSetNode expected = new AstSetNode("@anId",
-                asList(new AstSetNode.AggregateAssignment(asList("k"), asList("v1", "v2"))));
+                asList(new AggregateSlotValuePair(asList("k"), asList("v1", "v2"))));
         assertEquals(expected, sut.parse("[>@anId<set: k += v1, v2]"));
         assertEquals(expected, sut.parse("[>@anId<set: k+=v1, v2]"));
         assertEquals(expected, sut.parse("[>@anId<set: k+=v1,v2]"));
 
         expected = new AstSetNode("@anId",
-                asList(new AstSetNode.AggregateAssignment(asList("k1", "k2"), asList("v"))));
+                asList(new AggregateSlotValuePair(asList("k1", "k2"), asList("v"))));
 
         assertEquals(expected, sut.parse("[>@anId< set: k1/k2 += v]"));
         assertEquals(expected, sut.parse("[>@anId< set: k1/k2+=v ]"));
 
         expected = new AstSetNode("@anId",
-                asList(new AstSetNode.AggregateAssignment(asList("k1", "k2", "k3"), asList("v1", "v2", "v3"))));
+                asList(new AggregateSlotValuePair(asList("k1", "k2", "k3"), asList("v1", "v2", "v3"))));
         assertEquals(expected, sut.parse("[>@anId< set: k1/k2/k3 += v1, v2, v3]"));
         assertEquals(expected, sut.parse("[>@anId< set: k1/k2/k3 += v1,v2,v3]"));
         assertEquals(expected, sut.parse("[>@anId<set:k1/k2/k3+=v1,v2,v3]"));
@@ -335,10 +337,10 @@ public class DecisionGraphRuleParserTest {
     public void setNode() {
         Parser<AstSetNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.SET_NODE);
         AstSetNode expected = new AstSetNode("@anId",
-                asList(new AstSetNode.AggregateAssignment(asList("k"), asList("v1", "v2")),
-                        new AstSetNode.AggregateAssignment(asList("j", "j2"), asList("v")),
-                        new AstSetNode.AtomicAssignment(asList("r"), "vee"),
-                        new AstSetNode.AggregateAssignment(asList("l1", "l2", "l3"), asList("v1", "v2", "v3"))));
+                asList(new AggregateSlotValuePair(asList("k"), asList("v1", "v2")),
+                        new AggregateSlotValuePair(asList("j", "j2"), asList("v")),
+                        new AtomicSlotValuePair(asList("r"), "vee"),
+                        new AggregateSlotValuePair(asList("l1", "l2", "l3"), asList("v1", "v2", "v3"))));
 
         assertEquals(expected, sut.parse("[>@anId<set: k += v1, v2; j/j2+=v; r=vee; l1/l2/l3+=v1,v2,v3 ]"));
     }
@@ -488,8 +490,8 @@ public class DecisionGraphRuleParserTest {
         List<? extends AstNode> expected = asList(new AstConsiderNode("44", asList("Greeting"),
                         asList(new AstConsiderOptionSubNode(
                                 asList("hello"),
-                                asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("world"))))))),
-                        asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("planet")))))),
+                                asList(new AstSetNode(null, asList(new AggregateSlotValuePair(asList("Subject"), asList("world"))))))),
+                        asList(new AstSetNode(null, asList(new AggregateSlotValuePair(asList("Subject"), asList("planet")))))),
                 new AstEndNode(null)
         );
 
@@ -506,9 +508,9 @@ public class DecisionGraphRuleParserTest {
                        + "[end]";
         List<? extends AstNode> expected = asList(new AstConsiderNode("44", null,
                         asList(new AstConsiderOptionSubNode(
-                                asList(new AstSetNode.AtomicAssignment(asList("Greeting"), "hello")),
-                                asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("world"))))))),
-                        asList(new AstSetNode(null, asList(new AstSetNode.AggregateAssignment(asList("Subject"), asList("planet")))))),
+                                asList(new AtomicSlotValuePair(asList("Greeting"), "hello")),
+                                asList(new AstSetNode(null, asList(new AggregateSlotValuePair(asList("Subject"), asList("world"))))))),
+                        asList(new AstSetNode(null, asList(new AggregateSlotValuePair(asList("Subject"), asList("planet")))))),
                 new AstEndNode(null)
         );
 
@@ -579,14 +581,13 @@ public class DecisionGraphRuleParserTest {
                 + "    {not sure: [reject:please check]}}]\n"
                 + "[call: dua]\n"
                 + "[end]";
-        List<? extends AstNode> expected = asList(
-                new AstAskNode("44", new AstTextSubNode("Do the data concern living persons?"), null,
+        List<? extends AstNode> expected = asList(new AstAskNode("44", new AstTextSubNode("Do the data concern living persons?"), null,
                         asList(new AstAnswerSubNode("yes",
-                                asList(new AstSetNode(null, asList(new AstSetNode.AtomicAssignment(asList("identity"), "personData"))),
+                                asList(new AstSetNode(null, asList(new AtomicSlotValuePair(asList("identity"), "personData"))),
                                         new AstCallNode(null, "medRecs"),
                                         new AstTodoNode(null, "Arrest and Conviction Records")), null),
                                 new AstAnswerSubNode("no",
-                                        asList(new AstSetNode(null, asList(new AstSetNode.AtomicAssignment(asList("identity"), "noPersonData")))), null),
+                                        asList(new AstSetNode(null, asList(new AtomicSlotValuePair(asList("identity"), "noPersonData")))), null),
                                 new AstAnswerSubNode("not sure",
                                         asList(new AstRejectNode(null, "please check")),null))),
                 new AstCallNode(null, "dua"),
