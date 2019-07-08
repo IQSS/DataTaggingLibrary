@@ -100,8 +100,8 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
                     .shape(GvNode.Shape.cds)
                     .fillColor("#BBBBFF")
                     .gv());
-            advanceTo(nd.getNextNode());
             if ( shouldLinkTo(nd.getNextNode()) ) {
+                advanceTo(nd.getNextNode());
                 out.println(makeEdge(nd, nd.getNextNode()).gv());
             }
         }
@@ -121,8 +121,8 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
                     .fillColor("#AAFFAA")
                     .shape(GvNode.Shape.note)
                     .label(idLabel(nd) + "todo\n" + wrap(nd.getTodoText())).gv());
-            advanceTo(nd.getNextNode());
             if ( shouldLinkTo(nd.getNextNode()) ) {
+                advanceTo(nd.getNextNode());
                 out.println(makeEdge(nd, nd.getNextNode()).gv());
             }
         }
@@ -143,8 +143,8 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
                     .shape(GvNode.Shape.rect)
                     .label(label.toString())
                     .gv());
-            advanceTo(nd.getNextNode());
             if ( shouldLinkTo(nd.getNextNode()) ) {
+                advanceTo(nd.getNextNode());
                 out.println(makeEdge(nd, nd.getNextNode()).gv());
             }
         }
@@ -164,26 +164,29 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
         
         @Override
         public void visitImpl(ContinueNode nd) throws DataTagsRuntimeException {
-            out.println(node(nodeId(nd))
-                    .shape(GvNode.Shape.point)
-                    .fontColor("#AAAAAA")
-                    .fillColor("#8833AA")
-                    .add("height", "0.2")
-                    .add("width", "0.2")
-                    .label("c").gv());
+            if ( drawEndNodes ) {
+                out.println(node(nodeId(nd))
+                        .shape(GvNode.Shape.point)
+                        .fontColor("#AAAAAA")
+                        .fillColor("#8833AA")
+                        .add("height", "0.2")
+                        .add("width", "0.2")
+                        .label("c").gv());
+            }
         }
         
         @Override
         public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
             out.println("subgraph cluster_" + nodeId(nd)  + "{ ");
             out.println("label=\"Section " + nd.getTitle() + "\"");
+            out.println("color=\"#888888\"");
 //            out.println( node(sanitizeId(nd.getId()+"__[scstart]")).hidden().gv() );
             advanceTo(nd.getStartNode());
             out.println("}");
 //            out.println( edge(sanitizeId(nd.getId()+"__[scstart]"), nodeId(nd.getStartNode())).gv() );
                         
-            advanceTo(nd.getNextNode());
             if ( shouldLinkTo(nd.getNextNode()) ) {
+                advanceTo(nd.getNextNode());
                 out.println(makeEdge(nd.getStartNode(), nd.getNextNode())
                             .add("ltail", "cluster_" + nodeId(nd)).gv() );
             }
@@ -199,6 +202,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
             out.println("subgraph cluster_" + nodeId(nd)  + "{ ");
             out.println("label=\"Part " + effTitle +  "\"");
             advanceTo(nd.getStartNode());
+            
             out.println("}");
             Node arrowDest = getFirstNonContainerNode(nd);
             GvEdge edge = edge(sanitizeId(nd.getId()+"__[pstart]"), nodeId(arrowDest));
@@ -262,7 +266,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
     }
     
     private boolean shouldLinkTo( Node nd ) {
-        return (! (nd instanceof EndNode) ) || drawEndNodes ;
+        return (! (nd instanceof EndNode || nd instanceof ContinueNode)) || drawEndNodes ;
     }
 
     public void setDrawCallLinks(boolean drawCallLinks) {
