@@ -25,7 +25,7 @@ of interest in the release:
 
 Download and extract the **PolicyModels-[version].zip** file. Using a terminal [*]_, naviagte to the newly extracted  directory, and type::
 
-  java -jar DataTagsLib.jar
+  java -jar PolicyModelsLib.jar
 
 You should see the DataTags/PolicyModels logo, followed by a prompt. To load a policy model, such as those available from the extracted *sample-models.zip* file, type ``\load path/to/model``. To create a new model, type ``\new``. CliRunner will ask you for some data, and then create the model for you.
 

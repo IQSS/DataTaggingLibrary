@@ -34,6 +34,7 @@ public class StatisticsCommand implements CliCommand {
         rnr.getModel().getSpaceRoot().accept(cnt);
         rnr.println("Slot count: %d", cnt.slotsCount);
         rnr.println("Value count: %d", cnt.valuesCount);
+        rnr.println("Dimension count: %d", cnt.dimensionCount);
         rnr.println("Decision graph nodes: %d", rnr.getModel().getDecisionGraph().nodeIds().size() );
         final Map<Class<?>, AtomicInteger> countsByClass = new HashMap<>();
         rnr.getModel().getDecisionGraph().nodes().forEach( 
@@ -55,22 +56,26 @@ class TagCounter extends AbstractSlot.VoidVisitor {
     
     int slotsCount=0;
     int valuesCount=0;
+    int dimensionCount=0;
     
     @Override
     public void visitAtomicSlotImpl(AtomicSlot t) {
         valuesCount += t.values().size();
+        dimensionCount++;
+        slotsCount++;
     }
 
     @Override
     public void visitAggregateSlotImpl(AggregateSlot t) {
         valuesCount += t.getItemType().values().size();
+        dimensionCount += t.getItemType().values().size();
+        slotsCount++;
     }
 
     @Override
     public void visitCompoundSlotImpl(CompoundSlot t) {
         slotsCount++;
         t.getSubSlots().forEach( tt -> {
-            slotsCount++;
             tt.accept(this);
         });
     }
@@ -78,6 +83,7 @@ class TagCounter extends AbstractSlot.VoidVisitor {
     @Override
     public void visitTodoSlotImpl(ToDoSlot t) {
         valuesCount++;
+        slotsCount++;
     }
     
     
