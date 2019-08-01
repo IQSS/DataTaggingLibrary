@@ -107,7 +107,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         }
 
         @Override
-            public Node visit(SetNode nd) {
+        public Node visit(SetNode nd) {
             // Apply changes
             setCurrentValue(getCurrentValue().composeWith(nd.getTags()));
             
@@ -158,10 +158,10 @@ import java.util.concurrent.atomic.AtomicInteger;
         public Node visit(EndNode nd) throws DataTagsRuntimeException {
             while ( ! stack.isEmpty() ) {
                 if ( stack.peek() instanceof SectionNode ) {
-                    // dispose sections
+                    // dispose all sections we may have on stack.
                     stack.pop();
                 } else {
-                    // got to the called node.
+                    // go back to the caller node.
                     return stack.pop().getNextNode();
                 }
             }
@@ -175,7 +175,13 @@ import java.util.concurrent.atomic.AtomicInteger;
          */
         @Override
         public Node visit( ContinueNode nd ) throws DataTagsRuntimeException {
-            return stack.pop().getNextNode();
+            if ( stack.isEmpty() || !(stack.peek() instanceof SectionNode) ) {
+                setStatus(RuntimeEngineStatus.Error);
+                throw new DataTagsRuntimeException(RuntimeEngine.this, "[continue] node outside of a [section] node.");
+            } else {
+                // continue to whatever is after the stack
+                return stack.pop().getNextNode();
+            }
         }
         
         @Override

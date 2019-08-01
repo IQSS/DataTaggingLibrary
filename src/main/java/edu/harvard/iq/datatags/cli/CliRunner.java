@@ -184,6 +184,7 @@ public class CliRunner {
                     if ( printDebugMessages ) {
                         dtre.printStackTrace( System.out );
                     }
+                    restartFlag = false;
                 }
             }
 

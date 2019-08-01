@@ -38,6 +38,4 @@ public class ContinueNode extends TerminalNode {
         return getId() != null ? getId().hashCode() : 0;
     }
     
-    
-    
 }
