@@ -70,7 +70,7 @@ public class DecisionGraphCompiler {
     private final List<ValidationMessage> messages = new ArrayList<>();
     
     public DecisionGraphCompiler(){
-        this(new StringContentReader());
+        this(new FileSystemContentReader());
     }
     
     public DecisionGraphCompiler(ContentReader aContentReader){
@@ -78,7 +78,7 @@ public class DecisionGraphCompiler {
     }
     /**
      * Creates a ready-to-run {@link DecisionGraph} from the parsed nodes and
-     * the tagspace.
+     * the policy space.
      *
      * @param tagSpace The tag space used in the graph.
      * @param modelData
@@ -146,7 +146,7 @@ public class DecisionGraphCompiler {
             for ( Map.Entry<String,String> callCalleePair: callToCallee.entrySet()) {
                 String calleeId = callCalleePair.getValue(); 
                 if ( calleeId.contains(">") ) { 
-                    //If the callee is from another compilation unit
+                    // link to a node from another compilation unit
                     String[] comps = calleeId.split(">");
                     String calleeCuName = comps[0]; //Take the cu in cu>id from callee
                     String calleeName = comps[1];
@@ -154,36 +154,35 @@ public class DecisionGraphCompiler {
                     CompilationUnit calleeCU = pathToCu.get(getRealPath(destinationCUPath, cu.getSourcePath()).toString());
                     if ( calleeCU != null ) {
                         String prefixNodes = modelData.getModelDirectoryPath().relativize(calleeCU.getSourcePath()).toString();
-                        Node calleeNode = calleeCU.getDecisionGraph().getNode("[" + prefixNodes + "]" + calleeName);
-                        //Check if the callee node is Part Node
-                        if (calleeNode instanceof PartNode){
+                        String prefixedCalleeName = "[" + prefixNodes + "]" + calleeName;
+                        Node calleeNode = calleeCU.getDecisionGraph().getNode(prefixedCalleeName);
+                        if ( calleeNode == null ) {
+                            messages.add(new ValidationMessage(Level.ERROR, "Calling nonexistent node: " + prefixedCalleeName));
+                        } else if (calleeNode instanceof PartNode){
+                            //Check if the callee node is Part Node
                             nameToCu.put(calleeCuName, calleeCU);
-                            if ( calleeNode != null ) {
-                                prefixNodes = modelData.getModelDirectoryPath().relativize(cu.getSourcePath()).toString();
-                                CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
-                                callNode.setCalleeNode(calleeNode);
-                            } else {
-                                messages.add(new ValidationMessage(Level.ERROR, "cannot find target node with id " + calleeCuName + ">" +  calleeName));
-                            }
+                            prefixNodes = modelData.getModelDirectoryPath().relativize(cu.getSourcePath()).toString();
+                            CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
+                            callNode.setCalleeNode(calleeNode);
                         } else {
-                            messages.add(new ValidationMessage((Level.ERROR), "You can only call [part] nodes: " + calleeNode.getId()));
+                            messages.add(new ValidationMessage(Level.ERROR, "You can only call [part] nodes: " + calleeNode.getId()));
                         }
                     } else {
                         messages.add(new ValidationMessage(Level.ERROR, "cannot find target file with id " + calleeCuName));
                     }
                     
                 } else {
-                    // link to node within same compilation unit
+                    // link to a node within same compilation unit
                     String prefixNodes = modelData.getModelDirectoryPath().relativize(cu.getSourcePath()).toString();
                     Node calleeNode = cu.getDecisionGraph().getNode( "[" + prefixNodes + "]" + callCalleePair.getValue() );
                     if ( calleeNode == null ) {
-                        messages.add(new ValidationMessage((Level.ERROR), "Calling nonexistent node: " + "[" + prefixNodes + "]" + callCalleePair.getValue()));
-                    //Check if the callee node is Part Node
+                        messages.add(new ValidationMessage(Level.ERROR, "Calling nonexistent node: " + "[" + prefixNodes + "]" + callCalleePair.getValue()));
                     } else if (calleeNode instanceof PartNode){
+                        //Check if the callee node is Part Node
                         CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
                         callNode.setCalleeNode(calleeNode);
                     } else {
-                        messages.add(new ValidationMessage((Level.ERROR), "You can only call [part] nodes: " + calleeNode.getId()));
+                        messages.add(new ValidationMessage(Level.ERROR, "You can only call [part] nodes: " + calleeNode.getId()));
                     }
                     CallNode callNode = (CallNode) cu.getDecisionGraph().getNode("[" + prefixNodes + "]" + callCalleePair.getKey());
                     if ( callNode != null ) {

@@ -23,6 +23,7 @@ import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
 import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
+import edu.harvard.iq.datatags.tools.ValidationMessage;
 import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import java.util.Map;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -490,6 +492,36 @@ public class DecisionGraphParseResultTest {
         assertEquals(expected, actual);
     }
     
+     @Test
+    public void strayContinueTest() throws Exception {
+        
+        String code = " [>1< section:\n" +
+                        "   [>2< ask:\n" +
+                        "     {text:what?}" + 
+                        "     {answers:\n" +
+                        "       {yes:[>3<end]}\n" +
+                        "       {no:[>4<continue]}\n" +
+                        "     }\n" +
+                        "   ]\n" +
+                        " ]\n" +
+                        " [continue]\n" +
+                        " [>6<todo: todo]";
+
+        Map<Path, String> pathToString = new HashMap<>();
+        PolicyModelData pmd = new PolicyModelData();
+        pmd.setDecisionGraphPath(Paths.get("/main.dg"));
+        pmd.setMetadataFile(Paths.get("/test/main.dg"));
+        pathToString.put(Paths.get("/main.dg"), code);
+        ContentReader contentReader = new MemoryContentReader(pathToString);
+        DecisionGraphCompiler dgc = new DecisionGraphCompiler(contentReader);
+        dgc.compile(emptyTagSpace, pmd, new ArrayList<>());
+        
+        assertEquals( 1, dgc.getMessages().size() );
+        ValidationMessage actual = dgc.getMessages().get(0);
+        assertEquals( ValidationMessage.Level.ERROR, actual.getLevel() );
+        assertTrue( actual.getMessage().contains("continue") );
+    }
+    
 
     @Test
     public void setEndTest() throws Exception {
@@ -669,7 +701,6 @@ public class DecisionGraphParseResultTest {
         assertEquals( C.set("[.." + File.separator + "a.dg]nd-1",
                             "[.." + File.separator + "b.dg]nd-2", "[.." + File.separator + "b.dg]nd-3", 
                             "[.." + File.separator + "a.dg]nd-4", "[.." + File.separator + "a.dg]nd-5",
-                            "[SYN-END]", 
                             "[SYN-END]"), actual.nodeIds());
     }
     

@@ -18,6 +18,7 @@ import edu.harvard.iq.datatags.model.slots.AtomicSlot;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.slots.AbstractSlot;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
+import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAnswerSubNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstCallNode;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstConsiderOptionSubNode;
@@ -36,6 +37,7 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.ParsedFile;
 import edu.harvard.iq.datatags.parser.exceptions.BadLookupException;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
+import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
 import edu.harvard.iq.datatags.tools.NodeValidationMessage;
 import edu.harvard.iq.datatags.tools.ValidationMessage;
@@ -45,12 +47,16 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.jparsec.Parser;
 import org.jparsec.error.ParserException;
@@ -137,17 +143,24 @@ public class CompilationUnit {
         parse();
         
         astValidators.stream().flatMap( v -> v.validate(parsedFile.getAstNodes()).stream())
-                                    .forEach(validationMessages::add);
+                              .forEach(validationMessages::add);
+        
         //Validate that part doesn't contain other parts
         List <AstNode> parts = parsedFile.getAstNodes().stream().filter(node -> node instanceof AstPartNode).collect(Collectors.toList());
-          parts.forEach(part -> {
-                ((AstPartNode) part).getAstNodes().forEach(node -> {
-                    if(node instanceof AstPartNode) {
-                        throw new RuntimeException(new DataTagsParseException(node, "Error: part can't contain another part (at node " + node + ")"));
-                    }
-                });
-          });
-                                    
+        parts.forEach(part -> 
+            ((AstPartNode) part).getAstNodes().stream()
+                                .filter( n-> n instanceof AstPartNode )
+                                .findFirst()
+                                .ifPresent( node -> {throw new RuntimeException(new DataTagsParseException(node, "Error: part can't contain another part (at node " + node + ")"));} )
+        );
+        
+        // validate there are no stray [continue] nodes.
+        StrayContiueNodesFinder scnf = new StrayContiueNodesFinder();
+        scnf.traverseList(parsedFile.getAstNodes());
+        if ( ! scnf.strayNodes.isEmpty() ) {
+            throw new DataTagsParseException(scnf.strayNodes.iterator().next(), "[continue] nodes have to be inside a [section] node.");
+        }
+        
         try {
             //Build Parts separately
             List <AstNode> mainNodes = parsedFile.getAstNodes().stream().filter(node -> !(node instanceof AstPartNode)).collect(Collectors.toList());
@@ -450,5 +463,69 @@ public class CompilationUnit {
         return sourcePath;
     }
     
+    
+    /**
+     * Traverses the AST, and looks for continue nodes that are outside of a section node.
+     */
+    private static class StrayContiueNodesFinder extends AstNode.NullVisitor {
+            
+        final Deque<AstNode> stack = new ArrayDeque<>();
+        final Set<AstContinueNode> strayNodes = new HashSet<>();
+        
+        @Override
+        public void visitImpl(AstConsiderNode nd) throws DataTagsRuntimeException {
+            nd.getOptions().stream()
+                .map( AstConsiderOptionSubNode::getSubGraph )
+                .forEach( this::traverseList );
+            if ( nd.getElseNode() != null ){
+                traverseList( nd.getElseNode() );
+            }
+        }
+
+        @Override
+        public void visitImpl(AstAskNode nd) throws DataTagsRuntimeException {
+            nd.getAnswers().stream()
+                .map( AstAnswerSubNode::getSubGraph )
+                .forEach( this::traverseList );
+        }
+
+        @Override
+        public void visitImpl(AstSetNode nd) throws DataTagsRuntimeException {}
+
+        @Override
+        public void visitImpl(AstRejectNode nd) throws DataTagsRuntimeException {}
+
+        @Override
+        public void visitImpl(AstCallNode nd) throws DataTagsRuntimeException {}
+
+        @Override
+        public void visitImpl(AstTodoNode nd) throws DataTagsRuntimeException {}
+
+        @Override
+        public void visitImpl(AstEndNode nd) throws DataTagsRuntimeException {}
+
+        @Override
+        public void visitImpl(AstSectionNode nd) throws DataTagsRuntimeException {
+            stack.push(nd);
+            traverseList(nd.getAstNodes());
+            stack.pop();
+        }
+
+        @Override
+        public void visitImpl(AstPartNode nd) throws DataTagsRuntimeException {
+            traverseList(nd.getAstNodes());
+        }
+
+        @Override
+        public void visitImpl(AstContinueNode nd) throws DataTagsRuntimeException {
+            if ( stack.isEmpty() ) {
+                strayNodes.add( nd );
+            }
+        }
+        
+        void traverseList( List<? extends AstNode> nodes ) {
+            nodes.forEach( n->n.accept(this) );
+        }
+    }
 
 }
