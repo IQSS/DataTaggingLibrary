@@ -101,4 +101,4 @@ If there's an answer that requiers no action, you can leave the decision graph p
     ]
 
 
-Now that you've leanred to ask questions and set slot values according to the user's choices, you can start writing questionnaires! But you your training is not complete; there are :doc:`more nodes to be discovered <call-and-end>`.
+Now that you've learned to ask questions and set slot values according to the user's choices, you can start writing questionnaires! But you your training is not complete; there are more nodes to be discovered. First, however, we need to learn about :doc:`node ids <node-ids>`.

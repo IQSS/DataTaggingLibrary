@@ -5,7 +5,7 @@
 Section Node
 ============
 
-Groups other nodes in logical groups, and allows to add title.
+Groups other nodes in logical groups. A section can have a title.
 
 ::
 

@@ -47,12 +47,12 @@ Throughout the execution, the engine keeps a single value of the top-level type,
    :titlesonly:
    :maxdepth: 2
 
-   set-node
    ask-node
-   consider-when-node
    call-node
+   consider-when-node
    end-node
    reject-node
-   todo-node
    section-node
+   set-node
+   todo-node
    import-node

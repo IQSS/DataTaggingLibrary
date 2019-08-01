@@ -72,7 +72,7 @@ public class SpaceLocalizationParser {
         
         Set<List<String>> fullTypeRefs = spaceIndex.get(comps[0]);
         if ( fullTypeRefs.size() == 1 ) {
-            String[] notes = new String[]{"", ""};;
+            String[] notes = new String[]{"", ""};
             if(comps.length > 2 && !comps[2].trim().isEmpty()){
                 if(notesSeparator.split(comps[2]).length == 2){
                     notes = notesSeparator.split(comps[2], 2);    
