@@ -41,7 +41,7 @@ Node types can be divided to three groups:
 
 Throughout the execution, the engine keeps a single value of the top-level type, referred to as *Current Value*. This value can be altered by :doc:`set nodes<set-node>`. At the end of the interview, this value holds the final tagging result. Additionally, the engine maintains a call stack of nodes. Pushing onto the stack is done by :doc:`call nodes<call-node>`. Popping is done by :doc:`end nodes<end-node>`.
 
-
+ 
 .. toctree::
    :glob:
    :titlesonly:

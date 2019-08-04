@@ -1,6 +1,6 @@
 :doc:`Home <../index>` / :doc:`index`
 
-==--================
+====================
 The ``Section`` Node
 ====================
 
@@ -19,22 +19,24 @@ A section node has two components. An optional title, and a the set of decision 
     [set: Slot=value]
   ]
 
-Section nodes can be nested as needed.
+Section nodes can be nested as needed. It is also possible to skip to the end of a section, using a ``[continue]`` node.
 
 Sample Graph with Sections
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Suppose we want the user to select three independent sets of animals: dogs, cats, and frogs. The graph below uses sections to logically group the nodes that deal with each animal type together. Note that sections can be inlined with normal flow of the graphs (as is the ``>frogs<`` section), or live outside the normal flow, and be referred to by a :doc:`call </decision-graphs/call-node>` (like ``>dogs<`` and ``>cats<`` below). In the latter case, if the intension is to execute only the called section, it has to be followed by an :doc:`end </decision-graphs/end-node>` node.
+Suppose we want the user to select three independent sets of animals: dogs, cats, and frogs. The graph below uses sections to logically group the nodes that deal with each animal type together.
+
+Sections are normally inlined, that is, are part of the decision graph. If a section is large enough, it may make sense to wrap it in a ``part`` node, and then :doc:`call </decision-graphs/call-node>` it. In the code below, the ``>frogs<`` section is inlined, and the ``>cats<`` and ``>dogs<`` sections are not.
+
+The ``>cats<`` section demonstrates a typical use of a ``[continue]`` node: It starts by asking the user whether she is interested in adding cats at all. If the answer is "no", the rest of the section is skipped.
 
 .. include :: code/section-node/graph.dg
    :code:
    :number-lines:
 
-
 .. figure :: code/section-node/graph-dg.png
 
-  Visualization of a decision graph with sections. This visualization was done using
-  the ``-style=f11`` flag.
+  Visualization of a decision graph with sections.
 
 
 This completes the types of nodes PolicyModels currently has to offer. The last tutorial will look into a :doc:`why the order of values in a slot matters<value-order>`.
