@@ -77,7 +77,7 @@ public class DecisionGraphRuleParserTest {
         assertEquals(new AstNodeHead("id", "end"), sut.parse(">id<    end"));
         assertEquals(new AstNodeHead("id", "end"), sut.parse("   >id<    end   "));
         assertEquals(new AstNodeHead("177", "end"), sut.parse("   >177<    end   "));
-        assertEquals(new AstNodeHead("1$$7@7##", "end"), sut.parse("   >1$$7@7##<    end   "));
+        assertEquals(new AstNodeHead("abcdEFG123-._", "end"), sut.parse("   >abcdEFG123-._<    end   "));
 
     }
 
@@ -292,53 +292,53 @@ public class DecisionGraphRuleParserTest {
     @Test
     public void setNodeSimpleWithId() {
         Parser<AstSetNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.SET_NODE);
-        AstSetNode expected = new AstSetNode("Set!", asList(new AstSetNode.AtomicAssignment(asList("k"), "v")));
-        assertEquals(expected, sut.parse("[>Set!<set: k=v]"));
-        assertEquals(expected, sut.parse("[>Set!< set: k=v]"));
-        assertEquals(expected, sut.parse("[>Set!< set: k = v ]"));
+        AstSetNode expected = new AstSetNode("Set-._", asList(new AstSetNode.AtomicAssignment(asList("k"), "v")));
+        assertEquals(expected, sut.parse("[>Set-._<set: k=v]"));
+        assertEquals(expected, sut.parse("[>Set-._< set: k=v]"));
+        assertEquals(expected, sut.parse("[>Set-._< set: k = v ]"));
     }
 
     @Test
     public void setNodeSimpleAggregate() {
         Parser<AstSetNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.SET_NODE);
-        AstSetNode expected = new AstSetNode("Set!", asList(new AstSetNode.AggregateAssignment(asList("k"), asList("v"))));
-        assertEquals(expected, sut.parse("[>Set!<set: k+=v]"));
-        assertEquals(expected, sut.parse("[>Set!< set: k += v]"));
-        assertEquals(expected, sut.parse("[>Set!< set: k+=v ]"));
+        AstSetNode expected = new AstSetNode("Set-._", asList(new AstSetNode.AggregateAssignment(asList("k"), asList("v"))));
+        assertEquals(expected, sut.parse("[>Set-._<set: k+=v]"));
+        assertEquals(expected, sut.parse("[>Set-._< set: k += v]"));
+        assertEquals(expected, sut.parse("[>Set-._< set: k+=v ]"));
     }
 
     @Test
     public void setNodeAggregate() {
         Parser<AstSetNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.SET_NODE);
-        AstSetNode expected = new AstSetNode("@anId",
+        AstSetNode expected = new AstSetNode("anId",
                 asList(new AstSetNode.AggregateAssignment(asList("k"), asList("v1", "v2"))));
-        assertEquals(expected, sut.parse("[>@anId<set: k += v1, v2]"));
-        assertEquals(expected, sut.parse("[>@anId<set: k+=v1, v2]"));
-        assertEquals(expected, sut.parse("[>@anId<set: k+=v1,v2]"));
+        assertEquals(expected, sut.parse("[>anId<set: k += v1, v2]"));
+        assertEquals(expected, sut.parse("[>anId<set: k+=v1, v2]"));
+        assertEquals(expected, sut.parse("[>anId<set: k+=v1,v2]"));
 
-        expected = new AstSetNode("@anId",
+        expected = new AstSetNode("anId",
                 asList(new AstSetNode.AggregateAssignment(asList("k1", "k2"), asList("v"))));
 
-        assertEquals(expected, sut.parse("[>@anId< set: k1/k2 += v]"));
-        assertEquals(expected, sut.parse("[>@anId< set: k1/k2+=v ]"));
+        assertEquals(expected, sut.parse("[>anId< set: k1/k2 += v]"));
+        assertEquals(expected, sut.parse("[>anId< set: k1/k2+=v ]"));
 
-        expected = new AstSetNode("@anId",
+        expected = new AstSetNode("anId",
                 asList(new AstSetNode.AggregateAssignment(asList("k1", "k2", "k3"), asList("v1", "v2", "v3"))));
-        assertEquals(expected, sut.parse("[>@anId< set: k1/k2/k3 += v1, v2, v3]"));
-        assertEquals(expected, sut.parse("[>@anId< set: k1/k2/k3 += v1,v2,v3]"));
-        assertEquals(expected, sut.parse("[>@anId<set:k1/k2/k3+=v1,v2,v3]"));
+        assertEquals(expected, sut.parse("[>anId< set: k1/k2/k3 += v1, v2, v3]"));
+        assertEquals(expected, sut.parse("[>anId< set: k1/k2/k3 += v1,v2,v3]"));
+        assertEquals(expected, sut.parse("[>anId<set:k1/k2/k3+=v1,v2,v3]"));
     }
 
     @Test
     public void setNode() {
         Parser<AstSetNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.SET_NODE);
-        AstSetNode expected = new AstSetNode("@anId",
+        AstSetNode expected = new AstSetNode("anId",
                 asList(new AstSetNode.AggregateAssignment(asList("k"), asList("v1", "v2")),
                         new AstSetNode.AggregateAssignment(asList("j", "j2"), asList("v")),
                         new AstSetNode.AtomicAssignment(asList("r"), "vee"),
                         new AstSetNode.AggregateAssignment(asList("l1", "l2", "l3"), asList("v1", "v2", "v3"))));
 
-        assertEquals(expected, sut.parse("[>@anId<set: k += v1, v2; j/j2+=v; r=vee; l1/l2/l3+=v1,v2,v3 ]"));
+        assertEquals(expected, sut.parse("[>anId<set: k += v1, v2; j/j2+=v; r=vee; l1/l2/l3+=v1,v2,v3 ]"));
     }
 
     @Test
