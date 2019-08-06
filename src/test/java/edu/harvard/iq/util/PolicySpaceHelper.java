@@ -1,8 +1,8 @@
 package edu.harvard.iq.util;
 
-import edu.harvard.iq.datatags.model.slots.AtomicSlot;
-import edu.harvard.iq.datatags.model.slots.CompoundSlot;
-import edu.harvard.iq.datatags.model.values.CompoundValue;
+import edu.harvard.iq.policymodels.model.policyspace.slots.AtomicSlot;
+import edu.harvard.iq.policymodels.model.policyspace.slots.CompoundSlot;
+import edu.harvard.iq.policymodels.model.policyspace.values.CompoundValue;
 import java.util.Arrays;
 import java.util.List;
 import static java.util.stream.Collectors.joining;
