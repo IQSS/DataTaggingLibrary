@@ -96,7 +96,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>edu.harvard.iq.datatags.mains.PolicyModelCliRunner</mainClass>
+                            <mainClass>edu.harvard.iq.policymodels.mains.PolicyModelCliRunner</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
