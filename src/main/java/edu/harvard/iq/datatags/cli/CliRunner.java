@@ -227,7 +227,7 @@ public class CliRunner {
             
             Answer ans = Answer.withName(ansText);
             if ((ngn.getCurrentNode() instanceof AskNode)
-                    && (((AskNode) ngn.getCurrentNode()).getAnswers().contains(ans))) {
+                    && (((AskNode) ngn.getCurrentNode()).getEnabledAnswers(ngn.getCurrentValue()).contains(ans))) {
                 return ans;
 
             } else if (ansText.equals("?")) {
@@ -315,7 +315,7 @@ public class CliRunner {
             });
         }
         println("Possible Answers:");
-        ask.getAnswers().forEach(ans -> println(" - " + ans.getAnswerText()));
+        ask.getEnabledAnswers(ngn.getCurrentValue()).forEach(ans -> println(" - " + ans.getAnswerText()));
     }
 
     public void print(String format, Object... args) {

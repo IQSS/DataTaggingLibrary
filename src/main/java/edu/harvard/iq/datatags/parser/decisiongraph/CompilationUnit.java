@@ -13,12 +13,18 @@ import edu.harvard.iq.datatags.model.graphs.nodes.RejectNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SetNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.AndExp;
 import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.BooleanExpression;
 import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.EqualsExp;
+import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.GreaterThanExp;
+import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.NotExp;
+import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.SmallerThanExp;
+import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.TrueExp;
 import edu.harvard.iq.datatags.model.slots.AggregateSlot;
 import edu.harvard.iq.datatags.model.slots.AtomicSlot;
 import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.slots.AbstractSlot;
+import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AggregateSlotValuePair;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstAskNode;
@@ -48,8 +54,12 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.Recur
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.SmallerThanExpAst;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.booleanExpressions.TrueExpAst;
 import edu.harvard.iq.datatags.parser.exceptions.BadLookupException;
+import edu.harvard.iq.datatags.parser.exceptions.BadSetInstructionException;
+import edu.harvard.iq.datatags.parser.exceptions.BadSlotLookupException;
 import static java.util.Arrays.asList;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
+import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
 import edu.harvard.iq.datatags.parser.tagspace.ast.CompilationUnitLocationReference;
 import edu.harvard.iq.datatags.tools.DecisionGraphAstValidator;
 import edu.harvard.iq.datatags.tools.NodeValidationMessage;
@@ -361,78 +371,87 @@ public class CompilationUnit {
                             astNode.getAnswers().forEach(ansSubNode -> {
                                     //check for be
                                     BooleanExpressionAst currBE = ansSubNode.getBoolExp();
-                                    
-//                                    SlotValuePair slotValuePair;
-//                                    switch(currBE.getSlotType()){
-//                                        case "atomic":
-//                                            slotValuePair = new AtomicSlotValuePair(
-//                                                    ((AtomicExpressionAst) currBE).getValueInSlot(), ((AtomicExpressionAst) currBE).getValue());
-//                                            break;
-//                                        case "aggregate":
-//                                            slotValuePair = new AggregateSlotValuePair(
-//                                                    ((AtomicExpressionAst) currBE).getValueInSlot(), asList(((AtomicExpressionAst) currBE).getValue()));
-//                                            break;
-//                                        case "compuond":
-//                                      }
+                                    BooleanExpression ans;
                                     try {
-                                        currBE.accept(new BooleanExpressionAst.Visitor() {
+                                        ans = currBE.accept(new BooleanExpressionAst.Visitor<BooleanExpression>() {
                                             @Override
-                                            public void visit(GreaterThanExpAst exp) {
+                                            public GreaterThanExp visit(GreaterThanExpAst exp) {
+                                                List<String> fqsn = fullyQualifiedSlotName.get(exp.getSlotName());
+                                               
                                                 CompoundValue topValue = topLevelType.createInstance();
-                                                ValueBuilder valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
-                                                AtomicExpressionAst ae = (AtomicExpressionAst) currBE;
-                                                SlotValuePair slotValuePair = new AtomicSlotValuePair(
-                                                        ae.getValueInSlot(), ae.getValue());
-                                                slotValuePair.accept(valueBuilder);
+                                                AbstractSlot slot = (fqsn!=null) ? topValue.getSlot().getSubSlot(fqsn): null;
+                                                if(slot == null) {
+                                                    throw new RuntimeException(new BadSlotLookupException(astNode, "can't find slot " + exp.getSlotName()));
+                                                }
+                                                if(slot instanceof AtomicSlot){
+                                                    AtomicValue value = ((AtomicSlot)slot).valueOf(exp.getValue());
+                                                    return new GreaterThanExp(fqsn, value);
+                                                } else {
+                                                    throw new RuntimeException(new SemanticsErrorException(new CompilationUnitLocationReference(0, 0), "Greater than operator need Atomic Slot"));
+                                                }
                                             }
 
                                             @Override
-                                            public void visit(SmallerThanExpAst exp) {
+                                            public SmallerThanExp visit(SmallerThanExpAst exp) {
+                                                List<String> fqsn = fullyQualifiedSlotName.get(exp.getSlotName());
+                                               
                                                 CompoundValue topValue = topLevelType.createInstance();
-                                                ValueBuilder valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
-                                                AtomicExpressionAst ae = (AtomicExpressionAst) currBE;
-                                                SlotValuePair slotValuePair = new AtomicSlotValuePair(
-                                                        ae.getValueInSlot(), ae.getValue());
-                                                slotValuePair.accept(valueBuilder);
+                                                AbstractSlot slot = (fqsn!=null) ? topValue.getSlot().getSubSlot(fqsn): null;
+                                                if(slot == null) {
+                                                    throw new RuntimeException(new BadSlotLookupException(astNode, "can't find slot " + exp.getSlotName()));
+                                                }
+                                                if(slot instanceof AtomicSlot){
+                                                    AtomicValue value = ((AtomicSlot)slot).valueOf(exp.getValue());
+                                                    return new SmallerThanExp(fqsn, value);
+                                                } else {
+                                                    throw new RuntimeException(new SemanticsErrorException(new CompilationUnitLocationReference(0, 0), "Greater than operator need Atomic Slot"));
+                                                }
                                             }
 
                                             @Override
-                                            public void visit(EqualsExpAst exp) {
+                                            public EqualsExp visit(EqualsExpAst exp) {
+                                                List<String> fqsn = fullyQualifiedSlotName.get(exp.getSlotName());
+                                               
                                                 CompoundValue topValue = topLevelType.createInstance();
-                                                ValueBuilder valueBuilder = new ValueBuilder(topValue, fullyQualifiedSlotName);
-                                                AtomicExpressionAst ae = (AtomicExpressionAst) currBE;
-                                                SlotValuePair slotValuePair = new AtomicSlotValuePair(
-                                                        ae.getValueInSlot(), ae.getValue());
-                                                slotValuePair.accept(valueBuilder);
-                                                BooleanExpression be = new EqualsExp(topLevelType.getSubSlot(C.last(ae.getValueInSlot())), topValue.get(topLevelType.getSubSlot(ae.getValue())));
+                                                AbstractSlot slot = (fqsn!=null) ? topValue.getSlot().getSubSlot(fqsn): null;
+                                                if(slot == null) {
+                                                    throw new RuntimeException(new BadSlotLookupException(astNode, "can't find slot " + exp.getSlotName()));
+                                                }
+                                                if(slot instanceof AtomicSlot){
+                                                    AtomicValue value = ((AtomicSlot)slot).valueOf(exp.getValue());
+                                                    return new EqualsExp(fqsn, value);
+                                                } else {
+                                                    throw new RuntimeException(new SemanticsErrorException(new CompilationUnitLocationReference(0, 0), "Greater than operator need Atomic Slot"));
+                                                }
                                             }
 
                                             @Override
-                                            public void visit(NotExpAst exp) {
-                                                exp.getOp().accept(this);
+                                            public NotExp visit(NotExpAst exp) {
+                                                return new NotExp(exp.getOp().accept(this));
                                             }
 
                                             @Override
-                                            public void visit(AndExpAst exp) {
-                                                exp.getFirstOp().accept(this);
-                                                exp.getSecondOp().accept(this);
+                                            public AndExp visit(AndExpAst exp) {
+                                                return new AndExp(exp.getFirstOp().accept(this),
+                                                                  exp.getSecondOp().accept(this));
                                             }
 
                                             @Override
-                                            public void visit(TrueExpAst exp) {
+                                            public TrueExp visit(TrueExpAst exp) {
+                                                return TrueExp.INSTANCE;
                                                 
                                             }
                                         });
-                                    } catch (RuntimeException re) {
-                                        if (re.getCause() instanceof DataTagsParseException) {
-                                            ((DataTagsParseException) re.getCause()).setOffendingNode(astNode);
-                                            throw re;
-                                        } else {
-                                            throw new RuntimeException(re.getMessage() + " (at node " + astNode + ")", re);
+                                        } catch (RuntimeException re) {
+                                            if (re.getCause() instanceof DataTagsParseException) {
+                                                ((DataTagsParseException) re.getCause()).setOffendingNode(astNode);
+                                                throw re;
+                                            } else {
+                                                throw new RuntimeException(re.getMessage() + " (at node " + astNode + ")", re);
+                                            }
                                         }
-                                    }
-                                    res.addAnswer(Answer.withName(ansSubNode.getAnswerText()),
-                                        buildNodes(ansSubNode.getSubGraph(), syntacticallyNext));
+                                        res.addAnswer(Answer.withName(ansSubNode.getAnswerText()),
+                                            buildNodes(ansSubNode.getSubGraph(), syntacticallyNext), ans);
                                     }
                                 );
 

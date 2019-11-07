@@ -79,7 +79,7 @@ public class DecisionGraphRuleParser {
                             .collect( toList() ) );
         IDENTIFIER_WITH_KEYWORDS =  Parsers.sequence(
                 Parsers.or(parsers).many(),
-                Terminals.identifier().many()
+                Terminals.identzv ifier().many()
                 ).source().map( String::trim );
     }
     

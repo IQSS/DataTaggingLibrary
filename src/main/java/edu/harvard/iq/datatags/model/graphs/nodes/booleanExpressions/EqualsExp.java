@@ -5,9 +5,12 @@
  */
 package edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions;
 
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
+import java.util.List;
 
 /**
  *
@@ -15,17 +18,17 @@ import edu.harvard.iq.datatags.parser.decisiongraph.ast.AstSetNode;
  */
 public class EqualsExp extends BooleanExpression {
     
-    private AtomicValue valueInSlot;
+    private List<String> fullyQualifiedSlotName;
     private AtomicValue value;
 
-    public EqualsExp(AtomicValue valueInSlot, AtomicValue value) {
-        this.valueInSlot = valueInSlot;
+    public EqualsExp(List<String> fullyQualifiedSlotName, AtomicValue value) {
+        this.fullyQualifiedSlotName = fullyQualifiedSlotName;
         this.value = value;
     }
 
     @Override
     public boolean evaluate(CompoundValue ps) {
-        return (valueInSlot.compare(value) == AtomicValue.CompareResult.Same);
+        return (ps.getValue(fullyQualifiedSlotName).compare(value).equals(AbstractValue.CompareResult.Same));
     }
     
 }

@@ -5,8 +5,10 @@
  */
 package edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions;
 
+import edu.harvard.iq.datatags.model.values.AbstractValue;
 import edu.harvard.iq.datatags.model.values.AtomicValue;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
+import java.util.List;
 
 /**
  *
@@ -14,17 +16,17 @@ import edu.harvard.iq.datatags.model.values.CompoundValue;
  */
 public class GreaterThanExp extends BooleanExpression {
     
-    private AtomicValue valueInSlot;
+    private List<String> fullyQualifiedSlotName;;
     private AtomicValue value;
 
-    public GreaterThanExp(AtomicValue valueInSlot, AtomicValue value) {
-        this.valueInSlot = valueInSlot;
+    public GreaterThanExp(List<String> fullyQualifiedSlotName, AtomicValue value) {
+        this.fullyQualifiedSlotName = fullyQualifiedSlotName;
         this.value = value;
     }
     
     @Override
     public boolean evaluate(CompoundValue ps) {
-        return (valueInSlot.compare(value) == AtomicValue.CompareResult.Bigger);
+        return (ps.getValue(fullyQualifiedSlotName).compare(value).equals(AbstractValue.CompareResult.Bigger));
     }
     
 }

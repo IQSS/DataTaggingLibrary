@@ -16,17 +16,17 @@ import java.util.List;
  */
 public class SmallerThanExp extends BooleanExpression {
 
-    private AtomicValue valueInSlot;
+    private List<String> fullyQualifiedSlotName;
     private AtomicValue value;
 
-    public SmallerThanExp(AtomicValue valueInSlot, AtomicValue value) {
-        this.valueInSlot = valueInSlot;
+    public SmallerThanExp(List<String> fullyQualifiedSlotName, AtomicValue value) {
+        this.fullyQualifiedSlotName = fullyQualifiedSlotName;
         this.value = value;
     }
     
     @Override
     public boolean evaluate(CompoundValue ps) {
-        return (valueInSlot.compare(value) == AtomicValue.CompareResult.Smaller);
+        return (ps.getValue(fullyQualifiedSlotName).compare(value).equals(AbstractValue.CompareResult.Smaller));
     }
     
 }

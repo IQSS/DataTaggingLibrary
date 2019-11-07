@@ -1,5 +1,6 @@
 package edu.harvard.iq.datatags.runtime;
 
+import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.DecisionGraph;
 import edu.harvard.iq.datatags.model.graphs.nodes.AskNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.CallNode;
@@ -10,12 +11,18 @@ import static edu.harvard.iq.datatags.model.graphs.Answer.*;
 import edu.harvard.iq.datatags.model.graphs.nodes.ContinueNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.SectionNode;
 import edu.harvard.iq.datatags.model.graphs.nodes.ToDoNode;
+import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.GreaterThanExp;
+import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.TrueExp;
 import edu.harvard.iq.datatags.model.metadata.PolicyModelData;
+import edu.harvard.iq.datatags.model.slots.AtomicSlot;
 import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.parser.decisiongraph.ContentReader;
 import edu.harvard.iq.datatags.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.datatags.parser.decisiongraph.MemoryContentReader;
 import edu.harvard.iq.datatags.parser.exceptions.DataTagsParseException;
+import edu.harvard.iq.datatags.parser.exceptions.SemanticsErrorException;
+import edu.harvard.iq.datatags.parser.exceptions.SyntaxErrorException;
+import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import static edu.harvard.iq.datatags.util.CollectionHelper.*;
 import static edu.harvard.iq.util.DecisionGraphHelper.*;
 import java.io.File;
@@ -26,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -239,6 +247,40 @@ public class ChartRunningTest {
                         "3", "sub_c_1", "sub_c_2", "sub_c_3", "sub_c_END",
                         "END"),
                 false);
+    }
+    
+    @Test
+    public void testAtomicBooleanExpression() throws SyntaxErrorException, SemanticsErrorException {
+        String code = "DataTags : consists of Bag, Burrito.\n" +
+                      "Bag : one of banana_leaf, paper, plastic.\n" +
+                      "Burrito : consists of Wrap, Main, Side.\n" +
+                      "Wrap : one of corn, full_grain, wheat.\n" +
+                      "Main : one of  chicken, tofu, beef.\n" +
+                      "Side : some of rice, corn, guacamole, cream, cheese.";
+        CompoundSlot lunchType = new TagSpaceParser().parse(code).buildType("DataTags").get();
+        CompoundSlot burritoType = (CompoundSlot) lunchType.getSubSlot("Burrito");
+        AtomicSlot mainType = (AtomicSlot) burritoType.getSubSlot("Main");
+        
+        CompoundValue val = lunchType.createInstance();
+        CompoundValue burrito = burritoType.createInstance();
+        burrito.put( mainType.valueOf("chicken") );
+        val.put( burrito );
+        
+        String flowChartName = "flowChart";
+        DecisionGraph c1 = new DecisionGraph(flowChartName);
+        
+        AskNode start = new AskNode("1");
+        Answer ansA = Answer.withName("A");
+        Answer ansB = Answer.withName("B");
+        Answer ansC = Answer.withName("C");
+        Answer ansD = Answer.withName("D");
+        
+        start.addAnswer(ansA, start)
+        .addAnswer(ansB, start, new GreaterThanExp(Arrays.asList("Burrito", "Main"), mainType.valueOf("tofu")))
+        .addAnswer(ansC, start)
+        .addAnswer(ansD, start);
+
+        Assert.assertEquals(start.getEnabledAnswers(val), Arrays.asList(ansA, ansC, ansD));
     }
 
 }

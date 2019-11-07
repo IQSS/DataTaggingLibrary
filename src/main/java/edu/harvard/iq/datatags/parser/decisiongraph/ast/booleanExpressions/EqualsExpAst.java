@@ -20,7 +20,7 @@ public class EqualsExpAst extends AtomicExpressionAst {
     private String value;
     
     @Override
-    public List<String> getValueInSlot() {
+    public List<String> getSlotName() {
         return valueInSlot;
     }
 
@@ -74,8 +74,8 @@ public class EqualsExpAst extends AtomicExpressionAst {
     }
 
     @Override
-    public void accept(Visitor v) {
-        v.visit(this);
+    public <T> T accept(Visitor<T> v) {
+        return v.visit(this);
     }
     
     

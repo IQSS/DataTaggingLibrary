@@ -54,7 +54,7 @@ public class GreaterThanExpAst extends AtomicExpressionAst {
     }
 
     @Override
-    public List<String> getValueInSlot() {
+    public List<String> getSlotName() {
         return slotReference;
     }
 
@@ -74,8 +74,8 @@ public class GreaterThanExpAst extends AtomicExpressionAst {
     }
 
     @Override
-    public void accept(Visitor v) {
-        v.visit(this);
+    public <T> T accept(Visitor<T> v) {
+        return v.visit(this);
     }
     
     

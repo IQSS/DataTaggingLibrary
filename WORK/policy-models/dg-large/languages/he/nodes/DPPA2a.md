@@ -1,0 +1,1 @@
+Has express consent been obtained from each person whose photograph, Social Security number, or medical or disability information appears in the data?

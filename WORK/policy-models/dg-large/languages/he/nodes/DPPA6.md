@@ -1,0 +1,1 @@
+Was consent obtained from the individuals whose information is contained in the data by the requester of the records?

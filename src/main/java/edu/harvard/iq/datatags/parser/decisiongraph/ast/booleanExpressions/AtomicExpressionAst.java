@@ -13,7 +13,7 @@ import java.util.List;
  */
 public abstract class AtomicExpressionAst extends BooleanExpressionAst {
     
-    public abstract List<String> getValueInSlot();
+    public abstract List<String> getSlotName();
     
     public abstract String getValue();
     

@@ -16,7 +16,7 @@ public class TrueExpAst extends BooleanExpressionAst{
 
     @Override
     BooleanExpression build() {
-        return new TrueExp();
+        return TrueExp.INSTANCE;
     }
 
     @Override
@@ -25,8 +25,8 @@ public class TrueExpAst extends BooleanExpressionAst{
     }
 
     @Override
-    public void accept(Visitor v) {
-        v.visit(this);
+    public <T> T accept(Visitor<T> v) {
+        return v.visit(this);
     }
     
 }

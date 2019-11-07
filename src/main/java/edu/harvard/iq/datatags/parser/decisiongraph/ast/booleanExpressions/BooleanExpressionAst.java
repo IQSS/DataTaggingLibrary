@@ -20,19 +20,19 @@ public abstract class BooleanExpressionAst {
     
     public interface Visitor<T> {
 
-        void visit(GreaterThanExpAst exp);
+        T visit(GreaterThanExpAst exp);
 
-        void visit(SmallerThanExpAst exp);
+        T visit(SmallerThanExpAst exp);
 
-        void visit(EqualsExpAst exp);
+        T visit(EqualsExpAst exp);
 
-        void visit(NotExpAst exp);
+        T visit(NotExpAst exp);
 
-        void visit(AndExpAst exp);
+        T visit(AndExpAst exp);
         
-        void visit(TrueExpAst exp);
+        T visit(TrueExpAst exp);
 
     }
     
-    public abstract void accept(Visitor v);
+    public abstract <T> T accept(Visitor<T> v);
 }

@@ -2,14 +2,20 @@ package edu.harvard.iq.datatags.model.graphs.nodes;
 
 import edu.harvard.iq.datatags.model.graphs.Answer;
 import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.BooleanExpression;
+import edu.harvard.iq.datatags.model.graphs.nodes.booleanExpressions.TrueExp;
+import edu.harvard.iq.datatags.model.values.CompoundValue;
 import edu.harvard.iq.datatags.runtime.exceptions.DataTagsRuntimeException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toList;
 
 /**
  * A node where the user has to provide an answer to a question.
@@ -43,6 +49,7 @@ public class AskNode extends Node {
      * @param <T> the actual type of the node
      * @param answer the answer for which the node applies
      * @param node the node
+     * @param be the boolean expression to determine if display the answer 
      * @return {@code node}, for convenience, call chaining, etc.
      */
     public <T extends Node> T addAnswer(Answer answer, T node, BooleanExpression be) {
@@ -50,6 +57,19 @@ public class AskNode extends Node {
         nextNodeByAnswer.put(answer, node);
         answerToBE.put(answer, be);
         return node;
+    }
+    
+        /**
+     * Adds an answer, and sets the node for it.
+     *
+     * @param <T> the actual type of the node
+     * @param answer the answer for which the node applies
+     * @param node the node
+     * @param be the boolean expression to determine if display the answer 
+     * @return {@code node}, for convenience, call chaining, etc.
+     */
+    public <T extends Node> T addAnswer(Answer answer, T node) {
+        return addAnswer(answer, node, TrueExp.INSTANCE);
     }
     
     public void removeAnswer( Answer ans ) {
@@ -101,6 +121,10 @@ public class AskNode extends Node {
 
     public List<Answer> getAnswers() {
         return answers;
+    }
+    
+    public List<Answer> getEnabledAnswers(CompoundValue ps){
+        return answers.stream().filter(ans -> answerToBE.get(ans).evaluate(ps)).collect(Collectors.toList());
     }
 
     @Override

@@ -1,0 +1,18 @@
+[>WW< ask:
+  {text: Noname node #1 }
+  {answers:
+      {yes: [>never-set< set: Test=Work]}
+  }
+]
+[-->dog<
+  {title: Dogs!}
+  [>q-dogType< ask:
+    {text: What type of dogs?}
+    {answers:
+      {none: }
+      {animated: [>1< set: Dogs += Pluto]}
+      {cute: [>2< set: Dogs += Rex, Lassie]}
+      {hounds: [>3< set: Dogs += Pluto, Lassie]}
+    }
+  ]
+--]

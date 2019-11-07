@@ -6,6 +6,7 @@ import edu.harvard.iq.datatags.model.slots.CompoundSlot;
 import edu.harvard.iq.datatags.model.values.AbstractValue.CompareResult;
 import edu.harvard.iq.datatags.parser.tagspace.TagSpaceParser;
 import static org.junit.Assert.*;
+import static edu.harvard.iq.datatags.util.CollectionHelper.C;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -221,5 +222,19 @@ public class CompoundValueTest {
         val.put( bagType.valueOf("paper") );
         
         assertFalse( val.equals(otherVal) );
+    }
+    
+    @Test
+    public void testGetValue() {
+        CompoundValue val = lunchType.createInstance();
+        CompoundValue burrito = burritoType.createInstance();
+        AtomicValue aVal = new AtomicValue(0, "chicken", mainType, "");
+       
+        burrito.put( wrapType.valueOf("corn") );
+        burrito.put( mainType.valueOf("chicken") );
+        val.put(burrito);
+        
+        assertEquals(aVal, val.getValue(C.list("Burrito", "Main")));
+        assertThrows(IllegalArgumentException.class, () -> val.getValue(C.list("not", "exist")));
     }
 }

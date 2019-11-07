@@ -17,5 +17,11 @@ public class TrueExp extends BooleanExpression {
     public boolean evaluate(CompoundValue ps) {
         return true;
     }
+     
+    private TrueExp() {
+        
+    }
+    
+    public static final TrueExp INSTANCE = new TrueExp();
     
 }

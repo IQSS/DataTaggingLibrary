@@ -1,0 +1,13 @@
+all: all
+animated: animated
+cute: cute
+hounds: hounds
+no: no
+none: none
+some: some
+yes: yes
+a: a
+b: b
+x: x
+y: y
+z: z

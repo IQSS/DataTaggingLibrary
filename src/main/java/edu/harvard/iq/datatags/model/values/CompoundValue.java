@@ -45,7 +45,7 @@ public class CompoundValue extends AbstractValue{
     public void clear(AbstractSlot slot) {
         fields.remove(slot);
     }
-
+    
     public AbstractValue get(AbstractSlot slot) {
         if (getSlot().getSubSlots().contains(slot)) {
             return fields.get(slot);
@@ -53,6 +53,28 @@ public class CompoundValue extends AbstractValue{
             throw new IllegalArgumentException("Slot " + getSlot() + " does not have a sub-slot " + slot + ". Available slots are " +
                                                 getSlot().getSubSlots().stream().map( s -> s.getName() ).collect( joining(",","[","]")) );
         }
+    }
+    
+    public AbstractValue getValue(String slot) {
+        return get(getSlot().getSubSlot(slot));
+    }
+    
+    public AbstractValue getValue(List<String> slot) {
+       if(slot.isEmpty()) {
+           return this;
+       } else {
+            AbstractValue next = getValue(C.head(slot));
+            if ( next == null ) return null;
+            if ( next instanceof CompoundValue ) {
+                return ((CompoundValue)next).getValue(C.tail(slot));
+            } else {
+                if ( slot.size() == 1  ) {
+                    return next;
+                } else {
+                    return null;
+                }
+            }
+       }
     }
 
     /**
