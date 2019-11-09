@@ -200,8 +200,6 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
             }
         }
         
-        candidates.forEach( c -> System.out.println("Candidate: " + c.getId() + " " + c.toString()));
-        
         return candidates;
     }
     
