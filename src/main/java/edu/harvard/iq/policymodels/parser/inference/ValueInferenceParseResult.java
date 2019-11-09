@@ -62,7 +62,7 @@ public class ValueInferenceParseResult {
             // For each ValueInferrereAst
             AbstractValueInferrer valueInferrer = null;
             switch (i.getType()) {
-                case "copmly": valueInferrer = new ComplianceValueInferrer(); break;
+                case "comply": valueInferrer = new ComplianceValueInferrer(); break;
                 case "support": valueInferrer = new SupportValueInferrer(); break;
                 default: validationMessages.add(new ValidationMessage(Level.ERROR, "Unknown inferrer type '" + i.getType() + "'."));
             }

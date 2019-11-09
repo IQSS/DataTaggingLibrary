@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.harvard.iq.policymodels.cli.commands;
 
 import edu.harvard.iq.policymodels.cli.CliRunner;
@@ -73,7 +68,7 @@ public class UpdateLocalizationCommand extends AbstractCliCommand {
                     currLocName = null;
                     return;
                 }
-                rnr.println("Start update localization name: %s", currLocName);
+                rnr.println("Start localization update: %s", currLocName);
                 rnr.println("-----");
                 updateAnswerFile(rnr);
                 updatePolicySpace(rnr);

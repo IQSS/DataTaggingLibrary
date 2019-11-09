@@ -2,6 +2,7 @@
 package edu.harvard.iq.policymodels.tools;
 
 import edu.harvard.iq.policymodels.model.decisiongraph.DecisionGraph;
+import edu.harvard.iq.policymodels.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.policymodels.tools.ValidationMessage.Level;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -33,7 +34,7 @@ public class UnreachableNodeValidator implements DecisionGraphValidator {
         ReachableNodesCollector nc = new ReachableNodesCollector();
         dg.getStart().accept(nc);
         nc.getCollectedNodes().stream().map(n->n.getId()).forEach( flowChartNodeIds::remove );
-        Set<String> flowChartNodeIdsEnds = flowChartNodeIds.stream().filter(n->n.endsWith("[SYN-END]")).collect(toSet());
+        Set<String> flowChartNodeIdsEnds = flowChartNodeIds.stream().filter(n->n.endsWith(DecisionGraphCompiler.SYNTHETIC_END_NODE_ID)).collect(toSet());
         flowChartNodeIds.removeAll(flowChartNodeIdsEnds);
 
         if (!flowChartNodeIds.isEmpty()) {

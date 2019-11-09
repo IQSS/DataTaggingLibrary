@@ -511,7 +511,7 @@ public class CliRunner {
 
                 @Override
                 public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-                    println("Sorry, we can't accept the dataset: " + nd.getReason());
+                    println("Interview terminated: " + nd.getReason());
                 }
 
                 @Override

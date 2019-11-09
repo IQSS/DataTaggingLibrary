@@ -1,14 +1,3 @@
-[>q-order< ask:
-  {text: Do the dogs first?}
-  {terms:
-    {frogs: Referring to the section pertaining to dogs.}
-    {first: Before the section regarding the cats.}
-  }
-  {answers:
-      {yes: [call: dogs]}
-      {no: [call:dogs]}
-  }
-]
 [todo: specify mice]
 [>sec-frogs< section:
   {title: Add frogs}
@@ -16,7 +5,6 @@
   [todo: Add frog 2]
 ]
 [set: Rice=Full]
-[end]
 
 [>dogs< section:
   {title: Dogs!}
@@ -34,7 +22,7 @@
 
 [>cats< section:
   {title: Cats}
-  [>q:cats:group< ask:
+  [>q-cats-group< ask:
     {text: What cats?}
     {answers:
       {all: [set: Cats += Tom, Shmil, Mitzi]}
@@ -42,5 +30,5 @@
       {none: }
     }
   ]
-  [>dog_section_set< set: SetCats = cWorks]
+  [>cat_section_set< set: SetCats = cWorks]
 ]
