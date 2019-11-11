@@ -13,18 +13,12 @@ import edu.harvard.iq.policymodels.model.decisiongraph.nodes.ContainerNode;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.ContinueNode;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.PartNode;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.SectionNode;
-import edu.harvard.iq.policymodels.model.policyspace.values.AbstractValue;
-import edu.harvard.iq.policymodels.model.policyspace.values.AggregateValue;
-import edu.harvard.iq.policymodels.model.policyspace.values.AtomicValue;
-import edu.harvard.iq.policymodels.model.policyspace.values.CompoundValue;
-import edu.harvard.iq.policymodels.model.policyspace.values.ToDoValue;
 import edu.harvard.iq.policymodels.runtime.exceptions.DataTagsRuntimeException;
 import static edu.harvard.iq.policymodels.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.policymodels.visualizers.graphviz.GvNode.node;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Set;
-import static java.util.stream.Collectors.joining;
 
 /**
  * Given a {@link DecisionGraph}, instances of this class create gravphviz files
@@ -34,8 +28,6 @@ import static java.util.stream.Collectors.joining;
  */
 public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDecisionGraphVisualizer {
     
-    /** Draws links between call nodes and their callees. */
-    private boolean drawCallLinks = false;
     
     /**
      * Concentrates edges (Graphviz graph feature). When {@code true}, Graphviz will 
@@ -44,8 +36,8 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
      * Causes crash in Graphviz versions below 2.40, so should be turned off for these.
      */
     private boolean concentrate = true;
-    
-    private class NodePainter extends AbstractGraphvizDecisionGraphVisualizer.AbstractNodePainter {
+
+    protected class NodePainter extends AbstractGraphvizDecisionGraphVisualizer.AbstractNodePainter {
         
         @Override
         public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
@@ -225,7 +217,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
 
     @Override
     protected void printBody(PrintWriter out) throws IOException {
-        printChart(theGraph, new PrintWriter(out, true));
+        printChart(theGraph, out);
         out.println(makeEdge(START_NODE_NAME, theGraph.getStart())
                 .color("#008800")
                 .penwidth(4)
@@ -244,7 +236,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
             chartHead.accept(np);
         });
         
-        if ( drawCallLinks ) {
+        if ( isDrawCallLinks() ) {
             drawCallLinks(wrt);
         }
         
@@ -258,72 +250,12 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
 
     }
     
-    public void setDrawCallLinks(boolean drawCallLinks) {
-        this.drawCallLinks = drawCallLinks;
-    }
-
     public void setConcentrate(boolean concentrate) {
         this.concentrate = concentrate;
     }
-    
-    private static final String INDENT_15 = "               ";
-    String indentedToString( AbstractValue cv ) {
-        StringBuilder out = new StringBuilder();
-        cv.accept( new AbstractValue.Visitor<Void>() {
-            int indentLevel = 0;
 
-            @Override
-            public Void visitToDoValue(ToDoValue v) {
-                add( v.getSlot().getName(), "(TODO)");
-                return null;
-            }
-
-            @Override
-            public Void visitAtomicValue(AtomicValue v) {
-                add( v.getSlot().getName() + " = ", v.getName() );
-                return null;
-            }
-
-            @Override
-            public Void visitAggregateValue(AggregateValue v) {
-                add( v.getSlot().getName() + " += ", v.getValues().stream()
-                    .map( AtomicValue::getName )
-                    .sorted()
-                    .collect( joining(", ") )
-                );
-                return null;
-            }
-
-            @Override
-            public Void visitCompoundValue(CompoundValue v) {
-                add(v.getSlot().getName(), ":");
-                indentLevel++;
-                v.getNonEmptySubSlots().forEach(asl -> 
-                    v.get(asl).accept(this)
-                );
-                indentLevel--;
-                return null;
-            }
-            
-            void add( String title, String values ) {
-                indent();
-                out.append( title ).append(values).append("\n");
-            }
-            
-            void indent() {
-                indent(indentLevel);
-            }
-            void indent(int amount) {
-                if (amount == 0 ) return;
-                if (amount < INDENT_15.length() ) {
-                    out.append(INDENT_15.substring(0, indentLevel));
-                } else {
-                    out.append(INDENT_15);
-                    indent(amount - INDENT_15.length());
-                }
-            }
-        });
-            
-        return out.toString(); 
+    public boolean isConcentrate() {
+        return concentrate;
     }
+    
 }

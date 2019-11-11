@@ -52,7 +52,38 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
      */
     protected boolean drawEndNodes = false;
     
+    /** Draw links between call nodes and their calees. */
+    private boolean drawCallLinks = false;
+    
     Set<String> visitedIds = new TreeSet<>();
+
+    protected void drawCallLinks(PrintWriter out) {
+        out.println("edge [constraint=false, color=\"#CCCCFF\", penwidth=2, style=dotted, arrowhead=open];");
+        for (Node nd : getDecisionGraph().nodes()) {
+            if (nd instanceof CallNode) {
+                CallNode cn = (CallNode) nd;
+                Node dest = cn.getCalleeNode();
+                if (dest instanceof PartNode) {
+                    dest = ((PartNode) dest).getStartNode();
+                }
+                if (dest != null) {
+                    out.println(makeEdge(cn, dest).add("lhead", "cluster_" + sanitizeId(cn.getCalleeNode().getId())).gv());
+                }
+            }
+        }
+    }
+
+    public void setDrawCallLinks(boolean drawCallLinks) {
+        this.drawCallLinks = drawCallLinks;
+    }
+
+    public boolean isDrawCallLinks() {
+        return drawCallLinks;
+    }
+
+    public boolean isDrawEndNodes() {
+        return drawEndNodes;
+    }
     
     protected abstract class AbstractNodePainter extends Node.VoidVisitor {
         PrintWriter out;
@@ -204,7 +235,7 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
     }
     
     /**
-     * Returns a map of node. Each key-value pair is an edge that, if added, 
+     * Returns a map of nodes, where each key-value pair is an edge that, if added, 
      * ensures that section clusters come one below the other, not side-by-side.
      * @return A map fo nodes to be translated to invisible edges.
      */
@@ -431,23 +462,7 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
         
         return aDeepest[0];
     }
-        
-    protected void drawCallLinks(PrintWriter out) {
-        out.println("edge [constraint=false, color=\"#CCCCFF\", penwidth=2, style=dotted, arrowhead=open];");
-        for ( Node nd : getDecisionGraph().nodes() ) {
-            if ( nd instanceof CallNode ) {
-                CallNode cn = (CallNode) nd;
-                Node dest = cn.getCalleeNode();
-                if ( dest instanceof PartNode ) {
-                    dest = ((PartNode)dest).getStartNode();
-                }
-                if ( dest != null ) {
-                    out.println( makeEdge(cn, dest).add("lhead", "cluster_" + sanitizeId(cn.getCalleeNode().getId())).gv() );   
-                }                
-            }
-        }
-    }
-    
+            
     public DecisionGraph getDecisionGraph() {
         return theGraph;
     }

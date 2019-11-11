@@ -1,6 +1,14 @@
 package edu.harvard.iq.policymodels.visualizers.graphviz;
 
 import edu.harvard.iq.policymodels.model.decisiongraph.DecisionGraph;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.CallNode;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.Node;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.PartNode;
+import edu.harvard.iq.policymodels.model.policyspace.values.AbstractValue;
+import edu.harvard.iq.policymodels.model.policyspace.values.AggregateValue;
+import edu.harvard.iq.policymodels.model.policyspace.values.AtomicValue;
+import edu.harvard.iq.policymodels.model.policyspace.values.CompoundValue;
+import edu.harvard.iq.policymodels.model.policyspace.values.ToDoValue;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,6 +19,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Base class for GraphViz visualizers. Contains mainly utility methods.
@@ -22,7 +31,7 @@ public abstract class GraphvizVisualizer {
     protected final Pattern whitespace = Pattern.compile("\\s|-");
 
     private final Map<Character, String> idEncodeMap = new HashMap<>();
-
+    
     public GraphvizVisualizer() {
         String idChars = ".:,/~?!()@#$%^&*_+-[] >=\\";
 
@@ -142,6 +151,63 @@ public abstract class GraphvizVisualizer {
         out.append(input, lastIdx, input.length - lastIdx);
 
         return out.toString();
+    }
+
+    private static final String INDENT_15 = "               ";
+    protected String indentedToString(AbstractValue cv) {
+        StringBuilder out = new StringBuilder();
+        cv.accept(new AbstractValue.Visitor<Void>() {
+            int indentLevel = 0;
+
+            @Override
+            public Void visitToDoValue(ToDoValue v) {
+                add(v.getSlot().getName(), "(TODO)");
+                return null;
+            }
+
+            @Override
+            public Void visitAtomicValue(AtomicValue v) {
+                add(v.getSlot().getName() + "=", v.getName());
+                return null;
+            }
+
+            @Override
+            public Void visitAggregateValue(AggregateValue v) {
+                add(v.getSlot().getName() + "+=", v.getValues().stream().map(AtomicValue::getName).sorted().collect(joining(",")));
+                return null;
+            }
+
+            @Override
+            public Void visitCompoundValue(CompoundValue v) {
+                add(v.getSlot().getName(), ":");
+                indentLevel++;
+                v.getNonEmptySubSlots().forEach((asl) -> v.get(asl).accept(this));
+                indentLevel--;
+                return null;
+            }
+
+            void add(String title, String values) {
+                indent();
+                out.append(title).append(values).append("\n");
+            }
+
+            void indent() {
+                indent(indentLevel);
+            }
+
+            void indent(int amount) {
+                if (amount == 0) {
+                    return;
+                }
+                if (amount < INDENT_15.length()) {
+                    out.append(INDENT_15.substring(0, indentLevel));
+                } else {
+                    out.append(INDENT_15);
+                    indent(amount - INDENT_15.length());
+                }
+            }
+        });
+        return out.toString().trim();
     }
 
 }

@@ -1,5 +1,8 @@
 package edu.harvard.iq.policymodels.visualizers.graphviz;
 
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.CallNode;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.Node;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.PartNode;
 import edu.harvard.iq.policymodels.model.policyspace.slots.AggregateSlot;
 import edu.harvard.iq.policymodels.model.policyspace.slots.AtomicSlot;
 import edu.harvard.iq.policymodels.model.policyspace.slots.CompoundSlot;
@@ -138,5 +141,5 @@ public class GraphvizPolicySpacePathsVisualizer extends GraphvizVisualizer {
                     .gv());
         out.println("{rank=source; start}");
 	}
-	
+
 }
