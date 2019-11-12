@@ -57,6 +57,13 @@ public class LocalizationLoader extends BaseModelLoader {
         if ( modelLocalizationPath != null ) {
             LocalizedModelDataParser lmdp = new LocalizedModelDataParser(retVal.getLanguage());
             retVal.setLocalizedModelData(lmdp.read(modelLocalizationPath));
+        } else {
+            LocalizedModelData locMd = new LocalizedModelData();
+            locMd.setLanguage("DEFAULT");
+            locMd.setUiLanguage("en");
+            locMd.setTitle( model.getMetadata().getTitle() );
+            locMd.setSubTitle( model.getMetadata().getSubTitle() );
+            retVal.setLocalizedModelData(locMd);
         }
         
         messages.addAll( loadReadmes(retVal.getLocalizedModelData(), localizationPath) );

@@ -84,7 +84,7 @@ public class TrivialLocalization extends Localization {
     private class TriviallyLocalizedModelData extends LocalizedModelData {
 
         @Override
-        public String getUiLang() {
+        public String getUiLanguage() {
             return "en";
         }
 

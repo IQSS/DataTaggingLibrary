@@ -93,7 +93,7 @@ public class Localization {
     }
     
     public Optional<String> getUiLang() {
-        return Optional.ofNullable(localizedModelData.getUiLang()).filter(s -> !s.isEmpty());
+        return Optional.ofNullable(localizedModelData.getUiLanguage()).filter(s -> !s.isEmpty());
     }
 
     
