@@ -1,1 +1,0 @@
-Did any of the students in the data, or their parents, if the students are under 18, request to opt out of the release of their information as directory information?

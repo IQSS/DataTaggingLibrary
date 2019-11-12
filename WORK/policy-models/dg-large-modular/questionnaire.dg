@@ -32,9 +32,10 @@ NOT TO BE USED AS A LEGAL ADVICE
         [call: dppa>dppaSection]
         [>futures< todo: Future additions go here.]}
       {no:  [set: Code=blue; Identity=noPersonData] }
-    }]
-  [call: dua]
+}]
+[call: pDUA]
 
+[-->pDUA<
   [>dua< section:
     {title: Data Use Agreements}
     [>dua-ext< todo: Data use agreements]
@@ -60,6 +61,7 @@ NOT TO BE USED AS A LEGAL ADVICE
     }
   ]
 ]
+--]
 <*
 DISCLAIMER:
 NOT TO BE USED AS A LEGAL ADVICE

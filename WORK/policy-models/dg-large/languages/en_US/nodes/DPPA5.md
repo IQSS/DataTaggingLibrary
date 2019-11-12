@@ -1,1 +1,0 @@
-Was consent obtained from the person about whom the information pertains by the State DMV in response to a request for an individual record?

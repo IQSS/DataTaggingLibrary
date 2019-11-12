@@ -1,1 +1,0 @@
-Were the data maintained by the Department of Veterans Affairs either shared with the patients’ consent for the purposes of scientific research, or shared without consent but in connection with a medical emergency or public health activity related to HIV?

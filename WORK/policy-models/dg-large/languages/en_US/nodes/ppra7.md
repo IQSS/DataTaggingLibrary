@@ -1,1 +1,0 @@
-Were parents provided with notice and an opportunity to opt out of the collection and disclosure of the information?
