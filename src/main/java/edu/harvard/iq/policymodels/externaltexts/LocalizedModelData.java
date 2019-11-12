@@ -14,7 +14,7 @@ public class LocalizedModelData extends BaseModelData {
     
     private String direction = "rtl";
     
-    private String uiLang = "en";
+    private String uiLang;
     
     public String getLanguage() {
         return language;

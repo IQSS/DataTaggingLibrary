@@ -1,0 +1,25 @@
+[todo: start]
+[call: pRabbitHole]
+[todo: done]
+
+[-->pRabbitHole<
+  {title:Rabbit Hole!}
+[>s1< section:
+  {title: section 1}
+  [>s11< section:
+    {title: section 1/2}
+    [todo: s11-1]
+    [todo: s11-2]
+  ]
+  [>s12< section:
+    {title: section 1/2}
+    [>s121< section:
+      {title: section 1/2/1}
+      [>s1211< section:
+        {title: section 1/2/1/1}
+        [todo: s1211-1]
+      ]
+    ]
+  ]
+]
+--]

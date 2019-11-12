@@ -2,6 +2,7 @@ package edu.harvard.iq.policymodels.visualizers.graphviz;
 
 import edu.harvard.iq.policymodels.model.decisiongraph.DecisionGraph;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.ContainerNode;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.EndNode;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.Node;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.PartNode;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.SectionNode;
@@ -49,6 +50,40 @@ public class ClosedSectionGraphVizualizer extends GraphvizDecisionGraphClustered
                 out.println(makeEdge(nd, nd.getNextNode()).gv());
             }
         }
+        
+        @Override
+        public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
+            String effTitle =  nd.getId();
+            if ( nd.getTitle()!=null && (!nd.getTitle().trim().isEmpty()) ) {
+                effTitle += "\\n" + nd.getTitle().trim();
+            }
+            out.println( node(sanitizeId(nd.getId()+"__PART_START")).hidden().gv() );
+            out.println("subgraph cluster_" + nodeId(nd)  + "{ ");
+            out.println("label=\"Part " + effTitle +  "\"");
+            out.println("color=\"#AAAAAA\"");
+            
+            String arrowDestId;
+            if ( nd.getStartNode() instanceof EndNode ) {
+                // edge case: part is empty
+                arrowDestId = nodeId(nd)+"__EMPTY";
+                out.println( node(arrowDestId)
+                               .shape(GvNode.Shape.diamond)
+                               .fillColor("#BBBBBB")
+                               .fontColor("#888888")
+                               .color("#888888")
+                               .label("(empty)")
+                               .gv());
+            } else {
+                advanceTo(nd.getStartNode());
+                arrowDestId = nodeId(nd.getStartNode());
+            }
+            
+            out.println("}");
+            GvEdge edge = edge(sanitizeId(nd.getId()+"__PART_START"), arrowDestId);
+            
+            out.println(edge.gv());
+            
+        }
     }
     
     @Override
@@ -92,8 +127,7 @@ public class ClosedSectionGraphVizualizer extends GraphvizDecisionGraphClustered
                                .constraint(false)
                                .penwidth(3)
                                .color( COL_SECTION )
-                               .gv()
-                );
+                               .gv());
         });
         
         wrt.println("edge [style=invis]");
@@ -101,7 +135,11 @@ public class ClosedSectionGraphVizualizer extends GraphvizDecisionGraphClustered
             .filter(kv->!kv.getValue().isEmpty())
             .forEach( kv -> {
                 Set<SectionNode> dependants = kv.getValue();
-                Node subgraphBottom = findDeepestDrawnNode(kv.getKey());
+                Node traversalStart = kv.getKey();
+                if ( traversalStart instanceof PartNode ) {
+                    traversalStart = ((PartNode)traversalStart).getStartNode();
+                }
+                Node subgraphBottom = findDeepestDrawnNode(traversalStart);
                 dependants.forEach( dep -> {
                     wrt.println( edge(nodeId(subgraphBottom), nodeId(dep.getStartNode())).gv() );
                 });
