@@ -28,6 +28,14 @@ import java.util.Set;
  */
 public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDecisionGraphVisualizer {
     
+    final static String COL_CALL     = "#8DCCB8";
+    final static String COL_SECTION  = "#85E6C6";
+    final static String COL_ASK      = "#00EEFF";
+    final static String COL_CONSIDER = "#00CEDF";
+    final static String COL_TODO     = "#F9FCCA";
+    final static String COL_DEFAULT  = "#59FFE6";
+    final static String COL_REJECT   = "#AA0000";
+    final static String COL_SUBGRAPH_EDGE = "#BBBBBB";
     
     /**
      * Concentrates edges (Graphviz graph feature). When {@code true}, Graphviz will 
@@ -43,6 +51,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
         public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
             out.println(node(nodeId(nd))
                     .shape(GvNode.Shape.egg)
+                    .fillColor(COL_CONSIDER)
                     .label(idLabel(nd) + "consider\n")
                     .gv());
             nd.getAnswers().forEach( option -> {
@@ -73,6 +82,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
             }
             out.println(node(nodeId(nd))
                     .shape(GvNode.Shape.oval)
+                    .fillColor(COL_ASK)
                     .label(idLabel(nd) + "ask\n" + wrap(nodeText))
                     .gv());
             nd.getAnswers().forEach( ans -> {
@@ -90,7 +100,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
                             + sanitizeIdDisplay(nd.getCalleeNode().getId()).replaceAll("/", "/\n")
                     )
                     .shape(GvNode.Shape.cds)
-                    .fillColor("#BBBBFF")
+                    .fillColor(COL_CALL)
                     .gv());
             if ( shouldLinkTo(nd.getNextNode()) ) {
                 advanceTo(nd.getNextNode());
@@ -103,14 +113,15 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
             out.println(node(nodeId(nd))
                     .label(idLabel(nd) + "REJECT\n" + wrap(nd.getReason()))
                     .shape(GvNode.Shape.hexagon)
-                    .fillColor("#FFAAAA")
+                    .fillColor(COL_REJECT)
+                    .fontColor("#FFFF00")
                     .gv());
         }
 
         @Override
         public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
             out.println(node(nodeId(nd))
-                    .fillColor("#AAFFAA")
+                    .fillColor(COL_TODO)
                     .shape(GvNode.Shape.note)
                     .label(idLabel(nd) + "todo\n" + wrap(nd.getTodoText())).gv());
             if ( shouldLinkTo(nd.getNextNode()) ) {
@@ -122,7 +133,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
         @Override
         public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
             out.println(node(nodeId(nd))
-                    .fillColor("#AADDAA")
+                    .fillColor(COL_DEFAULT)
                     .shape(GvNode.Shape.rect)
                     .label("Set\n" + indentedToString(nd.getTags()).replaceAll("\n","\\\\l") )
                     .gv());
@@ -138,7 +149,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
                 out.println(node(nodeId(nd))
                     .shape(GvNode.Shape.point)
                     .fontColor("#AAAAAA")
-                    .fillColor("#000000")
+                    .fillColor(COL_DEFAULT)
                     .add("height", "0.2")
                     .add("width", "0.2")
                     .label("x").gv());
@@ -151,7 +162,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
                 out.println(node(nodeId(nd))
                         .shape(GvNode.Shape.point)
                         .fontColor("#AAAAAA")
-                        .fillColor("#8833AA")
+                        .fillColor(COL_DEFAULT)
                         .add("height", "0.2")
                         .add("width", "0.2")
                         .label("c").gv());
@@ -162,7 +173,7 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
         public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
             out.println("subgraph cluster_" + nodeId(nd)  + "{ ");
             out.println("label=\"Section " + nd.getTitle() + "\"");
-            out.println("color=\"#888888\"");
+            out.println("color=\""+COL_SUBGRAPH_EDGE+"\"");
             advanceTo(nd.getStartNode());
             out.println("}");
             if ( shouldLinkTo(nd.getNextNode()) ) {
@@ -179,18 +190,34 @@ public class GraphvizDecisionGraphClusteredVisualizer extends AbstractGraphvizDe
             if ( nd.getTitle()!=null && (!nd.getTitle().trim().isEmpty()) ) {
                 effTitle += "\\n" + nd.getTitle().trim();
             }
-            out.println( node(sanitizeId(nd.getId()+"__[pstart]")).hidden().gv() );
+            out.println( node(sanitizeId(nd.getId()+"__PART_START")).hidden().gv() );
             out.println("subgraph cluster_" + nodeId(nd)  + "{ ");
             out.println("label=\"Part " + effTitle +  "\"");
-            advanceTo(nd.getStartNode());
+            out.println("color=\"#AAAAAA\"");
+            
+            String arrowDestId;
+            if ( nd.getStartNode() instanceof EndNode ) {
+                // edge case: part is empty
+                arrowDestId = nodeId(nd)+"__EMPTY";
+                out.println( node(arrowDestId)
+                               .shape(GvNode.Shape.diamond)
+                               .fillColor("#BBBBBB")
+                               .fontColor("#888888")
+                               .color("#888888")
+                               .label("(empty)")
+                               .gv());
+            } else {
+                advanceTo(nd.getStartNode());
+                arrowDestId = nodeId(getFirstNonContainerNode(nd));
+            }
             
             out.println("}");
-            Node arrowDest = getFirstNonContainerNode(nd);
-            GvEdge edge = edge(sanitizeId(nd.getId()+"__[pstart]"), nodeId(arrowDest));
+            GvEdge edge = edge(sanitizeId(nd.getId()+"__PART_START"), arrowDestId);
             if ( nd.getStartNode() instanceof ContainerNode ) {
                 edge = edge.add("lhead", "cluster_"+nodeId(nd.getStartNode()));
             }
-            out.println(edge.gv() );
+            out.println(edge.gv());
+            
         }
 
     }

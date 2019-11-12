@@ -1,28 +1,19 @@
 package edu.harvard.iq.policymodels.visualizers.graphviz;
 
-import edu.harvard.iq.policymodels.model.decisiongraph.Answer;
 import edu.harvard.iq.policymodels.model.decisiongraph.DecisionGraph;
-import edu.harvard.iq.policymodels.model.decisiongraph.nodes.AskNode;
-import edu.harvard.iq.policymodels.model.decisiongraph.nodes.CallNode;
-import edu.harvard.iq.policymodels.model.decisiongraph.nodes.ConsiderNode;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.ContainerNode;
-import edu.harvard.iq.policymodels.model.decisiongraph.nodes.ContinueNode;
-import edu.harvard.iq.policymodels.model.decisiongraph.nodes.EndNode;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.Node;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.PartNode;
-import edu.harvard.iq.policymodels.model.decisiongraph.nodes.RejectNode;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.SectionNode;
-import edu.harvard.iq.policymodels.model.decisiongraph.nodes.SetNode;
-import edu.harvard.iq.policymodels.model.decisiongraph.nodes.ToDoNode;
 import edu.harvard.iq.policymodels.runtime.exceptions.DataTagsRuntimeException;
-import edu.harvard.iq.policymodels.util.NodeDepth;
 import static edu.harvard.iq.policymodels.visualizers.graphviz.GvEdge.edge;
 import static edu.harvard.iq.policymodels.visualizers.graphviz.GvNode.node;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import static java.util.stream.Collectors.joining;
 
 /**
  * A decision graph visualizer that draws sections and closed nodes, and then
@@ -33,15 +24,22 @@ import static java.util.stream.Collectors.joining;
 public class ClosedSectionGraphVizualizer extends GraphvizDecisionGraphClusteredVisualizer {
     
     protected final Set<SectionNode> sectionsToDraw = new HashSet<>();
+    final Map<Node, Set<SectionNode>> dependencies = new HashMap<>(); 
+    final Node[] curTraversed = new Node[1];
+        
+    public ClosedSectionGraphVizualizer() {
+        setConcentrate(false);
+    }
     
     class ClosedSectionNP extends GraphvizDecisionGraphClusteredVisualizer.NodePainter {
         @Override
         public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
             
             sectionsToDraw.add(nd);
+            dependencies.get(curTraversed[0]).add(nd);
             
             out.println(node(nodeId(nd))
-                    .fillColor("#DDAAAA")
+                    .fillColor(COL_SECTION)
                     .shape(GvNode.Shape.folder)
                     .label("Section\n" + nd.getTitle() )
                     .gv());
@@ -60,10 +58,13 @@ public class ClosedSectionGraphVizualizer extends GraphvizDecisionGraphClustered
         
         // group to subcharts
         Set<Node> subchartHeads = findSubchartHeades(dg);
+        
         NodePainter np = new ClosedSectionNP();
         np.out = wrt;
         
         subchartHeads.forEach(chartHead -> {
+            curTraversed[0] = chartHead;
+            dependencies.put( curTraversed[0], new HashSet<>());
             chartHead.accept(np);
         });
         
@@ -74,46 +75,37 @@ public class ClosedSectionGraphVizualizer extends GraphvizDecisionGraphClustered
             SectionNode sectionNode = sectionsToDraw.iterator().next();
             sectionsToDraw.remove(sectionNode);
             drawnSections.add(sectionNode);
+            curTraversed[0] = sectionNode.getStartNode();
+            dependencies.put( curTraversed[0], new HashSet<>());
             
             wrt.println("subgraph cluster_" + nodeId(sectionNode) + " {");
             wrt.println(String.format("label=\"%s\"", sanitizeTitle(sectionNode.getTitle())) );
+            wrt.println("color=\""+COL_SUBGRAPH_EDGE+"\"");
             sectionNode.getStartNode().accept(np);
             wrt.println("}");
         };
        
         // link section nodes to section details
-        wrt.println("node [fillcolor=\"transparent\" color=transparent shape=\"point\" fontcolor=\"#008800\" fontsize=\"16\" label=\"\"]");
-        drawnSections.forEach( sectionNode-> wrt.println( nodeId(sectionNode)+"__START") );
-        
         drawnSections.forEach( sectionNode-> {
-                wrt.println(edge(nodeId(sectionNode), nodeId(sectionNode)+"__START")
+            wrt.println(edge(nodeId(sectionNode), nodeId(sectionNode.getStartNode()))
                                .style(GvEdge.Style.Dashed )
                                .constraint(false)
                                .penwidth(3)
-                               .color( "#DDAAAA" )
-                               .arrowhead(GvEdge.ArrowType.None)
-                               .gv()
-                );
-                wrt.println(edge(nodeId(sectionNode)+"__START", nodeId(sectionNode.getStartNode()))
-                               .style(GvEdge.Style.Dashed )
-                               .penwidth(3)
-                               .color( "#DDAAAA" )
+                               .color( COL_SECTION )
                                .gv()
                 );
         });
         
-        if ( ! drawnSections.isEmpty() ) {
-            
-            Node deepest = findDeepestDrawnNode(dg.getStart());
-            wrt.println( edge(nodeId(deepest), nodeId(drawnSections.iterator().next()) + "__START")
-                .style(GvEdge.Style.Invis)
-                .gv() );
-
-            // put sections below, by making their starts same rank
-            wrt.println("{rank=same;" +
-                drawnSections.stream().map(n->nodeId(n)+"__START").collect(joining(", "))
-                + "}");
-        }
+        wrt.println("edge [style=invis]");
+        dependencies.entrySet().stream()
+            .filter(kv->!kv.getValue().isEmpty())
+            .forEach( kv -> {
+                Set<SectionNode> dependants = kv.getValue();
+                Node subgraphBottom = findDeepestDrawnNode(kv.getKey());
+                dependants.forEach( dep -> {
+                    wrt.println( edge(nodeId(subgraphBottom), nodeId(dep.getStartNode())).gv() );
+                });
+            });
         
         if ( isDrawCallLinks() ) {
             drawCallLinks(wrt);

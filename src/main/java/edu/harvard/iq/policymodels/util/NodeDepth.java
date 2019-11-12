@@ -7,12 +7,13 @@ import java.util.Objects;
  * Utility class holding a node and its depth in the graph.
  * 
  * @author michael
+ * @param <N>
  */
-public class NodeDepth {
+public class NodeDepth<N extends Node> {
    public final int depth;
-   public final Node node;
+   public final N node;
 
-    public NodeDepth(int depth, Node node) {
+    public NodeDepth(int depth, N node) {
         this.depth = depth;
         this.node = node;
     }

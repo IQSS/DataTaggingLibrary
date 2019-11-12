@@ -23,7 +23,7 @@ public abstract class GvObject<T extends GvObject> {
             sb.append( "[ " );
             for ( Map.Entry<String,String> e : atts.entrySet() ) {
                 sb.append( e.getKey() )
-                  .append( "=\"").append( e.getValue() ).append("\" ");
+                  .append( "=\"").append( e.getValue().trim() ).append("\" ");
             }
             sb.append( "]" );
         }
