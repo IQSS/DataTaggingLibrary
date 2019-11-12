@@ -3,6 +3,7 @@ package edu.harvard.iq.policymodels.cli.commands;
 import edu.harvard.iq.policymodels.cli.CliRunner;
 import edu.harvard.iq.policymodels.cli.ProcessOutputDumper;
 import edu.harvard.iq.policymodels.visualizers.graphviz.AbstractGraphvizDecisionGraphVisualizer;
+import edu.harvard.iq.policymodels.visualizers.graphviz.ClosedSectionGraphVizualizer;
 import edu.harvard.iq.policymodels.visualizers.graphviz.GraphvizDecisionGraphClusteredVisualizer;
 import edu.harvard.iq.policymodels.visualizers.graphviz.GraphvizDecisionGraphF11Visualizer;
 import java.awt.Desktop;
@@ -31,7 +32,9 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
         return "Creates a visualization of the decision graph. Requires graphviz (www.graphviz.org).\n"
                 + "Can be invoked with a parameter for output file name. The filename extension is used to determine"
                 + "the output format (options are .pdf .png .gv .jpg .svg).\n"
-                + "Invoke with `--style=f11` for alternative graph styling.\n"
+                + "Styles:\n"
+                + "  `--style=f11` for alternative graph styling.\n"
+                + "  `--style=inline-sections for rendering the sections in place"
                 + "When using f11 style, end nodes are typically not drawn; use --show-ends to draw them as well.\n"
                 + "--show-ends  draws end nodes\n"
                 + "--no-concentrate prevents edge concentration\n"
@@ -56,7 +59,9 @@ public class VisualizeDecisionGraphCommand extends DotCommand {
         Set<String> argSet = args.stream().map(s->s.toLowerCase()).collect(toSet());
         AbstractGraphvizDecisionGraphVisualizer viz = argSet.contains("--style=f11") 
                                                             ? new GraphvizDecisionGraphF11Visualizer(argSet.contains("--show-ends")) 
-                                                            : new GraphvizDecisionGraphClusteredVisualizer();
+                                                            : (argSet.contains("--style=inline-sections") ?
+                                                                    new GraphvizDecisionGraphClusteredVisualizer() :
+                                                                    new ClosedSectionGraphVizualizer());
         
         if ( viz instanceof GraphvizDecisionGraphClusteredVisualizer ) {
             GraphvizDecisionGraphClusteredVisualizer gvv = (GraphvizDecisionGraphClusteredVisualizer) viz;

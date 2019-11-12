@@ -16,7 +16,7 @@ public class QuitCommand implements CliCommand {
 
     @Override
     public String description() {
-        return "Terminates the interview.";
+        return "Quits this application. Terminates the interview, if one is currently running.";
     }
 
     @Override

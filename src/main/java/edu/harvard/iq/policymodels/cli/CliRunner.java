@@ -231,8 +231,8 @@ public class CliRunner {
                     && (((AskNode) ngn.getCurrentNode()).getAnswers().contains(ans))) {
                 return ans;
 
-            } else if (ansText.equals("?")) {
-                printHelp();
+            } else if (ansText.startsWith("?")) {
+                printHelp(ansText.substring(1).trim());
 
             } else if (ansText.startsWith("\\")) {
                 try {
@@ -268,8 +268,8 @@ public class CliRunner {
         userChoice = userChoice.trim();
         if ( userChoice.isEmpty() ) return;
             
-        if ( userChoice.equals("?")) {
-            printHelp();
+        if ( userChoice.startsWith("?")) {
+            printHelp(userChoice.substring(1));
 
         } else {
             if ( userChoice.startsWith("\\")) {
@@ -295,11 +295,23 @@ public class CliRunner {
         } 
     }
 
-    private void printHelp() {
-        println("Please type one of the following commands:"
+    private void printHelp(String commandName) {
+        commandName = commandName.trim();
+        if ( commandName.isEmpty() ) {
+            println("Please type one of the commands below. Type ? <command> for help on a specific command."
                 + "");
-        commands.entrySet().stream().sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
-                .forEach(e -> println("\\%s: %s\n%s", e.getKey(), findShortcut(e.getKey()), indent(e.getValue().description())));
+            commands.entrySet().stream().sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+                    .forEach(e -> println(" %s %s", e.getKey(), findShortcut(e.getKey())));
+        } else {
+            CliCommand cmd = commands.get(commandName);
+            if (cmd == null ) {
+                printWarning("Command '%s' not found.", commandName);
+            } else {
+                printTitle(commandName + " " + findShortcut(commandName));
+                println(cmd.description());
+            }
+        }
+        
     }
 
     public void printCurrentAskNode() {
