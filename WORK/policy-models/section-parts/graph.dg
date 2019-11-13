@@ -19,7 +19,7 @@
 [call: metadata]
 
 [-->dogs<
-[>sec:dogs< section:
+[>sec-dogs< section:
   {title: Dogs!}
   [>q-dogType< ask:
     {text: What type of dogs?}
@@ -35,9 +35,9 @@
 --]
 
 [-->cats<
-[>sec:cats< section:
+[>sec-cats< section:
   {title: Cats}
-  [>q:cats:group< ask:
+  [>q-cats-group< ask:
     {text: What cats?}
     {answers:
       {all: [set: Cats += Tom, Shmil, Mitzi]}
@@ -46,13 +46,13 @@
     }
   ]
 ]
-[>dog_section_set< set: SetCats = cWorks]
+[>cat_section_set< set: SetCats = cWorks]
 --]
 
 [-->metadata<
   {title: Metadata part}
   [todo: Start this section]
-[>sec:m1< section:
+[>sec-m1< section:
   {title: metadata one}
   [>m1a< ask:
     {text: aaa?}
@@ -63,9 +63,9 @@
   ]
 ]
 
-[>sec:m2< section:
+[>sec-m2< section:
   {title: metadata too}
-  [>m1a< ask:
+  [>m2a< ask:
     {text: xxx?}
     {answers:
       {x: [todo: xxx]}

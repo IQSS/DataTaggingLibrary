@@ -12,7 +12,7 @@ public class LocalizedModelData extends BaseModelData {
     
     private String language;
     
-    private String direction;
+    private String direction = "rtl";
     
     private String uiLang;
     
@@ -35,14 +35,14 @@ public class LocalizedModelData extends BaseModelData {
         }
     }
     
-    public void setUiLang(String aUiLang) {
+    public void setUiLanguage(String aUiLang) {
         uiLang = aUiLang;
         if ( uiLang!=null ) {
             uiLang = uiLang.toLowerCase();
         }
     }
     
-    public String getUiLang() {
+    public String getUiLanguage() {
         return uiLang;
     }
     

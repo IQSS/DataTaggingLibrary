@@ -16,7 +16,7 @@ public class GvEdge extends GvObject<GvEdge> {
     }
     
     public enum Style {
-        Solid, Dashed, Dotted, Bold
+        Solid, Dashed, Dotted, Bold, Invis
     }
     
     private final String from, to;

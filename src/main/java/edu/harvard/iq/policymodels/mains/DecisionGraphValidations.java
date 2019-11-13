@@ -4,6 +4,7 @@ import edu.harvard.iq.policymodels.model.decisiongraph.DecisionGraph;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.EndNode;
 import edu.harvard.iq.policymodels.model.policyspace.slots.CompoundSlot;
 import edu.harvard.iq.policymodels.parser.decisiongraph.CompilationUnit;
+import edu.harvard.iq.policymodels.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.policymodels.parser.policyspace.TagSpaceParser;
 import edu.harvard.iq.policymodels.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.policymodels.parser.exceptions.DataTagsParseException;
@@ -49,7 +50,7 @@ public class DecisionGraphValidations {
             String source = readAll(chartFile);
 
             CompilationUnit cu = new CompilationUnit(source);
-            cu.compile(baseType, new EndNode("[SYN-END]"), new ArrayList<>());
+            cu.compile(baseType, new EndNode(DecisionGraphCompiler.SYNTHETIC_END_NODE_ID), new ArrayList<>());
             List<? extends AstNode> refs = cu.getParsedFile().getAstNodes();
             
             GraphvizGraphNodeAstVisualizer viz = new GraphvizGraphNodeAstVisualizer(refs);

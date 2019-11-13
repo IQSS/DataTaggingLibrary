@@ -37,6 +37,7 @@ public class GraphvizGraphNodeAstVisualizer extends GraphvizVisualizer {
 
     List<String> nodes = new LinkedList<>();
     List<String> edges = new LinkedList<>();
+    
 
     interface AstNodeHandler<T extends AstNode> {
 

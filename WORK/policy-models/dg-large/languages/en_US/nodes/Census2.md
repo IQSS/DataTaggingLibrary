@@ -1,1 +1,0 @@
-Were the data published by the Census Bureau?

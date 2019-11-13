@@ -9,6 +9,7 @@ import edu.harvard.iq.policymodels.parser.PolicyModelLoadResult;
 import edu.harvard.iq.policymodels.parser.PolicyModelLoader;
 import edu.harvard.iq.policymodels.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.policymodels.parser.exceptions.DataTagsParseException;
+import edu.harvard.iq.policymodels.visualizers.graphviz.ClosedSectionGraphVizualizer;
 import edu.harvard.iq.policymodels.visualizers.graphviz.GraphvizDecisionGraphClusteredVisualizer;
 import edu.harvard.iq.policymodels.visualizers.graphviz.GraphvizDecisionGraphF11Visualizer;
 import edu.harvard.iq.policymodels.visualizers.graphviz.GraphvizPolicySpacePathsVisualizer;
@@ -72,15 +73,15 @@ public class DecisionGraphCompiling {
         }
         
         PolicyModel model = loadRes.getModel();
-        GraphvizPolicySpaceTreeVisualizer tagViz = new GraphvizPolicySpaceTreeVisualizer(model.getSpaceRoot());
-        Path tagsOutPath = modelFile.resolveSibling(modelFile.getFileName().toString() + ".ps-plain.gv");
-        System.out.println("Writing " + tagsOutPath);
-        tagViz.vizualize(tagsOutPath);
-        
-        GraphvizPolicySpacePathsVisualizer tagPViz = new GraphvizPolicySpacePathsVisualizer(model.getSpaceRoot());
-        tagsOutPath = modelFile.resolveSibling(modelFile.getFileName().toString() + ".ps-paths.gv");
-        System.out.println("Writing " + tagsOutPath);
-        tagPViz.vizualize(tagsOutPath);
+//        GraphvizPolicySpaceTreeVisualizer tagViz = new GraphvizPolicySpaceTreeVisualizer(model.getSpaceRoot());
+//        Path tagsOutPath = modelFile.resolveSibling(modelFile.getFileName().toString() + ".ps-plain.gv");
+//        System.out.println("Writing " + tagsOutPath);
+//        tagViz.vizualize(tagsOutPath);
+//        
+//        GraphvizPolicySpacePathsVisualizer tagPViz = new GraphvizPolicySpacePathsVisualizer(model.getSpaceRoot());
+//        tagsOutPath = modelFile.resolveSibling(modelFile.getFileName().toString() + ".ps-paths.gv");
+//        System.out.println("Writing " + tagsOutPath);
+//        tagPViz.vizualize(tagsOutPath);
 
         // AST Visualizer
 //        GraphvizGraphNodeAstVisualizer viz = new GraphvizGraphNodeAstVisualizer(loadRes.getDecisionGraphAst());
@@ -96,12 +97,18 @@ public class DecisionGraphCompiling {
         System.out.println("Writing: " + outfile);
         fcsViz.setDecisionGraph(dg);
         fcsViz.vizualize(outfile);
-
-        GraphvizDecisionGraphF11Visualizer f11Viz = new GraphvizDecisionGraphF11Visualizer();
-        outfile = modelFile.resolveSibling(modelFile.getFileName().toString() + ".dg-f11.gv");
+        
+        fcsViz = new ClosedSectionGraphVizualizer();
+        outfile = modelFile.resolveSibling(modelFile.getFileName().toString() + "-cs.dg.gv");
         System.out.println("Writing: " + outfile);
-        f11Viz.setDecisionGraph(dg);
-        f11Viz.vizualize(outfile);
+        fcsViz.setDecisionGraph(dg);
+        fcsViz.vizualize(outfile);
+
+//        GraphvizDecisionGraphF11Visualizer f11Viz = new GraphvizDecisionGraphF11Visualizer();
+//        outfile = modelFile.resolveSibling(modelFile.getFileName().toString() + ".dg-f11.gv");
+//        System.out.println("Writing: " + outfile);
+//        f11Viz.setDecisionGraph(dg);
+//        f11Viz.vizualize(outfile);
         
         System.out.println("Trivial Localization");
         TrivialLocalization tl = new TrivialLocalization(model);

@@ -1,1 +1,0 @@
-Was written consent obtained from the parents of the students who participated in the survey or assessment, or from the students themselves if they are adults or emancipated minors, prior to the data collection?

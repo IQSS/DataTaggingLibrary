@@ -2,7 +2,8 @@
 	DISCLAIMER:
 	NOT TO BE USED AS A LEGAL ADVICE
 *>
-[>dppaSection< section:
+[-->dppaSection<
+	{title: Driver's Privacy Protection Act}
 	[>DPPA1< ask:
 		{text: Do the data contain personal information obtained from a state department of motor vehicles?}
 	  {answers:
@@ -73,7 +74,7 @@
 																		[reject: possible violation of the DPPA: depositor has not cited one of the required or permissible uses for disclosure.]}
 						  }]}}]}}] <-- DPPA6
 	}}]}}]}}]}}] <-- DPPA1
-] <-- dppaSection
+--] <-- dppaSection
 <*
 	DISCLAIMER:
 	NOT TO BE USED AS A LEGAL ADVICE

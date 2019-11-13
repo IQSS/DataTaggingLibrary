@@ -56,6 +56,7 @@ public class GraphvizVisualizerTest {
 
         public void printBody(PrintWriter out) throws IOException {
         }
+
     }
     
 }

@@ -102,7 +102,7 @@ public class LocalizedModelDataParser {
                     }
                     String uiLang = atts.getValue("ui-lang");
                     if ( uiLang!=null ) {
-                        model.setUiLang(uiLang);
+                        model.setUiLanguage(uiLang);
                     }
                     break;
                     

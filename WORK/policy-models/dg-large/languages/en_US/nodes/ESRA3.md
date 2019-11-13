@@ -1,1 +1,0 @@
-Has the IES Data Security Office limited access to the data to individuals authorized by an IES license agreement or individuals who have executed an affidavit of nondisclosure?

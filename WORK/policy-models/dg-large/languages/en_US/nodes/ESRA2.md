@@ -1,1 +1,0 @@
-Have the data been published previously, or did you submit a copy of the data to the Institute of Education Sciences (IES) Data Security Office and receive its authorization to disclose the data?

@@ -2,7 +2,8 @@
 	DISCLAIMER:
 	NOT TO BE USED AS A LEGAL ADVICE
 *>
-[>ferpaSection< section:
+[-->ferpaSection<
+	{title: Family Education Records Protection Act}
 	[>start< ask:
 	  {text: Do the data contain any information derived from institutional records directly related to a student?}
 	  {answers:
@@ -62,7 +63,7 @@
 				[reject: FERPA violation by disclosing data that should not be disclosed.]
 		  }}] <-- ferpa15
 	}}] <-- ferpa12
-] <-- ferpaSection
+--] <-- ferpaSection
 <*
 	DISCLAIMER:
 	NOT TO BE USED AS A LEGAL ADVICE

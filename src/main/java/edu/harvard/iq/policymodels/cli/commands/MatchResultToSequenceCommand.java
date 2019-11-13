@@ -8,6 +8,7 @@ import edu.harvard.iq.policymodels.model.decisiongraph.nodes.EndNode;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.Node;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.SetNode;
 import edu.harvard.iq.policymodels.parser.decisiongraph.CompilationUnit;
+import edu.harvard.iq.policymodels.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.policymodels.parser.exceptions.BadSetInstructionException;
 import edu.harvard.iq.policymodels.parser.exceptions.DataTagsParseException;
 import edu.harvard.iq.policymodels.tools.ValidationMessage;
@@ -47,7 +48,7 @@ public class MatchResultToSequenceCommand implements CliCommand {
         try {
             CompilationUnit cu = new CompilationUnit(tagValueExpression);
             try {
-                cu.compile(rnr.getModel().getSpaceRoot(), new EndNode("SYN-END"), new ArrayList<>());
+                cu.compile(rnr.getModel().getSpaceRoot(), new EndNode(DecisionGraphCompiler.SYNTHETIC_END_NODE_ID), new ArrayList<>());
             } catch ( RuntimeException rte ) {
                 if ( rte.getCause() instanceof BadSetInstructionException ) {
                     throw (BadSetInstructionException) rte.getCause();

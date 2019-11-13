@@ -1,1 +1,0 @@
-Were the data maintained in connection with the US Department of Veterans Affairs or US Armed Services?

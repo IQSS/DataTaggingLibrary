@@ -1,1 +1,0 @@
-Did the data have any restrictions on sharing, e.g. stated in an agreement or policy statement?

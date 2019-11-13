@@ -1,8 +1,0 @@
-all: all
-animated: animated
-cute: cute
-hounds: hounds
-no: no
-none: none
-some: some
-yes: yes
