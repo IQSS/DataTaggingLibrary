@@ -1,5 +1,5 @@
-[call:dogs]
-[call:cats]
+[call:pDogs]
+[call:pCats]
 [>frogs< section:
   {title: Add frogs}
   [todo: Add frog 1]
@@ -8,6 +8,7 @@
 [todo: specify mice]
 [end]
 
+[-->pDogs<
 [>dogs< section:
   {title: Dogs!}
   [ask:
@@ -20,17 +21,23 @@
     }
   ]
 ]
-[end]
+--]
 
+[-->pCats<
 [>cats< section:
   {title: Cats}
+  [ask:
+    {text: Do you want cats?}
+    {answers:
+      {no: [continue]}
+    }
+  ]
   [ask:
     {text: Which cats?}
     {answers:
       {all: [set: Cats += Tom, Garfield, Cleo]}
       {some: [set: Cats += Tom, Garfield]}
-      {none: }
     }
   ]
 ]
-[end]
+--]

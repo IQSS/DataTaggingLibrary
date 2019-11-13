@@ -1,0 +1,185 @@
+package edu.harvard.iq.policymodels.parser;
+
+import edu.harvard.iq.policymodels.externaltexts.FsLocalizationIO;
+import static edu.harvard.iq.policymodels.io.FileUtils.ciResolve;
+import edu.harvard.iq.policymodels.model.PolicyModel;
+import edu.harvard.iq.policymodels.model.metadata.PolicyModelData;
+import edu.harvard.iq.policymodels.model.decisiongraph.DecisionGraph;
+import edu.harvard.iq.policymodels.model.inference.AbstractValueInferrer;
+import edu.harvard.iq.policymodels.model.policyspace.slots.CompoundSlot;
+import edu.harvard.iq.policymodels.parser.inference.ValueInferenceParseResult;
+import edu.harvard.iq.policymodels.parser.inference.ValueInferenceParser;
+import edu.harvard.iq.policymodels.parser.decisiongraph.DecisionGraphCompiler;
+import edu.harvard.iq.policymodels.parser.exceptions.SemanticsErrorException;
+import edu.harvard.iq.policymodels.parser.exceptions.SyntaxErrorException;
+import edu.harvard.iq.policymodels.parser.policyspace.TagSpaceParseResult;
+import edu.harvard.iq.policymodels.parser.policyspace.TagSpaceParser;
+import edu.harvard.iq.policymodels.tools.DecisionGraphAstValidator;
+import edu.harvard.iq.policymodels.tools.DecisionGraphValidator;
+import edu.harvard.iq.policymodels.tools.DuplicateNodeAnswerValidator;
+import edu.harvard.iq.policymodels.tools.DuplicateIdValidator;
+import edu.harvard.iq.policymodels.tools.UnreachableNodeValidator;
+import edu.harvard.iq.policymodels.tools.ValidationMessage;
+import edu.harvard.iq.policymodels.tools.processors.YesNoAnswersSorter;
+import java.io.IOException;
+import static edu.harvard.iq.policymodels.tools.ValidationMessage.Level;
+import edu.harvard.iq.policymodels.tools.processors.DecisionGraphProcessor;
+import edu.harvard.iq.policymodels.tools.processors.EndNodeOptimizer;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Loads policy models from {@link PolicyModelData}. Each loader has a list of
+ * validators and post-processors that is runs in the appropriate places.
+ * 
+ * Use the class' static methods to obtain instances that fit certain contexts 
+ * (e.g. dev, production).
+ * 
+ * @author michael
+ */
+public class PolicyModelLoader extends BaseModelLoader {
+    
+    private final List<DecisionGraphAstValidator> dgAstValidators = new ArrayList<>();
+    private final List<DecisionGraphValidator> dgValidators = new ArrayList<>();
+    private final List<DecisionGraphProcessor> postProcessors = new ArrayList<>();
+    
+    /**
+     * @return A loader with all validations and no post-processing.
+     */
+    public static PolicyModelLoader verboseLoader() {
+        PolicyModelLoader res = new PolicyModelLoader();
+        
+        res.add( new DuplicateNodeAnswerValidator() );
+        res.add( new DuplicateIdValidator() );
+        
+        res.add( new UnreachableNodeValidator() );
+        
+        return res;
+    }
+    
+    /**
+     * @return A loader with optimizations and little validations.
+     */
+    public static PolicyModelLoader productionLoader() {
+        PolicyModelLoader res = new PolicyModelLoader();
+        
+        res.add( new DuplicateNodeAnswerValidator() );
+        res.add( new DuplicateIdValidator() );
+        
+        
+        res.add( new EndNodeOptimizer() );
+        
+        return res;
+    }
+    
+    public PolicyModelLoadResult load( PolicyModelData data ) {
+        // Setup result
+        PolicyModelLoadResult res = new PolicyModelLoadResult();
+        PolicyModel model = new PolicyModel();
+        model.setMetadata(data);
+        res.setModel(model);
+        
+        try {
+            // Load space root.
+            CompoundSlot spaceRoot = null;
+            try {
+                TagSpaceParseResult spaceParseRes = new TagSpaceParser().parse(data.getPolicySpacePath());
+                spaceRoot = spaceParseRes.buildType(data.getRootTypeName()).orElse(null);
+                if ( spaceRoot == null ) {
+                    res.addMessage( new ValidationMessage(Level.ERROR, "Slot '" + data.getRootTypeName() + "', used as policy space root, is not defined. ") );
+                    return res;
+                }
+                model.setSpaceRoot(spaceRoot);
+                
+            } catch (IOException ex) {
+                res.addMessage( new ValidationMessage(Level.ERROR, "Cannot load policy space: " + ex.getMessage()));
+                
+            } catch (SyntaxErrorException ex) {
+                res.addMessage( new ValidationMessage(Level.ERROR, "Syntax error in policy space: " + ex.getMessage()));
+                
+            } catch (SemanticsErrorException ex) {
+                res.addMessage( new ValidationMessage(Level.ERROR, "Semantic error in policy space: " + ex.getMessage()));
+            }
+            if ( spaceRoot == null ) return res;
+            
+            // load decision graph
+            DecisionGraphCompiler decisionGraphCompiler = new DecisionGraphCompiler();
+            DecisionGraph dg = decisionGraphCompiler.compile(spaceRoot, data, dgAstValidators);
+            decisionGraphCompiler.getMessages().forEach(res::addMessage);
+            
+            if ( dg != null ) {
+                switch ( data.getAnswerTransformationMode() ) {
+                    case Verbatim: break;
+                    case YesFirst:
+                        dg = new YesNoAnswersSorter(true).process(dg);
+                        break;
+                    case YesLast:
+                        dg = new YesNoAnswersSorter(false).process(dg);
+                        break;
+                }
+                final DecisionGraph fdg = dg; // let the lambdas below compile
+                dgValidators.stream().flatMap( v->v.validate(fdg).stream() ).forEach(res::addMessage);
+                for ( DecisionGraphProcessor dgp : postProcessors ) {
+                    dg = dgp.process(dg);
+                }
+                model.setDecisionGraph(dg);
+                
+                // Load localizations
+                Path localizations;
+                try {
+                    localizations = ciResolve(data.getMetadataFile().getParent(), FsLocalizationIO.LOCALIZATION_DIRECTORY_NAME);
+                    if ( localizations != null ) {
+                        Files.list(localizations).filter(Files::isDirectory)
+                                                 .filter( d -> Files.exists(d.resolve(FsLocalizationIO.LOCALIZED_METADATA_FILENAME)) )
+                                                 .map(p->p.getFileName().toString())
+                                                 .forEach(res.getModel()::addLocalization);
+                    }
+                } catch (IOException ex) {
+                    res.addMessage( new ValidationMessage(Level.WARNING, "IO Error reading localizations: " + ex.getMessage()));
+                }
+
+            } else {
+                res.addMessage( new ValidationMessage(Level.ERROR, "Failed to create decision graph; see previous errors.") );
+            }
+            
+            //load valueInferrers
+            try {
+                if ( data.getValueInferrersPath() != null ) {
+                    ValueInferenceParseResult inferenceParseResult = new ValueInferenceParser(spaceRoot).parse(data.getValueInferrersPath());
+                    Set<AbstractValueInferrer> valueInferrer =  inferenceParseResult.buildValueInference();
+                    model.setValueInferrers(valueInferrer);
+                    res.addMessages(inferenceParseResult.getValidationMessages());
+                }
+            } catch (SyntaxErrorException ex) {
+                res.addMessage( new ValidationMessage(Level.ERROR, "Syntax error in value inference: " + ex.getMessage()));
+            } catch (IOException ex) {
+                res.addMessage( new ValidationMessage(Level.ERROR, "Cannot load value inference: " + ex.getMessage()));
+            }
+            
+            res.addMessages( loadReadmes(data, data.getModelDirectoryPath()) );
+            
+        } catch (NoSuchFileException ex) {
+            res.addMessage( new ValidationMessage(Level.ERROR, "File " + ex.getMessage() + " cannot be found."));
+        } catch (IOException ex) {
+            res.addMessage( new ValidationMessage(Level.ERROR, "IO error while reading graph: " + ex.getMessage()));
+        }
+        
+        return res;
+    }
+    
+    public void add( DecisionGraphAstValidator vld ) {
+        dgAstValidators.add(vld);
+    }
+    
+    public void add( DecisionGraphValidator vld ) {
+        dgValidators.add(vld);
+    }
+    
+    public void add( DecisionGraphProcessor prc ) {
+        postProcessors.add(prc);
+    }
+}

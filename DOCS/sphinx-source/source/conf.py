@@ -32,7 +32,7 @@ import shlex
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.todo',
-    'sphinx.ext.pngmath',
+    'sphinx.ext.imgmath',
     'sphinx.ext.ifconfig',
 ]
 
@@ -51,8 +51,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'The PolicyModels Language and Toolset'
-copyright = u'2017 The President and Fellows of Harvard College'
+project = u'PolicyModels Language and Tool Suite'
+copyright = u'2013-2019 The President and Fellows of Harvard College'
 author = u'Michael Bar-Sinai'
 
 # The version info for the project you're documenting, acts as replacement for

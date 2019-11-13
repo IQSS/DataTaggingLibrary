@@ -1,0 +1,3 @@
+root: consists of A, B.
+A: one of a0, a1, a2.
+B: one of b0, b1, b2.

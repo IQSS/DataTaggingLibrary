@@ -26,4 +26,4 @@ The to-do questionnaire. Note that ``todo`` nodes can be used as ``call`` destin
   Visualization of the todo tag space. The structure is known, but the details aren't.
 
 
-As models grow, there's a need to arrange the nodes in some logical grouping. Our :doc:`next section<section>` covers the ``[section]`` node, that does just that.
+As models grow, there's a need to arrange the nodes in some physical and logical grouping. Our :doc:`next section<section-node>` shows how.

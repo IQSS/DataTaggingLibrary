@@ -1,0 +1,20 @@
+[>n1< set: A=a0]
+[>ns< section:
+    {title: test section}
+    [>ns1< set: B=b0]
+    [continue]
+    [end]
+    [>ns2< set: A=a1]
+]
+[ask:
+    {text: what?}
+    {answers:
+        {a: [todo: a]}
+        {b: [todo: b]}
+    }
+]
+<*
+[continue]
+[end]
+*>
+[>n2< set: B=b2]

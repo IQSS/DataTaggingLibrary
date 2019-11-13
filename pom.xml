@@ -9,7 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <exec.mainClass>edu.harvard.iq.datatags.mains.PolicyModelCliRunner</exec.mainClass>
+        <exec.mainClass>edu.harvard.iq.policymodels.mains.PolicyModelCliRunner</exec.mainClass>
     </properties>
       <repositories>
     <repository>
@@ -44,7 +44,6 @@
     <finalName>${project.artifactId}-${project.version}</finalName>
     <testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>
     <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
-    <!-- TODO: MNG-3731 maven-plugin-tools-api < 2.4.4 expect this to be relative... -->
     <scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
     <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
     <resources>
@@ -79,14 +78,6 @@
           </plugin>
           <!-- / Code Coverage -->
          <plugin>
-           <artifactId>maven-antrun-plugin</artifactId>
-           <version>1.3</version>
-         </plugin>       
-         <plugin>
-           <artifactId>maven-assembly-plugin</artifactId>
-           <version>2.2-beta-2</version>
-         </plugin>         
-         <plugin>
            <artifactId>maven-clean-plugin</artifactId>
            <version>2.2</version>
          </plugin>
@@ -99,21 +90,13 @@
            <version>2.0</version>
          </plugin>
          <plugin>
-           <artifactId>maven-deploy-plugin</artifactId>
-           <version>2.4</version>
-         </plugin>
-         <plugin>
-           <artifactId>maven-install-plugin</artifactId>
-           <version>2.2</version>
-         </plugin>
-         <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.1.1</version>
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>edu.harvard.iq.datatags.mains.PolicyModelCliRunner</mainClass>
+                            <mainClass>edu.harvard.iq.policymodels.mains.PolicyModelCliRunner</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -122,37 +105,9 @@
            <artifactId>maven-javadoc-plugin</artifactId>
            <version>2.5</version>
          </plugin>
-         <plugin>
-           <artifactId>maven-plugin-plugin</artifactId>
-           <version>2.4.3</version>
-         </plugin>
-         <plugin>
-           <artifactId>maven-rar-plugin</artifactId>
-           <version>2.2</version>
-         </plugin>        
-         <plugin>                
-           <artifactId>maven-release-plugin</artifactId>
-           <version>2.0-beta-8</version>
-         </plugin>
          <plugin>                
            <artifactId>maven-resources-plugin</artifactId>
            <version>2.3</version>
-         </plugin>
-         <plugin>
-           <artifactId>maven-site-plugin</artifactId>
-           <version>2.0-beta-7</version>
-         </plugin>
-         <plugin>
-           <artifactId>maven-source-plugin</artifactId>
-           <version>2.0.4</version>
-         </plugin>         
-         <plugin>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.15</version>
-         </plugin>
-         <plugin>
-           <artifactId>maven-war-plugin</artifactId>
-           <version>2.1-alpha-2</version>
          </plugin>
        </plugins>
      </pluginManagement>
@@ -162,55 +117,6 @@
     <outputDirectory>${project.build.directory}/site</outputDirectory>
   </reporting>
   <profiles>
-    <profile>
-      <id>release-profile</id>
- 
-      <activation>
-        <property>
-          <name>performRelease</name>
-          <value>true</value>
-        </property>
-      </activation>
- 
-      <build>
-        <plugins>
-          <plugin>
-            <inherited>true</inherited>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <inherited>true</inherited>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-javadocs</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <inherited>true</inherited>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-deploy-plugin</artifactId>
-            <configuration>
-              <updateReleaseInfo>true</updateReleaseInfo>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
     <profile>
         <!-- Making uber jar for easy execution. -->
         <id>uber-jar</id>
@@ -248,7 +154,9 @@
     <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.13-beta-1</version>
+        <version>4.0</version>
+      <scope>test</scope>
+      <type>jar</type>
     </dependency>
   </dependencies>
 </project>

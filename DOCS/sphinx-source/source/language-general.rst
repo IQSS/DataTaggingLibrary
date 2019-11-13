@@ -50,7 +50,7 @@ Top-Down Support
 
 As developing a full questionnaire may benefit from a top-down approach, it is possible to add placeholders for unimplemented parts. This allows questionnaire developers to reference those parts now, and implement them later. Creating placeholders is done using the ``TODO`` keyword (in tag spaces) and the ``[todo]`` node in decision graphs.
 
-In the below example of a tag space definition, ``Policy`` already contains ``Sharing``, although is it not implemented yet ::
+In the below example of a tag space definition, ``Policy`` already contains ``Sharing``, although is it not impl`emented yet ::
 
   Policy: consists of Security, Sharing.
   Sharing: TODO.

@@ -7,24 +7,26 @@
 Text Externalization and Localizations
 ========================================
 
-PolicyModels offers a text externalization/localization mechanism. This mechanism can be used when decision graph questions require long texts, or when there's a need to present a model in more than one langugage. Another advantage of having the texts outside of the interview is that it allows text editing by domain experts who are not familiar with PolicyModel's syntax.
+PolicyModels offers a text externalization/localization mechanism. This mechanism can be used when decision graph questions require long texts, or when there's a need to present a model in more than one language. Another advantage of having the texts outside of the interview is that it allows text editing by domain experts who are not familiar with PolicyModel's syntax.
 
-During an interview, the system will use localized texts when available, and default to the texts appearing in the policy model itself when no localized value is available. Thus, it is possible to only partially localize an interview -- useful for those times when only a few questions are too long and need to be pulled out for editing.
+During an interview, the system will use localized texts when available, and default to the texts in the policy model itself when no localized value is available. Thus, it is possible to only partially localize an interview -- useful for those times when only a few questions are too long and need to be pulled out for editing.
 
-.. note:: Localization data are used by the web-based interview. CliRunner, being a console-based application, cannot present formatted texts.
+.. note:: Localization data are used by the web-based interview. CliRunner uses the texts from the model.
 
 All elements of a policy model can be localized, as detailed below. Localizations live in a special sub-directory in the model directory, called ``languages``. Each localization has its own directory. The name of the directory of a given localization should reflect the language and dialect of the localization. This can be done using codes (such as `ISO-639`_ and `ISO-3166`_).
 
 Formats
 ~~~~~~~~
-PolicyModel localizations make use of plan text, HTML, and -- mostly -- GitHub-flavored `markdown`_. markdown provides a good balance between rich features (such as formatting, hyperlinking and graphics) and simple syntax. Multiple visual markdown editors are available, including free, open source and web-based ones.
+PolicyModel localizations make use of plan text, HTML, and -- mostly -- GitHub-flavored `markdown`_. Markdown provides a good balance between rich features (such as formatting, hyperlinking and graphics) and simple syntax. Multiple visual markdown editors are available, including free, open source and web-based ones.
 
-Localization Elements
-----------------------
+Localizing Model Elements
+-------------------------
 
 In this section, we look into how different parts of a model can be localized.
 
 .. tip:: There's no need to manually create the files listed here; they can be created automatically from CliRunner by executing the command ``\loc-create``.
+
+.. tip:: When a model is updated after a localization package has been created, this package can be updated to the new model by executing command ``\loc-update``.
 
 Model Metadata
 ~~~~~~~~~~~~~~
@@ -37,31 +39,36 @@ The readme file should contain general, free-form text about the model. The syst
 
 Policy Space
 ~~~~~~~~~~~~
-Policy space texts are stored in a file named ``space.md``. It consists of a list of slot and value names, followed by tehir descriptive texts.
+Policy space texts are stored in a file named ``space.md``. It consists of a list of slot and value names, followed by their localized name, tooltip, and  descriptive texts.
 
-* Slot/value descriptions starts by either:
+The format for slot localization is as follows (each bullet is a line in the file):
 
-  * New line with type path, ``:`` (no spaces between line start and ``:``)
-  * New line with ``# typePath`` EOL.
+* Item start: ``# typePath``. The line starts with ``#``, then has a full or non-ambiguous slot/value name, and that's it.
+* Localized name of the slot/value.
+* Short description (typically a single, short sentence). This description will appear in tool-tips.
+* Separator line: ``---``
+* Long explanation text, in markdown. This explanation may use multiple lines, and ends when the next description starts, or when the file ends.
 
-* Slot/value names are either full or non-ambiguous
-* The localization text is markdown.
-* Can have line comments (``<--``)
-* Content of text for type goes all the way until next type/EOF
+.. note:: Policy space localizations support line comments (``<-- I'm a comment``)
 
 Below is an example of a ``space.md`` file:
 
 .. code::
 
-  # Base/Dogs
-  This slot describes which dogs should join.
+  # DataRepoCompliance/FAIR
+  FAIR
+  Findable, Accessible, Interoperable, Reusable
+  ---
+  Read more at [FAIR principles](https://www.dtls.nl/fair-data/fair-principles-explained/).
 
-  Base/Rice: This slot will contain which type of rice is used.
+  # DataRepoCompliance/FAIR/Accessible
+  Accessible
 
-  Base/Cats/Tom: Tom, a large cat that sits on fences, staring at the passing cars.
 
-  Sox: Another cat, whose name is unique enough so that we can omit the Base/Cats part of the type path.
+.. figure:: /img/PomoLocs.png
+   :align: center
 
+   Policy space localization. All policy space entities (slots and values) are localized using the ``space.md`` file of the localization package. For each entity, translators can specify name, short explanation, and a long explanation. The long explanation supports links, tables, and rich styling.
 
 Answers
 ~~~~~~~

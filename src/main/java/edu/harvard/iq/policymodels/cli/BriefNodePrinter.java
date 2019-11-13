@@ -1,0 +1,80 @@
+package edu.harvard.iq.policymodels.cli;
+
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.AskNode;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.CallNode;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.ConsiderNode;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.ContinueNode;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.EndNode;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.Node;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.PartNode;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.RejectNode;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.SectionNode;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.SetNode;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.ToDoNode;
+import edu.harvard.iq.policymodels.runtime.exceptions.DataTagsRuntimeException;
+
+/**
+ * Prints nodes to the console, with minimal details.
+ * @author michael
+ */
+public class BriefNodePrinter extends Node.VoidVisitor {
+    
+    private static final int WIDTH = 70;
+    private final CliRunner rnr;
+
+    public BriefNodePrinter(CliRunner rnr) {
+        this.rnr = rnr;
+    }
+    
+    @Override
+    public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
+        rnr.println("[>%s< consider: ]", nd.getId());
+    }
+    @Override
+    public void visitImpl(AskNode nd) throws DataTagsRuntimeException {
+        rnr.println("[>%s< ask: %s]", nd.getId(), rnr.truncateAt(nd.getText(), WIDTH-nd.getId().length()));
+    }
+
+    @Override
+    public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
+        rnr.println("[>%s< set]", nd.getId());
+    }
+
+    @Override
+    public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
+        rnr.println("[>%s< reject: %s]", nd.getId(), rnr.truncateAt(nd.getReason(), WIDTH-nd.getId().length()-3));
+    }
+
+    @Override
+    public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
+        rnr.println("[>%s< call: %s]", nd.getId(), nd.getCalleeNode());
+    }
+
+    @Override
+    public void visitImpl(ToDoNode nd) throws DataTagsRuntimeException {
+        rnr.println("[>%s< todo: %s]", nd.getId(), rnr.truncateAt(nd.getTodoText(), WIDTH-nd.getId().length()-1));
+    }
+
+    @Override
+    public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
+        rnr.println("[>%s< end]", nd.getId());
+    }
+    
+    @Override
+    public void visitImpl(ContinueNode nd) throws DataTagsRuntimeException {
+        rnr.println("[>%s< continue]", nd.getId());
+    }
+    
+    
+    @Override
+    public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
+        rnr.println("[>%s< section]", nd.getId());
+    }
+
+    @Override
+    public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
+        rnr.println("[-->%s<]", nd.getId());
+    }
+    
+    
+}
