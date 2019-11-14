@@ -15,33 +15,45 @@ import java.util.Set;
 public class Localization {
    
     /**
-     * Language the localization is in. Does not have to be an ISO code.
+     * The localized parts of the model meta data.
      */
-    private final String language;
+    private LocalizedModelData localizedModelData;
     
     /**
      * Maps answer names from the decision graph code to localized ones.
      */
     private final Map<String, String> answers = new HashMap<>();
     
-    private LocalizedModelData localizedModelData;
-    
+    /**
+     * Texts for nodes. Some nodes may not have an entry here.
+     */
     private final Map<String, String> nodeText = new HashMap<>();
     
+    /**
+     * Texts for policy space slots. Some slots may not have an entry here,
+     * i.e. were not localized.
+     */
     private final Map<AbstractSlot, LocalizationTexts> slotsTexts = new HashMap<>();
     
+    /**
+     * Texts for policy space values. Some values may not have an entry here,
+     * i.e. were not localized.
+     */
     private final Map<AbstractValue, LocalizationTexts> slotValuesTexts = new HashMap<>();
     
-    public Localization(String language) {
-        this.language = language;
-    }
-    
     public LocalizedModelData getLocalizedModelData() {
+        if ( localizedModelData==null ) {
+            initializeDefaultModel();
+        }            
         return localizedModelData;
     }
 
-    public void setLocalizedModelData(LocalizedModelData localizedModelData) {
-        this.localizedModelData = localizedModelData;
+    public void setLocalizedModelData(LocalizedModelData aLocalizedModelData) {
+        if ( aLocalizedModelData != null ) {
+            localizedModelData = aLocalizedModelData; 
+        } else {
+            initializeDefaultModel();
+        }
     }
     
     public String localizeAnswer( String dgAnswer ) {
@@ -57,7 +69,7 @@ public class Localization {
     }
     
     public String getLanguage() {
-        return language;
+        return getLocalizedModelData().getLanguage();
     }
     
     void addNodeText(String nodeId, String data) {
@@ -87,25 +99,23 @@ public class Localization {
     public Optional<LocalizationTexts> getSlotValueText( AbstractValue tv ) {
         return Optional.ofNullable(slotValuesTexts.get(tv));
     }
-
-    public String getDirection() {
-        return localizedModelData.getDirection();
-    }
-    
-    public Optional<String> getUiLang() {
-        return Optional.ofNullable(localizedModelData.getUiLanguage()).filter(s -> !s.isEmpty());
-    }
-
-    
-    public boolean isRtl() {
-        return localizedModelData!=null 
-                 && getDirection()!=null 
-                    && getDirection().equals("rtl");
-    }
     
     @Override
     public String toString() {
         return "[Localization language:" + getLanguage() + ']';
     }
     
+    /**
+     * Create a new localized model data, with default values. Sort of a 
+     * Null Object Pattern, but we can't use the same static object, since
+     * the model is mutable and someone might change it for the entire
+     * application.
+     */
+    private void initializeDefaultModel() {
+        localizedModelData = new LocalizedModelData();
+        localizedModelData.setDirection( LocalizedModelData.Direction.LTR );
+        localizedModelData.setLanguage("__DEFAULT__");
+        localizedModelData.setTitle("");
+        localizedModelData.setSubTitle("");
+    }
 }

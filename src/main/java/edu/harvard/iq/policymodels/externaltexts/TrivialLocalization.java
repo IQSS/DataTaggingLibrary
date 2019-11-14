@@ -28,7 +28,6 @@ public class TrivialLocalization extends Localization {
     private final LocalizedModelData modelData;
     
     public TrivialLocalization(PolicyModel pm) {
-        super(LANGUAGE_NAME);
         model = pm;
         modelData = new TriviallyLocalizedModelData();
     }
@@ -65,32 +64,26 @@ public class TrivialLocalization extends Localization {
     }
     
     @Override
-    public boolean isRtl() {
-        return false;
-    }
-    
-    @Override
     public Optional<LocalizationTexts> getSlotText( AbstractSlot st ) {
         return Optional.of(new LocalizationTexts(st.getName(), st.getNote(), null));
     }
-    
-    
+        
     @Override
     public Optional<LocalizationTexts> getSlotValueText( AbstractValue tv ) {
         return Optional.of(new LocalizationTexts(name(tv), note(tv), null));
     }
 
     
-    private class TriviallyLocalizedModelData extends LocalizedModelData {
+    protected class TriviallyLocalizedModelData extends LocalizedModelData {
 
         @Override
-        public String getUiLanguage() {
-            return "en";
+        public Optional<String> getUiLanguage() {
+            return Optional.of("en");
         }
 
         @Override
-        public String getDirection() {
-            return "ltr";
+        public Direction getDirection() {
+            return Direction.LTR;
         }
          
         @Override

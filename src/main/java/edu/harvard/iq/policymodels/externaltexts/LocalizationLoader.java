@@ -46,7 +46,7 @@ public class LocalizationLoader extends BaseModelLoader {
                     String.format("Expecting a directory at '%s'.", localizationPath.toAbsolutePath()));
         }
                 
-        Localization retVal = new Localization(localizationName);
+        Localization retVal = new Localization();
         
         Path answersFilePath = ciResolve(localizationPath, FsLocalizationIO.ANSWERS_FILENAME);
         if ( answersFilePath != null ) {
@@ -55,7 +55,7 @@ public class LocalizationLoader extends BaseModelLoader {
         
         Path modelLocalizationPath = ciResolve(localizationPath, FsLocalizationIO.LOCALIZED_METADATA_FILENAME);
         if ( modelLocalizationPath != null ) {
-            LocalizedModelDataParser lmdp = new LocalizedModelDataParser(retVal.getLanguage());
+            LocalizedModelDataParser lmdp = new LocalizedModelDataParser(localizationName);
             retVal.setLocalizedModelData(lmdp.read(modelLocalizationPath));
         } else {
             LocalizedModelData locMd = new LocalizedModelData();

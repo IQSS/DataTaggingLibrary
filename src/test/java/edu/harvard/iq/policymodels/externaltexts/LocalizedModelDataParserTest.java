@@ -1,9 +1,6 @@
 package edu.harvard.iq.policymodels.externaltexts;
 
-import edu.harvard.iq.policymodels.externaltexts.Localization;
-import edu.harvard.iq.policymodels.externaltexts.LocalizationException;
-import edu.harvard.iq.policymodels.externaltexts.LocalizedModelData;
-import edu.harvard.iq.policymodels.externaltexts.LocalizedModelDataParser;
+import edu.harvard.iq.policymodels.externaltexts.LocalizedModelData.Direction;
 import edu.harvard.iq.policymodels.model.metadata.GroupAuthorData;
 import edu.harvard.iq.policymodels.model.metadata.ModelReference;
 import edu.harvard.iq.policymodels.model.metadata.PersonAuthorData;
@@ -44,7 +41,7 @@ public class LocalizedModelDataParserTest {
     
     @Test
     public void testMinimalModel() throws LocalizationException {
-        LocalizedModelDataParser sut = new LocalizedModelDataParser("test-lang");
+        LocalizedModelDataParser sut = new LocalizedModelDataParser("minimal");
         
         LocalizedModelData lmd = sut.read(MINIMAL_MODEL);
         assertEquals(1, lmd.getReferences().size());
@@ -78,12 +75,12 @@ public class LocalizedModelDataParserTest {
         String source = MINIMAL_MODEL.replace("<localized-model>", "<localized-model direction=\"RTL\">");
         LocalizedModelData lmd = sut.read(source);
         
-        assertEquals("rtl", lmd.getDirection());
+        assertEquals(Direction.RTL, lmd.getDirection());
         
-        Localization ll = new Localization("he");
+        Localization ll = new Localization();
         ll.setLocalizedModelData(lmd);
         
-        assertTrue( ll.isRtl() );
+        assertTrue( ll.getLocalizedModelData().getDirection() == LocalizedModelData.Direction.RTL );
         
     } 
     
@@ -93,11 +90,10 @@ public class LocalizedModelDataParserTest {
         String source = MINIMAL_MODEL.replace("<localized-model>", "<localized-model direction=\"LTR\" ui-lang=\"en\">");
         LocalizedModelData lmd = sut.read(source);
         
-        
-        Localization ll = new Localization("en");
+        Localization ll = new Localization();
         ll.setLocalizedModelData(lmd);
         
-        assertEquals(Optional.of("en"), ll.getUiLang());
+        assertEquals(Optional.of("en"), ll.getLocalizedModelData().getUiLanguage());
     }
     
     @Test
@@ -107,9 +103,9 @@ public class LocalizedModelDataParserTest {
         LocalizedModelData lmd = sut.read(source);
         
         
-        Localization ll = new Localization("en");
+        Localization ll = new Localization();
         ll.setLocalizedModelData(lmd);
         
-        assertEquals(Optional.empty(), ll.getUiLang());
+        assertEquals(Optional.empty(), ll.getLocalizedModelData().getUiLanguage());
     }
 }

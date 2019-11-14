@@ -98,7 +98,7 @@ public class LocalizedModelDataParser {
                 case "localized-model":
                     String direction = atts.getValue("direction");
                     if ( direction!=null ) {
-                        model.setDirection(direction);
+                        model.setDirection(LocalizedModelData.Direction.valueOf(direction.toUpperCase()));
                     }
                     String uiLang = atts.getValue("ui-lang");
                     if ( uiLang!=null ) {

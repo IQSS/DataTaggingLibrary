@@ -1,8 +1,5 @@
 package edu.harvard.iq.policymodels.externaltexts;
 
-import edu.harvard.iq.policymodels.externaltexts.Localization;
-import edu.harvard.iq.policymodels.externaltexts.LocalizationLoader;
-import edu.harvard.iq.policymodels.externaltexts.LocalizationException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +29,7 @@ public class LocalizationLoaderTest {
         );
         
         LocalizationLoader sut = new LocalizationLoader();
-        Localization loc = new Localization("test");
+        Localization loc = new Localization();
         sut.loadAnswers(source.stream(), loc);
         
         Map<String,String> expected = new HashMap<>();
@@ -54,7 +51,7 @@ public class LocalizationLoaderTest {
         );
         
         LocalizationLoader sut = new LocalizationLoader();
-        Localization loc = new Localization("test");
+        Localization loc = new Localization();
         try {
             sut.loadAnswers(source.stream(), loc);
         } catch ( LocalizationException le ) {
