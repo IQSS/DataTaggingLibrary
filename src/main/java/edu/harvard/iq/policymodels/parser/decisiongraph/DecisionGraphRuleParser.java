@@ -84,15 +84,13 @@ public class DecisionGraphRuleParser {
         return Parsers.or(parsers).many().source();
     }
     
-    final static Parser<AstSetNode.AtomicAssignment> ATOMIC_ASSIGNMENT_SLOT = Parsers.sequence(
-            IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
+    final static Parser<AstSetNode.AtomicAssignment> ATOMIC_ASSIGNMENT_SLOT = Parsers.sequence(IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
             nodeStructurePart("="),
             IDENTIFIER_WITH_KEYWORDS,
             (path, _eq, value) -> new AstSetNode.AtomicAssignment(path, value.trim())
         );
     
-    final static Parser<AstSetNode.AggregateAssignment> AGGREGATE_ASSIGNMENT_SLOT = Parsers.sequence(
-            IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
+    final static Parser<AstSetNode.AggregateAssignment> AGGREGATE_ASSIGNMENT_SLOT = Parsers.sequence(IDENTIFIER_WITH_KEYWORDS.sepBy(nodeStructurePart("/")),
             nodeStructurePart("+="),
             IDENTIFIER_WITH_KEYWORDS.sepBy( nodeStructurePart(",") ),
             (path, _eq, value) -> new AstSetNode.AggregateAssignment(path, value)

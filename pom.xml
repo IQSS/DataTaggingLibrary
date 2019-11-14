@@ -154,6 +154,7 @@
     <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
+        <type>jar</type>
         <version>4.12</version>
 	<scope>test</scope>
     </dependency>
