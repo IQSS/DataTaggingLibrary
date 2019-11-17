@@ -47,6 +47,7 @@ public class LocalizedModelDataParser {
     public LocalizedModelData read(String xml) throws LocalizationException {
         try {
             model = new LocalizedModelData();
+            model.setLanguage(language);
             
             SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
             XMLReader reader = parser.getXMLReader();
@@ -129,7 +130,6 @@ public class LocalizedModelDataParser {
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            String tmpStr;
             switch( qName ) {
                 case "title":
                     model.setTitle(chars());

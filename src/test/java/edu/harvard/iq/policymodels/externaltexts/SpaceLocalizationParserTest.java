@@ -1,7 +1,5 @@
 package edu.harvard.iq.policymodels.externaltexts;
 
-import edu.harvard.iq.policymodels.externaltexts.SpaceLocalizationParser;
-import edu.harvard.iq.policymodels.externaltexts.LocalizationTexts;
 import edu.harvard.iq.policymodels.model.PolicySpaceIndex;
 import edu.harvard.iq.policymodels.model.policyspace.slots.CompoundSlot;
 import edu.harvard.iq.policymodels.parser.exceptions.SemanticsErrorException;

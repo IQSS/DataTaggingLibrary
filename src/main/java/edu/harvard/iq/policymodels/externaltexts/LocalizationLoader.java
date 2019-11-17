@@ -48,6 +48,7 @@ public class LocalizationLoader extends BaseModelLoader {
                 
         Localization retVal = new Localization();
         
+        
         Path answersFilePath = ciResolve(localizationPath, FsLocalizationIO.ANSWERS_FILENAME);
         if ( answersFilePath != null ) {
             loadAnswers( Files.lines(answersFilePath, StandardCharsets.UTF_8), retVal );

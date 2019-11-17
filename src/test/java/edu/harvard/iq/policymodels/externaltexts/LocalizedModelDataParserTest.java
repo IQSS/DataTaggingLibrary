@@ -67,6 +67,7 @@ public class LocalizedModelDataParserTest {
         ref.setText("ref1 text");
         assertEquals(Arrays.asList(ref), lmd.getReferences());
         
+        assertEquals( "minimal", lmd.getLanguage() );
     } 
     
     @Test

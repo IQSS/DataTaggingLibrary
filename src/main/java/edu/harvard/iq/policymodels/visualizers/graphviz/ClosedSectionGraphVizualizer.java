@@ -118,8 +118,8 @@ public class ClosedSectionGraphVizualizer extends GraphvizDecisionGraphClustered
             wrt.println("color=\""+COL_SUBGRAPH_EDGE+"\"");
             sectionNode.getStartNode().accept(np);
             wrt.println("}");
-        };
-       
+        }
+        
         // link section nodes to section details
         drawnSections.forEach( sectionNode-> {
             wrt.println(edge(nodeId(sectionNode), nodeId(sectionNode.getStartNode()))
