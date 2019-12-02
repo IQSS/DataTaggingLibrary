@@ -241,16 +241,13 @@ public class GraphvizDecisionGraphF11Visualizer extends AbstractGraphvizDecision
 
         @Override
         public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
-            String nodeTitle = nd.getTitle();
-            if (nodeTitle.length() > 140) {
-                nodeTitle = nodeTitle.substring(0, 140) + "...";
-            }
-            out.println(node(nodeId(nd))
+            String nodeTitle = nd.getId();
+                        out.println(node(nodeId(nd))
                     .label(idLabel(nd) + wrap(nodeTitle))
                     .gv());
 
             out.println("subgraph cluster_part_" + nodeId(nd) + "{ ");
-            out.println("label=\"Part " + nd.getTitle() + "\"");
+            out.println("label=\"Part " + nd.getId() + "\"");
             advanceTo(nd.getStartNode());
             out.println("}");
 

@@ -143,7 +143,7 @@ public class DecisionGraphCompiler {
         // Static Linking Pass
         for ( CompilationUnit cu: pathToCu.values() ){
             Map<String, String> callToCallee = cu.getCallToCalleeID();
-            for ( Map.Entry<String,String> callCalleePair: callToCallee.entrySet()) {
+            for ( Map.Entry<String,String> callCalleePair: callToCallee.entrySet() ) {
                 String calleeId = callCalleePair.getValue(); 
                 if ( calleeId.contains(">") ) { 
                     // link to a node from another compilation unit

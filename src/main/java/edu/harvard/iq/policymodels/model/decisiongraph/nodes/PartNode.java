@@ -4,37 +4,22 @@ import edu.harvard.iq.policymodels.runtime.exceptions.DataTagsRuntimeException;
 import java.util.Objects;
 
 /**
- *
+ * A node that structurally groups other nodes together.
  * @author mor
  */
-public class PartNode extends Node  implements ContainerNode {
+public class PartNode extends Node implements ContainerNode {
 
-    private String title;
     private Node startNode;
     
-    public PartNode(String anId) {
+    public PartNode( Node startNode, String anId) {
         super(anId);
-    }
-    
-    public PartNode(String id, String title) {
-        super(id);
-        this.title = title;
-    }
-
-    public PartNode(String title, Node startNode, String anId) {
-        super(anId);
-        this.title = title;
         this.startNode = startNode;
     }
-
-    public String getTitle() {
-        return title;
+    
+    public PartNode(String anId) {
+        this( null, anId );
     }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
+    
     @Override
     public Node getStartNode() {
         return startNode;
@@ -52,7 +37,6 @@ public class PartNode extends Node  implements ContainerNode {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 97 * hash + Objects.hashCode(this.title);
         hash = 97 * hash + Objects.hashCode(this.startNode);
         return hash;
     }
@@ -69,9 +53,6 @@ public class PartNode extends Node  implements ContainerNode {
             return false;
         }
         final PartNode other = (PartNode) obj;
-        if (!Objects.equals(this.title, other.title)) {
-            return false;
-        }
         return Objects.equals(this.startNode, other.startNode);
     } 
     

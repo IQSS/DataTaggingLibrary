@@ -206,15 +206,12 @@ public class DecisionGraphRuleParserTest {
         Parser<List<? extends AstNode>> bodyParser
                 = Parsers.or(DecisionGraphRuleParser.END_NODE, DecisionGraphRuleParser.TODO_NODE).many().cast();
         Parser<AstPartNode> sut = DecisionGraphTerminalParser.buildParser(DecisionGraphRuleParser.partNode(bodyParser));
-        assertEquals(new AstPartNode("id", new AstInfoSubNode("bla bla"),
-                asList(new AstTodoNode(null, "bla"))),
-                sut.parse("[-->id< {title: bla bla}\n[todo: bla] --]"));
-        assertEquals(new AstPartNode("id",
-                asList(new AstTodoNode(null, "bla"))),
+        assertEquals(new AstPartNode("id", asList(new AstTodoNode(null, "bla"))),
+                sut.parse("[-->id< [todo: bla] --]"));
+        assertEquals(new AstPartNode("id", asList(new AstTodoNode(null, "bla"))),
                 sut.parse("[-->id< \n\n [todo: bla]\n\n\n --]"));
-        assertEquals(new AstPartNode("id", new AstInfoSubNode("bla bla"),
-                asList(new AstTodoNode(null, "bla"))),
-                sut.parse("[-->id<{title: bla bla}[todo: bla]--]"));
+        assertEquals(new AstPartNode("id", asList(new AstTodoNode(null, "bla"))),
+                sut.parse("[-->id<[todo: bla]--]"));
     }
     
     @Test

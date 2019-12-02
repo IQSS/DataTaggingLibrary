@@ -1,10 +1,5 @@
 package edu.harvard.iq.policymodels.parser.decisiongraph;
 
-import edu.harvard.iq.policymodels.parser.decisiongraph.AstNodeIdProvider;
-import edu.harvard.iq.policymodels.parser.decisiongraph.ContentReader;
-import edu.harvard.iq.policymodels.parser.decisiongraph.CompilationUnit;
-import edu.harvard.iq.policymodels.parser.decisiongraph.MemoryContentReader;
-import edu.harvard.iq.policymodels.parser.decisiongraph.DecisionGraphCompiler;
 import edu.harvard.iq.policymodels.model.decisiongraph.DecisionGraph;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.AskNode;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.ConsiderNode;
@@ -119,7 +114,7 @@ public class DecisionGraphParseResultTest {
         ToDoNode start = new ToDoNode("fTodo", "this and that");
         final ToDoNode toDoNode = new ToDoNode("sTodo", "bla");
         toDoNode.setNextNode(endNode);
-        final PartNode partNode = new PartNode("bla", toDoNode, "ghostbusters");
+        final PartNode partNode = new PartNode(toDoNode, "ghostbusters");
         CallNode call = new CallNode("fCall", partNode);
         final EndNode end = new EndNode(nodeIdProvider.nextId());
         toDoNode.setNextNode(endNode);
@@ -129,7 +124,7 @@ public class DecisionGraphParseResultTest {
         expected.setStart(start);
         expected.prefixNodeIds("[.." + File.separator + "main.dg]");
 
-        String code = "[>fTodo< todo: this and that][>fCall< call: ghostbusters][end][-->ghostbusters< {title: bla} [>sTodo< todo: bla]--]";
+        String code = "[>fTodo< todo: this and that][>fCall< call: ghostbusters][end][-->ghostbusters< [>sTodo< todo: bla]--]";
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();
         pmd.setDecisionGraphPath(Paths.get("/main.dg"));
@@ -155,8 +150,7 @@ public class DecisionGraphParseResultTest {
         ToDoNode start = new ToDoNode("fTodo", "this and that");
         final ToDoNode toDoNode = new ToDoNode("sTodo", "bla");
         toDoNode.setNextNode(endNode);
-        final PartNode partNode = new PartNode("bla", toDoNode, "ghostbusters");
-        final EndNode end = new EndNode(nodeIdProvider.nextId());
+        final PartNode partNode = new PartNode(toDoNode, "ghostbusters");
         final RejectNode reject = new RejectNode("fReject","obvious.");
         start.setNextNode(new CallNode("fCall", partNode)).setNextNode(reject);
         DecisionGraph expected = new DecisionGraph();
@@ -165,7 +159,7 @@ public class DecisionGraphParseResultTest {
         expected.addAllReachableNodes();
         expected.prefixNodeIds("[.." + File.separator + "main.dg]");
         
-        String code = "[>fTodo< todo: this and that][>fCall<call: ghostbusters][>fReject< reject: obvious.][-->ghostbusters< {title: bla} [>sTodo< todo: bla]--]";
+        String code = "[>fTodo< todo: this and that][>fCall<call: ghostbusters][>fReject< reject: obvious.][-->ghostbusters< [>sTodo< todo: bla]--]";
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();
         pmd.setDecisionGraphPath(Paths.get("/main.dg"));
@@ -190,8 +184,8 @@ public class DecisionGraphParseResultTest {
         EndNode finalEndNode = new EndNode("2");
         ToDoNode todo1 = new ToDoNode("fTodo", "bla");
         ToDoNode todo2 = new ToDoNode("sTodo", "bla");
-        PartNode pn1 = new PartNode("bla", todo1, "duh");
-        PartNode pn2 = new PartNode("bla", todo2, "duh2");
+        PartNode pn1 = new PartNode(todo1, "duh");
+        PartNode pn2 = new PartNode(todo2, "duh2");
         todo1.setNextNode(endNode);
         todo2.setNextNode(endNode);
         final CallNode whyNotCallNode = new CallNode("wnc", pn1);
@@ -227,8 +221,8 @@ public class DecisionGraphParseResultTest {
                 + "   { else: [>wnc< call: duh]}\n"
                 + "]\n"
                 + "[>2< end]"
-                + "[-->duh< {title: bla} [>fTodo< todo: bla]--]"
-                + "[-->duh2< {title: bla} [>sTodo< todo: bla]--]";
+                + "[-->duh< [>fTodo< todo: bla]--]"
+                + "[-->duh2< [>sTodo< todo: bla]--]";
 
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();
@@ -254,7 +248,7 @@ public class DecisionGraphParseResultTest {
         ToDoNode todoNode = new ToDoNode("secTodo", "bla");
         todoNode.setNextNode(endNode);
         EndNode end = new EndNode((nodeIdProvider.nextId()));
-        PartNode callPart = new PartNode("bla", todoNode, "duh");
+        PartNode callPart = new PartNode(todoNode, "duh");
         start.setText("why?");
         start.addAnswer(Answer.withName("dunno"), new EndNode("de"));
         final CallNode whyNotCallNode = new CallNode("wnc", callPart);
@@ -266,7 +260,7 @@ public class DecisionGraphParseResultTest {
         expected.setStart(start);
         expected.prefixNodeIds("[.." + File.separator + "main.dg]");
 
-        String code = "[ask: {text: why?} {answers: {dunno:[>de< end]} {why not:[>wnc< call: duh]}}][end][-->duh< {title: bla} [>secTodo< todo: bla]--]";
+        String code = "[ask: {text: why?} {answers: {dunno:[>de< end]} {why not:[>wnc< call: duh]}}][end][-->duh< [>secTodo< todo: bla]--]";
         
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();
@@ -318,22 +312,22 @@ public class DecisionGraphParseResultTest {
     @Test
     public void sectionTest() throws Exception {
 
-        PartNode fisrt_partNode = new PartNode("part", "Part - start");
+        PartNode firstPartNode = new PartNode("part");
         ToDoNode callTodo = new ToDoNode("sTodo", "bla");
-        PartNode partNode = new PartNode("bla", callTodo, "callid");
+        PartNode partNode = new PartNode( callTodo, "callid");
         ToDoNode sectionStartNode = new ToDoNode("blaID", "bla bla");
         CallNode call = new CallNode("CallID", partNode);
         sectionStartNode.setNextNode(call);
-        fisrt_partNode.setStartNode(sectionStartNode);
+        firstPartNode.setStartNode(sectionStartNode);
 
         EndNode finalEndNode = new EndNode("[SYN-END]");
         call.setNextNode(finalEndNode);
 
         DecisionGraph expected = new DecisionGraph();
-        expected.add(fisrt_partNode);
+        expected.add(firstPartNode);
         expected.setStart(finalEndNode);
         expected.prefixNodeIds("[.." + File.separator + "main.dg]");
-        String code = "[-->part< {title: Part - start} [>blaID< todo: bla bla] [>CallID< call: callid]--][-->callid< {title: bla} [>sTodo< todo: bla]--]";
+        String code = "[-->part< [>blaID< todo: bla bla] [>CallID< call: callid]--][-->callid< [>sTodo< todo: bla]--]";
 
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();
@@ -356,7 +350,7 @@ public class DecisionGraphParseResultTest {
     
     @Test
     public void callPartTest() throws Exception {
-        PartNode partNode = new PartNode("part","");
+        PartNode partNode = new PartNode("part");
         ToDoNode firstTodo = new ToDoNode("first_todo", "first todo");
         ToDoNode secondTodo = new ToDoNode("second_todo", "second todo");
         firstTodo.setNextNode(secondTodo);
@@ -396,7 +390,7 @@ public class DecisionGraphParseResultTest {
     
     @Test
     public void noCallPartTest() throws Exception {
-        PartNode partNode = new PartNode("part","");
+        PartNode partNode = new PartNode("part");
         ToDoNode firstTodo = new ToDoNode("first_todo", "first todo");
         ToDoNode secondTodo = new ToDoNode("second_todo", "second todo");
         firstTodo.setNextNode(secondTodo);
@@ -689,9 +683,9 @@ public class DecisionGraphParseResultTest {
     public void importToTheMainFile() throws IOException {
         String code_a = "[#import b: b.dg]"
                 + "[>nd-1< call: b>nd-2]"
-                + "[-->nd-4<\n {title: bla} [>nd-5< todo: bla bla]--]";
+                + "[-->nd-4<\n [>nd-5< todo: bla bla]--]";
         String code_b = "[#import a: a.dg]"
-                + "[-->nd-2<\n {title: bla} [>nd-3< call: a>nd-4]--]";
+                + "[-->nd-2<\n [>nd-3< call: a>nd-4]--]";
         
         Map<Path, String> pathToString = new HashMap<>();
         PolicyModelData pmd = new PolicyModelData();

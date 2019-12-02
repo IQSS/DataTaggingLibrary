@@ -279,10 +279,9 @@ public class DecisionGraphRuleParser {
         return Parsers.sequence(
                 nodeStructurePart("[--"),
                 Terminals.fragment( Tags.NODE_ID ),
-                INFO_SUBNODE.optional(null),
                 bodyParser,
                 nodeStructurePart("--]"),
-                ( _s, id, info, nodes, _e) -> new AstPartNode( id, info, nodes));
+                ( _s, id, nodes, _e) -> new AstPartNode( id, nodes));
     }
     /*
     return Parsers.sequence(

@@ -278,11 +278,7 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
                 FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesPaths.get(nd.getId()), nd.getTodoText());
             }
 
-            @Override
-            public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
-                FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesPaths.get(nd.getId()), nd.getTitle());
-            }
-
+            @Override public void visitImpl(PartNode nd)     throws DataTagsRuntimeException {}
             @Override public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {}
             @Override public void visitImpl(SetNode nd)      throws DataTagsRuntimeException {}
             @Override public void visitImpl(CallNode nd)     throws DataTagsRuntimeException {}

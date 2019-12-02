@@ -422,7 +422,7 @@ public class CompilationUnit {
                         
                         @Override
                         public Node visit(AstPartNode astNode) {
-                            final PartNode partNode = new PartNode(astNode.getId(), astNode.getInfo() != null ? astNode.getInfo().getText() : "");
+                            final PartNode partNode = new PartNode(astNode.getId());
                             Node startNode = buildNodes(astNode.getAstNodes(), endAll);
                             partNode.setStartNode(startNode);
                             buildNodes(C.tail(astNodes), defaultNode);

@@ -108,7 +108,7 @@ public class UpdateLocalizationCommand extends AbstractCliCommand {
             rnr.println("...Done!");
             rnr.println("Answers that were added:");
             rnr.println(StreamSupport.stream(needToAdd.spliterator(), true).collect(Collectors.joining("\n - ", " - ","")));
-            rnr.println("Answers that need to remove:");
+            rnr.println("Answers that can be removed:");
             rnr.println(StreamSupport.stream(needToRemove.spliterator(), true).collect(Collectors.joining("\n - ", " - ","")));
         } catch (IOException ex) {
             Logger.getLogger(UpdateLocalizationCommand.class.getName()).log(Level.SEVERE, "Error reading localized answers", ex);
@@ -222,7 +222,7 @@ public class UpdateLocalizationCommand extends AbstractCliCommand {
             rnr.println("...Done");
             rnr.println("slots/values that were added:");
             rnr.println(StreamSupport.stream(added.spliterator(), true).collect(Collectors.joining("\n - ", " - ","")));
-            rnr.println("slots/values that need to remove:");
+            rnr.println("slots/values that can be removed:");
             rnr.println(StreamSupport.stream(oldPS.spliterator(), true).collect(Collectors.joining("\n - ", " - ","")));
         } catch (IOException ex) {
             Logger.getLogger(UpdateLocalizationCommand.class.getName()).log(Level.SEVERE, "Error reading policy space file", ex);
@@ -292,7 +292,6 @@ public class UpdateLocalizationCommand extends AbstractCliCommand {
             @Override
             public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
                     addedNodes.add(nodesToPaths.get(nd.getId()));
-                    FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesToPaths.get(nd.getId()), nd.getTitle());
             }
 
             @Override public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {}
@@ -301,13 +300,13 @@ public class UpdateLocalizationCommand extends AbstractCliCommand {
             @Override public void visitImpl(EndNode nd)      throws DataTagsRuntimeException {}
             @Override public void visitImpl(ContinueNode nd) throws DataTagsRuntimeException {}
         };
-            StreamSupport.stream(rnr.getModel().getDecisionGraph().nodes().spliterator(), true)
+        StreamSupport.stream(rnr.getModel().getDecisionGraph().nodes().spliterator(), true)
                     .filter((node) -> !AstNodeIdProvider.isAutoId(node.getId()))
                     .filter(node -> !oldNodes.contains(nodesToPaths.get(node.getId()))).forEach(n -> n.accept(writer));
         rnr.println("..Done");
-        rnr.println("nodes that were added:");
+        rnr.println("newly added nodes:");
             rnr.println(StreamSupport.stream(addedNodes.spliterator(), true).map(p-> p.toString()).collect(Collectors.joining("\n - ", " - ","")));
-        rnr.println("nodes that need to remove:");
+        rnr.println("removed nodes:");
         rnr.println(oldNodes.stream().filter(node -> !nodesToPaths.values().contains(node)).map(n -> n.normalize().toString()).collect(Collectors.joining("\n - ", " - ","")));
         } catch (IOException ex) {
             Logger.getLogger(UpdateLocalizationCommand.class.getName()).log(Level.SEVERE, null, ex);

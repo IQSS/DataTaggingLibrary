@@ -551,7 +551,7 @@ public class CliRunner {
 
                 @Override
                 public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
-                    printMsg("Started part " + nd.getTitle() );
+                    printMsg("Started part " + nd.getId());
                 }
                 
             });

@@ -166,12 +166,10 @@ public class UnreachableNodeValidatorTest {
     @Test
     public void validateUnreachableNodesTest_unreachableParts() throws BadSetInstructionException, DataTagsParseException, IOException {
         String code = "[-->part<\n" +
-                        " {title: Part - start}\n" +
                         " [>blaID< todo: bla bla]\n" +
                         " [>CallID< call: callid]\n" +
                         "--]\n" +
                         "[-->callid<\n" +
-                        " {title: bla}\n" +
                         " [>sTodo< todo: bla]\n" +
                         "--]";
         

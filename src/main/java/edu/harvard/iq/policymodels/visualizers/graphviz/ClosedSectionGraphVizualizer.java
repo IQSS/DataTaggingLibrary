@@ -54,9 +54,6 @@ public class ClosedSectionGraphVizualizer extends GraphvizDecisionGraphClustered
         @Override
         public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
             String effTitle =  nd.getId();
-            if ( nd.getTitle()!=null && (!nd.getTitle().trim().isEmpty()) ) {
-                effTitle += "\\n" + nd.getTitle().trim();
-            }
             out.println( node(sanitizeId(nd.getId()+"__PART_START")).hidden().gv() );
             out.println("subgraph cluster_" + nodeId(nd)  + "{ ");
             out.println("label=\"Part " + effTitle +  "\"");

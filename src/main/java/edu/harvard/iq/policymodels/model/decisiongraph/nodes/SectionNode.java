@@ -9,8 +9,7 @@ import java.util.Objects;
  */
 public class SectionNode extends ThroughNode implements ContainerNode {
     
-    private String title;
-    
+    private String title;    
     private Node startNode;
     
     public SectionNode(String id, String info) {
