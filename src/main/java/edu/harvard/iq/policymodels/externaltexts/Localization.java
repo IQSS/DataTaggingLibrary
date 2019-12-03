@@ -14,6 +14,8 @@ import java.util.Set;
  */
 public class Localization {
    
+    public static final String DEFAULT_LANGUAGE_NAME = "__DEFAULT__";
+    
     /**
      * The localized parts of the model meta data.
      */
@@ -40,6 +42,11 @@ public class Localization {
      * i.e. were not localized.
      */
     private final Map<AbstractValue, LocalizationTexts> slotValuesTexts = new HashMap<>();
+    
+    /**
+     * Texts for each section: title, tooltip, and possible long text.
+     */
+    private final Map<String, LocalizationTexts> sectionTexts = new HashMap<>();
     
     public LocalizedModelData getLocalizedModelData() {
         if ( localizedModelData==null ) {
@@ -88,7 +95,7 @@ public class Localization {
         slotsTexts.put(st, texts);
     }
     
-    public Optional<LocalizationTexts> getSlotText( AbstractSlot st ) {
+    public Optional<LocalizationTexts> getSlotTexts( AbstractSlot st ) {
         return Optional.ofNullable(slotsTexts.get(st));
     }
     
@@ -96,8 +103,16 @@ public class Localization {
         slotValuesTexts.put(tv, texts);
     }
     
-    public Optional<LocalizationTexts> getSlotValueText( AbstractValue tv ) {
+    public Optional<LocalizationTexts> getSlotValueTexts( AbstractValue tv ) {
         return Optional.ofNullable(slotValuesTexts.get(tv));
+    }
+    
+     public void setSectionTexts( String nodeId, LocalizationTexts texts ) {
+        sectionTexts.put(nodeId, texts);
+    }
+    
+    public Optional<LocalizationTexts> getSectionTexts( String sectionNodeId ) {
+        return Optional.ofNullable(sectionTexts.get(sectionNodeId));
     }
     
     @Override
@@ -114,7 +129,7 @@ public class Localization {
     private void initializeDefaultModel() {
         localizedModelData = new LocalizedModelData();
         localizedModelData.setDirection( LocalizedModelData.Direction.LTR );
-        localizedModelData.setLanguage("__DEFAULT__");
+        localizedModelData.setLanguage(DEFAULT_LANGUAGE_NAME);
         localizedModelData.setTitle("");
         localizedModelData.setSubTitle("");
     }

@@ -23,6 +23,7 @@ public class FsLocalizationIO {
     public static final String LOCALIZATION_DIRECTORY_NAME = "languages";
     public static final String ANSWERS_FILENAME = "answers.txt";
     public static final String SPACE_DATA_FILENAME = "space.md";
+    public static final String SECTION_TEXTS_FILENAME = "sections.md";
     public static final String NODE_DIRECTORY_NAME = "nodes";
     public static final String LOCALIZED_METADATA_FILENAME = "localized-model.xml";
 

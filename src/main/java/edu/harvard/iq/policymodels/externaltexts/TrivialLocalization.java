@@ -64,12 +64,12 @@ public class TrivialLocalization extends Localization {
     }
     
     @Override
-    public Optional<LocalizationTexts> getSlotText( AbstractSlot st ) {
+    public Optional<LocalizationTexts> getSlotTexts( AbstractSlot st ) {
         return Optional.of(new LocalizationTexts(st.getName(), st.getNote(), null));
     }
         
     @Override
-    public Optional<LocalizationTexts> getSlotValueText( AbstractValue tv ) {
+    public Optional<LocalizationTexts> getSlotValueTexts( AbstractValue tv ) {
         return Optional.of(new LocalizationTexts(name(tv), note(tv), null));
     }
 

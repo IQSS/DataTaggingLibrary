@@ -14,7 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import static java.util.stream.Collectors.toList;
 
 /**
  * 
@@ -119,9 +118,7 @@ public class PolicySpaceIndex {
     }
     
     public Set<List<String>> get( String partialPath ) {
-        return get(
-                Arrays.stream(partialPath.trim().split("/")).collect(toList())
-        );
+        return get(Arrays.asList(partialPath.trim().split("/")));
     }
     
     public boolean isValue( List<String> path ) {

@@ -23,7 +23,7 @@ public class SpaceLocalizationParserTest {
 
     static CompoundSlot spaceBase;
     
-    SpaceLocalizationParser sut;
+    LocalizationTextsParser sut;
     
     @BeforeClass
     public static void setupClass() throws SyntaxErrorException, SemanticsErrorException {
@@ -36,11 +36,11 @@ public class SpaceLocalizationParserTest {
     
     @Before
     public void setup() {
-        sut = new SpaceLocalizationParser(new PolicySpaceIndex(spaceBase));
+        sut = new LocalizationTextsParser((new PolicySpaceIndex(spaceBase))::get);
     }
     
     /**
-     * Test of parse method, of class SpaceLocalizationParser.
+     * Test of parse method, of class LocalizationTextsParser.
      */
     @Test
     public void isInlineSlotStartYes() {
@@ -76,7 +76,7 @@ public class SpaceLocalizationParserTest {
             sut.getMessages().forEach( m->System.out.println("sut message: " + m) );
         }
         assertTrue(parseRes);
-        sut.getSpaceEnitiyTexts().forEach( (p,t)->assertEquals( expected.get(fromPath(p)), t) );
+        sut.getTextsMap().forEach( (p,t)->assertEquals( expected.get(fromPath(p)), t) );
     }
 
     @Test
@@ -102,7 +102,7 @@ public class SpaceLocalizationParserTest {
             sut.getMessages().forEach( m->System.out.println("sut message: " + m) );
         }
         assertTrue(parseRes);
-        sut.getSpaceEnitiyTexts().forEach( (p,t)->assertEquals( expected.get(fromPath(p)), t) );
+        sut.getTextsMap().forEach( (p,t)->assertEquals( expected.get(fromPath(p)), t) );
     }
     
     @Test
@@ -156,7 +156,53 @@ public class SpaceLocalizationParserTest {
             sut.getMessages().forEach( m->System.out.println("sut message: " + m) );
         }
         assertTrue(parseRes);
-        sut.getSpaceEnitiyTexts().forEach( (p,t)->assertEquals( expected.get(fromPath(p)), t) );
+
+        sut.getTextsMap().forEach( (p,t)->{
+            String key = fromPath(p);
+            System.out.println("Key: " + key);
+            LocalizationTexts expectedVal = expected.get(key);
+            assertEquals( "for key: " + key, expectedVal, t);
+        });
     }
     
+    
+    @Test
+    public void parseSingleFullEntry() {
+        List<String> input = Arrays.asList(
+            "# Base/Rice",
+            "rice name",
+            "rice tooltip",
+            "---",
+            "rice long note",
+            "rice long note 2");
+        LocalizationTexts expected = new LocalizationTexts("rice name", "rice tooltip",
+            "rice long note\nrice long note 2");
+        sut.parse(input.stream());
+        
+        assertEquals( expected, sut.getTextsMap().get(Arrays.asList("Base","Rice")) );
+        
+    }
+    
+    @Test
+    public void parseSinglePartialEntry() {
+        List<String> input = Arrays.asList(
+            "# Base/Rice",
+            "rice name",
+            "rice tooltip"
+            );
+        LocalizationTexts expected = new LocalizationTexts("rice name", "rice tooltip",null);
+        sut.parse(input.stream());
+        assertEquals( expected, sut.getTextsMap().get(Arrays.asList("Base","Rice")) );
+    }
+    
+    @Test
+    public void parseSinglePartialEntry2() {
+        List<String> input = Arrays.asList(
+            "# Base/Rice",
+            "rice name"
+            );
+        LocalizationTexts expected = new LocalizationTexts("rice name", null, null);
+        sut.parse(input.stream());
+        assertEquals( expected, sut.getTextsMap().get(Arrays.asList("Base","Rice")) );
+    }
 }

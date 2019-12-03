@@ -5,6 +5,8 @@ import static edu.harvard.iq.policymodels.io.FileUtils.readAll;
 import edu.harvard.iq.policymodels.model.PolicyModel;
 import edu.harvard.iq.policymodels.model.PolicySpaceIndex;
 import edu.harvard.iq.policymodels.model.PolicySpacePathQuery;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.Node;
+import edu.harvard.iq.policymodels.model.decisiongraph.nodes.SectionNode;
 import edu.harvard.iq.policymodels.model.policyspace.slots.CompoundSlot;
 import edu.harvard.iq.policymodels.parser.BaseModelLoader;
 import edu.harvard.iq.policymodels.tools.ValidationMessage;
@@ -16,9 +18,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import static java.util.stream.Collectors.toSet;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Loads a localization from a localization directory into a 
@@ -73,6 +79,11 @@ public class LocalizationLoader extends BaseModelLoader {
         if ( spacePath != null ) {
             loadTagspaceData( retVal, model.getSpaceRoot(), spacePath );
         }
+        
+        Path sectionPath = ciResolve(localizationPath, FsLocalizationIO.SECTION_TEXTS_FILENAME);
+        if ( Files.exists(sectionPath) ) {
+            loadSectionLocalizations(retVal, model, sectionPath);
+        }
                 
         loadNodeData( retVal, model, localizationPath );
         
@@ -104,12 +115,13 @@ public class LocalizationLoader extends BaseModelLoader {
 
     private void loadTagspaceData(Localization retVal, CompoundSlot baseSlot, Path spacePath) throws IOException {
         PolicySpaceIndex spaceIndex = new PolicySpaceIndex(baseSlot);
-        SpaceLocalizationParser parser = new SpaceLocalizationParser(spaceIndex);
+        
+        LocalizationTextsParser parser = new LocalizationTextsParser(spaceIndex::get);
         
         if ( parser.parse(Files.lines(spacePath, StandardCharsets.UTF_8)) ) {
             PolicySpacePathQuery qry = new PolicySpacePathQuery(baseSlot);
                     
-            parser.getSpaceEnitiyTexts().forEach(
+            parser.getTextsMap().forEach(
                     (path,text) -> qry.get(path).accept(new PolicySpacePathQuery.Result.Visitor<Void>() {
                            @Override
                            public Void visit(PolicySpacePathQuery.TagValueResult tvr) {
@@ -135,6 +147,29 @@ public class LocalizationLoader extends BaseModelLoader {
         
     }
     
+    private void loadSectionLocalizations(Localization retVal, PolicyModel model, Path sectionsPath) throws IOException {
+        final Set<String> sectionNodeIds = StreamSupport.stream(model.getDecisionGraph().nodes().spliterator(), true)
+                                                   .filter( n -> n instanceof SectionNode )
+                                                   .map( Node::getId )
+                                                   .collect( toSet() );
+        
+        LocalizationTextsParser parser = new LocalizationTextsParser(key -> {
+            if ( sectionNodeIds.contains(key) ) {
+                return Collections.singleton(Collections.singletonList(key));
+            } else {
+                return Collections.emptySet();
+            }
+        });
+        
+        if ( parser.parse(Files.lines(sectionsPath, StandardCharsets.UTF_8)) ) {
+            parser.getTextsMap().forEach((k,v)->{
+                retVal.setSectionTexts(k.get(0), v);
+            });
+        } 
+        
+        parser.getMessages().forEach( s -> messages.add(new ValidationMessage(Level.WARNING, s)));
+        
+    }
     
     private void loadNodeData(Localization loc, PolicyModel model, Path localizationPath) throws IOException {
         

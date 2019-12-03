@@ -46,10 +46,11 @@ public class LocalizationTexts {
         if (!Objects.equals(this.bigNote, other.bigNote)) {
             return false;
         }
-        if (!Objects.equals(this.smallNote, other.smallNote)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.smallNote, other.smallNote);
     }
     
+    @Override
+    public String toString(){
+        return "[LocalizationTexts " + name + " note:" + smallNote + " bigNote:" + bigNote + "]";
+    }
 }
