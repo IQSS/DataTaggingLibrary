@@ -115,6 +115,10 @@ public class Localization {
         return Optional.ofNullable(sectionTexts.get(sectionNodeId));
     }
     
+    public Set<String> getLocalizedSectionIds() {
+        return sectionTexts.keySet();
+    }
+    
     @Override
     public String toString() {
         return "[Localization language:" + getLanguage() + ']';

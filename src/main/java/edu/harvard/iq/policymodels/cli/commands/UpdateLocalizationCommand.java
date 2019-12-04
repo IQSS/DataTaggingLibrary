@@ -237,7 +237,7 @@ public class UpdateLocalizationCommand extends AbstractCliCommand {
         
     }
     
-        private void updateNodeFiles(CliRunner rnr) {
+    private void updateNodeFiles(CliRunner rnr) {
         try {
             rnr.println("Update node files");
             Set<Path> oldNodes = Files.walk(currLocDir.resolve(FsLocalizationIO.NODE_DIRECTORY_NAME))

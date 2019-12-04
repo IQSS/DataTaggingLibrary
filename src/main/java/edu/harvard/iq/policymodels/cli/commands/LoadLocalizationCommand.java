@@ -40,7 +40,9 @@ public class LoadLocalizationCommand extends AbstractCliCommand {
             loc.getLocalizedAnswers().stream().sorted().forEach( ans -> rnr.println(" - %s: %s", ans, loc.localizeAnswer(ans)));
             rnr.println("");
             rnr.println("Localized node ids:");
-            loc.getLocalizedNodeIds().forEach( id -> rnr.println(" - %s", id));
+            loc.getLocalizedNodeIds().stream().sorted().forEach( id -> rnr.println(" - %s", id));
+            rnr.println("Localized Sections:");
+            loc.getLocalizedSectionIds().stream().sorted().forEach( id -> rnr.println(" - %s", id));
             
         } catch ( IOException | LocalizationException exp ) {
             rnr.printWarning( exp.getMessage() );
