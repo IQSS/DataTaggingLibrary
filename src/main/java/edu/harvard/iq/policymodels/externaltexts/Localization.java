@@ -99,12 +99,20 @@ public class Localization {
         return Optional.ofNullable(slotsTexts.get(st));
     }
     
+    public Set<AbstractSlot> getLocalizedSlots() {
+        return slotsTexts.keySet();
+    }
+    
     public void setSlotValueTexts( AbstractValue tv, LocalizationTexts texts ) {
         slotValuesTexts.put(tv, texts);
     }
     
     public Optional<LocalizationTexts> getSlotValueTexts( AbstractValue tv ) {
         return Optional.ofNullable(slotValuesTexts.get(tv));
+    }
+    
+    public Set<AbstractValue> getLocalizedValues() {
+        return slotValuesTexts.keySet();
     }
     
      public void setSectionTexts( String nodeId, LocalizationTexts texts ) {

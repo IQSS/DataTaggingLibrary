@@ -2,6 +2,8 @@ package edu.harvard.iq.policymodels.cli.commands;
 
 import edu.harvard.iq.policymodels.cli.CliRunner;
 import edu.harvard.iq.policymodels.externaltexts.FsLocalizationIO;
+import edu.harvard.iq.policymodels.externaltexts.Localization;
+import edu.harvard.iq.policymodels.externaltexts.LocalizationLoader;
 import edu.harvard.iq.policymodels.model.decisiongraph.DecisionGraph;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.AskNode;
 import edu.harvard.iq.policymodels.model.decisiongraph.nodes.CallNode;
@@ -50,6 +52,7 @@ import java.util.stream.StreamSupport;
 public class UpdateLocalizationCommand extends AbstractCliCommand {
     private String currLocName;
     private Path currLocDir;
+    private Localization updated;
 
     public UpdateLocalizationCommand() {
         super("loc-update", "Update all existing localization");
@@ -63,18 +66,32 @@ public class UpdateLocalizationCommand extends AbstractCliCommand {
                                             .resolve(FsLocalizationIO.LOCALIZATION_DIRECTORY_NAME)
                                             .resolve(currLocName);
                 if ( !Files.exists(currLocDir) ) {
-                    rnr.printWarning("Try to update non-existing localization: '%s'", currLocName);
+                    rnr.printWarning("Localization '%s' not found.", currLocName);
                     currLocDir = null;
                     currLocName = null;
                     return;
                 }
                 rnr.println("Start localization update: %s", currLocName);
                 rnr.println("-----");
-                updateAnswerFile(rnr);
-                updatePolicySpace(rnr);
-                updateNodeFiles(rnr);
+                try {
+                    LocalizationLoader ldr = new LocalizationLoader();
+                    updated = ldr.load(rnr.getModel(), currLocName);
+                    updateAnswerFile(rnr);
+                    updatePolicySpace(rnr);
+                    updateNodeFiles(rnr);
+                    updateSections(rnr);
+                    
+                } catch (Exception iox) {
+                    rnr.printWarning("Error updating localization " + currLocName + ": " + iox.getMessage());
+                    if ( rnr.getPrintDebugMessages() ) {
+                        iox.printStackTrace(System.out);
+                    }
+                }
                 rnr.println("-----");
                 
+                currLocDir = null;
+                currLocName = null;
+                updated = null;
         });
        
     }
@@ -233,7 +250,55 @@ public class UpdateLocalizationCommand extends AbstractCliCommand {
                 Logger.getLogger(UpdateLocalizationCommand.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+    
+    private void updateSections( CliRunner rnr ) throws IOException {
+        rnr.println("Updating sections");
+        Set<SectionNode> sections = StreamSupport.stream(rnr.getModel().getDecisionGraph().nodes().spliterator(), true)
+                                            .filter( n->n instanceof SectionNode)
+                                            .map( n -> (SectionNode)n )
+                                            .collect( toSet() );
+        Path sectionsFile = currLocDir.resolve( FsLocalizationIO.SECTION_TEXTS_FILENAME );
+        if ( Files.exists(sectionsFile) ) {
+            Files.delete( sectionsFile );
+        }
+        try ( PrintWriter prt = new PrintWriter(Files.newBufferedWriter(sectionsFile)) ) {
+            sections.stream().sorted((s1, s2)->s1.getId().compareTo(s2.getId())).forEach( section-> {
+                prt.println( "# " + section.getId() );
+                updated.getSectionTexts(section.getId()).ifPresent( txts-> {
+                    prt.println(txts.name != null ? txts.name : "");
+                    prt.println(txts.smallNote != null ? txts.smallNote : "");
+                    if ( txts.bigNote != null ) {
+                        prt.println("---");
+                        prt.println( txts.bigNote );
+                    }
+                });
+                prt.println();
+            });
+        }
         
+        Set<String> newlyAdded = sections.stream().map(n->n.getId())
+                                         .filter( s->updated.getSectionTexts(s).isEmpty() )
+                                         .collect( toSet() );
+        
+        if ( newlyAdded.isEmpty()  ) {
+            rnr.println("No new sections added");
+        } else {
+            rnr.println("Newly added sections: ");
+            newlyAdded.forEach( s -> rnr.println(" - " + s));
+        }
+        
+        DecisionGraph dg = rnr.getModel().getDecisionGraph();
+        Set<String> removed = updated.getLocalizedSectionIds().stream()
+                                                              .filter( id->dg.getNode(id)==null )
+                                                              .collect( toSet() );
+        
+        if ( removed.isEmpty()  ) {
+            rnr.println("No sections were removed");
+        } else {
+            rnr.println("Removed sections: ");
+            removed.forEach( s -> rnr.println(" - " + s));
+        }
         
     }
     

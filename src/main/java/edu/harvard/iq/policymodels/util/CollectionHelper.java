@@ -37,6 +37,16 @@ public class CollectionHelper {
 		}
 	}
 	
+    public static class DoubleSetDiff<E> {
+        public final Set<E> inAOnly;
+        public final Set<E> inBOnly;
+
+        public DoubleSetDiff(Set<E> inAOnly, Set<E> inBOnly) {
+            this.inAOnly = inAOnly;
+            this.inBOnly = inBOnly;
+        }
+    }
+    
 	private CollectionHelper(){};
 	
 	public <T> List<T> dropLast( List<T> in ) {
@@ -68,11 +78,7 @@ public class CollectionHelper {
             return list.get( list.size()-1 );
         }
 	}
-	
-	public <T> Set<T> set( T... items ) {
-		return new HashSet<>( Arrays.asList(items) );
-	}
-	
+    
 	public <T> T head( List<T> list ) {
 		return list.get(0);
 	}
@@ -99,6 +105,10 @@ public class CollectionHelper {
         return Collections.unmodifiableList( list(ct) );
     }
     
+	public <T> Set<T> set( T... items ) {
+		return new HashSet<>( Arrays.asList(items) );
+	}
+    
 	public <T> Set<T> unionSet( Collection<T> c1, Collection<T> c2 ) {
 		Set<T> out = new HashSet<>( c1 );
 		out.addAll( c2 );
@@ -116,6 +126,10 @@ public class CollectionHelper {
 		out.removeAll( c2 );
 		return out;
 	}
+    
+    public <E> DoubleSetDiff<E> diff( Set<E> a, Set<E> b ) {
+        return new DoubleSetDiff( subtractSet(a,b), subtractSet(b,a) );
+    }
     
 	public <T> T first(Iterable<T> itr ) {
 		return ( itr == null ) ? null

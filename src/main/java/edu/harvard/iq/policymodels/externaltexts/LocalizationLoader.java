@@ -81,7 +81,7 @@ public class LocalizationLoader extends BaseModelLoader {
         }
         
         Path sectionPath = ciResolve(localizationPath, FsLocalizationIO.SECTION_TEXTS_FILENAME);
-        if ( Files.exists(sectionPath) ) {
+        if ( sectionPath!=null && Files.exists(sectionPath) ) {
             loadSectionLocalizations(retVal, model, sectionPath);
         }
                 
@@ -205,7 +205,7 @@ public class LocalizationLoader extends BaseModelLoader {
         return messages;
     }
 
-    public boolean isHasErrors() {
+    public boolean hasErrors() {
         return messages.stream().anyMatch(vm->vm.getLevel()==ValidationMessage.Level.ERROR);
     }
     

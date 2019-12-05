@@ -294,11 +294,6 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
             }
 
             @Override
-            public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-                FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesPaths.get(nd.getId()), nd.getTitle());
-            }
-
-            @Override
             public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
                 FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesPaths.get(nd.getId()), nd.getReason());
             }
@@ -309,28 +304,25 @@ public class CreateLocalizationCommand extends AbstractCliCommand {
             }
 
             @Override
-            public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
-            }
+            public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {}
 
             @Override
-            public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {
-            }
+            public void visitImpl(PartNode nd) throws DataTagsRuntimeException {}
 
             @Override
-            public void visitImpl(SetNode nd) throws DataTagsRuntimeException {
-            }
+            public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {}
 
             @Override
-            public void visitImpl(CallNode nd) throws DataTagsRuntimeException {
-            }
+            public void visitImpl(SetNode nd) throws DataTagsRuntimeException {}
 
             @Override
-            public void visitImpl(EndNode nd) throws DataTagsRuntimeException {
-            }
+            public void visitImpl(CallNode nd) throws DataTagsRuntimeException {}
 
             @Override
-            public void visitImpl(ContinueNode nd) throws DataTagsRuntimeException {
-            }
+            public void visitImpl(EndNode nd) throws DataTagsRuntimeException {}
+
+            @Override
+            public void visitImpl(ContinueNode nd) throws DataTagsRuntimeException {}
         };
 
         rnr.getModel().getDecisionGraph().nodes().forEach(nd -> {

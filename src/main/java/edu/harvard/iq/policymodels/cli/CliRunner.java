@@ -19,6 +19,7 @@ import edu.harvard.iq.policymodels.cli.commands.ToggleDebugMessagesCommand;
 import edu.harvard.iq.policymodels.cli.commands.MatchResultToSequenceCommand;
 import edu.harvard.iq.policymodels.cli.commands.VisualizePolicySpaceCommand;
 import edu.harvard.iq.policymodels.cli.commands.LoadPolicyModelCommand;
+import edu.harvard.iq.policymodels.cli.commands.LocalizationDiffCommand;
 import edu.harvard.iq.policymodels.cli.commands.NewModelCommand;
 import edu.harvard.iq.policymodels.cli.commands.OpenInDesktopCommand;
 import edu.harvard.iq.policymodels.cli.commands.PrintRunTraceCommand;
@@ -135,7 +136,8 @@ public class CliRunner {
                 new VisualizePolicySpaceCommand(), new PrintRunTraceCommand(), new LoadPolicyModelCommand(), 
                 new NewModelCommand(), new OpenInDesktopCommand(), new LoadLocalizationCommand(),
                 new RunValidationsCommand(), new MatchResultToSequenceCommand(), new StatisticsCommand(),
-                new CreateLocalizationCommand(), new OptimizeDecisionGraphCommand(), new TodoCommand(), new UpdateLocalizationCommand()
+                new CreateLocalizationCommand(), new OptimizeDecisionGraphCommand(), new TodoCommand(),
+                new UpdateLocalizationCommand(), new LocalizationDiffCommand()
         ).forEach(c -> commands.put(c.command(), c));
         
         // shortcuts

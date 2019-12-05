@@ -46,7 +46,7 @@ public class ToggleDebugMessagesCommand implements CliCommand {
         }
         rnr.printMsg( "Debug messages are [%s]%s" , 
                 toParamStr(rnr.getPrintDebugMessages()),
-                args.size()==1 ? (" (use `debug " + toParamStr(rnr.getPrintDebugMessages()) + "` to change.)") : ""
+                args.size()==1 ? (" (use `debug " + toParamStr(! rnr.getPrintDebugMessages()) + "` to change.)") : ""
                 );
     }
     

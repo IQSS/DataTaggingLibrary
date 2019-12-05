@@ -259,6 +259,9 @@ import java.util.concurrent.atomic.AtomicInteger;
     public boolean consume(Answer ans) throws DataTagsRuntimeException {
         AskNode current = (AskNode) currentNode;
         Node next = current.getNodeFor(ans);
+        if ( next == null ) {
+            throw new DataTagsRuntimeException(this, "AskNode " + current.getId() + " does not have a node for answer " + ans );
+        }
         return processNode(next);
     }
 
