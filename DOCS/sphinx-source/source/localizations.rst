@@ -88,12 +88,44 @@ Line-comments (``<--``) are also supported, for convenience.
   other: otro
 
 
+Sections
+~~~~~~~~
+Section nodes can be localized using a ``sections.md`` file in the localization directory. This file uses the same format as the policy space localization file.
+
+.. code::
+
+  # [mainFile.dg]sInitialRouting
+  Initial Routing
+  This part of the interview gathers basic data.
+  ---
+  The art of interviewee routing is as ancient as the art of interviews 
+  itself, and some say even older [London,77](http://link/to/evidence).
+  Indeed, this is not a concept to be taken for granted, not is it a 
+  matter which technical reference manuals should use for examples of
+  lengthy texts in markdown. However, ...
+
+  
 Decision Graph Elements
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Decision graph elements that contain texts (``ask``, ``todo``, and ``section``) can be localized by adding a file to the ``nodes`` sub-directory in the localization directory. The file name is the id of the node it provides localized text for. Files can be in either text (``.txt``) or markdown (``.md``) format. In case both text and markdown files are present, the markdown variant is preferred.
+Decision graph elements that contain texts (``ask``, ``todo``, and ``reject``) can be localized by adding a file to the ``nodes`` sub-directory in the localization directory. The file name is the id of the node it provides localized text for. Files can be in either text (``.txt``) or markdown (``.md``) format. In case both text and markdown files are present, the markdown variant is preferred.
 
 
 .. tip:: There are many Markdown editors that offer formatted preview of the text, or even allow editing of formatted text (like "normal" word processors.) Use your favorite search engine to find one - the list updated too often to include a recommendation here.
+
+Useful CliRunner Commands
+--------------------------
+
+:doc:`CliRunner <cli-manual>` offers the following commands for working with localizations:
+
+``\loc-create <localization name>``
+  Creates a localization with the given name. The localization created uses data and texts from the model.
+
+``\loc-update``
+  Updates all localizations, adding new nodes, sections, and policy space entities. It also lists which data can be removed from each localization (e.g. an answer that is not used anymore at the model).
+
+``\loc-diff <localization name>``
+  Lists how the passed localization differs from the model. E.g., what nodes are not localized, what sections where localized but are not present anymore.
+
 
 ..  _ISO-639: https://www.iso.org/iso-639-language-codes.html
 .. _ISO-3166: https://www.iso.org/iso-3166-country-codes.html

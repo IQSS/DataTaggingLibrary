@@ -11,6 +11,6 @@ public final class PolicyModelsInfo {
     }
     
     public static String getVersionString() {
-        return "PolicyModels 1.9.8-SNAPSHOT";
+        return "PolicyModels 1.9.9-SNAPSHOT";
     }
 }

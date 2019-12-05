@@ -1,8 +1,8 @@
 :doc:`Home <index>`
 
 
-PolicyModels Console Application
-================================
+CliRunner - PolicyModels Console Application
+============================================
 
 PolicyModels has a console application - that means it runs in a terminal and uses a text based, command line interface. The simplicity of this interface allows it to provide support for advanced language features early -- developing graphic user interface takes time.
 
