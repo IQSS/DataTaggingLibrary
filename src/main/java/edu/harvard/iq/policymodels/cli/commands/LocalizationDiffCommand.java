@@ -38,7 +38,7 @@ public class LocalizationDiffCommand implements CliCommand {
 
     @Override
     public String description() {
-        return "Prints the differences between a localization and the model (e.g. non-licalized nodes).";
+        return "Prints the differences between a localization and the model (e.g. non-localized nodes).";
     }
 
     @Override

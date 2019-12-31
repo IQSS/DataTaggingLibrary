@@ -196,7 +196,7 @@ public class CompilationUnit {
                 final CompoundValue additionPoint = valueBuilder.descend(C.tail(fullyQualifiedSlotName.get(astSlot)), topValue);
                 slot = additionPoint.getSlot().getSubSlot(C.last(astSlot));
             } catch (RuntimeException re) {
-                throw new RuntimeException("Tag not found");
+                throw new RuntimeException("Slot " + astSlot.toString() + " not found");
             }
         }
         return slot;
