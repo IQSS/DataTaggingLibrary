@@ -337,15 +337,9 @@ public class UpdateLocalizationCommand extends AbstractCliCommand {
             }
 
             @Override
-            public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {
-                addedNodes.add(nodesToPaths.get(nd.getId()));
-                FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesToPaths.get(nd.getId()), nd.getTitle());
-            }
-
-            @Override
             public void visitImpl(RejectNode nd) throws DataTagsRuntimeException {
-                    addedNodes.add(nodesToPaths.get(nd.getId()));
-                    FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesToPaths.get(nd.getId()), nd.getReason());
+                addedNodes.add(nodesToPaths.get(nd.getId()));
+                FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesToPaths.get(nd.getId()), nd.getReason());
             }
 
             @Override
@@ -354,11 +348,8 @@ public class UpdateLocalizationCommand extends AbstractCliCommand {
                 FsLocalizationIO.createNodeLocalizationFile(nodesDir, nodesToPaths.get(nd.getId()), nd.getTodoText());
             }
 
-            @Override
-            public void visitImpl(PartNode nd) throws DataTagsRuntimeException {
-                    addedNodes.add(nodesToPaths.get(nd.getId()));
-            }
-
+            @Override public void visitImpl(SectionNode nd) throws DataTagsRuntimeException {}
+            @Override public void visitImpl(PartNode nd) throws DataTagsRuntimeException {}
             @Override public void visitImpl(ConsiderNode nd) throws DataTagsRuntimeException {}
             @Override public void visitImpl(SetNode nd)      throws DataTagsRuntimeException {}
             @Override public void visitImpl(CallNode nd)     throws DataTagsRuntimeException {}
