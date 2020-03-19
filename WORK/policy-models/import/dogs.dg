@@ -5,7 +5,6 @@
   }
 ]
 [-->dog<
-  {title: Dogs!}
   [>q-dogType< ask:
     {text: What type of dogs?}
     {answers:

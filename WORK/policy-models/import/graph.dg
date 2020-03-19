@@ -1,11 +1,11 @@
-[#import dogs: dogs.dg]
-[#import cats: cats.dg]
+[#import dogImport: dogs.dg]
+[#import catImport: cats.dg]
 
 [>q-order< ask:
   {text: Do the dogs first?}
   {answers:
-      {yes: [call: dogs>dog][call: cats>cat]}
-      {no:  [call: cats>cat][call:dogs>dog]}
+      {yes: [call: dogImport>dog][call: catImport>cat]}
+      {no:  [call: catImport>cat][call: dogImport>dog]}
   }
 ]
 [todo: specify mice]
