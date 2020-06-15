@@ -28,6 +28,7 @@ import static edu.harvard.iq.policymodels.visualizers.graphviz.GvEdge.edge;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -151,66 +152,61 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
      */
     protected Set<Node> findSubchartHeades(DecisionGraph dg) {
         final Set<Node> candidates = new HashSet<>();
-        for (Node n : dg.nodes()) {
-            candidates.add(n);
-        }
-        candidates.remove( dg.getNode(DecisionGraphCompiler.SYNTHETIC_END_NODE_ID) );
-        
+                
         Node.VoidVisitor remover = new Node.VoidVisitor() {
             @Override
             public void visitImpl(AskNode nd) {
-                nd.getAnswers().stream().map( nd::getNodeFor )
-                               .forEach( ansNode -> { 
-                                   candidates.remove(ansNode); 
-                                   ansNode.accept(this);
-                               });
+                for ( Answer a:nd.getAnswers() ) {
+                    Node ansNode = nd.getNodeFor(a);
+                    if ( candidates.contains(ansNode) ) {
+                        candidates.remove(ansNode);
+                        ansNode.accept(this);
+                    }
+                }
             }
 
             @Override
             public void visitImpl(ConsiderNode nd) {
-                nd.getAnswers().stream().map( nd::getNodeFor )
-                               .forEach( ansNode -> { 
-                                   candidates.remove(ansNode); 
-                                   ansNode.accept(this);
-                               });
-                if ( nd.getElseNode() != null ) {
-                    candidates.remove(nd.getElseNode());
-                    nd.getElseNode().accept(this);
+                for ( CompoundValue a:nd.getAnswers() ) {
+                    Node ansNode = nd.getNodeFor(a);
+                    if ( candidates.contains(ansNode) ) {
+                        candidates.remove(ansNode);
+                        ansNode.accept(this);
+                    }
+                }
+                
+                Node elseNode = nd.getElseNode();
+                if ( elseNode != null && candidates.contains(elseNode)) {
+                    candidates.remove(elseNode);
+                    elseNode.accept(this);
                 }
             }
 
             @Override
             public void visitImpl(SectionNode nd) {
-                candidates.remove(nd.getNextNode());
-                nd.getNextNode().accept(this);
-                
-                candidates.remove(nd.getStartNode());
-                nd.getStartNode().accept(this);
+                removeNextNode(nd);
+                removeStartNode(nd);
             }
             
             @Override
             public void visitImpl(PartNode nd) {
-                candidates.remove(nd.getStartNode());
-                nd.getStartNode().accept(this);
+                removeStartNode(nd);
             }
 
             /// Through nodes - remove next node, and then proceed using it
             @Override
             public void visitImpl(SetNode nd) {
-                candidates.remove(nd.getNextNode());
-                nd.getNextNode().accept(this);
+                removeNextNode(nd);
             }
 
             @Override
             public void visitImpl(CallNode nd){
-                candidates.remove(nd.getNextNode());
-                nd.getNextNode().accept(this);
+                removeNextNode(nd);
             }
 
             @Override
             public void visitImpl(ToDoNode nd){
-                candidates.remove(nd.getNextNode());
-                nd.getNextNode().accept(this);
+                removeNextNode(nd);
             }
             
             /// Terminal nodes - Nothing to do.
@@ -222,8 +218,29 @@ public abstract class AbstractGraphvizDecisionGraphVisualizer extends GraphvizVi
             
             @Override
             public void visitImpl(ContinueNode nd ) {}
-
+            
+            private void removeNextNode( ThroughNode nd ){
+                Node notAHead = nd.getNextNode();
+                if ( candidates.contains(notAHead) ) {
+                    candidates.remove(notAHead);
+                    notAHead.accept(this);
+                }
+            }
+            
+            private void removeStartNode( ContainerNode nd ) {
+                Node notAHead = nd.getStartNode();
+                if ( candidates.contains(notAHead) ) {
+                    candidates.remove(notAHead);
+                    notAHead.accept(this);                    
+                }
+            }
+            
         };
+        
+        for (Node n : dg.nodes()) {
+            candidates.add(n);
+        }
+        candidates.remove( dg.getNode(DecisionGraphCompiler.SYNTHETIC_END_NODE_ID) );
         
         for (Node n : dg.nodes()) {
             if (candidates.contains(n)) {

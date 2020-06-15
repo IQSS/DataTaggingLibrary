@@ -46,4 +46,14 @@
                 <exec.workingdir>WORK/policy-models</exec.workingdir>
             </properties>
         </action>
+        <action>
+            <actionName>CUSTOM-t1</actionName>
+            <displayName>t1</displayName>
+            <goals>
+                <goal>exec:java</goal>
+            </goals>
+            <properties>
+                <exec.args>"/Users/michael/Documents/PhD/IQSS/Data-Tags/SubProjects/Force11/work/dkNET-DecisionTrees/data-repo-compliance"</exec.args>
+            </properties>
+        </action>
     </actions>

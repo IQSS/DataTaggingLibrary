@@ -173,6 +173,9 @@ public class LocalizationLoader extends BaseModelLoader {
     
     private void loadNodeData(Localization loc, PolicyModel model, Path localizationPath) throws IOException {
         
+        // Safety: If there was an error parsing the model, abort.
+        if ( model.getDecisionGraph() == null ) return;
+        
         // load nodes that have localization ids.
         model.getDecisionGraph().nodes().forEach(node -> {
             String nodeName = node.getId().substring(node.getId().indexOf("]")+1, node.getId().length());
