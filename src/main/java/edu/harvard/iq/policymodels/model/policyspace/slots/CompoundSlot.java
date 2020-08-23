@@ -2,6 +2,7 @@ package edu.harvard.iq.policymodels.model.policyspace.slots;
 
 import edu.harvard.iq.policymodels.model.policyspace.values.CompoundValue;
 import static edu.harvard.iq.policymodels.util.CollectionHelper.C;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -33,6 +34,10 @@ public class CompoundSlot extends AbstractSlot {
 		return Collections.unmodifiableSet(new HashSet<>(subSlots.values()));
 	}
 	
+    public List<AbstractSlot> getSubSlotsInDeclaraionOrder() {
+        return Collections.unmodifiableList( new ArrayList<>(subSlots.values()) );
+    }
+    
 	public void removeSubSlot( AbstractSlot tt ) {
 		subSlots.remove(tt.getName());
 	}

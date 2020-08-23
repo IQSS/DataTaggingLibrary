@@ -1,5 +1,6 @@
 package edu.harvard.iq.policymodels.model.slots;
 
+import edu.harvard.iq.policymodels.model.policyspace.slots.AbstractSlot;
 import edu.harvard.iq.policymodels.model.policyspace.slots.SlotHelper;
 import edu.harvard.iq.policymodels.model.policyspace.slots.AggregateSlot;
 import edu.harvard.iq.policymodels.model.policyspace.slots.CompoundSlot;
@@ -90,6 +91,14 @@ public class CompoundSlotTest {
         
     }
     
+    @Test
+    public void testGetSubSlotsInDeclaraionOrder() {
+        
+        List<AbstractSlot> expected = Arrays.asList(stA, stB, aggT);
+        List<AbstractSlot> actual = ctSut.getSubSlotsInDeclaraionOrder();
+        
+        assertEquals(expected, actual);
+    }
     
     @Test
     public void testAggregateSet() {
