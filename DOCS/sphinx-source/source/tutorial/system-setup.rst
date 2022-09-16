@@ -26,7 +26,7 @@ The items below are not crucial to developing a model, but they do make it easie
 
 Atom text editor
 
-  `Atom`_ is a text editor geared towards editing computer languages. It is the recommended editor for editing policy models, as it offers, out of its proverbial box, various features such as automatic highlight of matchning braces, code completion, and a rich set of keyboard shortcuts. And also because of the next item in this list.
+  `Atom`_ is a text editor geared towards editing computer languages. It is the recommended editor for editing policy models, as it offers, out of its proverbial box, various features such as automatic highlight of matching braces, code completion, and a rich set of keyboard shortcuts. And also because of the next item in this list.
 
 Atom PolicyModels Langauge Support Package
 
